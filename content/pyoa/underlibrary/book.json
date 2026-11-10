@@ -60,10 +60,6 @@
     {
      "label": "Consult the night-porter's old roster",
      "to": "ul-0-013"
-    },
-    {
-     "label": "Read the archivist's folded parchment",
-     "to": "ul-0-017"
     }
    ]
   },
@@ -125,7 +121,10 @@
      "to": "ul-0-006",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-002/0",
@@ -225,7 +224,10 @@
      "to": "ul-0-011",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-002/1",
@@ -310,7 +312,10 @@
      "to": "ul-0-015",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-002/2",
@@ -390,10 +395,6 @@
     {
      "label": "Research ancient floor-weight equations",
      "to": "ul-0-033"
-    },
-    {
-     "label": "Step through the squeaking wicker gate",
-     "to": "ul-0-038"
     }
    ]
   },
@@ -455,7 +456,10 @@
      "to": "ul-0-022",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-018/0",
@@ -555,7 +559,10 @@
      "to": "ul-0-027",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-018/1",
@@ -640,7 +647,10 @@
      "to": "ul-0-031",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-018/2",
@@ -740,7 +750,10 @@
      "to": "ul-0-036",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-0-018/3",
@@ -865,10 +878,6 @@
     {
      "label": "Endure the endless interrogation",
      "to": "ul-1-018"
-    },
-    {
-     "label": "Navigate the crowded rival gallery",
-     "to": "ul-1-022"
     }
    ]
   },
@@ -930,7 +939,10 @@
      "to": "ul-1-006",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-002/0",
@@ -1030,7 +1042,10 @@
      "to": "ul-1-011",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-002/1",
@@ -1130,7 +1145,10 @@
      "to": "ul-1-016",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-002/2",
@@ -1215,7 +1233,10 @@
      "to": "ul-1-020",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-002/3",
@@ -1291,10 +1312,6 @@
     {
      "label": "Gracefully bypass the territorial barrier",
      "to": "ul-1-033"
-    },
-    {
-     "label": "Descend into the lower scriptoriums",
-     "to": "ul-1-037"
     }
    ]
   },
@@ -1356,7 +1373,10 @@
      "to": "ul-1-027",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-023/0",
@@ -1441,7 +1461,10 @@
      "to": "ul-1-031",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-023/1",
@@ -1477,7 +1500,7 @@
    "exits": [
     {
      "label": "Return to the crowded scholar alcove",
-     "to": "ul-1-023"
+     "to": "ul-1-037"
     }
    ],
    "chain": "ul-1-023/1",
@@ -1526,7 +1549,10 @@
      "to": "ul-1-035",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-023/2",
@@ -1589,7 +1615,7 @@
    "kind": "hub",
    "title": "The Ink-Sellers' Stall",
    "brief": "The Ink-Sellers' Stall: Merchants hawk dubious liquids that promise to reveal hidden text or make parchment scream when touched.",
-   "page": "Canvas awnings strain against greasy drafts in a cavernous bazaar where merchants hawk dubious liquids by flickering lantern light. Glass vials clink against one another, filled with concoctions that promise to reveal hidden text, make parchment scream when touched, or permanently stain wandering fingers. The air smells thick of turpentine, gall, and stale vinegar, laced with the low hum of rival shelvers haggling over prices. Every stall offers a different route through the creeping shadows, tempting you to spend your meager copper on draughts that might ease your journey into the deep stacks.",
+   "page": "Canvas awnings strain against greasy drafts in a cavernous bazaar where merchants hawk dubious liquids by flickering lantern light. Glass vials clink against one another, filled with concoctions that promise to reveal hidden text, make parchment scream when touched, or permanently stain wandering fingers. The air smells thick of turpentine, gall, and stale vinegar, laced with the low hum of rival shelvers haggling over prices. A hooded merchant thrusts a stoppered flask toward you, demanding your last copper for a draught meant for the deep stacks.",
    "exits": [
     {
      "label": "Catch a jar of falling luminescent ink",
@@ -1610,10 +1636,6 @@
     {
      "label": "Trick a greedy merchant with waste-paper",
      "to": "ul-1-056"
-    },
-    {
-     "label": "Cross the bridge over the ink canal",
-     "to": "ul-1-060"
     }
    ]
   },
@@ -1660,7 +1682,10 @@
      "to": "ul-1-041",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-038/0",
@@ -1745,7 +1770,10 @@
      "to": "ul-1-045",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-038/1",
@@ -1830,7 +1858,10 @@
      "to": "ul-1-049",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-038/2",
@@ -1930,7 +1961,10 @@
      "to": "ul-1-054",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-038/3",
@@ -2015,7 +2049,10 @@
      "to": "ul-1-058",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-038/4",
@@ -2095,10 +2132,6 @@
     {
      "label": "Correct the monks ledger system",
      "to": "ul-1-075"
-    },
-    {
-     "label": "Visit the Shelvers Fellowship vault",
-     "to": "ul-1-079"
     }
    ]
   },
@@ -2145,7 +2178,10 @@
      "to": "ul-1-064",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-061/0",
@@ -2245,7 +2281,10 @@
      "to": "ul-1-069",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-061/1",
@@ -2330,7 +2369,10 @@
      "to": "ul-1-073",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-061/2",
@@ -2415,7 +2457,10 @@
      "to": "ul-1-077",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-061/3",
@@ -2491,10 +2536,6 @@
     {
      "label": "Smooth over the tension with calm diplomacy",
      "to": "ul-1-089"
-    },
-    {
-     "label": "Slip away into the labyrinthine map-rooms",
-     "to": "ul-1-093"
     }
    ]
   },
@@ -2541,7 +2582,10 @@
      "to": "ul-1-083",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-080/0",
@@ -2626,7 +2670,10 @@
      "to": "ul-1-087",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-080/1",
@@ -2711,7 +2758,10 @@
      "to": "ul-1-091",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-080/2",
@@ -2791,10 +2841,6 @@
     {
      "label": "Endure the endless lost-wing tales",
      "to": "ul-1-110"
-    },
-    {
-     "label": "Ascend the encyclopedia-spine stairs",
-     "to": "ul-1-115"
     }
    ]
   },
@@ -2856,7 +2902,10 @@
      "to": "ul-1-098",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-094/0",
@@ -2956,7 +3005,10 @@
      "to": "ul-1-103",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-094/1",
@@ -3056,7 +3108,10 @@
      "to": "ul-1-108",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-094/2",
@@ -3156,7 +3211,10 @@
      "to": "ul-1-113",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-094/3",
@@ -3236,10 +3294,6 @@
     {
      "label": "Retrieve a silver bone-folder scrap",
      "to": "ul-1-131"
-    },
-    {
-     "label": "Approach the heavy brass gates quietly",
-     "to": "ul-1-135"
     }
    ]
   },
@@ -3301,7 +3355,10 @@
      "to": "ul-1-120",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-116/0",
@@ -3386,7 +3443,10 @@
      "to": "ul-1-124",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-116/1",
@@ -3490,7 +3550,10 @@
      "to": "ul-1-129",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-116/2",
@@ -3575,7 +3638,10 @@
      "to": "ul-1-133",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-116/3",
@@ -3655,10 +3721,6 @@
     {
      "label": "Cite the unwritten exemption clause",
      "to": "ul-1-152"
-    },
-    {
-     "label": "Rush the closing threshold",
-     "to": "ul-1-156"
     }
    ]
   },
@@ -3720,7 +3782,10 @@
      "to": "ul-1-140",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-136/0",
@@ -3820,7 +3885,10 @@
      "to": "ul-1-145",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-136/1",
@@ -3920,7 +3988,10 @@
      "to": "ul-1-150",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-136/2",
@@ -4005,7 +4076,10 @@
      "to": "ul-1-154",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-1-136/3",
@@ -4156,10 +4230,6 @@
     {
      "label": "Brace against the shifting wall",
      "to": "ul-2-012"
-    },
-    {
-     "label": "Follow the dripping lamp-oil transom",
-     "to": "ul-2-016"
     }
    ]
   },
@@ -4221,7 +4291,10 @@
      "to": "ul-2-006",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-002/0",
@@ -4306,7 +4379,10 @@
      "to": "ul-2-010",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-002/1",
@@ -4391,7 +4467,10 @@
      "to": "ul-2-014",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-002/2",
@@ -4475,10 +4554,6 @@
     {
      "label": "Salvage intact cartography from the muck",
      "to": "ul-2-036"
-    },
-    {
-     "label": "Cross the chasm on the bridge of spines",
-     "to": "ul-2-041"
     }
    ]
   },
@@ -4525,7 +4600,10 @@
      "to": "ul-2-020",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-017/0",
@@ -4614,7 +4692,10 @@
      "to": "ul-2-024",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-017/1",
@@ -4714,7 +4795,10 @@
      "to": "ul-2-029",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-017/2",
@@ -4814,7 +4898,10 @@
      "to": "ul-2-034",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-017/3",
@@ -4914,7 +5001,10 @@
      "to": "ul-2-039",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-017/4",
@@ -4990,10 +5080,6 @@
     {
      "label": "Glide across the rolling surface",
      "to": "ul-2-051"
-    },
-    {
-     "label": "Enter the carbon-smoked corridor",
-     "to": "ul-2-056"
     }
    ]
   },
@@ -5041,7 +5127,10 @@
      "to": "ul-2-045",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-042/0",
@@ -5077,7 +5166,7 @@
    "exits": [
     {
      "label": "Return to the trembling span",
-     "to": "ul-2-042"
+     "to": "ul-2-056"
     }
    ],
    "chain": "ul-2-042/0",
@@ -5126,7 +5215,10 @@
      "to": "ul-2-049",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-042/1",
@@ -5226,7 +5318,10 @@
      "to": "ul-2-054",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-042/2",
@@ -5302,10 +5397,6 @@
     {
      "label": "Take the oiled scarf",
      "to": "ul-2-068"
-    },
-    {
-     "label": "Enter the rotating maze",
-     "to": "ul-2-072"
     }
    ]
   },
@@ -5367,7 +5458,10 @@
      "to": "ul-2-061",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-057/0",
@@ -5467,7 +5561,10 @@
      "to": "ul-2-066",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-057/1",
@@ -5552,7 +5649,10 @@
      "to": "ul-2-070",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-057/2",
@@ -5628,10 +5728,6 @@
     {
      "label": "Leap through the turning gap",
      "to": "ul-2-082"
-    },
-    {
-     "label": "Drift toward the chaotic heaps",
-     "to": "ul-2-086"
     }
    ]
   },
@@ -5678,7 +5774,10 @@
      "to": "ul-2-076",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-073/0",
@@ -5714,7 +5813,7 @@
    "exits": [
     {
      "label": "Return to the revolving chamber",
-     "to": "ul-2-073"
+     "to": "ul-2-086"
     }
    ],
    "chain": "ul-2-073/0",
@@ -5763,7 +5862,10 @@
      "to": "ul-2-080",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-073/1",
@@ -5848,7 +5950,10 @@
      "to": "ul-2-084",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-073/2",
@@ -5928,10 +6033,6 @@
     {
      "label": "Recover a heavy brass reading glass using clever sleight of hand",
      "to": "ul-2-100"
-    },
-    {
-     "label": "Approach the turbulent river of jet-black ink",
-     "to": "ul-2-105"
     }
    ]
   },
@@ -5978,7 +6079,10 @@
      "to": "ul-2-090",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-087/0",
@@ -6014,7 +6118,7 @@
    "exits": [
     {
      "label": "Retrace your steps to the central crossroads",
-     "to": "ul-2-087"
+     "to": "ul-2-105"
     }
    ],
    "chain": "ul-2-087/0",
@@ -6063,7 +6167,10 @@
      "to": "ul-2-094",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-087/1",
@@ -6148,7 +6255,10 @@
      "to": "ul-2-098",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-087/2",
@@ -6248,7 +6358,10 @@
      "to": "ul-2-103",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-087/3",
@@ -6332,10 +6445,6 @@
     {
      "label": "Leap across the slick stones",
      "to": "ul-2-124"
-    },
-    {
-     "label": "Squeeze through the narrow cleft",
-     "to": "ul-2-129"
     }
    ]
   },
@@ -6397,7 +6506,10 @@
      "to": "ul-2-110",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-106/0",
@@ -6482,7 +6594,10 @@
      "to": "ul-2-114",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-106/1",
@@ -6567,7 +6682,10 @@
      "to": "ul-2-118",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-106/2",
@@ -6652,7 +6770,10 @@
      "to": "ul-2-122",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-106/3",
@@ -6752,7 +6873,10 @@
      "to": "ul-2-127",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-106/4",
@@ -6832,10 +6956,6 @@
     {
      "label": "Bend your posture to the curve",
      "to": "ul-2-143"
-    },
-    {
-     "label": "Emerge into the vaulted scriptorium",
-     "to": "ul-2-147"
     }
    ]
   },
@@ -6882,7 +7002,10 @@
      "to": "ul-2-133",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-130/0",
@@ -6967,7 +7090,10 @@
      "to": "ul-2-137",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-130/1",
@@ -7052,7 +7178,10 @@
      "to": "ul-2-141",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-130/2",
@@ -7137,7 +7266,10 @@
      "to": "ul-2-145",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-130/3",
@@ -7213,10 +7345,6 @@
     {
      "label": "Move with silent grace among phantoms",
      "to": "ul-2-159"
-    },
-    {
-     "label": "Examine the barricaded iron cabinets",
-     "to": "ul-2-164"
     }
    ]
   },
@@ -7278,7 +7406,10 @@
      "to": "ul-2-152",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-148/0",
@@ -7378,7 +7509,10 @@
      "to": "ul-2-157",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-148/1",
@@ -7478,7 +7612,10 @@
      "to": "ul-2-162",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-148/2",
@@ -7562,10 +7699,6 @@
     {
      "label": "Decipher the ancient cataloguing marks",
      "to": "ul-2-183"
-    },
-    {
-     "label": "Descend into the floating archipelago",
-     "to": "ul-2-188"
     }
    ]
   },
@@ -7612,7 +7745,10 @@
      "to": "ul-2-168",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-165/0",
@@ -7712,7 +7848,10 @@
      "to": "ul-2-173",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-165/1",
@@ -7797,7 +7936,10 @@
      "to": "ul-2-177",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-165/2",
@@ -7882,7 +8024,10 @@
      "to": "ul-2-181",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-165/3",
@@ -7982,7 +8127,10 @@
      "to": "ul-2-186",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-165/4",
@@ -8066,10 +8214,6 @@
     {
      "label": "Approach the great bronze threshold",
      "to": "ul-2-209"
-    },
-    {
-     "label": "Bridge the widest gap with anchor chains",
-     "to": "ul-2-214"
     }
    ]
   },
@@ -8131,7 +8275,10 @@
      "to": "ul-2-193",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-189/0",
@@ -8231,7 +8378,10 @@
      "to": "ul-2-198",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-189/1",
@@ -8316,7 +8466,10 @@
      "to": "ul-2-202",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-189/2",
@@ -8416,7 +8569,10 @@
      "to": "ul-2-207",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-189/3",
@@ -8516,7 +8672,10 @@
      "to": "ul-2-212",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-2-189/4",
@@ -8701,10 +8860,6 @@
     {
      "label": "Intercept the tumbling dossier cart",
      "to": "ul-3-012"
-    },
-    {
-     "label": "Avoid the patrolling armed beadles",
-     "to": "ul-3-017"
     }
    ]
   },
@@ -8766,7 +8921,10 @@
      "to": "ul-3-006",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-002/0",
@@ -8851,7 +9009,10 @@
      "to": "ul-3-010",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-002/1",
@@ -8887,7 +9048,7 @@
    "exits": [
     {
      "label": "Return to the classification hall",
-     "to": "ul-3-002"
+     "to": "ul-3-017"
     }
    ],
    "chain": "ul-3-002/1",
@@ -8951,7 +9112,10 @@
      "to": "ul-3-015",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-002/2",
@@ -9014,7 +9178,7 @@
    "kind": "hub",
    "title": "The Tribunal Gallery",
    "brief": "The Tribunal Gallery: Spectators in grey robes watch from tiered benches as judges deliberate over charges of unauthorized cataloguing.",
-   "page": "Tiered benches of soot-stained pine rise into the damp vaulting, packed with grey-robed spectators whose breath smells of stale ink and dried chicory. Below, upon a raised dais of veined slate, three judges of the Cataloguers' Court whisper behind high barricades of cross-indexed ledgers, weighing charges of unauthorized cataloguing against the fellowship of the lower stacks. A thin drift of lamp-oil smoke hangs in the cold air, stinging your eyes while the scratching of nibs echoes like restless beetles. Every aisle out of this hollow court offers a desperate gamble, whether through forged credentials, balanced leaps across ledgers, or sheer defiance of the bench.",
+   "page": "Tiered benches of soot-stained pine rise into the damp vaulting, packed with grey-robed spectators whose breath smells of stale ink and dried chicory. Below, upon a raised dais of veined slate, three judges of the Cataloguers' Court whisper behind high barricades of cross-indexed ledgers, weighing charges of unauthorized cataloguing against the fellowship of the lower stacks. A thin drift of lamp-oil smoke hangs in the cold air, stinging your eyes while the scratching of nibs echoes like restless beetles. A court bailiff strikes an iron rod against the floor, calling for order across the shifting ledgers.",
    "exits": [
     {
      "label": "Slip into the clerk's alcove unnoticed",
@@ -9035,10 +9199,6 @@
     {
      "label": "Stare down the hostile prosecutor",
      "to": "ul-3-037"
-    },
-    {
-     "label": "Approach the iron portcullis barrier",
-     "to": "ul-3-042"
     }
    ]
   },
@@ -9085,7 +9245,10 @@
      "to": "ul-3-021",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-018/0",
@@ -9185,7 +9348,10 @@
      "to": "ul-3-026",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-018/1",
@@ -9285,7 +9451,10 @@
      "to": "ul-3-031",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-018/2",
@@ -9370,7 +9539,10 @@
      "to": "ul-3-035",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-018/3",
@@ -9470,7 +9642,10 @@
      "to": "ul-3-040",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-018/4",
@@ -9550,10 +9725,6 @@
     {
      "label": "Examine the darkened side corridor",
      "to": "ul-3-058"
-    },
-    {
-     "label": "Follow the grinding gear sounds",
-     "to": "ul-3-063"
     }
    ]
   },
@@ -9600,7 +9771,10 @@
      "to": "ul-3-046",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-043/0",
@@ -9700,7 +9874,10 @@
      "to": "ul-3-051",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-043/1",
@@ -9800,7 +9977,10 @@
      "to": "ul-3-056",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-043/2",
@@ -9900,7 +10080,10 @@
      "to": "ul-3-061",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-043/3",
@@ -9980,10 +10163,6 @@
     {
      "label": "Slide along the top rail",
      "to": "ul-3-079"
-    },
-    {
-     "label": "Confront the red-robed enforcers ahead",
-     "to": "ul-3-084"
     }
    ]
   },
@@ -10030,7 +10209,10 @@
      "to": "ul-3-067",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-064/0",
@@ -10130,7 +10312,10 @@
      "to": "ul-3-072",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-064/1",
@@ -10230,7 +10415,10 @@
      "to": "ul-3-077",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-064/2",
@@ -10330,7 +10518,10 @@
      "to": "ul-3-082",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-064/3",
@@ -10414,10 +10605,6 @@
     {
      "label": "Acquire duplicate keys from storage",
      "to": "ul-3-104"
-    },
-    {
-     "label": "Descend into the towering card rotunda",
-     "to": "ul-3-109"
     }
    ]
   },
@@ -10464,7 +10651,10 @@
      "to": "ul-3-088",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-085/0",
@@ -10500,7 +10690,7 @@
    "exits": [
     {
      "label": "Return to the smoky dormitory",
-     "to": "ul-3-085"
+     "to": "ul-3-109"
     }
    ],
    "chain": "ul-3-085/0",
@@ -10549,7 +10739,10 @@
      "to": "ul-3-092",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-085/1",
@@ -10649,7 +10842,10 @@
      "to": "ul-3-097",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-085/2",
@@ -10749,7 +10945,10 @@
      "to": "ul-3-102",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-085/3",
@@ -10849,7 +11048,10 @@
      "to": "ul-3-107",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-085/4",
@@ -10925,10 +11127,6 @@
     {
      "label": "Trick the chief card sorter",
      "to": "ul-3-121"
-    },
-    {
-     "label": "Cross the encyclopedia spine bridge",
-     "to": "ul-3-126"
     }
    ]
   },
@@ -10990,7 +11188,10 @@
      "to": "ul-3-114",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-110/0",
@@ -11090,7 +11291,10 @@
      "to": "ul-3-119",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-110/1",
@@ -11190,7 +11394,10 @@
      "to": "ul-3-124",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-110/2",
@@ -11266,10 +11473,6 @@
     {
      "label": "Outwit the toll-troll using bylaws",
      "to": "ul-3-137"
-    },
-    {
-     "label": "Descend the fossilised paper stairs",
-     "to": "ul-3-141"
     }
    ]
   },
@@ -11316,7 +11519,10 @@
      "to": "ul-3-130",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-127/0",
@@ -11416,7 +11622,10 @@
      "to": "ul-3-135",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-127/1",
@@ -11501,7 +11710,10 @@
      "to": "ul-3-139",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-127/2",
@@ -11585,10 +11797,6 @@
     {
      "label": "Chase after the fleeing courier",
      "to": "ul-3-160"
-    },
-    {
-     "label": "Enter the grand tribunal chamber",
-     "to": "ul-3-165"
     }
    ]
   },
@@ -11650,7 +11858,10 @@
      "to": "ul-3-146",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-142/0",
@@ -11735,7 +11946,10 @@
      "to": "ul-3-150",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-142/1",
@@ -11820,7 +12034,10 @@
      "to": "ul-3-154",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-142/2",
@@ -11905,7 +12122,10 @@
      "to": "ul-3-158",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-142/3",
@@ -12005,7 +12225,10 @@
      "to": "ul-3-163",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-142/4",
@@ -12072,7 +12295,7 @@
    "kind": "hub",
    "title": "The Tribunal Mosaic",
    "brief": "The Grand Tribune: High stained-glass windows depict legendary librarians sorting the stars while golden scales hang motionless above the judges.",
-   "page": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Every archway offers a distinct path deeper into the administrative labyrinth, each guarded by different interpretations of municipal law and custom.",
+   "page": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Bailiffs in brass-buttoned coats stand watch at the archways, clutching sheaves of municipal law.",
    "exits": [
     {
      "label": "Address the judging bench directly",
@@ -12085,10 +12308,6 @@
     {
      "label": "Secure a travel warrant from magistrates",
      "to": "ul-3-175"
-    },
-    {
-     "label": "Confront the living parchment barrier",
-     "to": "ul-3-179"
     }
    ]
   },
@@ -12135,7 +12354,10 @@
      "to": "ul-3-169",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-166/0",
@@ -12171,7 +12393,7 @@
    "exits": [
     {
      "label": "Return to the grand tribunal hub",
-     "to": "ul-3-166",
+     "to": "ul-3-179",
      "setFlags": {
       "end-edit-one-line": true
      }
@@ -12224,7 +12446,10 @@
      "to": "ul-3-173",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-166/1",
@@ -12309,7 +12534,10 @@
      "to": "ul-3-177",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-166/2",
@@ -12385,10 +12613,6 @@
     {
      "label": "Dissolve the magic with a verbal paradox",
      "to": "ul-3-191"
-    },
-    {
-     "label": "Step out onto the grand balcony",
-     "to": "ul-3-195"
     }
    ]
   },
@@ -12450,7 +12674,10 @@
      "to": "ul-3-184",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-180/0",
@@ -12550,7 +12777,10 @@
      "to": "ul-3-189",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-180/1",
@@ -12639,7 +12869,10 @@
      "to": "ul-3-193",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-180/2",
@@ -12675,7 +12908,7 @@
    "exits": [
     {
      "label": "Return to the vellum barrier hub",
-     "to": "ul-3-180"
+     "to": "ul-3-195"
     }
    ],
    "chain": "ul-3-180/2",
@@ -12702,7 +12935,7 @@
    "kind": "hub",
    "title": "The Balcony of Sighs",
    "brief": "The Balcony of Sighs: Stone balustrades overlook a dizzying abyss filled with drifting book-stacks, floating lanterns, and distant whispering echoes.",
-   "page": "Lanterns swing gently from iron brackets along the curving balustrade of the Balcony of Sighs, casting long, wavering shadows across the worn stone. Down in the misty depths, shelves drift like slow-moving rafts of timber, and the faint rustle of phantom pages drifts upward on the chill draft. Every direction offers its own perilous invitation to the depths below, demanding a steady hand and a sharp eye.",
+   "page": "Lanterns swing gently from iron brackets along the curving balustrade of the Balcony of Sighs, casting long, wavering shadows across the worn stone. Down in the misty depths, shelves drift like slow-moving rafts of timber, and the faint rustle of phantom pages drifts upward on the chill draft. A gust of cold air rattles the loose ironwork along the frost-slicked railing.",
    "exits": [
     {
      "label": "Venture down the creaking stairway",
@@ -12719,10 +12952,6 @@
     {
      "label": "Chart the swirling atmospheric currents",
      "to": "ul-3-211"
-    },
-    {
-     "label": "Cross the broken threshold below",
-     "to": "ul-3-215"
     }
    ]
   },
@@ -12784,7 +13013,10 @@
      "to": "ul-3-200",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-196/0",
@@ -12869,7 +13101,10 @@
      "to": "ul-3-204",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-196/1",
@@ -12969,7 +13204,10 @@
      "to": "ul-3-209",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-196/2",
@@ -13054,7 +13292,10 @@
      "to": "ul-3-213",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-3-196/3",
@@ -13220,10 +13461,6 @@
     {
      "label": "Decipher the carved warning glyphs",
      "to": "ul-4-012"
-    },
-    {
-     "label": "Answer the whispering wall parchment",
-     "to": "ul-4-017"
     }
    ]
   },
@@ -13285,7 +13522,10 @@
      "to": "ul-4-006",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-002/0",
@@ -13370,7 +13610,10 @@
      "to": "ul-4-010",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-002/1",
@@ -13474,7 +13717,10 @@
      "to": "ul-4-015",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-002/2",
@@ -13550,10 +13796,6 @@
     {
      "label": "Step past the tumbling folios",
      "to": "ul-4-027"
-    },
-    {
-     "label": "Tread softly on murmuring bookplates",
-     "to": "ul-4-031"
     }
    ]
   },
@@ -13600,7 +13842,10 @@
      "to": "ul-4-021",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-018/0",
@@ -13636,7 +13881,7 @@
    "exits": [
     {
      "label": "Return to the Margin Alcove",
-     "to": "ul-4-018"
+     "to": "ul-4-031"
     }
    ],
    "chain": "ul-4-018/0",
@@ -13685,7 +13930,10 @@
      "to": "ul-4-025",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-018/1",
@@ -13770,7 +14018,10 @@
      "to": "ul-4-029",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-018/2",
@@ -13846,10 +14097,6 @@
     {
      "label": "Trick the mosaic into lowering its barrier",
      "to": "ul-4-042"
-    },
-    {
-     "label": "Press through the thick fog of pulverized dust",
-     "to": "ul-4-046"
     }
    ]
   },
@@ -13911,7 +14158,10 @@
      "to": "ul-4-036",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-032/0",
@@ -13996,7 +14246,10 @@
      "to": "ul-4-040",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-032/1",
@@ -14032,7 +14285,7 @@
    "exits": [
     {
      "label": "Step carefully back onto the shifting plates",
-     "to": "ul-4-032"
+     "to": "ul-4-046"
     }
    ],
    "chain": "ul-4-032/1",
@@ -14081,7 +14334,10 @@
      "to": "ul-4-044",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-032/2",
@@ -14161,10 +14417,6 @@
     {
      "label": "Trace the stable limestone floor below",
      "to": "ul-4-057"
-    },
-    {
-     "label": "Navigate the leaning bookshelf arches",
-     "to": "ul-4-062"
     }
    ]
   },
@@ -14211,7 +14463,10 @@
      "to": "ul-4-050",
      "result": "miss",
      "stat": "GUILE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-047/0",
@@ -14311,7 +14566,10 @@
      "to": "ul-4-055",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-047/1",
@@ -14411,7 +14669,10 @@
      "to": "ul-4-060",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-047/2",
@@ -14495,10 +14756,6 @@
     {
      "label": "Thread the shuddering aisles with grace",
      "to": "ul-4-082"
-    },
-    {
-     "label": "Approach the black ink river below",
-     "to": "ul-4-086"
     }
    ]
   },
@@ -14560,7 +14817,10 @@
      "to": "ul-4-067",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-063/0",
@@ -14645,7 +14905,10 @@
      "to": "ul-4-071",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-063/1",
@@ -14749,7 +15012,10 @@
      "to": "ul-4-076",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-063/2",
@@ -14834,7 +15100,10 @@
      "to": "ul-4-080",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-063/3",
@@ -14919,7 +15188,10 @@
      "to": "ul-4-084",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-063/4",
@@ -14999,10 +15271,6 @@
     {
      "label": "Hail the unseen ink-rower",
      "to": "ul-4-102"
-    },
-    {
-     "label": "Enter the iron-bound trial chambers",
-     "to": "ul-4-106"
     }
    ]
   },
@@ -15049,7 +15317,10 @@
      "to": "ul-4-090",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-087/0",
@@ -15085,7 +15356,7 @@
    "exits": [
     {
      "label": "Return to the main sluice junction",
-     "to": "ul-4-087"
+     "to": "ul-4-106"
     }
    ],
    "chain": "ul-4-087/0",
@@ -15149,7 +15420,10 @@
      "to": "ul-4-095",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-087/1",
@@ -15249,7 +15523,10 @@
      "to": "ul-4-100",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-087/2",
@@ -15334,7 +15611,10 @@
      "to": "ul-4-104",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-087/3",
@@ -15414,10 +15694,6 @@
     {
      "label": "Slip past the balance scales",
      "to": "ul-4-120"
-    },
-    {
-     "label": "Approach the amphitheatre of ghosts",
-     "to": "ul-4-125"
     }
    ]
   },
@@ -15464,7 +15740,10 @@
      "to": "ul-4-110",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-107/0",
@@ -15549,7 +15828,10 @@
      "to": "ul-4-114",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-107/1",
@@ -15634,7 +15916,10 @@
      "to": "ul-4-118",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-107/2",
@@ -15734,7 +16019,10 @@
      "to": "ul-4-123",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-107/3",
@@ -15818,10 +16106,6 @@
     {
      "label": "Hold your ground against the spectral surge",
      "to": "ul-4-147"
-    },
-    {
-     "label": "Approach the sliding letter puzzle door",
-     "to": "ul-4-151"
     }
    ]
   },
@@ -15883,7 +16167,10 @@
      "to": "ul-4-130",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-126/0",
@@ -15983,7 +16270,10 @@
      "to": "ul-4-135",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-126/1",
@@ -16087,7 +16377,10 @@
      "to": "ul-4-140",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-126/2",
@@ -16187,7 +16480,10 @@
      "to": "ul-4-145",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-126/3",
@@ -16272,7 +16568,10 @@
      "to": "ul-4-149",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-126/4",
@@ -16308,7 +16607,7 @@
    "exits": [
     {
      "label": "Return to the whispering assembly",
-     "to": "ul-4-126",
+     "to": "ul-4-151",
      "setFlags": {
       "end-marginalia-speak": true
      }
@@ -16360,10 +16659,6 @@
     {
      "label": "Analyze the root etymology",
      "to": "ul-4-170"
-    },
-    {
-     "label": "Enter the silent inner sanctum",
-     "to": "ul-4-175"
     }
    ]
   },
@@ -16425,7 +16720,10 @@
      "to": "ul-4-156",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-152/0",
@@ -16510,7 +16808,10 @@
      "to": "ul-4-160",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-152/1",
@@ -16595,7 +16896,10 @@
      "to": "ul-4-164",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-152/2",
@@ -16680,7 +16984,10 @@
      "to": "ul-4-168",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-152/3",
@@ -16780,7 +17087,10 @@
      "to": "ul-4-173",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-152/4",
@@ -16856,10 +17166,6 @@
     {
      "label": "Step softly to gain restoration oil",
      "to": "ul-4-187"
-    },
-    {
-     "label": "Follow the trembling finger toward the vault",
-     "to": "ul-4-192"
     }
    ]
   },
@@ -16921,7 +17227,10 @@
      "to": "ul-4-180",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-176/0",
@@ -17021,7 +17330,10 @@
      "to": "ul-4-185",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-176/1",
@@ -17121,7 +17433,10 @@
      "to": "ul-4-190",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-4-176/2",
@@ -17340,10 +17655,6 @@
     {
      "label": "Confront the whispering clerk phantom",
      "to": "ul-5-021"
-    },
-    {
-     "label": "Approach the massive swinging pivot",
-     "to": "ul-5-025"
     }
    ]
   },
@@ -17390,7 +17701,10 @@
      "to": "ul-5-005",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-002/0",
@@ -17490,7 +17804,10 @@
      "to": "ul-5-010",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-002/1",
@@ -17590,7 +17907,10 @@
      "to": "ul-5-015",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-002/2",
@@ -17675,7 +17995,10 @@
      "to": "ul-5-019",
      "result": "miss",
      "stat": "GRACE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-002/3",
@@ -17760,7 +18083,10 @@
      "to": "ul-5-023",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-002/4",
@@ -17840,10 +18166,6 @@
     {
      "label": "Endure the ancient insults of bound law",
      "to": "ul-5-039"
-    },
-    {
-     "label": "Watch the Burner zealots breach parapet",
-     "to": "ul-5-043"
     }
    ]
   },
@@ -17890,7 +18212,10 @@
      "to": "ul-5-029",
      "result": "miss",
      "stat": "STUDY",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-026/0",
@@ -17975,7 +18300,10 @@
      "to": "ul-5-033",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-026/1",
@@ -18060,7 +18388,10 @@
      "to": "ul-5-037",
      "result": "miss",
      "stat": "GRACE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-026/2",
@@ -18145,7 +18476,10 @@
      "to": "ul-5-041",
      "result": "miss",
      "stat": "WILL",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-026/3",
@@ -18208,7 +18542,7 @@
    "kind": "hub",
    "title": "The Scriptorium Bridge",
    "brief": "The Scriptorium Bridge: A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike.",
-   "page": "A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike. Thick plumes of greasy smoke roll across the span, obscuring the far archways where the deep stacks begin their slow, mechanical shifting. To your left, a frantic librarian struggles to defend a stack of uncatalogued maps against a torch-waving zealot, while other paths beckon deeper into the labyrinth of rising alarms and falling masonry. Every route offers a desperate chance to alter the course of the impending closure before the heavy vault doors seal forever.",
+   "page": "A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike. Thick plumes of greasy smoke roll across the span, obscuring the far archways where the deep stacks begin their slow, mechanical shifting. To your left, a frantic librarian struggles to defend a stack of uncatalogued maps against a torch-waving zealot, while other paths beckon deeper into the labyrinth of rising alarms and falling masonry. The heavy vault doors grind loudly against their stone frames as the closure begins.",
    "exits": [
     {
      "label": "Charge the fanatic with your iron",
@@ -18229,10 +18563,6 @@
     {
      "label": "Forge a false tribunal clearance order",
      "to": "ul-5-063"
-    },
-    {
-     "label": "Navigate the shifting upper masonry",
-     "to": "ul-5-068"
     }
    ]
   },
@@ -18294,7 +18624,10 @@
      "to": "ul-5-048",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-044/0",
@@ -18379,7 +18712,10 @@
      "to": "ul-5-052",
      "result": "miss",
      "stat": "STUDY",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-044/1",
@@ -18479,7 +18815,10 @@
      "to": "ul-5-057",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-044/2",
@@ -18564,7 +18903,10 @@
      "to": "ul-5-061",
      "result": "miss",
      "stat": "GUILE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-044/3",
@@ -18664,7 +19006,10 @@
      "to": "ul-5-066",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-044/4",
@@ -18727,7 +19072,7 @@
    "kind": "hub",
    "title": "The Collapsed Stacks",
    "brief": "The Collapsed Stacks: Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and dust.",
-   "page": "Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and choking dust. The great artery of the library lies choked and fractured, forcing you to pick your footing with extreme care among the ruins of a thousand forgotten treatises. Every direction offers a perilous gamble as the ceiling overhead continues to rain fine gray powder upon your shoulders.\n\nTo your left, a narrow gap opens through the wreckage; straight ahead, a precarious bridge of fallen spines beckons; to your right, a stairwell winds down into the suffocating dark.",
+   "page": "Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and choking dust. The great artery of the library lies choked and fractured, forcing you to pick your footing with extreme care among the ruins of a thousand forgotten treatises. The ceiling overhead drops a fresh shower of fine gray powder onto your shoulders.\n\nTo your left, a narrow gap opens through the wreckage; straight ahead, a precarious bridge of fallen spines beckons; to your right, a stairwell winds down into the suffocating dark.",
    "exits": [
     {
      "label": "Search the stable load line",
@@ -18740,10 +19085,6 @@
     {
      "label": "Steel nerves against debris",
      "to": "ul-5-078"
-    },
-    {
-     "label": "Brave the whispering ghosts",
-     "to": "ul-5-082"
     }
    ]
   },
@@ -18790,7 +19131,10 @@
      "to": "ul-5-072",
      "result": "miss",
      "stat": "STUDY",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-069/0",
@@ -18875,7 +19219,10 @@
      "to": "ul-5-076",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-069/1",
@@ -18960,7 +19307,10 @@
      "to": "ul-5-080",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-069/2",
@@ -19044,10 +19394,6 @@
     {
      "label": "Dance through the tempest of pages",
      "to": "ul-5-101"
-    },
-    {
-     "label": "Stand before the pedestal of the Index",
-     "to": "ul-5-106"
     }
    ]
   },
@@ -19094,7 +19440,10 @@
      "to": "ul-5-086",
      "result": "miss",
      "stat": "GUILE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-083/0",
@@ -19179,7 +19528,10 @@
      "to": "ul-5-090",
      "result": "miss",
      "stat": "WILL",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-083/1",
@@ -19279,7 +19631,10 @@
      "to": "ul-5-095",
      "result": "miss",
      "stat": "WILL",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-083/2",
@@ -19315,7 +19670,10 @@
    "exits": [
     {
      "label": "Step into the central vault",
-     "to": "ul-5-106"
+     "to": "ul-5-106",
+     "setFlags": {
+      "end-remember-all": true
+     }
     }
    ],
    "chain": "ul-5-083/2",
@@ -19364,7 +19722,10 @@
      "to": "ul-5-099",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-083/3",
@@ -19464,7 +19825,10 @@
      "to": "ul-5-104",
      "result": "miss",
      "stat": "GRACE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "ul-5-083/4",
@@ -19516,7 +19880,10 @@
    "exits": [
     {
      "label": "Step forward to claim the Index",
-     "to": "ul-5-121"
+     "to": "ul-5-121",
+     "setFlags": {
+      "thessaly": true
+     }
     }
    ],
    "role": "gate"
@@ -19792,7 +20159,8 @@
      "label": "Thessaly's Way",
      "to": "ul-6-023",
      "when": {
-      "end-thessalys-way": true
+      "end-thessalys-way": true,
+      "thessaly": true
      }
     },
     {
@@ -19818,10 +20186,26 @@
     },
     {
      "label": "Misfiled",
-     "to": "ul-6-036"
+     "to": "ul-6-036",
+     "when": {
+      "check-miss": true
+     }
+    },
+    {
+     "id": "default-success",
+     "label": "Remember everything",
+     "to": "ul-6-001"
     }
    ],
-   "role": "ending-selector"
+   "role": "ending-selector",
+   "variants": [
+    {
+     "when": {
+      "thessaly": true
+     },
+     "after": "Thessaly stands beside you, her eyes reflecting the gleam of the descending bronze."
+    }
+   ]
   },
   {
    "id": "ul-6-001",
@@ -19881,7 +20265,8 @@
    "exits": [
     {
      "label": "Finish the final chapter",
-     "to": "ul-6-038"
+     "to": "ul-6-038",
+     "setFlags": {}
     }
    ],
    "endingKey": "remember-all",
@@ -19930,7 +20315,8 @@
    "exits": [
     {
      "label": "Step out into the wide white world",
-     "to": "ul-6-039"
+     "to": "ul-6-039",
+     "setFlags": {}
     }
    ],
    "endingKey": "great-forgetting",
@@ -19963,7 +20349,8 @@
    "exits": [
     {
      "label": "Sign your name in the final register",
-     "to": "ul-6-010"
+     "to": "ul-6-010",
+     "setFlags": {}
     }
    ],
    "endingKey": "cataloguers-century",
@@ -20007,7 +20394,8 @@
    "exits": [
     {
      "label": "Step closer to the vault",
-     "to": "ul-6-013"
+     "to": "ul-6-013",
+     "setFlags": {}
     }
    ],
    "endingKey": "the-burning",
@@ -20051,7 +20439,8 @@
    "exits": [
     {
      "label": "Read the turning pages",
-     "to": "ul-6-016"
+     "to": "ul-6-016",
+     "setFlags": {}
     }
    ],
    "endingKey": "marginalia-speak",
@@ -20095,7 +20484,8 @@
    "exits": [
     {
      "label": "Accept the final verdict of the stacks",
-     "to": "ul-6-019"
+     "to": "ul-6-019",
+     "setFlags": {}
     }
    ],
    "endingKey": "last-readers-chair",
@@ -20139,7 +20529,8 @@
    "exits": [
     {
      "label": "Close the heavy iron covers forever",
-     "to": "ul-6-022"
+     "to": "ul-6-022",
+     "setFlags": {}
     }
    ],
    "endingKey": "edit-one-line",
@@ -20199,7 +20590,8 @@
    "exits": [
     {
      "label": "Step out through the grand entrance",
-     "to": "ul-6-026"
+     "to": "ul-6-026",
+     "setFlags": {}
     }
    ],
    "endingKey": "thessalys-way",
@@ -20243,7 +20635,8 @@
    "exits": [
     {
      "label": "Walk out into the shifting alleys",
-     "to": "ul-6-029"
+     "to": "ul-6-029",
+     "setFlags": {}
     }
    ],
    "endingKey": "free-shelves",
@@ -20287,7 +20680,8 @@
    "exits": [
     {
      "label": "Leave the empty desk behind",
-     "to": "ul-6-032"
+     "to": "ul-6-032",
+     "setFlags": {}
     }
    ],
    "endingKey": "blank-page",
@@ -20331,7 +20725,8 @@
    "exits": [
     {
      "label": "Walk out with the gold",
-     "to": "ul-6-035"
+     "to": "ul-6-035",
+     "setFlags": {}
     }
    ],
    "endingKey": "sell-the-index",
@@ -20359,7 +20754,8 @@
    "exits": [
     {
      "label": "Remain quietly in the dark",
-     "to": "ul-6-037"
+     "to": "ul-6-037",
+     "setFlags": {}
     }
    ],
    "endingKey": "misfiled",

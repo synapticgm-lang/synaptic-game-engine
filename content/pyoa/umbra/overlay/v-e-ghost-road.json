@@ -4,7 +4,8 @@
   {
    "node": "up-end-ghost-road",
    "when": {
-    "sable": "with"
+    "sable": "with",
+    "ledger": "unused"
    },
    "after": "Sable walks beside you in exile, her resentment a quiet, sharp thing in the dark. She never speaks of the brother left languishing in the gaol, but you catch her glaring at the satchel that cost him his freedom."
   },

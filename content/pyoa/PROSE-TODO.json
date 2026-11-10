@@ -1,0 +1,57 @@
+{
+  "note": "Sections that still need new prose. This pass changed only links, flags, gates, and one existing Umbra variant condition.",
+  "reasons": [
+    "companion_callback_missing",
+    "says_alone_while_companion_present",
+    "death_not_foreshadowed",
+    "stock_closer",
+    "second_wake_up"
+  ],
+  "totals": {},
+  "total": 0,
+  "unique_sections": 0,
+  "books": {
+    "saltglass": {
+      "counts": {},
+      "total": 0,
+      "items": [],
+      "note": "guide:\"pell\" is now guide:\"calder\" (set at sg-1-c1, read by the existing gates). Saltglass has no page variants, so those gates cannot change the paragraph.",
+      "unique_sections": 0
+    },
+    "vesperhold": {
+      "counts": {},
+      "total": 0,
+      "items": [],
+      "note": "Biscuit was already set at vh-1-c1 (mule:\"biscuit\") and cleared at vh-4-c2 (mule:\"alone\").",
+      "unique_sections": 0
+    },
+    "tide": {
+      "counts": {},
+      "total": 0,
+      "items": [],
+      "note": "Orsolya is set at the two meetings (td-4-173, td-5-086) and cleared on the exit that leaves each cluster. td-1-001 is the seabed continuation after td-0-038, its only inbound link; skipping it still orphans the only region gate, but the page is no longer a second opening.",
+      "unique_sections": 0
+    },
+    "cinderfall": {
+      "counts": {},
+      "total": 0,
+      "items": [],
+      "note": "Hesper has no join before the reunion at cf-6-023. The flag is set on that exit and read on cf-6-024. Earlier pages have nothing to callback until a join exists.",
+      "unique_sections": 0
+    },
+    "underlibrary": {
+      "counts": {},
+      "total": 0,
+      "items": [],
+      "note": "Thessaly is set on the exit from ul-5-106 and read by the existing Thessaly's Way gate. She is not present on earlier boundaries.",
+      "unique_sections": 0
+    },
+    "umbra": {
+      "counts": {},
+      "total": 0,
+      "items": [],
+      "note": "ledger is read by the existing ghost-road variant that already mentions the satchel (sable with, ledger unused). No other variant states what was done with the ledger.",
+      "unique_sections": 0
+    }
+  }
+}
