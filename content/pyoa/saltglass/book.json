@@ -117,7 +117,7 @@
      "to": "sg-1-1-0-0",
      "intent": "Hire Calder the glass-diver as guide",
      "setFlags": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "id": "x0",
      "label": "Hire Calder the glass-diver as guide to lead the way across the white flats"
@@ -5801,7 +5801,7 @@
      "to": "sg-2-1-1-1",
      "intent": "",
      "when": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x1",
@@ -5919,7 +5919,7 @@
    ],
    "priv": {
     "cond": {
-     "guide": "pell"
+     "guide": "calder"
     },
     "why": "Calder the glass-diver is with the reader and knows this place"
    },
@@ -12216,7 +12216,7 @@
      "to": "sg-3-2-3-13",
      "intent": "",
      "when": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x1",
@@ -12650,7 +12650,7 @@
    ],
    "priv": {
     "cond": {
-     "guide": "pell"
+     "guide": "calder"
     },
     "why": "Calder the glass-diver is with the reader and knows this place"
    },
@@ -17367,7 +17367,7 @@
      "to": "sg-5-1-0-0",
      "intent": "Calder knows the way through the lens-hall",
      "when": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "id": "x0",
      "label": "Calder knows the way through the lens-hall"
@@ -17377,7 +17377,7 @@
      "intent": "Find your own way through the lens-hall",
      "when": {
       "not": {
-       "guide": "pell"
+       "guide": "calder"
       }
      },
      "id": "x1",
@@ -20545,7 +20545,7 @@
      "to": "sg-5-2-2-13",
      "intent": "",
      "when": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x3",
@@ -20568,7 +20568,7 @@
      "to": "sg-5-2-2-13",
      "intent": "",
      "when": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x0",
@@ -20968,7 +20968,7 @@
    ],
    "priv": {
     "cond": {
-     "guide": "pell"
+     "guide": "calder"
     },
     "why": "Calder the glass-diver is with the reader and knows this place"
    },
@@ -26187,7 +26187,7 @@
      "to": "sg-e-B1-1",
      "intent": "Calder Keeps the Door",
      "when": {
-      "guide": "pell"
+      "guide": "calder"
      },
      "endingKey": "B1",
      "id": "x0",
@@ -26198,7 +26198,7 @@
      "intent": "The Vault Remembers",
      "when": {
       "not": {
-       "guide": "pell"
+       "guide": "calder"
       }
      },
      "endingKey": "B2",

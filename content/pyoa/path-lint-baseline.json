@@ -1,0 +1,4 @@
+{
+  "note": "Hard structural issue fingerprints that CI allows. A new fingerprint fails the lint. Empty means the books are clean on the hard rules.",
+  "hard": []
+}

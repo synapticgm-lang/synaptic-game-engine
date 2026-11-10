@@ -60,10 +60,6 @@
     {
      "label": "Dismantle the heavy lantern for oil",
      "to": "td-0-012"
-    },
-    {
-     "label": "Climb down the treacherous cliff path",
-     "to": "td-0-017"
     }
    ]
   },
@@ -110,7 +106,10 @@
      "to": "td-0-005",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-002/0",
@@ -146,7 +145,7 @@
    "exits": [
     {
      "label": "Turn back to the room",
-     "to": "td-0-002"
+     "to": "td-0-017"
     }
    ],
    "chain": "td-0-002/0",
@@ -210,7 +209,10 @@
      "to": "td-0-010",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-002/1",
@@ -310,7 +312,10 @@
      "to": "td-0-015",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-002/2",
@@ -390,10 +395,6 @@
     {
      "label": "Coax the frightened drift pilgrim",
      "to": "td-0-033"
-    },
-    {
-     "label": "Step onto the open salt-flats",
-     "to": "td-0-038"
     }
    ]
   },
@@ -455,7 +456,10 @@
      "to": "td-0-022",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-018/0",
@@ -555,7 +559,10 @@
      "to": "td-0-027",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-018/1",
@@ -640,7 +647,10 @@
      "to": "td-0-031",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-018/2",
@@ -740,7 +750,10 @@
      "to": "td-0-036",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-0-018/3",
@@ -869,10 +882,6 @@
     {
      "label": "Work a stubborn skeleton key into the harbourmaster office lock",
      "to": "td-1-021"
-    },
-    {
-     "label": "Enter the smoky hall of the Wreckers Guild to press your claim",
-     "to": "td-1-026"
     }
    ]
   },
@@ -919,7 +928,10 @@
      "to": "td-1-005",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-002/0",
@@ -1022,7 +1034,10 @@
      "to": "td-1-010",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-002/1",
@@ -1107,7 +1122,10 @@
      "to": "td-1-014",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-002/2",
@@ -1207,7 +1225,10 @@
      "to": "td-1-019",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-002/3",
@@ -1307,7 +1328,10 @@
      "to": "td-1-024",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-002/4",
@@ -1387,10 +1411,6 @@
     {
      "label": "Haul water crates from the cellar",
      "to": "td-1-041"
-    },
-    {
-     "label": "Face the Customs-Priest at the gates",
-     "to": "td-1-045"
     }
    ]
   },
@@ -1437,7 +1457,10 @@
      "to": "td-1-030",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-027/0",
@@ -1522,7 +1545,10 @@
      "to": "td-1-034",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-027/1",
@@ -1622,7 +1648,10 @@
      "to": "td-1-039",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-027/2",
@@ -1707,7 +1736,10 @@
      "to": "td-1-043",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-027/3",
@@ -1787,10 +1819,6 @@
     {
      "label": "Pick through the wake of the frantic pilgrims",
      "to": "td-1-060"
-    },
-    {
-     "label": "Approach the pawn-widow near the stranded hull",
-     "to": "td-1-064"
     }
    ]
   },
@@ -1852,7 +1880,10 @@
      "to": "td-1-050",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-046/0",
@@ -1937,7 +1968,10 @@
      "to": "td-1-054",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-046/1",
@@ -2022,7 +2056,10 @@
      "to": "td-1-058",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-046/2",
@@ -2107,7 +2144,10 @@
      "to": "td-1-062",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-046/3",
@@ -2183,10 +2223,6 @@
     {
      "label": "Smash the reinforced glass case",
      "to": "td-1-076"
-    },
-    {
-     "label": "Approach the leviathan market",
-     "to": "td-1-080"
     }
    ]
   },
@@ -2248,7 +2284,10 @@
      "to": "td-1-069",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-065/0",
@@ -2351,7 +2390,10 @@
      "to": "td-1-074",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-065/1",
@@ -2436,7 +2478,10 @@
      "to": "td-1-078",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-065/2",
@@ -2520,10 +2565,6 @@
     {
      "label": "Carve a weighing scale peg for kelp",
      "to": "td-1-098"
-    },
-    {
-     "label": "Pass through the mournful pilgrim procession",
-     "to": "td-1-102"
     }
    ]
   },
@@ -2570,7 +2611,10 @@
      "to": "td-1-084",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-081/0",
@@ -2655,7 +2699,10 @@
      "to": "td-1-088",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-081/1",
@@ -2740,7 +2787,10 @@
      "to": "td-1-092",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-081/2",
@@ -2825,7 +2875,10 @@
      "to": "td-1-096",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-081/3",
@@ -2910,7 +2963,10 @@
      "to": "td-1-100",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-081/4",
@@ -2990,10 +3046,6 @@
     {
      "label": "Wade through the blind-eel pool",
      "to": "td-1-119"
-    },
-    {
-     "label": "Approach the singing dunes",
-     "to": "td-1-123"
     }
    ]
   },
@@ -3055,7 +3107,10 @@
      "to": "td-1-107",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-103/0",
@@ -3155,7 +3210,10 @@
      "to": "td-1-112",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-103/1",
@@ -3255,7 +3313,10 @@
      "to": "td-1-117",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-103/2",
@@ -3340,7 +3401,10 @@
      "to": "td-1-121",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-103/3",
@@ -3424,10 +3488,6 @@
     {
      "label": "Navigate the field of false echoes",
      "to": "td-1-143"
-    },
-    {
-     "label": "Approach the yawning Sunken Stair",
-     "to": "td-1-147"
     }
    ]
   },
@@ -3474,7 +3534,10 @@
      "to": "td-1-127",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-124/0",
@@ -3574,7 +3637,10 @@
      "to": "td-1-132",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-124/1",
@@ -3659,7 +3725,10 @@
      "to": "td-1-136",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-124/2",
@@ -3759,7 +3828,10 @@
      "to": "td-1-141",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-124/3",
@@ -3844,7 +3916,10 @@
      "to": "td-1-145",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-1-124/4",
@@ -4134,10 +4209,6 @@
     {
      "label": "Navigate the treacherous cargo hold",
      "to": "td-2-017"
-    },
-    {
-     "label": "Cross the quaking seabed flats",
-     "to": "td-2-022"
     }
    ]
   },
@@ -4184,7 +4255,10 @@
      "to": "td-2-005",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-002/0",
@@ -4284,7 +4358,10 @@
      "to": "td-2-010",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-002/1",
@@ -4387,7 +4464,10 @@
      "to": "td-2-015",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-002/2",
@@ -4487,7 +4567,10 @@
      "to": "td-2-020",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-002/3",
@@ -4571,10 +4654,6 @@
     {
      "label": "Work across the fragile crust",
      "to": "td-2-041"
-    },
-    {
-     "label": "Trace the edge of the pit",
-     "to": "td-2-045"
     }
    ]
   },
@@ -4621,7 +4700,10 @@
      "to": "td-2-026",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-023/0",
@@ -4721,7 +4803,10 @@
      "to": "td-2-031",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-023/1",
@@ -4806,7 +4891,10 @@
      "to": "td-2-035",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-023/2",
@@ -4891,7 +4979,10 @@
      "to": "td-2-039",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-023/3",
@@ -4976,7 +5067,10 @@
      "to": "td-2-043",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-023/4",
@@ -5056,10 +5150,6 @@
     {
      "label": "Intervene against the aggressive thugs",
      "to": "td-2-061"
-    },
-    {
-     "label": "Leave for the humming dunes",
-     "to": "td-2-065"
     }
    ]
   },
@@ -5121,7 +5211,10 @@
      "to": "td-2-050",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-046/0",
@@ -5206,7 +5299,10 @@
      "to": "td-2-054",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-046/1",
@@ -5309,7 +5405,10 @@
      "to": "td-2-059",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-046/2",
@@ -5394,7 +5493,10 @@
      "to": "td-2-063",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-046/3",
@@ -5478,10 +5580,6 @@
     {
      "label": "Stand firm against the wind",
      "to": "td-2-084"
-    },
-    {
-     "label": "Cross toward the jagged reef",
-     "to": "td-2-088"
     }
    ]
   },
@@ -5528,7 +5626,10 @@
      "to": "td-2-069",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-066/0",
@@ -5613,7 +5714,10 @@
      "to": "td-2-073",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-066/1",
@@ -5713,7 +5817,10 @@
      "to": "td-2-078",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-066/2",
@@ -5798,7 +5905,10 @@
      "to": "td-2-082",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-066/3",
@@ -5883,7 +5993,10 @@
      "to": "td-2-086",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-066/4",
@@ -5959,10 +6072,6 @@
     {
      "label": "Weave a net from discarded fishing lines",
      "to": "td-2-099"
-    },
-    {
-     "label": "Follow the silent kelp-robed procession ahead",
-     "to": "td-2-104"
     }
    ]
   },
@@ -6024,7 +6133,10 @@
      "to": "td-2-093",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-089/0",
@@ -6109,7 +6221,10 @@
      "to": "td-2-097",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-089/1",
@@ -6209,7 +6324,10 @@
      "to": "td-2-102",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-089/2",
@@ -6289,10 +6407,6 @@
     {
      "label": "Undergo the burning salt ritual",
      "to": "td-2-121"
-    },
-    {
-     "label": "Approach the stilted trading outpost",
-     "to": "td-2-126"
     }
    ]
   },
@@ -6354,7 +6468,10 @@
      "to": "td-2-109",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-105/0",
@@ -6457,7 +6574,10 @@
      "to": "td-2-114",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-105/1",
@@ -6557,7 +6677,10 @@
      "to": "td-2-119",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-105/2",
@@ -6657,7 +6780,10 @@
      "to": "td-2-124",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-105/3",
@@ -6733,10 +6859,6 @@
     {
      "label": "Pick the storage crate lock",
      "to": "td-2-138"
-    },
-    {
-     "label": "Descend toward the dark canyon",
-     "to": "td-2-142"
     }
    ]
   },
@@ -6798,7 +6920,10 @@
      "to": "td-2-131",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-127/0",
@@ -6898,7 +7023,10 @@
      "to": "td-2-136",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-127/1",
@@ -6983,7 +7111,10 @@
      "to": "td-2-140",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-127/2",
@@ -7019,7 +7150,7 @@
    "exits": [
     {
      "label": "Return to the sprawling outskirts",
-     "to": "td-2-127"
+     "to": "td-2-142"
     }
    ],
    "chain": "td-2-127/2",
@@ -7059,10 +7190,6 @@
     {
      "label": "Pry free the brass key",
      "to": "td-2-154"
-    },
-    {
-     "label": "Wade into the creeping fog",
-     "to": "td-2-159"
     }
    ]
   },
@@ -7124,7 +7251,10 @@
      "to": "td-2-147",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-143/0",
@@ -7224,7 +7354,10 @@
      "to": "td-2-152",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-143/1",
@@ -7324,7 +7457,10 @@
      "to": "td-2-157",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-143/2",
@@ -7400,10 +7536,6 @@
     {
      "label": "Navigate the patches of glowing fungi",
      "to": "td-2-171"
-    },
-    {
-     "label": "Follow the map to the spiral shaft",
-     "to": "td-2-176"
     }
    ]
   },
@@ -7465,7 +7597,10 @@
      "to": "td-2-164",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-160/0",
@@ -7565,7 +7700,10 @@
      "to": "td-2-169",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-160/1",
@@ -7665,7 +7803,10 @@
      "to": "td-2-174",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-160/2",
@@ -7749,10 +7890,6 @@
     {
      "label": "Lower heavy gear with the pulley",
      "to": "td-2-195"
-    },
-    {
-     "label": "Approach the great brass Meridian Gear",
-     "to": "td-2-199"
     }
    ]
   },
@@ -7799,7 +7936,10 @@
      "to": "td-2-180",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-177/0",
@@ -7884,7 +8024,10 @@
      "to": "td-2-184",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-177/1",
@@ -7984,7 +8127,10 @@
      "to": "td-2-189",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-177/2",
@@ -8069,7 +8215,10 @@
      "to": "td-2-193",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-177/3",
@@ -8154,7 +8303,10 @@
      "to": "td-2-197",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-2-177/4",
@@ -8568,10 +8720,6 @@
     {
      "label": "Confront the territorial slum thug",
      "to": "td-3-022"
-    },
-    {
-     "label": "Ascend into the parched districts",
-     "to": "td-3-026"
     }
    ]
   },
@@ -8633,7 +8781,10 @@
      "to": "td-3-006",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-002/0",
@@ -8718,7 +8869,10 @@
      "to": "td-3-010",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-002/1",
@@ -8818,7 +8972,10 @@
      "to": "td-3-015",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-002/2",
@@ -8918,7 +9075,10 @@
      "to": "td-3-020",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-002/3",
@@ -9003,7 +9163,10 @@
      "to": "td-3-024",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-002/4",
@@ -9087,10 +9250,6 @@
     {
      "label": "Mend the torn rain-catcher canvas",
      "to": "td-3-046"
-    },
-    {
-     "label": "Trace the chalk marks of Orsolya",
-     "to": "td-3-050"
     }
    ]
   },
@@ -9137,7 +9296,10 @@
      "to": "td-3-030",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-027/0",
@@ -9240,7 +9402,10 @@
      "to": "td-3-035",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-027/1",
@@ -9340,7 +9505,10 @@
      "to": "td-3-040",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-027/2",
@@ -9425,7 +9593,10 @@
      "to": "td-3-044",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-027/3",
@@ -9510,7 +9681,10 @@
      "to": "td-3-048",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-027/4",
@@ -9590,10 +9764,6 @@
     {
      "label": "Decipher Orsolya's faded chalk marks",
      "to": "td-3-067"
-    },
-    {
-     "label": "Confront the Brineholder patrol",
-     "to": "td-3-071"
     }
    ]
   },
@@ -9655,7 +9825,10 @@
      "to": "td-3-055",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-051/0",
@@ -9755,7 +9928,10 @@
      "to": "td-3-060",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-051/1",
@@ -9855,7 +10031,10 @@
      "to": "td-3-065",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-051/2",
@@ -9940,7 +10119,10 @@
      "to": "td-3-069",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-051/3",
@@ -9976,7 +10158,7 @@
    "exits": [
     {
      "label": "Cross the swaying rope bridge",
-     "to": "td-3-051"
+     "to": "td-3-071"
     }
    ],
    "chain": "td-3-051/3",
@@ -10016,10 +10198,6 @@
     {
      "label": "Dismantle the rusted grating for a makeshift shield",
      "to": "td-3-082"
-    },
-    {
-     "label": "Ascend toward the glittering glass-domed water reservoirs",
-     "to": "td-3-086"
     }
    ]
   },
@@ -10081,7 +10259,10 @@
      "to": "td-3-076",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-072/0",
@@ -10166,7 +10347,10 @@
      "to": "td-3-080",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-072/1",
@@ -10251,7 +10435,10 @@
      "to": "td-3-084",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-072/2",
@@ -10331,10 +10518,6 @@
     {
      "label": "Traverse the thin glass ledge",
      "to": "td-3-103"
-    },
-    {
-     "label": "Enter the restricted archives",
-     "to": "td-3-107"
     }
    ]
   },
@@ -10396,7 +10579,10 @@
      "to": "td-3-091",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-087/0",
@@ -10496,7 +10682,10 @@
      "to": "td-3-096",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-087/1",
@@ -10596,7 +10785,10 @@
      "to": "td-3-101",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-087/2",
@@ -10681,7 +10873,10 @@
      "to": "td-3-105",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-087/3",
@@ -10761,10 +10956,6 @@
     {
      "label": "Force the rusted iron bookcase",
      "to": "td-3-123"
-    },
-    {
-     "label": "Flee before the patrol arrives",
-     "to": "td-3-127"
     }
    ]
   },
@@ -10811,7 +11002,10 @@
      "to": "td-3-111",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-108/0",
@@ -10847,7 +11041,7 @@
    "exits": [
     {
      "label": "Slip away before the guards return",
-     "to": "td-3-108"
+     "to": "td-3-127"
     }
    ],
    "chain": "td-3-108/0",
@@ -10911,7 +11105,10 @@
      "to": "td-3-116",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-108/1",
@@ -11011,7 +11208,10 @@
      "to": "td-3-121",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-108/2",
@@ -11096,7 +11296,10 @@
      "to": "td-3-125",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-108/3",
@@ -11172,10 +11375,6 @@
     {
      "label": "Plunge into the blinding chimney smoke",
      "to": "td-3-137"
-    },
-    {
-     "label": "Drop through the shattered glass skylight",
-     "to": "td-3-141"
     }
    ]
   },
@@ -11222,7 +11421,10 @@
      "to": "td-3-131",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-128/0",
@@ -11307,7 +11509,10 @@
      "to": "td-3-135",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-128/1",
@@ -11392,7 +11597,10 @@
      "to": "td-3-139",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-128/2",
@@ -11476,10 +11684,6 @@
     {
      "label": "Smash the porcelain urn for cover",
      "to": "td-3-161"
-    },
-    {
-     "label": "Demand the truth about Orsolya Venn",
-     "to": "td-3-165"
     }
    ]
   },
@@ -11526,7 +11730,10 @@
      "to": "td-3-145",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-142/0",
@@ -11611,7 +11818,10 @@
      "to": "td-3-149",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-142/1",
@@ -11711,7 +11921,10 @@
      "to": "td-3-154",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-142/2",
@@ -11811,7 +12024,10 @@
      "to": "td-3-159",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-142/3",
@@ -11899,7 +12115,10 @@
      "to": "td-3-163",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-142/4",
@@ -11983,10 +12202,6 @@
     {
      "label": "Pry a glowing crystal from the shaft",
      "to": "td-3-187"
-    },
-    {
-     "label": "Ride the winch to the base",
-     "to": "td-3-192"
     }
    ]
   },
@@ -12048,7 +12263,10 @@
      "to": "td-3-170",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-166/0",
@@ -12148,7 +12366,10 @@
      "to": "td-3-175",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-166/1",
@@ -12248,7 +12469,10 @@
      "to": "td-3-180",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-166/2",
@@ -12348,7 +12572,10 @@
      "to": "td-3-185",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-166/3",
@@ -12448,7 +12675,10 @@
      "to": "td-3-190",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-166/4",
@@ -12528,10 +12758,6 @@
     {
      "label": "Pry a barnacle from a buried chest",
      "to": "td-3-207"
-    },
-    {
-     "label": "Approach the spiralling abyss directly",
-     "to": "td-3-211"
     }
    ]
   },
@@ -12593,7 +12819,10 @@
      "to": "td-3-197",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-193/0",
@@ -12678,7 +12907,10 @@
      "to": "td-3-201",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-193/1",
@@ -12763,7 +12995,10 @@
      "to": "td-3-205",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-193/2",
@@ -12848,7 +13083,10 @@
      "to": "td-3-209",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-3-193/3",
@@ -13082,10 +13320,6 @@
     {
      "label": "Study the old Tidewarden mosaic path",
      "to": "td-4-022"
-    },
-    {
-     "label": "Approach the colossal silent bell",
-     "to": "td-4-026"
     }
    ]
   },
@@ -13147,7 +13381,10 @@
      "to": "td-4-006",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-002/0",
@@ -13232,7 +13469,10 @@
      "to": "td-4-010",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-002/1",
@@ -13332,7 +13572,10 @@
      "to": "td-4-015",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-002/2",
@@ -13432,7 +13675,10 @@
      "to": "td-4-020",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-002/3",
@@ -13517,7 +13763,10 @@
      "to": "td-4-024",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-002/4",
@@ -13597,10 +13846,6 @@
     {
      "label": "Smash through the calcified wall",
      "to": "td-4-041"
-    },
-    {
-     "label": "Face the emerging Hollow Choir",
-     "to": "td-4-045"
     }
    ]
   },
@@ -13647,7 +13892,10 @@
      "to": "td-4-030",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-027/0",
@@ -13683,7 +13931,7 @@
    "exits": [
     {
      "label": "Return to the bell platform",
-     "to": "td-4-027"
+     "to": "td-4-045"
     }
    ],
    "chain": "td-4-027/0",
@@ -13747,7 +13995,10 @@
      "to": "td-4-035",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-027/1",
@@ -13832,7 +14083,10 @@
      "to": "td-4-039",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-027/2",
@@ -13917,7 +14171,10 @@
      "to": "td-4-043",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-027/3",
@@ -13993,10 +14250,6 @@
     {
      "label": "Endure the piercing gaze without flinching",
      "to": "td-4-055"
-    },
-    {
-     "label": "Slip past into the outer workings",
-     "to": "td-4-059"
     }
    ]
   },
@@ -14043,7 +14296,10 @@
      "to": "td-4-049",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-046/0",
@@ -14079,7 +14335,7 @@
    "exits": [
     {
      "label": "Return to the upper tier landing",
-     "to": "td-4-046"
+     "to": "td-4-059"
     }
    ],
    "chain": "td-4-046/0",
@@ -14128,7 +14384,10 @@
      "to": "td-4-053",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-046/1",
@@ -14213,7 +14472,10 @@
      "to": "td-4-057",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-046/2",
@@ -14296,10 +14558,6 @@
     {
      "label": "Harvest the leaking freshwater",
      "to": "td-4-076"
-    },
-    {
-     "label": "Approach the archive automaton",
-     "to": "td-4-081"
     }
    ]
   },
@@ -14361,7 +14619,10 @@
      "to": "td-4-064",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-060/0",
@@ -14464,7 +14725,10 @@
      "to": "td-4-069",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-060/1",
@@ -14564,7 +14828,10 @@
      "to": "td-4-074",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-060/2",
@@ -14664,7 +14931,10 @@
      "to": "td-4-079",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-060/3",
@@ -14744,10 +15014,6 @@
     {
      "label": "Realignthe damaged ocular lens",
      "to": "td-4-097"
-    },
-    {
-     "label": "Request descent into the pressure locks",
-     "to": "td-4-102"
     }
    ]
   },
@@ -14809,7 +15075,10 @@
      "to": "td-4-086",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-082/0",
@@ -14909,7 +15178,10 @@
      "to": "td-4-091",
      "result": "miss",
      "stat": "WIT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-082/1",
@@ -14994,7 +15266,10 @@
      "to": "td-4-095",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-082/2",
@@ -15094,7 +15369,10 @@
      "to": "td-4-100",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-082/3",
@@ -15178,10 +15456,6 @@
     {
      "label": "Search the rusted tool alcove",
      "to": "td-4-122"
-    },
-    {
-     "label": "Follow the torn coat into the gloom",
-     "to": "td-4-127"
     }
    ]
   },
@@ -15228,7 +15502,10 @@
      "to": "td-4-106",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-103/0",
@@ -15313,7 +15590,10 @@
      "to": "td-4-110",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-103/1",
@@ -15413,7 +15693,10 @@
      "to": "td-4-115",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-103/2",
@@ -15513,7 +15796,10 @@
      "to": "td-4-120",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-103/3",
@@ -15613,7 +15899,10 @@
      "to": "td-4-125",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-103/4",
@@ -15697,10 +15986,6 @@
     {
      "label": "Harvest the armored rock-centipede",
      "to": "td-4-148"
-    },
-    {
-     "label": "Slide down to the Meridian Gear",
-     "to": "td-4-152"
     }
    ]
   },
@@ -15747,7 +16032,10 @@
      "to": "td-4-131",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-128/0",
@@ -15847,7 +16135,10 @@
      "to": "td-4-136",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-128/1",
@@ -15950,7 +16241,10 @@
      "to": "td-4-141",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-128/2",
@@ -16050,7 +16344,10 @@
      "to": "td-4-146",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-128/3",
@@ -16135,7 +16432,10 @@
      "to": "td-4-150",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-128/4",
@@ -16215,10 +16515,6 @@
     {
      "label": "Reconnect the severed hydraulic line",
      "to": "td-4-168"
-    },
-    {
-     "label": "Confront the figure stepping from shadows",
-     "to": "td-4-173"
     }
    ]
   },
@@ -16265,7 +16561,10 @@
      "to": "td-4-156",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-153/0",
@@ -16301,7 +16600,7 @@
    "exits": [
     {
      "label": "Return to the central engine floor",
-     "to": "td-4-153"
+     "to": "td-4-173"
     }
    ],
    "chain": "td-4-153/0",
@@ -16365,7 +16664,10 @@
      "to": "td-4-161",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-153/1",
@@ -16468,7 +16770,10 @@
      "to": "td-4-166",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-153/2",
@@ -16568,7 +16873,10 @@
      "to": "td-4-171",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-153/3",
@@ -16620,7 +16928,10 @@
    "exits": [
     {
      "label": "Step closer to the blinding light",
-     "to": "td-4-174"
+     "to": "td-4-174",
+     "setFlags": {
+      "orsolya": true
+     }
     }
    ],
    "role": "gate"
@@ -16652,10 +16963,6 @@
     {
      "label": "Brace your back against the tremor",
      "to": "td-4-194"
-    },
-    {
-     "label": "Wait for the great iron to groan",
-     "to": "td-4-198"
     }
    ]
   },
@@ -16669,7 +16976,10 @@
    "exits": [
     {
      "label": "Force the lever to your side",
-     "to": "td-4-176"
+     "to": "td-4-176",
+     "when": {
+      "orsolya": true
+     }
     }
    ],
    "chain": "td-4-174/0"
@@ -16717,7 +17027,10 @@
      "to": "td-4-178",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-174/0",
@@ -16802,7 +17115,10 @@
      "to": "td-4-182",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-174/1",
@@ -16838,7 +17154,10 @@
    "exits": [
     {
      "label": "Face the turning of the gear",
-     "to": "td-4-198"
+     "to": "td-4-198",
+     "setFlags": {
+      "orsolya": false
+     }
     }
    ],
    "chain": "td-4-174/1",
@@ -16902,7 +17221,10 @@
      "to": "td-4-187",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-174/2",
@@ -16938,7 +17260,10 @@
    "exits": [
     {
      "label": "Turn the great bronze valve",
-     "to": "td-4-198"
+     "to": "td-4-198",
+     "setFlags": {
+      "orsolya": false
+     }
     }
    ],
    "chain": "td-4-174/2",
@@ -17002,7 +17327,10 @@
      "to": "td-4-192",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-174/3",
@@ -17087,7 +17415,10 @@
      "to": "td-4-196",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-4-174/4",
@@ -17216,10 +17547,6 @@
     {
      "label": "Dismantle bathysphere wreckage",
      "to": "td-5-021"
-    },
-    {
-     "label": "Face the Last Tidewarden",
-     "to": "td-5-025"
     }
    ]
   },
@@ -17281,7 +17608,10 @@
      "to": "td-5-006",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-002/0",
@@ -17366,7 +17696,10 @@
      "to": "td-5-010",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-002/1",
@@ -17451,7 +17784,10 @@
      "to": "td-5-014",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-002/2",
@@ -17551,7 +17887,10 @@
      "to": "td-5-019",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-002/3",
@@ -17636,7 +17975,10 @@
      "to": "td-5-023",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-002/4",
@@ -17720,10 +18062,6 @@
     {
      "label": "Slip past toward the ledger shelves",
      "to": "td-5-047"
-    },
-    {
-     "label": "Face the singing drowned ones",
-     "to": "td-5-051"
     }
    ]
   },
@@ -17785,7 +18123,10 @@
      "to": "td-5-030",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-026/0",
@@ -17885,7 +18226,10 @@
      "to": "td-5-035",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-026/1",
@@ -17985,7 +18329,10 @@
      "to": "td-5-040",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-026/2",
@@ -18085,7 +18432,10 @@
      "to": "td-5-045",
      "result": "miss",
      "stat": "WIT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-026/3",
@@ -18170,7 +18520,10 @@
      "to": "td-5-049",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-026/4",
@@ -18250,10 +18603,6 @@
     {
      "label": "Threaten the central tide clock",
      "to": "td-5-066"
-    },
-    {
-     "label": "Face the arriving faction delegates",
-     "to": "td-5-070"
     }
    ]
   },
@@ -18300,7 +18649,10 @@
      "to": "td-5-055",
      "result": "miss",
      "stat": "NERVE",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-052/0",
@@ -18385,7 +18737,10 @@
      "to": "td-5-059",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-052/1",
@@ -18485,7 +18840,10 @@
      "to": "td-5-064",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-052/2",
@@ -18570,7 +18928,10 @@
      "to": "td-5-068",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-052/3",
@@ -18646,10 +19007,6 @@
     {
      "label": "Bar the rusted iron doors",
      "to": "td-5-082"
-    },
-    {
-     "label": "Wait for Orsolya Venn",
-     "to": "td-5-086"
     }
    ]
   },
@@ -18711,7 +19068,10 @@
      "to": "td-5-075",
      "result": "miss",
      "stat": "WIT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-071/0",
@@ -18811,7 +19171,10 @@
      "to": "td-5-080",
      "result": "miss",
      "stat": "NERVE",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-071/1",
@@ -18896,7 +19259,10 @@
      "to": "td-5-084",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 9
+     "target": 9,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-071/2",
@@ -18948,7 +19314,10 @@
    "exits": [
     {
      "label": "Face your missing mentor",
-     "to": "td-5-087"
+     "to": "td-5-087",
+     "setFlags": {
+      "orsolya": true
+     }
     }
    ],
    "role": "gate"
@@ -18976,10 +19345,6 @@
     {
      "label": "Wrest the master lever away",
      "to": "td-5-101"
-    },
-    {
-     "label": "Wait for the seabed to flood",
-     "to": "td-5-106"
     }
    ]
   },
@@ -18993,7 +19358,10 @@
    "exits": [
     {
      "label": "Press her for the full history",
-     "to": "td-5-107"
+     "to": "td-5-107",
+     "when": {
+      "orsolya": true
+     }
     }
    ],
    "chain": "td-5-087/0"
@@ -19026,7 +19394,10 @@
      "to": "td-5-090",
      "result": "miss",
      "stat": "NERVE",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-087/0",
@@ -19126,7 +19497,10 @@
      "to": "td-5-095",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-087/1",
@@ -19211,7 +19585,10 @@
      "to": "td-5-099",
      "result": "miss",
      "stat": "CRAFT",
-     "target": 7
+     "target": 7,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-087/2",
@@ -19311,7 +19688,10 @@
      "to": "td-5-104",
      "result": "miss",
      "stat": "MIGHT",
-     "target": 8
+     "target": 8,
+     "setFlags": {
+      "check-miss": true
+     }
     }
    ],
    "chain": "td-5-087/3",
@@ -19347,7 +19727,11 @@
    "exits": [
     {
      "label": "Hold the heavy brass bar",
-     "to": "td-5-106"
+     "to": "td-5-106",
+     "setFlags": {
+      "end-return-gently": true,
+      "orsolya": false
+     }
     }
    ],
    "chain": "td-5-087/3",
@@ -19665,7 +20049,15 @@
     },
     {
      "label": "Let the current take everything",
-     "to": "td-6-033"
+     "to": "td-6-033",
+     "when": {
+      "check-miss": true
+     }
+    },
+    {
+     "id": "default-success",
+     "label": "Gently return the waiting sea",
+     "to": "td-6-001"
     }
    ],
    "role": "ending-selector"

@@ -1,0 +1,628 @@
+{
+  "note": "Sections that still need new prose. This pass changed only links, flags, gates, and one existing Umbra variant condition.",
+  "reasons": [
+    "companion_callback_missing",
+    "says_alone_while_companion_present",
+    "death_not_foreshadowed",
+    "stock_closer",
+    "second_wake_up"
+  ],
+  "totals": {
+    "companion_callback_missing": 40,
+    "death_not_foreshadowed": 21,
+    "says_alone_while_companion_present": 12,
+    "stock_closer": 34,
+    "second_wake_up": 1
+  },
+  "total": 108,
+  "unique_sections": 103,
+  "books": {
+    "saltglass": {
+      "counts": {
+        "companion_callback_missing": 21,
+        "death_not_foreshadowed": 11,
+        "says_alone_while_companion_present": 5,
+        "stock_closer": 6
+      },
+      "total": 43,
+      "items": [
+        {
+          "section": "sg-1-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-1-out",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-2-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-2-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-2-in",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-2-out",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-3-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-3-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-3-in",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-3-out",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-4-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-4-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-4-in",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-4-out",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-5-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-5-in",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-5-out",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-6-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-6-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-6-in",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-6-out",
+          "reason": "companion_callback_missing",
+          "detail": "Calder is present (guide) but this boundary does not name them"
+        },
+        {
+          "section": "sg-1-1-2-12",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-1-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-1-2-3-6",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-1-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-2-1-2-9",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-2-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-2-2-2-12",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-2-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-3-2-3-9",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-3-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-4-1-3-14",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-4-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-4-2-3-2",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-4-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-5-1-3-13",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-5-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-5-2-2-15",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-5-2 is only a generic reckless way. Label: Take the reckless way through the gate"
+        },
+        {
+          "section": "sg-6-1-2-13",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-6-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-6-2-3-13",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to sg-d-6-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "sg-2-0-1-5",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Calder is present but the page says the reader is alone"
+        },
+        {
+          "section": "sg-2-0-2-0",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Calder is present but the page says the reader is alone"
+        },
+        {
+          "section": "sg-2-1-2-7",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Calder is present but the page says the reader is alone"
+        },
+        {
+          "section": "sg-3-1-0-1",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Calder is present but the page says the reader is alone"
+        },
+        {
+          "section": "sg-6-0-1-3",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Calder is present but the page says the reader is alone"
+        },
+        {
+          "section": "sg-1-1-3-8",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "sg-1-1-4-2",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: decision_must_be_made"
+        },
+        {
+          "section": "sg-1-1-4-4",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose"
+        },
+        {
+          "section": "sg-4-1-4-0",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "sg-6-2-2-5",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose"
+        },
+        {
+          "section": "sg-6-2-5-1",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose"
+        }
+      ],
+      "note": "guide:\"pell\" is now guide:\"calder\" (set at sg-1-c1, read by the existing gates). Saltglass has no page variants, so those gates cannot change the paragraph.",
+      "unique_sections": 43
+    },
+    "vesperhold": {
+      "counts": {
+        "companion_callback_missing": 18,
+        "death_not_foreshadowed": 10,
+        "stock_closer": 9
+      },
+      "total": 37,
+      "items": [
+        {
+          "section": "vh-1-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-1-out",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-2-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-2-in",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-2-out",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-3-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-3-in",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-3-out",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-4-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-4-out",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-5-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-5-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-5-in",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-5-out",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-6-c1",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-6-c2",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-6-in",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-6-out",
+          "reason": "companion_callback_missing",
+          "detail": "Biscuit is present (mule) but this boundary does not name them"
+        },
+        {
+          "section": "vh-1-1-2-0",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-1-1 is only a generic reckless way. Label: Take the reckless way down"
+        },
+        {
+          "section": "vh-1-2-2-4",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-1-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "vh-2-1-3-6",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-2-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "vh-2-2-3-5",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-2-2 is only a generic reckless way. Label: Take the reckless way across the gap"
+        },
+        {
+          "section": "vh-3-1-3-2",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-3-1 is only a generic reckless way. Label: Take the reckless way across the high terrace"
+        },
+        {
+          "section": "vh-3-2-2-2",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-3-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "vh-5-1-3-3",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-5-1 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "vh-5-2-3-12",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-5-2 is only a generic reckless way. Label: Take the reckless way"
+        },
+        {
+          "section": "vh-6-1-2-5",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-6-1 is only a generic reckless way. Label: Take the reckless way across the swollen drainage canal"
+        },
+        {
+          "section": "vh-6-2-3-8",
+          "reason": "death_not_foreshadowed",
+          "detail": "Exit to vh-d-6-2 is only a generic reckless way. Label: Take the reckless way into the slag-pit"
+        },
+        {
+          "section": "vh-1-0-1-3",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "vh-1-in",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose"
+        },
+        {
+          "section": "vh-2-2-3-4",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose"
+        },
+        {
+          "section": "vh-2-2-3-8",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "vh-4-0-5-3",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "vh-4-1-4-2",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "vh-4-1-4-6",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "vh-6-1-3-6",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose"
+        },
+        {
+          "section": "vh-6-in",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        }
+      ],
+      "note": "Biscuit was already set at vh-1-c1 (mule:\"biscuit\") and cleared at vh-4-c2 (mule:\"alone\").",
+      "unique_sections": 36
+    },
+    "tide": {
+      "counts": {
+        "second_wake_up": 1,
+        "stock_closer": 7
+      },
+      "total": 8,
+      "items": [
+        {
+          "section": "td-1-001",
+          "reason": "second_wake_up",
+          "detail": "Region opening uses wake-up language. Relinking off this page would orphan it; the wake is the page itself."
+        },
+        {
+          "section": "td-1-027",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "td-1-081",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_choose, every_x_offers"
+        },
+        {
+          "section": "td-1-103",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "td-2-023",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "td-3-087",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "td-3-137",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "td-3-142",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        }
+      ],
+      "note": "Orsolya is set at the two meetings (td-4-173, td-5-086) and cleared on the exit that leaves each cluster. td-1-001 still wakes the reader; skipping it orphans the only region gate, and the wake is the page text.",
+      "unique_sections": 8
+    },
+    "cinderfall": {
+      "counts": {
+        "stock_closer": 6
+      },
+      "total": 6,
+      "items": [
+        {
+          "section": "cf-2-037",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "cf-2-100",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "cf-3-002",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "cf-3-033",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "cf-3-147",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: you_must_decide"
+        },
+        {
+          "section": "cf-3-176",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        }
+      ],
+      "note": "Hesper has no join before the reunion at cf-6-023. The flag is set on that exit and read on cf-6-024. Earlier pages have nothing to callback until a join exists.",
+      "unique_sections": 6
+    },
+    "underlibrary": {
+      "counts": {
+        "companion_callback_missing": 1,
+        "stock_closer": 6
+      },
+      "total": 7,
+      "items": [
+        {
+          "section": "ul-5-121",
+          "reason": "companion_callback_missing",
+          "detail": "Thessaly is present (thessaly) but this boundary does not name them"
+        },
+        {
+          "section": "ul-1-038",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "ul-3-018",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "ul-3-166",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "ul-3-196",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "ul-5-044",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        },
+        {
+          "section": "ul-5-069",
+          "reason": "stock_closer",
+          "detail": "Stock decision-closer: every_x_offers"
+        }
+      ],
+      "note": "Thessaly is set on the exit from ul-5-106 and read by the existing Thessaly's Way gate. She is not present on earlier boundaries.",
+      "unique_sections": 7
+    },
+    "umbra": {
+      "counts": {
+        "says_alone_while_companion_present": 7
+      },
+      "total": 7,
+      "items": [
+        {
+          "section": "up-l-alone-69",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Valerius is present but the page says the reader is alone"
+        },
+        {
+          "section": "up-l-alone-69",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Rigg is present but the page says the reader is alone"
+        },
+        {
+          "section": "up-l-last-20",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Valerius is present but the page says the reader is alone"
+        },
+        {
+          "section": "up-l-last-20",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Rigg is present but the page says the reader is alone"
+        },
+        {
+          "section": "up-w-night-37",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Sable is present but the page says the reader is alone"
+        },
+        {
+          "section": "up-w-night-37",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Valerius is present but the page says the reader is alone"
+        },
+        {
+          "section": "up-w-night-37",
+          "reason": "says_alone_while_companion_present",
+          "detail": "Rigg is present but the page says the reader is alone"
+        }
+      ],
+      "note": "ledger is read by the existing ghost-road variant that already mentions the satchel (sable with, ledger unused). No other variant states what was done with the ledger.",
+      "unique_sections": 3
+    }
+  }
+}
