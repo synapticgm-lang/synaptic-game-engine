@@ -123,7 +123,6 @@ export function shapePlayerOptions(state: GameState, raw: string[]): string[] {
       && !/^next unexplored room$/i.test(label)
       && !/^open the\b/i.test(label)
       && !/^head back to the exit$/i.test(label)
-      && !isProtectedOption(label)
     ) {
       continue;
     }

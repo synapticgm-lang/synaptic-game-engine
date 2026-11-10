@@ -1851,14 +1851,12 @@ export async function headlessFateTurn(
     nextChoices = shapeLiveTurnPad(arcState, nextChoices);
     const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
     const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };
-    const next: GameState = {
+    // Same pad commit as live play (useGame): stamp chips, four-slot, replay hash.
+    const next = commitOfferedTurn({
       ...midBase,
       log: [...prevLog, playerEntry, gm],
       choices: nextChoices,
-      offeredPad: state.offeredPad
-        ? { ...state.offeredPad, turn: midBase.turn, choices: nextChoices }
-        : { turn: midBase.turn, choices: nextChoices },
-    };
+    }, gm.id);
     const ended = Date.now();
     const choiceIds: string[] = [];
     for (let i = 0; i < offered.length; i++) choiceIds.push(`choice-${next.turn}-${i}`);

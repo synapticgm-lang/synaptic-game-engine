@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { chipKindOf } from './chipCheck';
 import { createInitialState } from './defaults';
 import { resolveEngineFight } from './engineFight';
 import { buildNewGameState } from './fateAutoplay';
@@ -278,6 +279,64 @@ describe('engine40 live-path option guard', () => {
       expect(reshaped.some((c) => /^Face the threat$/i.test(c)), `${mode} fight after reshape`).toBe(true);
       expect(reshaped.some((c) => /^Buy /i.test(c)), `${mode} buy after reshape`).toBe(true);
     }
+  });
+
+  it("a no-resolver 'Travel toward Lowmarket' is dropped, while builder-backed travel, fight and shop are kept at the cap", () => {
+    const { state: built } = buildNewGameState({
+      bibleId: 'cursed-keep',
+      characterName: 'Jax',
+      seed: 884211,
+      personality: 'chilled-gm',
+      engineMode: 'dnd',
+      tabletopCreation: true,
+    });
+    const state: GameState = {
+      ...built,
+      currentLocation: 'Greyhollow Inn',
+      gold: 80,
+      turn: 7,
+      playPhase: 'live',
+      tabletopCreation: built.tabletopCreation ? { ...built.tabletopCreation, stage: 'done' } : undefined,
+      sceneFacts: {
+        ...emptySceneFacts(7),
+        present: ['Hale'],
+        pendingEncounter: foe({ name: 'Cutpurse', level: 2, hp: 10, maxHp: 10 }),
+      },
+      npcMemories: [...(built.npcMemories ?? []), merchantMem('Greyhollow Inn')],
+      log: [
+        {
+          id: 'gm-inn',
+          turn: 7,
+          role: 'gm',
+          content: 'The common room of Greyhollow Inn is quiet. Hale keeps a stall. A cutpurse is watching. The lane toward Greyhollow Church is open.',
+          timestamp: 0,
+        },
+      ],
+    };
+    const buy = shopChips(state).find((c) => c.kind === 'buy')?.label;
+    expect(buy).toMatch(/^Buy /);
+    const liveTravel = 'Travel toward Greyhollow Church';
+    const deadTravel = 'Travel toward Lowmarket';
+    expect(chipKindOf(state, liveTravel), 'builder-backed travel').toBeTruthy();
+    expect(chipKindOf(state, 'Face the threat'), 'builder-backed fight').toBeTruthy();
+    expect(chipKindOf(state, buy!), 'builder-backed shop').toBeTruthy();
+    expect(chipKindOf(state, deadTravel), 'no-resolver travel').toBeNull();
+
+    const raw = [
+      'Look around',
+      'Wait and listen',
+      'Search the area',
+      deadTravel,
+      liveTravel,
+      'Face the threat',
+      buy!,
+    ];
+    const pad = declaredOnly(shapeLiveTurnPad(state, raw));
+    expect(pad.length).toBeLessThanOrEqual(3);
+    expect(pad.some((c) => /^Travel toward Lowmarket$/i.test(c))).toBe(false);
+    expect(pad.some((c) => /^Travel toward Greyhollow Church$/i.test(c))).toBe(true);
+    expect(pad.some((c) => /^Face the threat$/i.test(c))).toBe(true);
+    expect(pad.some((c) => /^Buy /i.test(c))).toBe(true);
   });
 
   it('PYOA pads are left alone by shapeLiveTurnPad', () => {
