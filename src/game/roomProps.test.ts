@@ -233,7 +233,7 @@ describe('filing from checker tags', () => {
     expect(fileKeptRoomProps(roomState(), ring.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
   });
 
-  it('files a tagged sword, lantern, and cloak as takeable, and files nothing when the check is off', async () => {
+  it('files a tagged sword, lantern, and cloak as takeable, and still files them when the check is off', async () => {
     const tagged = [
       ['An old rusty sword hung on the wall.', 'old rusty sword', 'weapon'],
       ['A lantern hung from a hook.', 'lantern', 'tool'],
@@ -256,7 +256,8 @@ describe('filing from checker tags', () => {
       expect(prop?.takeable, prose).toBe(true);
       expect(prop?.kind, prose).toBe(kind);
       const off = await applyFactGate({ prose, sheet: sheet(), pcName: 'Jax', factCheckEnabled: false });
-      expect(fileKeptRoomProps(roomState(), off.objectNotes).sceneFacts?.roomProps ?? [], prose).toEqual([]);
+      const filedOff = fileKeptRoomProps(roomState(), off.objectNotes).sceneFacts?.roomProps ?? [];
+      expect(filedOff.find((p) => p.label === label)?.takeable, prose).toBe(true);
     }
     const missed = await applyFactGate({
       prose: 'A lantern hangs against the furnace.',
@@ -267,7 +268,7 @@ describe('filing from checker tags', () => {
     });
     expect(missed.prose).toBe('A lantern hangs against the furnace.');
     expect(missed.spans[0]?.objectOnly).toBe(true);
-    expect(fileKeptRoomProps(roomState(), missed.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
+    expect(fileKeptRoomProps(roomState(), missed.objectNotes).sceneFacts?.roomProps?.some((p) => p.label === 'lantern')).toBe(true);
     const speech = await applyFactGate({
       prose: 'Mira said, "An old rusty sword hung on the wall."',
       sheet: sheet(),

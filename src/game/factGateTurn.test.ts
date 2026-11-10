@@ -11,8 +11,10 @@ import {
   isFactCheckEnabled,
   makeUnsureFactChecker,
 } from './factGate';
+import { fileKeptRoomProps } from './roomProps';
 import type { FactSheet } from './factSheet';
 import type { FactSpan } from './factGate';
+import type { GameState } from './types';
 
 function sheet(): FactSheet {
   return {
@@ -162,5 +164,36 @@ describe('turn fact model', () => {
       expect(source).toContain('pageWhenClauseWithheld');
       expect(source).toContain('factCheckEnabled: false');
     }
+  });
+
+  it('useGame and Fate file a kept sword and not a ring of guards when the fact check is off', async () => {
+    const live = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
+    const fate = readFileSync(resolve(__dirname, './fateAutoplay.ts'), 'utf8');
+    for (const source of [live, fate]) {
+      expect(source).toContain('factCheckEnabled: false');
+      expect(source).toMatch(/fileKeptRoomProps\(\s*\w+,\s*gate\.objectNotes\s*\)/);
+    }
+    const room = {
+      turn: 4,
+      seed: 'room-props',
+      currentLocation: 'Valespire Bathhouse',
+      engineMode: 'dnd',
+      character: { name: 'Jax', hp: 10, maxHp: 12, level: 1, xp: 0, xpToNext: 300, attributes: { DEX: 10 }, conditions: [] },
+      inventory: [],
+      sceneFacts: { present: ['Mira'], props: [], crowd: 'sparse', noise: 'quiet', lastBeat: '', updatedTurn: 4 },
+    } as GameState;
+    const filed = async (prose: string) => {
+      const gate = await applyFactGate({
+        prose,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: false,
+      });
+      return fileKeptRoomProps(room, gate.objectNotes).sceneFacts?.roomProps ?? [];
+    };
+    const sword = await filed('An old rusty sword hung on the wall.');
+    expect(sword.some((prop) => /sword/i.test(prop.label))).toBe(true);
+    const ring = await filed('A ring of guards stood in the yard.');
+    expect(ring).toEqual([]);
   });
 });

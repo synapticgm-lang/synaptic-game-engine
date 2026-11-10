@@ -6,6 +6,10 @@ import type { GameState, PlaceProp, Rarity, RoomPropKind } from './types';
 import { regionBand } from './regionLevels';
 import { tierToAreaLevel } from './placeAuthority';
 import type { MapNode } from './mapEngine';
+import { SRD_ARMOR, SRD_WEAPONS } from './rules/srdGear';
+import { ITEM_COST_CP } from './rules/coins';
+import { MAGIC_ITEMS } from './rules/magicItems';
+import srdShopGear from '../data/srd/srdShopGear.json';
 
 /** Same words the warden already blocks on an item-gain. Not a new list. */
 export const HIGH_TIER_ITEM_WORDS = /\b(legendary|mythic|artifact|relic|unique|god(?:like)?|excalibur|vorpal|holy avenger)\b/i;
@@ -68,6 +72,71 @@ export function placedPropLabels(page: string): string[] {
   while ((match = re.exec(page))) {
     const label = (match[1] ?? '').toLowerCase().trim();
     if (label && !out.includes(label)) out.push(label);
+  }
+  return out;
+}
+
+function catalogueHead(name: string): string {
+  const beforeComma = name.toLowerCase().replace(/armour/g, 'armor').replace(/[’‘]/g, "'").split(',')[0]!.trim();
+  const beforeOf = beforeComma.split(/\s+of\s+/)[0]!.trim();
+  return beforeOf.split(/[^a-z0-9']+/).filter((w) => w.length >= 3).at(-1) ?? '';
+}
+
+function ofTail(name: string): string {
+  return name.toLowerCase().replace(/armour/g, 'armor').split(/\s+of\s+/)[1]?.trim() ?? '';
+}
+
+/** Mounts, vehicles, ships, meals, and hirelings are not room props. */
+const NOT_ROOM_GEAR = new Set(
+  (['mounts', 'tack_and_vehicles', 'ships', 'food_drink_lodging', 'services'] as const).flatMap((key) => {
+    const rows = (srdShopGear as Record<string, Array<{ name?: string }>>)[key] ?? [];
+    return rows.map((row) => (row.name ?? '').toLowerCase()).filter(Boolean);
+  }),
+);
+
+function headMatches(head: string, name: string): boolean {
+  const cat = catalogueHead(name);
+  if (!cat || !head) return false;
+  if (cat === head) return true;
+  return cat.endsWith(head) && cat.length > head.length && head.length >= 4;
+}
+
+function namedByGear(label: string, catalogueName: string): boolean {
+  const head = catalogueHead(label);
+  if (!headMatches(head, catalogueName)) return false;
+  const labelTail = ofTail(label);
+  const nameTail = ofTail(catalogueName);
+  if (labelTail && labelTail !== nameTail) return false;
+  const pre = catalogueName.toLowerCase().replace(/armour/g, 'armor').replace(/[’‘]/g, "'").split(',')[0]!.split(/\s+of\s+/)[0]!;
+  const words = pre.split(/[^a-z0-9']+/).filter((w) => w.length >= 3);
+  if (words.length > 1 && words.at(-1) === head) {
+    const labelWords = label.toLowerCase().split(/[^a-z0-9']+/);
+    if (!words.slice(0, -1).every((w) => labelWords.includes(w))) return false;
+  }
+  return true;
+}
+
+/** Kind of a placed noun's head, or null when no weapon, armour, or carryable gear table names it. */
+export function placedNounKind(label: string): RoomPropKind | null {
+  const head = catalogueHead(label);
+  if (!head) return null;
+  if (Object.keys(SRD_WEAPONS).some((name) => namedByGear(label, name))) return 'weapon';
+  if (Object.keys(SRD_ARMOR).some((name) => namedByGear(label, name))) return 'armour';
+  const gear = [...Object.keys(ITEM_COST_CP), ...Object.keys(MAGIC_ITEMS)].filter((name) => !NOT_ROOM_GEAR.has(name.toLowerCase()));
+  if (gear.some((name) => namedByGear(label, name))) return 'tool';
+  return null;
+}
+
+/** Carryable nouns placedPropLabels found, and only those the gear tables name. */
+export function tagsFromPlacedSpan(text: string): FactObjectTag[] {
+  const hung = /\b(hangs|hung)\b/i.test(text);
+  const out: FactObjectTag[] = [];
+  for (const label of placedPropLabels(text)) {
+    const kind = placedNounKind(label);
+    if (!kind || out.some((tag) => tag.label === label)) continue;
+    const carried = kind === 'weapon' || kind === 'tool' || kind === 'coin';
+    const mount: FactObjectTag['mount'] = carried ? (hung ? 'hung' : 'loose') : 'fixed';
+    out.push({ label, kind, mount, owner: 'place' });
   }
   return out;
 }
