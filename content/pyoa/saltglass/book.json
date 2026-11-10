@@ -4315,7 +4315,15 @@
    "endingId": "doom-1-1",
    "exits": [],
    "title": "The High Swing",
-   "page": "You ignore Calder's warning and swing your blazing lamp high above your head to spite the toll-riders. A volley of poisoned sling-stones answers from the dark, and your water-cask cracks against a limestone boulder. Cool bitter brine soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your grip turns slick where the dampness spreads. The belt-lantern rattles. It sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. Darkness closes in with the taste of gypsum, and your journey ends right here in the white grit."
+   "page": "You swing your blazing lamp high above your head to spite the toll-riders, and a deadly volley of poisoned sling-stones answers from the dark. Your water-cask cracks against a limestone boulder. Cool bitter brine soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your grip turns slick where the dampness spreads. The belt-lantern rattles. It sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. Darkness closes in with the taste of gypsum, and your journey ends right here in the white grit.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "replace": "You ignore Calder's warning and swing your blazing lamp high above your head to spite the toll-riders. A volley of poisoned sling-stones answers from the dark, and your water-cask cracks against a limestone boulder. Cool bitter brine soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your grip turns slick where the dampness spreads. The belt-lantern rattles. It sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. Darkness closes in with the taste of gypsum, and your journey ends right here in the white grit."
+    }
+   ]
   },
   {
    "id": "sg-d-1-2",
