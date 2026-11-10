@@ -167,7 +167,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder watches the tallow smoke, his hand resting on his own unlit lantern."
+     "after": "Tallow smoke draws Calder's eye; his hand rests on his own unlit lantern."
     }
    ]
   },
@@ -191,7 +191,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder steps up beside you and shields his eyes against the glare. He checks his pack straps in silence."
+     "after": "Glare makes him shield his eyes as he steps up beside you. Calder checks his pack straps in silence."
     }
    ]
   },
@@ -2118,7 +2118,15 @@
     }
    ],
    "title": "The Distant Mill",
-   "page": "Walking entirely alone, you catch the muffled grind of a distant salt-mill working its stones through the windless afternoon silence. The mechanical groan vibrates up through the soles of your boots like the heartbeat of a sleeping leviathan. The open track splits into distinct directions as the grinding noise fades into the dry air. Swinging your lamp openly to spite the toll-riders here would draw a deadly volley of poisoned sling-stones."
+   "page": "You catch the muffled grind of a distant salt-mill working its stones through the windless afternoon silence. The mechanical groan vibrates up through the soles of your boots like the heartbeat of a sleeping leviathan. The open track splits into distinct directions as the grinding noise fades into the dry air. Swinging your lamp openly to spite the toll-riders here would draw a deadly volley of poisoned sling-stones.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Wicker hat tipped down, Calder warns you not to swing the lamp; the toll-riders would answer with a deadly volley of poisoned sling-stones."
+    }
+   ]
   },
   {
    "id": "sg-1-1-2-13",
@@ -4357,7 +4365,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder points to the horizon, tracing the edge of a mirage with a calloused finger."
+     "after": "On the horizon Calder points, tracing the edge of a mirage with a calloused finger."
     }
    ]
   },
@@ -4393,7 +4401,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder frowns at the well-mouth, keeping one hand near his belt as he waits for your signal."
+     "after": "Near the well-mouth Calder frowns, one hand on his staff as he waits for your signal."
     }
    ]
   },
@@ -4429,7 +4437,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder shifts his weight and glares at the official's ledger while his boots grind into the salt crust."
+     "after": "Salt crust grinds under his boots as Calder glares at the official's ledger."
     }
    ]
   },
@@ -4453,7 +4461,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder falls into step beside you, pulling his collar high against the gathering evening wind."
+     "after": "Evening wind catches his collar as Calder falls into step beside you."
     }
    ]
   },
@@ -4779,7 +4787,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder hangs back, eyeing the vibrating iron with suspicion.",
+     "after": "Back a pace, Calder eyes the vibrating iron with suspicion.",
      "replace": "A solitary metal boundary marker vibrates in the dry heat with residual low-frequency current from the Old Lensfolk days that sets your teeth on edge as you hurry past the iron. The strange metallic tone sits in the stagnant air. Skin on your arms prickles.\n\nYou notice the small marks in the crust that a party would walk past."
     }
    ]
@@ -4911,7 +4919,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder points his walking stick toward the depression, nodding silently.",
+     "after": "His iron-shod staff points toward the depression, and Calder nods.",
      "replace": "Silence presses on the Bitterflats like a hot flat iron. Boot crunch breaks it. You spot a faint depression in the salt where a fresh moisture seep has softened the surface, and a rich earthy smell rises from the damp grey clay that offers a rare chance to refill your canteen or unearth something left by earlier travelers. Pale glare shimmers into white lakes that obscure the horizon. The muddy hollow sits at your feet."
     }
    ]
@@ -6340,7 +6348,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder crouches beside the milestone, keeping a watchful eye on the drift.",
+     "after": "Crouched beside the milestone, Calder keeps a watchful eye on the drift.",
      "replace": "An old copper milestone lies half-buried in the white drift, its engraved distance numbers scoured smooth by decades of relentless dust-storms until it is nothing more than a dull green coin in the salt. You pause in its meager shadow to catch your breath, scanning the horizon for any sign of movement. You catch every subtle disturbance in the landscape that casual chatter might have masked."
     }
    ]
@@ -8750,7 +8758,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder stays close to the jagged walls, his boots crunching on the glass-littered stones."
+     "after": "Jagged walls keep him close; Calder's boots crunch on the glass-littered stones."
     }
    ]
   },
@@ -8786,7 +8794,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder listens to the merchants bicker, crossing his arms over his salt-stained coat."
+     "after": "Merchants bicker while Calder listens, arms crossed over his salt-stained coat."
     }
    ]
   },
@@ -8822,7 +8830,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder studies the brass collimator, tapping a slow rhythm against his thigh as he waits for your call."
+     "after": "Brass collimator under his eye, Calder taps a slow rhythm against his thigh as he waits for your call."
     }
    ]
   },
@@ -8846,7 +8854,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder pulls a scarf over his nose and mouth, squinting into the flying glass-dust."
+     "after": "A scarf goes over his nose and mouth as Calder squints into the flying glass-dust."
     }
    ]
   },
@@ -10287,7 +10295,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder puts a steadying hand on your shoulder and scans the shadows.",
+     "after": "Your shoulder takes his hand as Calder scans the shadows.",
      "replace": "Sunlight filters through a leaning arcade of greenish glass, casting a sickly emerald hue over the cracked pavement beneath your boots. A desperate smuggler crouches near a pillar, insisting in a frantic whisper that the Rain Vault is already heavily guarded by the Salt Court's elite pikemen. Your breath catches in your throat as you realize how closely watched the main avenues have become. You notice small details that others usually miss entirely."
     }
    ]
@@ -13147,7 +13155,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder squints into the gale, his hand resting on the hilt of his glass-knife. He nods toward the looming towers."
+     "after": "Into the gale Calder squints, one hand on his iron-shod staff. He nods toward the looming towers."
     }
    ]
   },
@@ -13183,7 +13191,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder shields his own pack from the razor-fine quartz, watching the leather pouch in your hands."
+     "after": "Razor-fine quartz makes Calder shield his own pack while he watches the leather pouch in your hands."
     }
    ]
   },
@@ -13219,7 +13227,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder crouches beside you, pulling his collar high against the flying glass. He waits for your signal."
+     "after": "Flying glass makes him pull his collar high as he crouches beside you. Calder waits for your signal."
     }
    ]
   },
@@ -13243,7 +13251,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder stops to shake the pale grit from his boots. He checks the horizon one last time before falling into step beside you."
+     "after": "Pale grit comes off his boots as he stops to shake them. Calder checks the horizon one last time before falling into step beside you."
     }
    ]
   },
@@ -17509,7 +17517,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder keeps his head down as you navigate the crowded approaches. He scans the rival claimants, ready to draw his blade if they step too close."
+     "after": "Head down, Calder stays with you through the crowded approaches. He scans the rival claimants, iron-shod staff ready if they step too close."
     }
    ]
   },
@@ -17577,7 +17585,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder ducks behind a fractured lens, watching the sentries above. He grips your shoulder and points toward a gap in the patrol."
+     "after": "Behind a fractured lens he ducks, watching the sentries above. Calder grips your shoulder and points toward a gap in the patrol."
     }
    ]
   },
@@ -17601,7 +17609,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder strikes a match to check the air draft before crossing the threshold. He gestures to the downward slope with a silent nod."
+     "after": "Matchlight lets him check the air draft before crossing the threshold. Calder gestures to the downward slope with a silent nod."
     }
    ]
   },
@@ -21945,7 +21953,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder checks his own lantern against the cold draft blowing from the tunnels. He waits for you to pick the path."
+     "after": "Cold draft from the tunnels meets his lantern as Calder checks the flame. He waits for you to pick the path."
     }
    ]
   },
@@ -21983,7 +21991,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder runs a gloved hand along the cold wall, his eyes searching the dark corners for traps. He stays close to your flank."
+     "after": "Along the cold wall a gloved hand runs, Calder's eyes searching the dark corners for traps. He stays close to your flank."
     }
    ]
   },
@@ -22021,7 +22029,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder stands ready by the rusted iron levers. He watches your face to see what you will try first."
+     "after": "Rusted iron levers find him ready. Calder watches your face to see what you will try first."
     }
    ]
   },
@@ -22057,7 +22065,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder stands beside the vault doors, wiping rain from his face. He looks at the bronze mechanism, ready to help you turn the locks."
+     "after": "Rain is wiped from his face as Calder stands beside the vault doors. He looks at the bronze mechanism, ready to help you turn the locks."
     }
    ]
   },
@@ -22309,7 +22317,7 @@
      "when": {
       "guide": "calder"
      },
-     "after": "Calder grimaces at the rust and claw marks, gripping his pack straps tight.",
+     "after": "Claw marks and rust draw a grimace; Calder grips his pack straps tight.",
      "replace": "An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor who found no way out before the drought took hold. The metallic tang of rust fills your nose as you shine your banked lantern into the shadowed recess.\n\nYou can advance toward the circular chamber or risk a hidden floor-drop."
     }
    ]

@@ -29,7 +29,7 @@
       "counts": {},
       "total": 0,
       "items": [],
-      "note": "Orsolya is set at the two meetings (td-4-173, td-5-086) and cleared on the exit that leaves each cluster. td-1-001 still wakes the reader; skipping it orphans the only region gate, and the wake is the page text.",
+      "note": "Orsolya is set at the two meetings (td-4-173, td-5-086) and cleared on the exit that leaves each cluster. td-1-001 is the seabed continuation after td-0-038, its only inbound link; skipping it still orphans the only region gate, but the page is no longer a second opening.",
       "unique_sections": 0
     },
     "cinderfall": {

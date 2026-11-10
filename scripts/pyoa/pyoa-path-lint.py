@@ -609,7 +609,7 @@ def main():
     notes = {
         "saltglass": "guide:\"pell\" is now guide:\"calder\" (set at sg-1-c1, read by the existing gates). Saltglass has no page variants, so those gates cannot change the paragraph.",
         "vesperhold": "Biscuit was already set at vh-1-c1 (mule:\"biscuit\") and cleared at vh-4-c2 (mule:\"alone\").",
-        "tide": "Orsolya is set at the two meetings (td-4-173, td-5-086) and cleared on the exit that leaves each cluster. td-1-001 still wakes the reader; skipping it orphans the only region gate, and the wake is the page text.",
+        "tide": "Orsolya is set at the two meetings (td-4-173, td-5-086) and cleared on the exit that leaves each cluster. td-1-001 is the seabed continuation after td-0-038, its only inbound link; skipping it still orphans the only region gate, but the page is no longer a second opening.",
         "cinderfall": "Hesper has no join before the reunion at cf-6-023. The flag is set on that exit and read on cf-6-024. Earlier pages have nothing to callback until a join exists.",
         "underlibrary": "Thessaly is set on the exit from ul-5-106 and read by the existing Thessaly's Way gate. She is not present on earlier boundaries.",
         "umbra": "ledger is read by the existing ghost-road variant that already mentions the satchel (sable with, ledger unused). No other variant states what was done with the ledger.",

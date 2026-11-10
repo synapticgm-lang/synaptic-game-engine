@@ -846,7 +846,7 @@
    "kind": "bottleneck",
    "title": "A Dry Harbour Morning",
    "brief": "You wake in Gullmouth to a silent, dry harbour and discover Orsolya's sealed letter warning that the Meridian Gear has jammed beneath the Sunken Stair.",
-   "page": "An eerie, hollow quiet replaces the rhythmic, thunderous crash of waves against the cliffs of Gullmouth. Looking out the window, you freeze. The harbour is entirely dry. Fishing smacks and smuggler galleons list pathetically in the mud, stranded amidst a vast, steaming expanse of exposed seabed stretching to the horizon.\n\nOn your washstand lies a thick envelope, sealed with the deep blue wax of the lighthouse keeper. Breaking it open, you recognise Orsolya's hurried scrawl. She writes that the Meridian Gear, the great engine of the old Tidewardens, has jammed far beneath the Sunken Stair. The sea has not merely retreated; it is locked out. Whoever turns the ancient wheel will dictate the shape of the returning waters. She has gone ahead, urging you to follow. The fate of the Wrack Coast now rests entirely on who controls the tide.",
+   "page": "Salt keeps crunching underfoot as the cliff-town falls behind and the Low widens. The wind off the flats still smells of rotting kelp and dried brine. Dark shapes resolve out of the glare: scavenger camps, coral spires, and the listing masts of the stranded harbour, already rising from the mud you have been crossing. Rival wreckers will be down among those keels. Orsolya is farther out still, toward the Sunken Stair. Between you and the harbour troughs the crust shines and sags in places, and every step has to pick its line.",
    "exits": [
     {
      "label": "Descend into the stranded harbour",
