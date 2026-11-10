@@ -4855,7 +4855,7 @@
    "kind": "hub",
    "title": "The Ribcage of Iron",
    "brief": "The Ribcage: Ribs of collapsed iron rolling stock form a twisted tunnel where the wind howls like a lost express train.",
-   "page": "Twisted ribs of collapsed rolling stock loom out of the swirling ash like the skeleton of some ancient leviathan, forming a sheltered tunnel where the wind shrieks through rusted gaps with the voice of a lost express. The air inside smells of old grease and dry soot, undisturbed for years save for the drifting grey silt that carpets the buckled floorboards. Shadows stretch long and strange beneath the iron arches, and every choice forward offers a different gamble against the rising storm and the failing light.\n\nYou can inspect the tangled wreckage for salvage, venture into the deeper shadows where the wind howls loudest, or keep the fire hot and push onward through the howling dark.",
+   "page": "Twisted ribs of collapsed rolling stock loom out of the swirling ash like the skeleton of some ancient leviathan, forming a sheltered tunnel where the wind shrieks through rusted gaps with the voice of a lost express. The air inside smells of old grease and dry soot, undisturbed for years save for the drifting grey silt that carpets the buckled floorboards. Shadows stretch long and strange beneath the iron arches as the rising storm batters the rusted hull in the failing light. Tangled wreckage hides potential salvage in the deeper shadows where the wind howls loudest, and a hot fire offers the only warmth against the howling dark.",
    "exits": [
     {
      "label": "Pick a path deeper through the rusted iron ribs",
@@ -6211,7 +6211,7 @@
    "kind": "hub",
    "title": "Siding Nine",
    "brief": "Siding Nine: A tangle of rusted sidings where abandoned carriages serve as a sprawling dormitory for displaced track maintenance gangs.",
-   "page": "Rusted carriages lean at drunken angles across the choked tracks, their shattered windows stuffed with oily rags and greasy sacking to keep out the stinging wind. This sprawling dormitory shelters bands of displaced track maintenance gangers who squat over smoking braziers, watching you with weary, dust-rimmed eyes. The air smells of charred fat and cheap chicory. Every pathway between the sleeping cars offers a choice of desperate labor or quiet danger, and the low rumble of distant thunder warns that the storm clock is running down.",
+   "page": "Rusted carriages lean at drunken angles across the choked tracks, their shattered windows stuffed with oily rags and greasy sacking to keep out the stinging wind. This sprawling dormitory shelters bands of displaced track maintenance gangers who squat over smoking braziers, watching you with weary, dust-rimmed eyes. The air smells of charred fat and cheap chicory. Between the sleeping cars, the gangers shift their tools in the dirt as distant thunder warns that the storm clock is running down.",
    "exits": [
     {
      "label": "Pick a path through the sleeping cars",
@@ -8720,7 +8720,7 @@
    "kind": "hub",
    "title": "The Iron Tollhouse",
    "brief": "The Iron Tollhouse: You must negotiate the initial customs barrier where Barons demand a heavy transit duty from unregistered engines.",
-   "page": "Rust flakes from the overhead gantry as the iron gates of the customs depot groan inward. Ledger-clerks and uniformed inspectors demand transit coin from every engine that dares roll its wheels upon Baronial iron. Steam hisses from the rail-mounts while greasy ledger-pages flutter in the downdraft, and you must decide whether to slip past the inspection booths through cunning, force your way through the bottleneck with brute leverage, or gamble your last drop of patience on a dangerous bribe.\n\nThe soot-stained tracks branch off toward the high-level scaffolding and the lower maintenance pits, each route offering its own sharp hazard and potential salvation under the cold gaze of the gantry-sentinels.",
+   "page": "Rust flakes from the overhead gantry as the iron gates of the customs depot groan inward. Ledger-clerks and uniformed inspectors demand transit coin from every engine that dares roll its wheels upon Baronial iron. Steam hisses from the rail-mounts while greasy ledger-pages flutter in the downdraft. Guards block the bottleneck by the inspection booths, expecting a bribe from every driver.\n\nThe soot-stained tracks branch off toward the high-level scaffolding and the lower maintenance pits under the cold gaze of the gantry-sentinels.",
    "exits": [
     {
      "label": "Hide extra fuel cells inside the gauge housing",
@@ -9371,7 +9371,7 @@
    "kind": "hub",
    "title": "The Gantry Labyrinth",
    "brief": "The Crane Yard: You navigate a labyrinth of swinging cargo derricks and suspended catwalks high above the misty canyon floor.",
-   "page": "Iron catwalks stretch out across the misty abyss like the ribs of some ancient, stranded leviathan, vibrating constantly with the deep, mechanical heartbeat of the viaduct below. Steam hisses from unseen vent-pipes, curling around greasy handrails that slick the palms of your gloves with black condensation. Every direction offers a desperate gamble: above, the crane operators squint through greasy goggles; below, the roaring gears of the hoisting winches offer a dangerous shortcut to the lower tracks. The bitter smell of sulfur drifts up from the canyon floor, mingling with the sharp tang of hot grease from the pulleys.",
+   "page": "Iron catwalks stretch out across the misty abyss like the ribs of some ancient, stranded leviathan, vibrating constantly with the deep, mechanical heartbeat of the viaduct below. Steam hisses from unseen vent-pipes, curling around greasy handrails that slick the palms of your gloves with black condensation. Above, the crane operators squint through greasy goggles. Below, the roaring gears of the hoisting winches spin near the lower tracks. The bitter smell of sulfur drifts up from the canyon floor, mingling with the sharp tang of hot grease from the pulleys.",
    "exits": [
     {
      "label": "Climb the suspended maintenance ladder",
@@ -11766,7 +11766,7 @@
    "kind": "check",
    "title": "The Turning Point",
    "brief": "You heave against the rusted brake drum with all your might, risking a muscle tear to manually lower the heavy platform.",
-   "page": "Rust scales rain down onto your shoulders as you strain against the frozen iron spokes, feeling the muscles in your back stretch to their absolute limit. The brake drum groans a high, protesting shriek, teetering right on the edge between holding fast and stripping its ancient gears entirely. Your palms slip slightly on the greasy metal rim, and you must decide whether to commit everything to a final, violent heave or risk losing the entire descent. The drop below waits in absolute silence, save for the ticking of the cooling firebox.",
+   "page": "Rust scales rain down onto your shoulders as you strain against the frozen iron spokes, feeling the muscles in your back stretch to their absolute limit. The brake drum groans a high, protesting shriek, teetering right on the edge between holding fast and stripping its ancient gears entirely. Your palms slip slightly on the greasy metal rim as you brace for a final, violent heave. The drop below waits in absolute silence, save for the ticking of the cooling firebox.",
    "exits": [
     {
      "label": "check-full",
@@ -12380,7 +12380,7 @@
    "kind": "hub",
    "title": "The Junction of Cogs",
    "brief": "",
-   "page": "Brass dials gleam under the greasy glow of enclosed gas lamps in the heart of the viaduct's control gallery. Overhead, the main cable trays pulse with mechanical life, transmitting signals across the entire span of the rail bridge. Every route away from this chamber offers a different hazard, from the automated security puzzles of the upper signal towers to the heavily guarded master logs where a forged signature might buy you permanent clearance. Down below, the distant shrieks of alarm sirens begin to echo through the stone canyons as the runaway engine draws the full wrath of the Baronial patrols.",
+   "page": "Brass dials gleam under the greasy glow of enclosed gas lamps in the heart of the viaduct's control gallery. Overhead, the main cable trays pulse with mechanical life, transmitting signals across the entire span of the rail bridge. Automated security puzzles block the upper signal towers, while armed guards watch over the master logs. Down below, the distant shrieks of alarm sirens begin to echo through the stone canyons as the runaway engine draws the full wrath of the Baronial patrols.",
    "exits": [
     {
      "label": "Enter the gear-chamber for manual override",

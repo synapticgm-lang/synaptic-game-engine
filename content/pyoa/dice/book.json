@@ -846,7 +846,7 @@
    "kind": "bottleneck",
    "title": "A Dry Harbour Morning",
    "brief": "You wake in Gullmouth to a silent, dry harbour and discover Orsolya's sealed letter warning that the Meridian Gear has jammed beneath the Sunken Stair.",
-   "page": "Silence is the first thing that wakes you. The rhythmic, thunderous crash of waves against the cliffs of Gullmouth has vanished, replaced by an eerie, hollow quiet. Pushing yourself up from your cot, you look out the window and freeze. The harbour is entirely dry. Fishing smacks and smuggler galleons list pathetically in the mud, stranded amidst a vast, steaming expanse of exposed seabed stretching to the horizon.\n\nOn your washstand lies a thick envelope, sealed with the deep blue wax of the lighthouse keeper. Breaking it open, you recognise Orsolya's hurried scrawl. She writes that the Meridian Gear - the great engine of the old Tidewardens - has jammed far beneath the Sunken Stair. The sea has not merely retreated; it is locked out. Whoever turns the ancient wheel will dictate the shape of the returning waters. She has gone ahead, urging you to follow. The fate of the Wrack Coast now rests entirely on who controls the tide.",
+   "page": "An eerie, hollow quiet replaces the rhythmic, thunderous crash of waves against the cliffs of Gullmouth. Looking out the window, you freeze. The harbour is entirely dry. Fishing smacks and smuggler galleons list pathetically in the mud, stranded amidst a vast, steaming expanse of exposed seabed stretching to the horizon.\n\nOn your washstand lies a thick envelope, sealed with the deep blue wax of the lighthouse keeper. Breaking it open, you recognise Orsolya's hurried scrawl. She writes that the Meridian Gear, the great engine of the old Tidewardens, has jammed far beneath the Sunken Stair. The sea has not merely retreated; it is locked out. Whoever turns the ancient wheel will dictate the shape of the returning waters. She has gone ahead, urging you to follow. The fate of the Wrack Coast now rests entirely on who controls the tide.",
    "exits": [
     {
      "label": "Descend into the stranded harbour",
@@ -1394,7 +1394,7 @@
    "kind": "hub",
    "title": "Smoke and Rumours",
    "brief": "The Wreckers' Guild: The smoky guildhall is filled with grim scavengers placing wagers on what lies beneath the mud, offering you a chance to prepare.",
-   "page": "Low murmurs and the clink of horn mugs fill the smoky guildhall of Gullmouth as scavengers lay fat wagers on what lies exposed beneath the vanished sea. Shadows stretch long across the floorboards from the hearth fire, where weathered men argue over tide charts and the strange silence of the horizon. You stand near the center of the room, weighing your options as various factions and desperate locals eye your boots with cautious interest. Every corner offers a different path into the dry abyss, whether through brawn, quick wits, or quiet bargains with the townsfolk. The air tastes of dried kelp and impending trouble.",
+   "page": "Low murmurs and the clink of horn mugs fill the smoky guildhall of Gullmouth as scavengers lay fat wagers on what lies exposed beneath the vanished sea. Shadows stretch long across the floorboards from the hearth fire, where weathered men argue over tide charts and the strange silence of the horizon. You stand near the center of the room, weighing your options as various factions and desperate locals eye your boots with cautious interest. Factions bicker in the corners over routes into the dry abyss, trading gossip and plotting brute-force raids. The air tastes of dried kelp and impending trouble.",
    "exits": [
     {
      "label": "Approach the bragging Brineholder agent",
@@ -2544,7 +2544,7 @@
    "kind": "hub",
    "title": "The Salt-Scraped Hub",
    "brief": "The Leviathan Market: Stalls are carved directly into the sun-baked whale bones, offering a chaotic bazaar where bizarre relics and desperate secrets are traded.",
-   "page": "Smoke from tiny dung-fires curls against the high ribs of the whale carcass, scenting the crowded market with an acrid haze that stings the eyes and throat. Every stall offers a new temptation or a hidden trap, from the glint of ambergris traded in the shadows to the quiet whispers of pilgrims mourning the missing sea. You stand at the crossroads of the beast's massive jaw, where multiple narrow paths diverge into the bustling chaos of the seabed bazaar. From here, you must choose where your search for Orsolya and the Meridian Gear leads next.",
+   "page": "Smoke from tiny dung-fires curls against the high ribs of the whale carcass, scenting the crowded market with an acrid haze that stings the eyes and throat. Ambergris glints in the shadows of the stalls, competing with the hushed murmurs of pilgrims mourning the missing sea. You stand at the crossroads of the beast's massive jaw, where multiple narrow paths diverge into the bustling chaos of the seabed bazaar. Your search for Orsolya and the Meridian Gear continues through the market.",
    "exits": [
     {
      "label": "Push deeper into the crowded market",
@@ -3029,7 +3029,7 @@
    "kind": "hub",
    "title": "Basins of the Faithful",
    "brief": "The Tide-pool Shrines: Shallow basins of trapped seawater serve as makeshift altars where fanatics offer sacrifices to the absent tide, creating tense and dangerous encounters.",
-   "page": "Stagnant pools of grey seawater cling to the salt-flats like weeping eyes, reflecting the pale, cloudless dome of the sunless sky. Fanatics kneel by the rims, whispering desperate bargains to the vanished tide while black weed dries into brittle crusts along the margins. Every path away from this basin offers its own peculiar peril, whether through the guarded shrines, the biting shallows, or onward to the howling dunes.",
+   "page": "Stagnant pools of grey seawater cling to the salt-flats like weeping eyes, reflecting the pale, cloudless dome of the sunless sky. Fanatics kneel by the rims, whispering desperate bargains to the vanished tide while black weed dries into brittle crusts along the margins. Guarded shrines, biting shallows, and howling dunes ring the perimeter of the basin.",
    "exits": [
     {
      "label": "Inspect the drying shrines",
@@ -4633,7 +4633,7 @@
    "kind": "hub",
    "title": "The Salt-Flats Sinkholes",
    "brief": "The Salt-Flats Sinkholes: A sprawling expanse of brittle white crust hides deep, treacherous pits that vent strange, intoxicating gases into the cold air.",
-   "page": "Brittle crusts of white salt stretch out toward the hazy horizon, concealing bottomless pits where strange, intoxicating gases hiss into the cold air. The ground here feels dangerously thin beneath your boots, whispering with the pressure of trapped vapors from below. Every direction offers a perilous temptation, from half-buried treasures glinting in the pale light to the looming, cathedral ribs of the great leviathan far across the flats.",
+   "page": "Brittle crusts of white salt stretch out toward the hazy horizon, concealing bottomless pits where strange, intoxicating gases hiss into the cold air. The ground here feels dangerously thin beneath your boots, whispering with the pressure of trapped vapors from below. Half-buried treasures glint in the pale light, scattered along the route toward the cathedral ribs of the great leviathan far across the flats.",
    "exits": [
     {
      "label": "Scavenge the buried sea chest",
@@ -10501,7 +10501,7 @@
    "kind": "hub",
    "title": "Cistern Walk",
    "brief": "The Cistern Walk: A grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger.",
-   "page": "The Cistern Walk stretches as a grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger. Sunlight reflects blindingly off the vast liquid domes, where Brineholder wardens march in rhythmic unison and merchants haggle over sealed water skins. Every archway offers a tempting route deeper into the stilt-city's administrative heart, though a single misstep could plunge you into the dry abyss below.",
+   "page": "The Cistern Walk stretches as a grand, patrolled promenade wrapping around the immense glass water tanks, presenting incredible views and terrible danger. Sunlight reflects blindingly off the vast liquid domes, where Brineholder wardens march in rhythmic unison and merchants haggle over sealed water skins. Archways lead deeper into the stilt-city's administrative heart, bordered by sheer drops that plunge into the dry abyss below.",
    "exits": [
     {
      "label": "Walk the glittering glass promenade",
@@ -11560,7 +11560,7 @@
    "kind": "scene",
    "title": "Choked in Soot",
    "brief": "You rapidly plan a route through the blinding smoke of a chimney fire, risking asphyxiation to find a safe hideout.",
-   "page": "Yellowish smoke billows from a ruptured flue and turns the narrow stilt-alley into a blinding labyrinth of acrid haze and blistering heat. Ash settles in your hair. Each ragged breath cakes your throat as you draw air through your sleeve. Wooden walkways groan under the thermal stress and warp outward while flames lick the underside of the hanging balconies. Every blind turn offers a new hazard, from white-hot iron plates to plunging drops into the hazy seabed below. You press your shoulder against the damp timber wall and inch forward through the gloom where the air tastes less like burning pitch.",
+   "page": "Yellowish smoke billows from a ruptured flue and turns the narrow stilt-alley into a blinding labyrinth of acrid haze and blistering heat. Ash settles in your hair. Each ragged breath cakes your throat as you draw air through your sleeve. Wooden walkways groan under the thermal stress and warp outward while flames lick the underside of the hanging balconies. White-hot iron plates and plunging drops into the hazy seabed lurk around the blind turns. You press your shoulder against the damp timber wall and inch forward through the gloom where the air tastes less like burning pitch.",
    "exits": [
     {
      "label": "Grope through the choking smoke ahead",
@@ -11663,7 +11663,7 @@
    "kind": "hub",
    "title": "The Governor's Solarium",
    "brief": "The Governor's Solarium: A sun-drenched room filled with dying exotic plants and nervous aristocrats making desperate bargains.",
-   "page": "Pale sunlight filters through salt-crusted domes onto dying ferns and imported palms drooping in terracotta pots across the circular chamber. Nervous aristocrats in stiff collars huddle near velvet settees, whispering behind gloved hands while armed guards hover by the bronze-plated doors. The Governor sits at an inlaid mahogany desk, ignoring the scattered glass from your entrance to study a brass-bound tide ledger. Every exit from this sunlit cage offers a desperate gamble, whether through negotiation, stealth, intimidation, or force, while the true prize - and the missing keeper - lurks deeper in the shadows of the stilt-city.",
+   "page": "Pale sunlight filters through salt-crusted domes onto dying ferns and imported palms drooping in terracotta pots across the circular chamber. Nervous aristocrats in stiff collars huddle near velvet settees, whispering behind gloved hands while armed guards hover by the bronze-plated doors. The Governor sits at an inlaid mahogany desk, ignoring the scattered glass from your entrance to study a brass-bound tide ledger. Beyond this sunlit cage, the true prize and the missing keeper wait deeper in the shadows of the stilt-city.",
    "exits": [
     {
      "label": "Forge a false emissary bargain",

@@ -1615,7 +1615,7 @@
    "kind": "hub",
    "title": "The Ink-Sellers' Stall",
    "brief": "The Ink-Sellers' Stall: Merchants hawk dubious liquids that promise to reveal hidden text or make parchment scream when touched.",
-   "page": "Canvas awnings strain against greasy drafts in a cavernous bazaar where merchants hawk dubious liquids by flickering lantern light. Glass vials clink against one another, filled with concoctions that promise to reveal hidden text, make parchment scream when touched, or permanently stain wandering fingers. The air smells thick of turpentine, gall, and stale vinegar, laced with the low hum of rival shelvers haggling over prices. Every stall offers a different route through the creeping shadows, tempting you to spend your meager copper on draughts that might ease your journey into the deep stacks.",
+   "page": "Canvas awnings strain against greasy drafts in a cavernous bazaar where merchants hawk dubious liquids by flickering lantern light. Glass vials clink against one another, filled with concoctions that promise to reveal hidden text, make parchment scream when touched, or permanently stain wandering fingers. The air smells thick of turpentine, gall, and stale vinegar, laced with the low hum of rival shelvers haggling over prices. A hooded merchant thrusts a stoppered flask toward you, demanding your last copper for a draught meant for the deep stacks.",
    "exits": [
     {
      "label": "Catch a jar of falling luminescent ink",
@@ -9178,7 +9178,7 @@
    "kind": "hub",
    "title": "The Tribunal Gallery",
    "brief": "The Tribunal Gallery: Spectators in grey robes watch from tiered benches as judges deliberate over charges of unauthorized cataloguing.",
-   "page": "Tiered benches of soot-stained pine rise into the damp vaulting, packed with grey-robed spectators whose breath smells of stale ink and dried chicory. Below, upon a raised dais of veined slate, three judges of the Cataloguers' Court whisper behind high barricades of cross-indexed ledgers, weighing charges of unauthorized cataloguing against the fellowship of the lower stacks. A thin drift of lamp-oil smoke hangs in the cold air, stinging your eyes while the scratching of nibs echoes like restless beetles. Every aisle out of this hollow court offers a desperate gamble, whether through forged credentials, balanced leaps across ledgers, or sheer defiance of the bench.",
+   "page": "Tiered benches of soot-stained pine rise into the damp vaulting, packed with grey-robed spectators whose breath smells of stale ink and dried chicory. Below, upon a raised dais of veined slate, three judges of the Cataloguers' Court whisper behind high barricades of cross-indexed ledgers, weighing charges of unauthorized cataloguing against the fellowship of the lower stacks. A thin drift of lamp-oil smoke hangs in the cold air, stinging your eyes while the scratching of nibs echoes like restless beetles. A court bailiff strikes an iron rod against the floor, calling for order across the shifting ledgers.",
    "exits": [
     {
      "label": "Slip into the clerk's alcove unnoticed",
@@ -12295,7 +12295,7 @@
    "kind": "hub",
    "title": "The Tribunal Mosaic",
    "brief": "The Grand Tribune: High stained-glass windows depict legendary librarians sorting the stars while golden scales hang motionless above the judges.",
-   "page": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Every archway offers a distinct path deeper into the administrative labyrinth, each guarded by different interpretations of municipal law and custom.",
+   "page": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Bailiffs in brass-buttoned coats stand watch at the archways, clutching sheaves of municipal law.",
    "exits": [
     {
      "label": "Address the judging bench directly",
@@ -12935,7 +12935,7 @@
    "kind": "hub",
    "title": "The Balcony of Sighs",
    "brief": "The Balcony of Sighs: Stone balustrades overlook a dizzying abyss filled with drifting book-stacks, floating lanterns, and distant whispering echoes.",
-   "page": "Lanterns swing gently from iron brackets along the curving balustrade of the Balcony of Sighs, casting long, wavering shadows across the worn stone. Down in the misty depths, shelves drift like slow-moving rafts of timber, and the faint rustle of phantom pages drifts upward on the chill draft. Every direction offers its own perilous invitation to the depths below, demanding a steady hand and a sharp eye.",
+   "page": "Lanterns swing gently from iron brackets along the curving balustrade of the Balcony of Sighs, casting long, wavering shadows across the worn stone. Down in the misty depths, shelves drift like slow-moving rafts of timber, and the faint rustle of phantom pages drifts upward on the chill draft. A gust of cold air rattles the loose ironwork along the frost-slicked railing.",
    "exits": [
     {
      "label": "Venture down the creaking stairway",
@@ -18542,7 +18542,7 @@
    "kind": "hub",
    "title": "The Scriptorium Bridge",
    "brief": "The Scriptorium Bridge: A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike.",
-   "page": "A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike. Thick plumes of greasy smoke roll across the span, obscuring the far archways where the deep stacks begin their slow, mechanical shifting. To your left, a frantic librarian struggles to defend a stack of uncatalogued maps against a torch-waving zealot, while other paths beckon deeper into the labyrinth of rising alarms and falling masonry. Every route offers a desperate chance to alter the course of the impending closure before the heavy vault doors seal forever.",
+   "page": "A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike. Thick plumes of greasy smoke roll across the span, obscuring the far archways where the deep stacks begin their slow, mechanical shifting. To your left, a frantic librarian struggles to defend a stack of uncatalogued maps against a torch-waving zealot, while other paths beckon deeper into the labyrinth of rising alarms and falling masonry. The heavy vault doors grind loudly against their stone frames as the closure begins.",
    "exits": [
     {
      "label": "Charge the fanatic with your iron",
@@ -19072,7 +19072,7 @@
    "kind": "hub",
    "title": "The Collapsed Stacks",
    "brief": "The Collapsed Stacks: Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and dust.",
-   "page": "Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and choking dust. The great artery of the library lies choked and fractured, forcing you to pick your footing with extreme care among the ruins of a thousand forgotten treatises. Every direction offers a perilous gamble as the ceiling overhead continues to rain fine gray powder upon your shoulders.\n\nTo your left, a narrow gap opens through the wreckage; straight ahead, a precarious bridge of fallen spines beckons; to your right, a stairwell winds down into the suffocating dark.",
+   "page": "Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and choking dust. The great artery of the library lies choked and fractured, forcing you to pick your footing with extreme care among the ruins of a thousand forgotten treatises. The ceiling overhead drops a fresh shower of fine gray powder onto your shoulders.\n\nTo your left, a narrow gap opens through the wreckage; straight ahead, a precarious bridge of fallen spines beckons; to your right, a stairwell winds down into the suffocating dark.",
    "exits": [
     {
      "label": "Search the stable load line",
@@ -20197,7 +20197,15 @@
      "to": "ul-6-001"
     }
    ],
-   "role": "ending-selector"
+   "role": "ending-selector",
+   "variants": [
+    {
+     "when": {
+      "thessaly": true
+     },
+     "after": "Thessaly stands beside you, their eyes reflecting the gleam of the descending bronze."
+    }
+   ]
   },
   {
    "id": "ul-6-001",
