@@ -149,10 +149,13 @@ export function sharedLevelUp(character: Character, toLevel: number): { characte
   };
 }
 
-/** Level-up STATUS lines per mode profile. Tabletop shows every number; LitRPG and story RPG show the one level line. */
+/** Level-up STATUS lines per mode profile. Tabletop shows every number; LitRPG and story RPG show the level and the HP change. */
 export function presentLevelUp(mode: EngineMode | undefined, info: SrdLevelUpInfo): string[] {
-  const head = `Level Up! Now level ${info.level}`;
-  if (!modeProfile(mode).levelUpDetail) return [head];
+  const head = `Level Up! Now level ${info.level} — HP ${info.hpBefore} → ${info.hpAfter} (max ${info.maxBefore} → ${info.maxAfter})`;
+  if (!modeProfile(mode).levelUpDetail) {
+    const point = mode === 'litrpg' ? ' 1 stat point to spend.' : '';
+    return [`${head}.${point}`.replace('..', '.')];
+  }
   const how = info.roll != null ? `rolled ${info.roll}` : `fixed ${info.taken}`;
   const dwarf = info.dwarf ? ` + ${info.dwarf} Dwarven Toughness` : '';
   const retro = info.asi?.bonus.CON ? ' (CON raised: every level counts)' : '';

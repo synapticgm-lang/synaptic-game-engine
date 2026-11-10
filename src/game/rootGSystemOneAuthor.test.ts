@@ -194,7 +194,7 @@ describe('s77 Root G — R: hidden growth under housing', () => {
     const { state, shown } = playFiveTurnsAndAFight('private_window');
     expect(shown.some((l) => /^XP Gained: \d+ \(Achievement: First Kill/.test(l))).toBe(true);
     expect(shown.some((l) => /^XP Gained: \d+ \(defeated Wardline Bandit/.test(l))).toBe(true);
-    expect(shown).toContain('Level Up! Now level 2');
+    expect(shown.some((l) => l.startsWith('Level Up! Now level 2'))).toBe(true);
     expect(shown.some((l) => /rank 1/.test(l))).toBe(true);
     expect(state.character.level).toBe(2);
   });

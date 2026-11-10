@@ -6,6 +6,7 @@ import { mentionsName, peopleHere } from './scenePresence';
 import { isWayOut, wayOutMovesPlayer } from './sceneAffordances';
 import { exitPlaceNames } from './placeNames';
 import { tabletopStepChip } from './tabletopQuestProgress';
+import { isCheckSystemChip } from './systemNotice';
 import { roundCombatChips } from './tabletop/combatChips';
 
 /**
@@ -41,9 +42,17 @@ function low(s: string): string {
 /** The kind of the builder chip an offered label binds to (exact label first, then the same action + target). */
 export function chipKindOf(state: GameState, label: string, prose = ''): ChipKind | null {
   // q39-T1a: for-loops (was .find arrows) so TOTAL fns stay flat with openThreads.ts.
-  const chips = engineChips(state, prose);
   const l = low(label);
   if (!l) return null;
+  if (isCheckSystemChip(label)) return 'system';
+  if (/^skip ahead to\s+/i.test(label)) {
+    const dest = label.replace(/^skip ahead to\s+/i, '').replace(/\.+$/, '').trim().toLowerCase();
+    const known = (state.places ?? []).some(
+      (p) => (p.name ?? '').trim().toLowerCase() === dest && typeof p.lastVisitedTurn === 'number',
+    );
+    if (known) return 'journey';
+  }
+  const chips = engineChips(state, prose);
   for (let i = 0; i < chips.length; i++) {
     if (chips[i]!.label.toLowerCase() === l) return chips[i]!.kind;
   }

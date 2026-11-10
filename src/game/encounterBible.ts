@@ -61,6 +61,8 @@ function seedLegal(state: GameState, seed: EncounterSeed, hubId?: string): boole
   if (seed.hubId && seed.hubId !== hubId) return false;
   if (isEncounterOnCooldown(state, seed.foeName)) return false;
   if (matchesLastKillName(seed.foeName, state.sceneFacts?.lastKill)) return false;
+  const cleared = state.arcDirector?.clearedFoeNames ?? [];
+  if (cleared.some((n) => n.toLowerCase() === seed.foeName.toLowerCase())) return false;
   return true;
 }
 
@@ -86,7 +88,7 @@ export function selectCatalogEncounter(state: GameState): EncounterSeed | null {
   const ranked = [...pool].sort((a, b) => scoreSeed(state, b, want, hubId) - scoreSeed(state, a, want, hubId));
   const top = ranked.filter((s) => scoreSeed(state, s, want, hubId) === scoreSeed(state, ranked[0]!, want, hubId));
   if (!top.length) {
-    return encountersForMode(mode).find((s) => s.tier === 'trash' && !s.hubId) ?? null;
+    return encountersForMode(mode).find((s) => s.tier === 'trash' && !s.hubId && seedLegal(state, s, hubId)) ?? null;
   }
   const clearCount = (state.stateTxLog ?? []).filter((t) => /Encounter cleared|Encounter:/i.test(t.summary)).length;
   return top[(clearCount + state.turn) % top.length] ?? top[0]!;

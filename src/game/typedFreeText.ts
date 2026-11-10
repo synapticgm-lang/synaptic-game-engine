@@ -113,6 +113,24 @@ const MECHANICAL_ACTIONS = new Set([
  * SRD 5.2.1 Communicating — brief speech is free; the engine does not invent the PC's line.
  * T10Q5 — when the addressee is not seated, pass last-seen place for the absence fact.
  */
+const CONSUMABLE = /\b(potion|flask|draught|vial|elixir|ration|holy water|scroll)\b/i;
+
+/** A successful Use of a flask, potion, or ration spends one from the bag. */
+function consumeNamedItem(state: GameState, clause: string): GameState | undefined {
+  const items = state.inventory ?? [];
+  const hit = items.find((it) => {
+    const name = (it.name ?? '').trim();
+    return !!name && clause.toLowerCase().includes(name.toLowerCase()) && CONSUMABLE.test(name) && (it.quantity ?? 1) > 0;
+  });
+  if (!hit) return undefined;
+  const inventory = items.flatMap((it) => {
+    if (it.id !== hit.id) return [it];
+    const q = (it.quantity ?? 1) - 1;
+    return q > 0 ? [{ ...it, quantity: q }] : [];
+  });
+  return { ...state, inventory };
+}
+
 function clauseWriterFact(
   step: IntentStep,
   speech: boolean,
@@ -389,7 +407,9 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   }
 
   const intent = intentFromStep(step);
-  const canRoll = !!state.character?.srd?.speciesId && !!state.character?.srd?.classId;
+  // Tabletop rolls from the SRD sheet. LitRPG and story RPG roll from attributes when there is no sheet.
+  const canRoll = (!!state.character?.srd?.speciesId && !!state.character?.srd?.classId)
+    || (state.engineMode !== 'dnd' && !!state.character?.attributes);
   const spec = canRoll ? checkForAction(state, intent, clause) : null;
   const actionable =
     !!spec
@@ -411,6 +431,10 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     let nextState = state;
     if (/^insight$/i.test(check.label ?? '') || isPersonInsightLabel(clause)) {
       nextState = markInsightAttempt(state, step.addressee || step.target || clause, check.isSuccess);
+    }
+    if (intent.kind === 'use_item') {
+      const used = consumeNamedItem(nextState, clause);
+      if (used) nextState = used;
     }
     // T10I: every clause still reaches the writer (Must narrate), even when a check fails —
     // free text is never rejected; a roll outcome alone must not drop the act.

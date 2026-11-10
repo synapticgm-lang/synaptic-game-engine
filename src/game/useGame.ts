@@ -174,6 +174,7 @@ import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairReject
 import { runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, roadDeathBookProse, travelEngineLines, travelOutcome } from './travelJourney';
+import { runFastForward } from './fastForward';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -2818,6 +2819,10 @@ export function useGame() {
         if (liveCurrent.sceneFacts?.stallProgressReceipt) {
           const sp = liveCurrent.sceneFacts.stallProgressReceipt;
           if (!pendingArcStatusReceipts.includes(sp)) pendingArcStatusReceipts = [...pendingArcStatusReceipts, sp];
+          liveCurrent = {
+            ...liveCurrent,
+            sceneFacts: { ...liveCurrent.sceneFacts, stallProgressReceipt: undefined },
+          };
         }
         stateRef.current = liveCurrent;
       }
@@ -2840,8 +2845,15 @@ export function useGame() {
         pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...riteTurn.receipts];
       }
       const hereBeforeMove = liveCurrent.currentLocation ?? '';
-      const graphMoved = dyingTurn ? liveCurrent : applyGraphExitTravel(liveCurrent, sanitizedInput);
-      const travelCommit = dyingTurn || graphMoved !== liveCurrent ? null : commitTravel(liveCurrent, sanitizedInput);
+      const skipTo = sanitizedInput.match(/^skip ahead to\s+(.+?)\.?$/i)?.[1]?.trim();
+      const fast = !dyingTurn && skipTo ? runFastForward(liveCurrent, { destination: skipTo, maxTurns: 6 }) : null;
+      const fastMoved = !!(fast && !fast.refused);
+      if (fastMoved && fast) {
+        liveCurrent = fast.state;
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...fast.receipts];
+      }
+      const graphMoved = dyingTurn || fastMoved ? liveCurrent : applyGraphExitTravel(liveCurrent, sanitizedInput);
+      const travelCommit = dyingTurn || fastMoved || graphMoved !== liveCurrent ? null : commitTravel(liveCurrent, sanitizedInput);
       liveCurrent = travelCommit?.state ?? graphMoved;
       if (travelCommit?.receipt) {
         pendingArcStatusReceipts = [...pendingArcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];

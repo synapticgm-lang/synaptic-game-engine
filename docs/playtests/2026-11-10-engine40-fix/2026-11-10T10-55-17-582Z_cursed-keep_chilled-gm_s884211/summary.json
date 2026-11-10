@@ -1,0 +1,156 @@
+{
+  "runId": "2026-11-10T10-55-17-582Z",
+  "bibleId": "cursed-keep",
+  "bibleTitle": "Cursed Keep",
+  "engineMode": "dnd",
+  "personalityId": "chilled-gm",
+  "seed": 884211,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T10:55:17.582Z",
+  "endedAt": "2026-11-10T10:55:23.356Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 100,
+    "p95": 230,
+    "mean": 116
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40-fix/2026-11-10T10-55-17-582Z_cursed-keep_chilled-gm_s884211",
+  "runManifest": {
+    "buildStamp": "2026-11-03e+e98c490b",
+    "seed": "884211",
+    "saveId": "fate-884211-cursed-keep-1794308117478",
+    "engineMode": "dnd",
+    "bibleId": "cursed-keep",
+    "createdAt": 1794308117679,
+    "eventSeq": 3
+  },
+  "receiptTotals": {
+    "combat": 1,
+    "questStage": 1,
+    "beatCommit": 3,
+    "crisis": 0,
+    "total": 6
+  },
+  "finalReplayHash": "91973da1",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 1,
+  "evalHarness": {
+    "manifestBound": true,
+    "livenessGates": {
+      "combatByT8": true
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 18,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 15,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Disengage and move\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 16,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Ask Silas Thorne to stabilise you\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 17,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Silas Thorne\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 18,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Study the clues\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 19,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Silas Thorne\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 21,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Study the rumor\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 22,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 24,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 25,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Study the signs at Greyhollow Inn\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 26,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 28,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 30,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 32,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 34,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 36,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 38,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 40,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Father Aldous\""
+      }
+    ]
+  }
+}

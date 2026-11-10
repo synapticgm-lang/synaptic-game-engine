@@ -911,8 +911,9 @@ export function formatTabletopSheet(state: Pick<GameState, 'character' | 'invent
   if (!d || !s) return [];
   const bonus = ABILITY_KEYS.filter((k) => s.bonus[k]).map((k) => `+${s.bonus[k]} ${k}`).join(', ');
   const skills = d.skills.filter((k) => k.proficient).map((k) => `${k.skill} ${fmtMod(k.total)}${k.expertise ? ' (expertise)' : ''}`);
-  const gear = (state.inventory ?? []).filter((i) => i.provenance === 'Class starting equipment' || i.provenance === 'Background starting equipment')
-    .map((i) => (i.quantity > 1 ? `${i.name} ×${i.quantity}` : i.name));
+  const gear = (state.inventory ?? [])
+    .filter((i) => (i.name ?? '').trim())
+    .map((i) => ((i.quantity ?? 1) > 1 ? `${i.name} ×${i.quantity}` : i.name));
   return [
     `${state.character.name} — ${d.title}`,
     ABILITY_KEYS.map((k) => `${k} ${d.scores[k]} (${fmtMod(abilityMod(d.scores[k]))})`).join(' · '),

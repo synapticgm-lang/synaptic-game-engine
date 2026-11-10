@@ -168,6 +168,8 @@ export interface ArcDirectorState {
   lastEncounterClearedTurn?: number;
   /** 29b — forcedSpawnKey → cooldown-until turn (no re-engage) */
   encounterCooldownUntil?: Record<string, number>;
+  /** Foe display names already beaten this save. They are not spawned again. */
+  clearedFoeNames?: string[];
   /** 29b — voice aside cooldown bookkeeping */
   voiceAsideLastUsed?: Record<string, number>;
   /** 29b — Free T12 durable delta forced */
@@ -771,7 +773,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
   const questsHidden = questListHidden(result.state?.systemHousing);
   const tabletop = result.state?.engineMode === 'dnd';
   for (const r of result.systemReceipts) {
-    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Medicine |Level Up! Now level \d+$|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:|Arrows:|Bolts:|Left behind \(too heavy|Heroic Inspiration:|Encounter difficulty:|Solo scaling:|Light: |Death rule \(|Gold Spent:|Gold Lost:|Milestone:|Class feature:|Oracle:|Crafting:|Attunement:)/.test(r)) {
+    if (tabletop && /^(?:HP: \d+ → \d+|Rounds? \d+(?:–\d+)? —|Opening strike —|Initiative —|Death save:|Medicine |Level Up! Now level \d+\b|Level \d+ —|New features?:|Ability Score Improvement:|Spell slots:|New spells?:|Spell:|Arcane Recovery:|Arrows:|Bolts:|Left behind \(too heavy|Heroic Inspiration:|Encounter difficulty:|Solo scaling:|Light: |Death rule \(|Gold Spent:|Gold Lost:|Milestone:|Class feature:|Oracle:|Crafting:|Attunement:)/.test(r)) {
       lines.push(r);
       continue;
     }

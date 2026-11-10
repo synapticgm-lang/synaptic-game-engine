@@ -178,9 +178,11 @@ export function buildClauseWriterFact(
       parts.push(speechAddressCue(who, here, lastSeen));
     } else {
       parts.push(showActCue());
+      // Search / look / examine is the act. It does not also open a speech event.
+      const lookOnly = /\b(search|look around|examine|inspect|scout|review)\b/i.test(clause);
       // T10X — unaddressed physical act (kick/point) with a present ledger group: they react.
       // Addressed Face/Talk targets stay show-act only (T10P — no Speech event stub).
-      if (!who) {
+      if (!who && !lookOnly) {
         const reactors = speakableHere(
           (here ?? []).map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean),
         );

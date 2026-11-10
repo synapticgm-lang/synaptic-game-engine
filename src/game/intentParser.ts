@@ -1579,7 +1579,9 @@ export function describeIntentStep(step: IntentStep): string {
   return [
     step.action,
     step.target,
-    step.addressee ? `to ${step.addressee}` : '',
+    step.addressee && step.addressee.trim().toLowerCase() !== (step.target ?? '').trim().toLowerCase()
+      ? `to ${step.addressee}`
+      : '',
     step.topic,
     step.destination ? `-> ${step.destination}` : '',
     step.deal ? `deal:${step.deal.kind}` : '',

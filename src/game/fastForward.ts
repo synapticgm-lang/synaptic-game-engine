@@ -34,6 +34,14 @@ function visitedPlace(state: GameState, name: string) {
   });
 }
 
+/** True when Skip ahead has a resolver: the place was visited and the map has a priced stretch. */
+export function canSkipAheadTo(state: GameState, destination: string): boolean {
+  if (state.engineMode === 'pyoa') return false;
+  const place = visitedPlace(state, destination);
+  if (!place) return false;
+  return pricedStretches(state, place.name).length > 0;
+}
+
 /** Endurance Stride takes one allowance turn off a stretch, and never below the base cost of 1. */
 function enduranceOffset(state: GameState): number {
   const skill = (state.character?.namedSkills ?? []).find((row) => row.id === 'endurance_stride');

@@ -211,7 +211,13 @@ function pushExit(out: PlaceExitRow[], seen: Set<string>, state: GameState, labe
   if (place && (place.closed || place.arcStatus === 'closed')) return;
   seen.add(key);
   const id = sourceId(state, e, explicit);
-  out.push({ id: id || e, label: e });
+  let shown = e;
+  if (/^place_[a-z0-9-]+$/i.test(e)) {
+    const named = (state.places ?? []).find((p) => p.id === e);
+    shown = named?.name && !/^place_/i.test(named.name) ? tidy(named.name) : '';
+  }
+  if (!shown || /^place_[a-z0-9-]+$/i.test(shown)) return;
+  out.push({ id: id || e, label: shown });
 }
 
 function labelsToRows(state: GameState, labels: string[]): PlaceExitRow[] {

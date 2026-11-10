@@ -86,7 +86,10 @@ describe('shared rules engine — level-up (SRD 5.2.1)', () => {
     const lines = presentLevelUp('dnd', up4.info);
     expect(lines).toContain('New feature: Ability Score Improvement');
     expect(lines).toContain(`Ability Score Improvement: +2 STR (${f.attributes.STR} → ${f.attributes.STR + 2})`);
-    expect(presentLevelUp('litrpg', up4.info)).toEqual(['Level Up! Now level 4']);
+    const litNote = presentLevelUp('litrpg', up4.info);
+    expect(litNote).toHaveLength(1);
+    expect(litNote[0]).toMatch(/^Level Up! Now level 4 — HP \d+ → \d+/);
+    expect(litNote[0]).toMatch(/1 stat point to spend/);
     const l3 = srdLevelUp(at(f, 2), 3);
     expect(l3.info.features).toEqual(['Champion subclass: Improved Critical (19–20)', 'Remarkable Athlete']);
   });
@@ -125,7 +128,10 @@ describe('shared rules engine — level-up (SRD 5.2.1)', () => {
     const plain = { ...hurt, srd: undefined, maxHp: 20, hp: 3, xpToNext: 150 } as Character;
     const gain = Math.max(1, 5 + abilityMod(f.attributes.CON));
     const lit = applyCharacterXpGain(plain, 150, 'litrpg');
-    expect(lit).toMatchObject({ notes: ['Level Up! Now level 2'], character: { maxHp: 20 + gain, hp: 3 + gain } });
+    expect(lit.character).toMatchObject({ maxHp: 20 + gain, hp: 3 + gain });
+    expect(lit.notes).toHaveLength(1);
+    expect(lit.notes[0]).toMatch(/^Level Up! Now level 2 — HP 3 → \d+/);
+    expect(lit.notes[0]).toMatch(/1 stat point to spend/);
   });
 });
 

@@ -414,13 +414,18 @@ function presentRest(state: GameState, rest: RestHeal): RestHeal {
   };
 }
 
-/** HP after an engine-resolved fight: some recovery on a win, a floor on a defeat. */
+/**
+ * HP after an engine-resolved fight.
+ * Damage never raises HP. A defeat does not apply the old 25% floor here —
+ * 0 HP is the lifeline / death-save consequence (playPhase + rules/death).
+ */
 export function hpAfterFight(state: GameState, victory: boolean, finalHp: number): number {
-  const max = state.character.maxHp || state.character.hp;
+  const start = Math.max(0, state.character.hp ?? 0);
+  const max = state.character.maxHp || start;
   const row = recoveryRow(state.engineMode);
-  const base = Math.max(1, finalHp);
-  if (victory) return Math.min(max, base + Math.ceil(max * row.victoryFraction));
-  return Math.min(max, Math.max(base, Math.ceil(max * row.defeatFraction)));
+  const fallen = Math.max(0, Math.min(start, finalHp));
+  if (victory) return Math.min(max, fallen + Math.ceil(max * row.victoryFraction));
+  return fallen;
 }
 
 /** Early fights: for player level 1–3 an enemy's attack is capped at 1 + level (Easy −1, Hard +1). */
