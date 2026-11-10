@@ -1,10 +1,10 @@
 /**
- * Hybrid fact gate. A span is colour only when every word is scenery or already on the sheet.
- * Anything uncertain is a candidate for one batched hosted check.
+ * Code fact gate. Every span gets a code verdict.
+ * A model runs only for spans that come back UNSURE, and only when SGM_UNSURE_FACT_CHECK=on.
  */
 import type { FactSheet } from './factSheet';
 import type { FactObjectNote, FactObjectTag } from './roomProps';
-import { isPlacedIndefinite, readObjectTag } from './roomProps';
+import { isPlacedIndefinite, readObjectTag, tagsFromPlacedSpan } from './roomProps';
 
 export type FactVerdict = 'colour' | 'allowed' | 'new/wrong' | 'UNSURE';
 
@@ -77,16 +77,18 @@ export function isUnsureFactCheckEnabled(): boolean {
 }
 
 /**
- * The batched fact check uses the hosted gm-turn path.
- * SGM_FACT_CHECK=off keeps the code verdicts. The test runner stays offline
- * unless a test passes its own checker.
+ * Old whole-candidate hosted check. Off unless SGM_FACT_CHECK=on.
+ * The turn does not use this. Code verdicts decide every span.
  */
+export function factCheckDefault(flag: string | undefined, inTest: boolean): boolean {
+  if (inTest && flag !== 'on') return false;
+  return flag === 'on';
+}
+
 export function isFactCheckEnabled(): boolean {
   const flag = process.env.SGM_FACT_CHECK ?? (import.meta.env?.VITE_SGM_FACT_CHECK as string | undefined);
-  if (flag === 'off') return false;
-  if (flag === 'on') return true;
-  if (process.env.VITEST === 'true' || import.meta.env?.MODE === 'test') return false;
-  return true;
+  const inTest = process.env.VITEST === 'true' || import.meta.env?.MODE === 'test';
+  return factCheckDefault(flag, inTest);
 }
 
 export interface CandidateCheck {
@@ -826,6 +828,31 @@ export function makeHostedFactChecker(call: (payload: string) => Promise<string>
   return async (input) => parseFactCheckReply(await call(formatFactCheckRequest(input)));
 }
 
+/** One hosted check of the spans code already marked UNSURE. An empty list makes no call. */
+export function makeUnsureFactChecker(
+  sheet: FactSheet,
+  call: (payload: string) => Promise<string>,
+): (spans: FactSpan[]) => Promise<UnsureVerdict[]> {
+  const hosted = makeHostedFactChecker(call);
+  return async (spans) => {
+    if (!spans.length) return [];
+    const reply = await hosted({
+      sheet,
+      lines: spans.map((span, i) => ({
+        n: i + 1,
+        text: span.text,
+        speech: span.speech,
+        writing: span.writing,
+      })),
+    });
+    return spans.map((span, i) => {
+      const row = reply.find((r) => r.n === i + 1);
+      if (row?.verdict === 'keep') return { id: span.id, verdict: 'allowed' as const };
+      return { id: span.id, verdict: 'new/wrong' as const };
+    });
+  };
+}
+
 export function estimateFactCheckTokens(sheet: FactSheet, lines: string[]): { input: number; output: number } {
   const body = formatFactCheckRequest({
     sheet,
@@ -1111,6 +1138,16 @@ export async function applyFactGate(args: {
         span.reason = 'checker cleared';
       }
     }
+  }
+  for (const span of spans) {
+    const kept = span.verdict === 'colour' || span.verdict === 'allowed';
+    if (!kept || span.speech || span.writing) continue;
+    const existing = objectNotes.find((note) => note.text === span.text);
+    if (existing?.objects.length) continue;
+    const objects = tagsFromPlacedSpan(span.text);
+    if (!objects.length) continue;
+    if (existing) existing.objects = objects;
+    else objectNotes.push({ text: span.text, speech: false, writing: false, kept: true, objects });
   }
   const result = finish(args.prose, spans, pieces, args.recentProse ?? [], people);
   result.objectNotes = objectNotes;

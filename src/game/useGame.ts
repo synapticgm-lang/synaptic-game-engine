@@ -52,8 +52,7 @@ import {
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
 import { captureTurnEngineFacts, repairParentExtra, withTrainLogJob } from './trainLog';
-import { storyAfterClauseCheck } from './clauseCheck';
-import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
+import { applyFactGate, isUnsureFactCheckEnabled, makeUnsureFactChecker } from './factGate';
 import { fileKeptRoomProps } from './roomProps';
 import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
@@ -3212,12 +3211,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...(writerTurn.combatLog ? [writerTurn.combatLog] : []),
           ],
         };
-        // Fact gate. Confident scenery stays. Other spans go through one batched check unless SGM_FACT_CHECK=off.
+        // Code verdicts decide every span. A model runs only for UNSURE, and only when SGM_UNSURE_FACT_CHECK=on.
         {
           const sheet = writerPacket?.factSheet ?? liveCurrent.completedEvent?.factSheet;
           const draft = result.text ?? '';
           if (sheet && draft.trim()) {
-            const factCheckOn = isFactCheckEnabled();
+            const unsureOn = isUnsureFactCheckEnabled();
             const gate = await applyFactGate({
               prose: draft,
               sheet,
@@ -3225,9 +3224,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               allowNames: writerPacket?.allowlist,
               recentProse: recentGmBeatTexts(liveCurrent),
               thirdPerson: narratesPcInThirdPerson(pcPov(liveCurrent.character, settingsRef.current.perspective)),
-              factCheckEnabled: factCheckOn,
-              factCheck: factCheckOn
-                ? makeHostedFactChecker((payload) => callGmCheck(liveCurrent, payload, settingsRef.current))
+              factCheckEnabled: false,
+              unsureCheckEnabled: unsureOn,
+              unsureCheck: unsureOn
+                ? makeUnsureFactChecker(sheet, (payload) => callGmCheck(liveCurrent, payload, settingsRef.current))
                 : undefined,
             });
             if (gate.objectNotes.length) {
@@ -3236,12 +3236,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             }
             if (gate.withheld) {
               const page = pageWhenClauseWithheld(liveCurrent, writerPacket, sanitizedInput);
-              const published = storyAfterClauseCheck({
-                clause: { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 0 },
-                enginePage: page,
-                draft,
-              });
-              result = { ...result, text: published.text };
+              result = { ...result, text: page };
               debugLogger.record('WARN', 'Fact gate left no prose', { turn: liveCurrent.turn });
             } else {
               result = {
