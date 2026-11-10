@@ -161,7 +161,15 @@
     }
    ],
    "title": "The Lamp-Stall Choice",
-   "page": "Thick tallow smoke curls around the wooden beams of the Last Lamp-Stall as you weigh your departure. An exposed flame would blaze your path and invite every eye across the basin, yet it would also keep the bitter night chill at bay. Banking the lantern deep in its case preserves your oil and cloaks your passage. The iron housing sits cold in your palm."
+   "page": "Thick tallow smoke curls around the wooden beams of the Last Lamp-Stall as you weigh your departure. An exposed flame would blaze your path and invite every eye across the basin, yet it would also keep the bitter night chill at bay. Banking the lantern deep in its case preserves your oil and cloaks your passage. The iron housing sits cold in your palm.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder watches the tallow smoke, his hand resting on his own unlit lantern."
+    }
+   ]
   },
   {
    "id": "sg-1-out",
@@ -177,7 +185,15 @@
     }
    ],
    "title": "Leaving the Rim Road",
-   "page": "Candlemere and the familiar safety of the Rim Road fall entirely behind you as you cross the threshold into the great white expanse of the Bitterflats. Every familiar landmark disappears into the vibrating heat haze, leaving only the endless salt crust and the distant gleam of the glass cities. You check your provisions and ensure your ember-lamp is secure, knowing that turning back is no longer an option.\n\nThe vast journey toward the centre of the Basin has truly begun."
+   "page": "Candlemere and the familiar safety of the Rim Road fall entirely behind you as you cross the threshold into the great white expanse of the Bitterflats. Every familiar landmark disappears into the vibrating heat haze, leaving only the endless salt crust and the distant gleam of the glass cities. You check your provisions and ensure your ember-lamp is secure, knowing that turning back is no longer an option.\n\nThe vast journey toward the centre of the Basin has truly begun.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder steps up beside you and shields his eyes against the glare. He checks his pack straps in silence."
+    }
+   ]
   },
   {
    "id": "sg-1-0-0-0",
@@ -2102,7 +2118,7 @@
     }
    ],
    "title": "The Distant Mill",
-   "page": "Walking entirely alone, you catch the muffled grind of a distant salt-mill working its stones through the windless afternoon silence. The mechanical groan vibrates up through the soles of your boots like the heartbeat of a sleeping leviathan.\n\nThe open track offers several distinct directions as the grinding noise fades into the dry air. You consider your options before taking another step into the heat."
+   "page": "Walking entirely alone, you catch the muffled grind of a distant salt-mill working its stones through the windless afternoon silence. The mechanical groan vibrates up through the soles of your boots like the heartbeat of a sleeping leviathan. The open track splits into distinct directions as the grinding noise fades into the dry air. Swinging your lamp openly to spite the toll-riders here would draw a deadly volley of poisoned sling-stones."
   },
   {
    "id": "sg-1-1-2-13",
@@ -2409,7 +2425,7 @@
     }
    ],
    "title": "The Choked Culvert",
-   "page": "Laborers toil with broad wooden shovels, heaving grey alkali silt from a choked stone culvert that once drained the rim hills. Their foreman wipes salt-crust from his forehead with a grease-rag, offering a gloomy nod as you pass. The cold ceramic Seedkey shifts heavily against your ribs beneath your woolen tunic.\n\nWith the afternoon fading fast, you must decide how to navigate the tightening gloom and the watchful eyes of the basin."
+   "page": "Laborers toil with broad wooden shovels, heaving grey alkali silt from a choked stone culvert that once drained the rim hills. Their foreman wipes salt-crust from his forehead with a grease-rag, offering a gloomy nod as you pass. The cold ceramic Seedkey shifts heavily against your ribs beneath your woolen tunic.\n\nWith the afternoon fading fast, shadows stretch across the watchful basin."
   },
   {
    "id": "sg-1-1-3-9",
@@ -2671,7 +2687,7 @@
     }
    ],
    "title": "Striking the Flint",
-   "page": "Darkness pools in the hollows of the rim road while a sharp draft carries the alkaline sting of the dry basin. Cold fingers fumble with the tin tinder-box, scraping flint against iron to coax a stubborn spark from the charred cloth within. Each tiny flash illuminates the frosted salt crust underfoot and the heavy ceramic Seedkey pressing cold against your ribs.\n\nBefore the ember catches or dies in the wind, a decision must be made regarding the lantern's glow and the long miles ahead."
+   "page": "Darkness pools in the hollows of the rim road while a sharp draft carries the alkaline sting of the dry basin. Cold fingers fumble with the tin tinder-box, scraping flint against iron to coax a stubborn spark from the charred cloth within. Each tiny flash illuminates the frosted salt crust underfoot and the heavy ceramic Seedkey pressing cold against your ribs.\n\nThe ember flares red for a fleeting second before the wind threatens to snatch it away into the long miles ahead."
   },
   {
    "id": "sg-1-1-4-3",
@@ -2721,7 +2737,7 @@
     }
    ],
    "title": "Wings Over Salt",
-   "page": "A flock of startled sand-grouse bursts from a dry gully, pale wings battering the evening air and shattering the stillness. Long violet shadows stretch quickly across the blinding white salt, swallowing the last bruised traces of sunset behind the western hills. After the sudden movement the stony track goes quiet, save for the crunch of your boots on the crust.\n\nStanding amid the fading light, you must choose how to manage your flame before complete darkness falls."
+   "page": "A flock of startled sand-grouse bursts from a dry gully, pale wings battering the evening air and shattering the stillness. Long violet shadows stretch quickly across the blinding white salt, swallowing the last bruised traces of sunset behind the western hills. After the sudden movement the stony track goes quiet, save for the crunch of your boots on the crust.\n\nOnly a sliver of daylight remains to guide your hands over the lantern glass before complete darkness falls."
   },
   {
    "id": "sg-1-1-4-5",
@@ -3760,7 +3776,7 @@
     }
    ],
    "title": "The Silt-Cliff Overhang",
-   "page": "Sharp sulphur stings your nostrils as you pause under the grey overhang of the silt-cliff to trim the charred wick of your ember-lamp. The banked coals pulse with a dull red warmth, keeping the chill of the rising night wind at bay. Loose dust trickles down from the dry earth above, ticking against your woollen cloak like falling gravel.\n\nYou can press onward toward the white cairn on the ledge, slip away into the limestone cleft, or strike your lamp directly into the volatile air of the old lime-kiln."
+   "page": "Sharp sulphur bites your nostrils as you pause under the grey overhang of the silt-cliff to trim the charred wick of your ember-lamp. The banked coals pulse with a dull red warmth, keeping the chill of the rising night wind at bay. Loose dust trickles down from the dry earth above, ticking against your woollen cloak like falling gravel. Striking your lamp directly in the old lime-kiln would ignite a fatal gas explosion."
   },
   {
    "id": "sg-1-2-3-7",
@@ -4335,7 +4351,15 @@
     }
    ],
    "title": "Arrival in the Bitterflats",
-   "page": "White salt flats stretch in every direction under a heavy zinc sky, playing tricks on your eyes with shimmering mirages of nonexistent lakes and soaring towers. In the distance, the low stone huts of the Dune Sisters mark their guarded wells, while a solitary Salt Court toll-hut cuts a sharp silhouette against the blinding horizon. Rumours of the deep vault whisper on the hot wind, drawing you onward into the heart of the ancient basin.\n\nSeveral distinct tracks branch out across the crusted salt before you."
+   "page": "White salt flats stretch in every direction under a heavy zinc sky, playing tricks on your eyes with shimmering mirages of nonexistent lakes and soaring towers. In the distance, the low stone huts of the Dune Sisters mark their guarded wells, while a solitary Salt Court toll-hut cuts a sharp silhouette against the blinding horizon. Rumours of the deep vault whisper on the hot wind, drawing you onward into the heart of the ancient basin.\n\nSeveral distinct tracks branch out across the crusted salt before you.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder points to the horizon, tracing the edge of a mirage with a calloused finger."
+    }
+   ]
   },
   {
    "id": "sg-2-c1",
@@ -4363,7 +4387,15 @@
     }
    ],
    "title": "The Binding Oath",
-   "page": "Steam rises faintly from the stone well-mouth as the well-keepers gather close, waiting for your final word on the bargain. Accepting their water means pledging your future loyalty to an unknown demand, whereas refusing leaves you to carry your thirst back out into the blinding white expanse with your own dwindling supplies.\n\nThe choice hangs heavy in the dry air between you and the silent watchers."
+   "page": "Steam rises faintly from the stone well-mouth as the well-keepers gather close, waiting for your final word on the bargain. Accepting their water means pledging your future loyalty to an unknown demand, whereas refusing leaves you to carry your thirst back out into the blinding white expanse with your own dwindling supplies.\n\nThe choice hangs heavy in the dry air between you and the silent watchers.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder frowns at the well-mouth, keeping one hand near his belt as he waits for your signal."
+    }
+   ]
   },
   {
    "id": "sg-2-c2",
@@ -4391,7 +4423,15 @@
     }
    ],
    "title": "The Toll-Collector's Demand",
-   "page": "A lean official blocks your way, tapping a ledger with an ink-stained finger and demanding settlement before you take another step across the Salt Court's territory. You can either sign your name to their cruel credit terms, pledging a future portion of your harvest for safe passage today, or you can open your personal purse and pay the heavy coin fee outright. The clerk waits with quill poised, watching the glow of your lamp with sharp, calculating eyes."
+   "page": "A lean official blocks your way, tapping a ledger with an ink-stained finger and demanding settlement before you take another step across the Salt Court's territory. You can either sign your name to their cruel credit terms, pledging a future portion of your harvest for safe passage today, or you can open your personal purse and pay the heavy coin fee outright. The clerk waits with quill poised, watching the glow of your lamp with sharp, calculating eyes.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder shifts his weight and glares at the official's ledger while his boots grind into the salt crust."
+    }
+   ]
   },
   {
    "id": "sg-2-out",
@@ -4407,7 +4447,15 @@
     }
    ],
    "title": "Leaving the Bitterflats",
-   "page": "Behind you, the endless white expanse of the Bitterflats fades into a shimmering haze of salt and mirage, its cruel beauty swallowed by the gathering shadows of evening. Ahead lies the labyrinthine maze of the Shard Cities, where towering walls of fractured glass and ancient metal whisper secrets to the desert wind. You hitch the ember-lamp strap and check the glowing coals so they keep their heat for the chill of the ruined metropolis."
+   "page": "Behind you, the endless white expanse of the Bitterflats fades into a shimmering haze of salt and mirage, its cruel beauty swallowed by the gathering shadows of evening. Ahead lies the labyrinthine maze of the Shard Cities, where towering walls of fractured glass and ancient metal whisper secrets to the desert wind. You hitch the ember-lamp strap and check the glowing coals so they keep their heat for the chill of the ruined metropolis.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder falls into step beside you, pulling his collar high against the gathering evening wind."
+    }
+   ]
   },
   {
    "id": "sg-2-0-0-0",
@@ -4725,7 +4773,16 @@
     }
    ],
    "title": "The Humming Boundary",
-   "page": "A solitary metal boundary marker vibrates in the dry heat with residual low-frequency current from the Old Lensfolk days that sets your teeth on edge as you hurry past the iron. The strange metallic tone sits in the stagnant air. Skin on your arms prickles.\n\nAlone and without a guide, you notice the small marks in the crust that a party would walk past."
+   "page": "A solitary metal boundary marker vibrates in the dry heat with residual low-frequency current from the Old Lensfolk days that sets your teeth on edge as you hurry past the iron. The strange metallic tone sits in the stagnant air. Skin on your arms prickles.\n\nAlone and without a guide, you notice the small marks in the crust that a party would walk past.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder hangs back, eyeing the vibrating iron with suspicion.",
+     "replace": "A solitary metal boundary marker vibrates in the dry heat with residual low-frequency current from the Old Lensfolk days that sets your teeth on edge as you hurry past the iron. The strange metallic tone sits in the stagnant air. Skin on your arms prickles.\n\nYou notice the small marks in the crust that a party would walk past."
+    }
+   ]
   },
   {
    "id": "sg-2-0-1-6",
@@ -4848,7 +4905,16 @@
     }
    ],
    "title": "The Damp Hollow",
-   "page": "Silence presses on the Bitterflats like a hot flat iron. Boot crunch breaks it. Alone across this blinding expanse without a guide's chatter, you spot a faint depression in the salt where a fresh moisture seep has softened the surface, and a rich earthy smell rises from the damp grey clay that offers a rare chance to refill your canteen or unearth something left by earlier travelers. Pale glare shimmers into white lakes that obscure the horizon. The muddy hollow sits at your feet."
+   "page": "Silence presses on the Bitterflats like a hot flat iron. Boot crunch breaks it. Alone across this blinding expanse without a guide's chatter, you spot a faint depression in the salt where a fresh moisture seep has softened the surface, and a rich earthy smell rises from the damp grey clay that offers a rare chance to refill your canteen or unearth something left by earlier travelers. Pale glare shimmers into white lakes that obscure the horizon. The muddy hollow sits at your feet.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder points his walking stick toward the depression, nodding silently.",
+     "replace": "Silence presses on the Bitterflats like a hot flat iron. Boot crunch breaks it. You spot a faint depression in the salt where a fresh moisture seep has softened the surface, and a rich earthy smell rises from the damp grey clay that offers a rare chance to refill your canteen or unearth something left by earlier travelers. Pale glare shimmers into white lakes that obscure the horizon. The muddy hollow sits at your feet."
+    }
+   ]
   },
   {
    "id": "sg-2-0-2-1",
@@ -6268,7 +6334,16 @@
     }
    ],
    "title": "The Copper Milestone",
-   "page": "An old copper milestone lies half-buried in the white drift, its engraved distance numbers scoured smooth by decades of relentless dust-storms until it is nothing more than a dull green coin in the salt. You pause in its meager shadow to catch your breath, scanning the horizon for any sign of movement. Being entirely by yourself means you catch every subtle disturbance in the landscape that a guide's idle chatter might have masked."
+   "page": "An old copper milestone lies half-buried in the white drift, its engraved distance numbers scoured smooth by decades of relentless dust-storms until it is nothing more than a dull green coin in the salt. You pause in its meager shadow to catch your breath, scanning the horizon for any sign of movement. Being entirely by yourself means you catch every subtle disturbance in the landscape that a guide's idle chatter might have masked.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder crouches beside the milestone, keeping a watchful eye on the drift.",
+     "replace": "An old copper milestone lies half-buried in the white drift, its engraved distance numbers scoured smooth by decades of relentless dust-storms until it is nothing more than a dull green coin in the salt. You pause in its meager shadow to catch your breath, scanning the horizon for any sign of movement. You catch every subtle disturbance in the landscape that casual chatter might have masked."
+    }
+   ]
   },
   {
    "id": "sg-2-1-2-8",
@@ -6325,7 +6400,7 @@
     }
    ],
    "title": "The Mirror Flash",
-   "page": "A sharp flash from a distant glasswright's mirror tower winks three times across the basin, signaling trouble and strict watchfulness on the high plateaus ahead. You shade your eyes against the glare, trying to decipher whether the code warns of shifting salt-storms or approaching toll-collectors.\n\nThe light fades into the shimmering haze, leaving you to decide your immediate path."
+   "page": "A sharp flash from a distant glasswright's mirror tower winks three times across the basin, signaling trouble and strict watchfulness on the high plateaus ahead. You shade your eyes against the glare, trying to decipher whether the code warns of shifting salt-storms or approaching toll-collectors. The light fades into the shimmering haze. Sprinting over the unstable sink-basin ahead means a plunge into boiling subterranean brine."
   },
   {
    "id": "sg-2-1-2-10",
@@ -7832,7 +7907,7 @@
     }
    ],
    "title": "The Sealed Well",
-   "page": "A rusted winch frame creaks in the dry desert breeze above a stone well-head sealed tightly with thick lead mortar, and the official seal of the Salt Court is stamped into the lead. The water is private. It was bought and paid for with tolls, and stagnant moisture rises from beneath the seal and sharpens the thirst in your throat.\n\nUnder the midday glare the lead seal keeps its dull shine."
+   "page": "A rusted winch frame creaks in the dry desert breeze above a stone well-head sealed tightly with thick lead mortar, and the official seal of the Salt Court is stamped into the lead. The water is private. It was bought and paid for with tolls, and stagnant moisture rises from beneath the seal and sharpens the thirst in your throat. Under the midday glare the lead seal keeps its dull shine. Marching onto the boiling sulfur flats with an empty canteen is certain death."
   },
   {
    "id": "sg-2-2-2-13",
@@ -8669,7 +8744,15 @@
     }
    ],
    "title": "Arrival in the Shard Cities",
-   "page": "Jagged towers of fused crystal and shattered glass rise around you like the ribs of prehistoric beasts, and they form a dense maze of silent alleys and towering archways in the heart of the Basin. High above, Glasswright signal-towers catch the last slanting rays of sunlight. Sudden coded flashes cross the labyrinth of streets and pedestrian bridges. Scavengers and stray travelers huddle in doorways wrapped in salt-stained cloaks and watch you pass. Wind whistles through empty window frames."
+   "page": "Jagged towers of fused crystal and shattered glass rise around you like the ribs of prehistoric beasts, and they form a dense maze of silent alleys and towering archways in the heart of the Basin. High above, Glasswright signal-towers catch the last slanting rays of sunlight. Sudden coded flashes cross the labyrinth of streets and pedestrian bridges. Scavengers and stray travelers huddle in doorways wrapped in salt-stained cloaks and watch you pass. Wind whistles through empty window frames.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder stays close to the jagged walls, his boots crunching on the glass-littered stones."
+    }
+   ]
   },
   {
    "id": "sg-3-c1",
@@ -8697,7 +8780,15 @@
     }
    ],
    "title": "The Rumour Market",
-   "page": "Heated arguments erupt near a fountain of dry, salt-crusted stone where merchants trade conflicting tales of the great subterranean vault. One faction of ragged scavengers swears the ancient cisterns remain untouched and brimming with fresh mountain meltwater, waiting only for the proper key to turn. Conversely, a group of frantic caravan guards insists the Salt Court breached the lower valves months ago and drained every drop for their private wells."
+   "page": "Heated arguments erupt near a fountain of dry, salt-crusted stone where merchants trade conflicting tales of the great subterranean vault. One faction of ragged scavengers swears the ancient cisterns remain untouched and brimming with fresh mountain meltwater, waiting only for the proper key to turn. Conversely, a group of frantic caravan guards insists the Salt Court breached the lower valves months ago and drained every drop for their private wells.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder listens to the merchants bicker, crossing his arms over his salt-stained coat."
+    }
+   ]
   },
   {
    "id": "sg-3-c2",
@@ -8725,7 +8816,15 @@
     }
    ],
    "title": "The Signal-Tower Sanctum",
-   "page": "Within the echoing heart of the signal-tower, a robed Glasswright pauses from adjusting a massive brass collimator and turns a pair of pale, lens-ground spectacles toward you. The artisan traces a complex pattern in the air with a polished silver rod, offering to teach you the intricate art of mirror-signal speech before the next watch changes. Such knowledge would unlock the silent language of the spires, but the process demands a full day of study that you can ill afford with the monsoon creeping closer across the basin."
+   "page": "Within the echoing heart of the signal-tower, a robed Glasswright pauses from adjusting a massive brass collimator and turns a pair of pale, lens-ground spectacles toward you. The artisan traces a complex pattern in the air with a polished silver rod, offering to teach you the intricate art of mirror-signal speech before the next watch changes. Such knowledge would unlock the silent language of the spires, but the process demands a full day of study that you can ill afford with the monsoon creeping closer across the basin.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder studies the brass collimator, tapping a slow rhythm against his thigh as he waits for your call."
+    }
+   ]
   },
   {
    "id": "sg-3-out",
@@ -8741,7 +8840,15 @@
     }
    ],
    "title": "The Mirror Storm",
-   "page": "The shattered labyrinth of the Shard Cities falls behind you as a roaring wall of glass-dust and rising gale swallows the horizon. Ahead lies the vast, untamed expanse of the dune-sea and the looming shadow of Prism, where the ancient Rain Vault waits beneath the dust. You adjust the strap of your ember-lamp, checking the cold weight of the Seedkey one last time before stepping boldly into the blinding squall.\n\nYou can continue your journey into the storm."
+   "page": "The shattered labyrinth of the Shard Cities falls behind you as a roaring wall of glass-dust and rising gale swallows the horizon. Ahead lies the vast, untamed expanse of the dune-sea and the looming shadow of Prism, where the ancient Rain Vault waits beneath the dust. You adjust the strap of your ember-lamp, checking the cold weight of the Seedkey one last time before stepping boldly into the blinding squall.\n\nYou can continue your journey into the storm.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder pulls a scarf over his nose and mouth, squinting into the flying glass-dust."
+    }
+   ]
   },
   {
    "id": "sg-3-0-0-0",
@@ -10174,7 +10281,16 @@
     }
    ],
    "title": "Leaning Green Arcade",
-   "page": "Sunlight filters through a leaning arcade of greenish glass, casting a sickly emerald hue over the cracked pavement beneath your boots. A desperate smuggler crouches near a pillar, insisting in a frantic whisper that the Rain Vault is already heavily guarded by the Salt Court's elite pikemen. Your breath catches in your throat as you realize how closely watched the main avenues have become. Without a companion to draw unwanted attention away, you notice small details that others usually miss entirely."
+   "page": "Sunlight filters through a leaning arcade of greenish glass, casting a sickly emerald hue over the cracked pavement beneath your boots. A desperate smuggler crouches near a pillar, insisting in a frantic whisper that the Rain Vault is already heavily guarded by the Salt Court's elite pikemen. Your breath catches in your throat as you realize how closely watched the main avenues have become. Without a companion to draw unwanted attention away, you notice small details that others usually miss entirely.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder puts a steadying hand on your shoulder and scans the shadows.",
+     "replace": "Sunlight filters through a leaning arcade of greenish glass, casting a sickly emerald hue over the cracked pavement beneath your boots. A desperate smuggler crouches near a pillar, insisting in a frantic whisper that the Rain Vault is already heavily guarded by the Salt Court's elite pikemen. Your breath catches in your throat as you realize how closely watched the main avenues have become. You notice small details that others usually miss entirely."
+    }
+   ]
   },
   {
    "id": "sg-3-1-1-0",
@@ -12543,7 +12659,7 @@
     }
    ],
    "title": "Trench of Glass Teeth",
-   "page": "Jagged glass teeth line the bottom of a deep trench that cuts across the thoroughfare like an open wound. A fallen metal girder spans the chasm, offering a narrow, trembling lane of safety above the razor-sharp floor. You steady your breathing and prepare to cross the terrifying gap, keeping your eyes fixed firmly on the far ledge."
+   "page": "Jagged glass teeth line the bottom of a deep trench that cuts across the thoroughfare like an open wound. A fallen metal girder spans the chasm, offering a narrow, trembling lane of safety above the razor-sharp floor. You catch your breath and prepare to cross the terrifying gap, keeping your eyes fixed firmly on the far ledge. Careless haste across the frail glass would drop you into the bottomless trench of shards below."
   },
   {
    "id": "sg-3-2-3-10",
@@ -13025,7 +13141,15 @@
     }
    ],
    "title": "The Mirror Storm Breaks",
-   "page": "A wall of singing glass-dust rears against the horizon and turns the pale sky the color of a bruised plum. You pull your thick wool scarf higher across your face as the gale-force wind flings fine crystal grit against your leather coat and finds every seam. Your banked ember-lamp glows a stubborn warm orange in your gloved grip. Cold ceramic Seedkey rests against your ribs. The salt-crust beneath your boots shudders under the rising atmospheric pressure."
+   "page": "A wall of singing glass-dust rears against the horizon and turns the pale sky the color of a bruised plum. You pull your thick wool scarf higher across your face as the gale-force wind flings fine crystal grit against your leather coat and finds every seam. Your banked ember-lamp glows a stubborn warm orange in your gloved grip. Cold ceramic Seedkey rests against your ribs. The salt-crust beneath your boots shudders under the rising atmospheric pressure.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder squints into the gale, his hand resting on the hilt of his glass-knife. He nods toward the looming towers."
+    }
+   ]
   },
   {
    "id": "sg-4-c1",
@@ -13053,7 +13177,15 @@
     }
    ],
    "title": "The Glass-Dust Wall",
-   "page": "Towering banks of razor-fine quartz and grey powder churn before you, a wall of the Mirror Storm that promises to strip paint from metal and flesh from bone. Your fingers brush the cold ceramic Seedkey in your pocket; one wrong method here will ruin the mission before you ever reach the heart of the Basin. Spare cloth waits in your pack to wrap the ceramic tight, though wrapping costs minutes the dunes will not give back. The leather pouch already holds it as it is, thin against the grit.\n\nGlass grit skates across the Seedkey's cold face."
+   "page": "Towering banks of razor-fine quartz and grey powder churn before you, a wall of the Mirror Storm that promises to strip paint from metal and flesh from bone. Your fingers brush the cold ceramic Seedkey in your pocket; one wrong method here will ruin the mission before you ever reach the heart of the Basin. Spare cloth waits in your pack to wrap the ceramic tight, though wrapping costs minutes the dunes will not give back. The leather pouch already holds it as it is, thin against the grit.\n\nGlass grit skates across the Seedkey's cold face.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder shields his own pack from the razor-fine quartz, watching the leather pouch in your hands."
+    }
+   ]
   },
   {
    "id": "sg-4-c2",
@@ -13081,7 +13213,15 @@
     }
    ],
    "title": "Heart of the Storm",
-   "page": "The storm reaches its roaring apex, screaming across the glass flats with enough force to shatter wood and strip skin, directly threatening to crush your ember-lamp into total darkness. If the coals go out here, the cold will claim your fingers before you ever reach the Vault, leaving the seed-hall locked forever. You can throw your own body around the brass chimney to take the brunt of the flying glass and heat, or you can let the storm take the lantern and trust your frozen feet to find the way through the blind dark."
+   "page": "The storm reaches its roaring apex, screaming across the glass flats with enough force to shatter wood and strip skin, directly threatening to crush your ember-lamp into total darkness. If the coals go out here, the cold will claim your fingers before you ever reach the Vault, leaving the seed-hall locked forever. You can throw your own body around the brass chimney to take the brunt of the flying glass and heat, or you can let the storm take the lantern and trust your frozen feet to find the way through the blind dark.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder crouches beside you, pulling his collar high against the flying glass. He waits for your signal."
+    }
+   ]
   },
   {
    "id": "sg-4-out",
@@ -13097,7 +13237,15 @@
     }
    ],
    "title": "Beyond the Storm",
-   "page": "The howling gale of the mirror storm finally falls away behind you, and a vast silent expanse of white earth stretches toward the distant horizon. Prism looms ahead like a jagged crown of glass and dark stone. Its towers catch the pale desert light. You adjust the cold ceramic key in your pouch. The threshold into the heart of the dry basin lies under your next step."
+   "page": "The howling gale of the mirror storm finally falls away behind you, and a vast silent expanse of white earth stretches toward the distant horizon. Prism looms ahead like a jagged crown of glass and dark stone. Its towers catch the pale desert light. You adjust the cold ceramic key in your pouch. The threshold into the heart of the dry basin lies under your next step.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder stops to shake the pale grit from his boots. He checks the horizon one last time before falling into step beside you."
+    }
+   ]
   },
   {
    "id": "sg-4-0-0-0",
@@ -15593,7 +15741,7 @@
     }
    ],
    "title": "The Rusted Iron Flange",
-   "page": "Beneath a massive flange of rusted iron pipe, you pause and lash the Seedkey inside your tunic with a length of braided hemp cord. The cold ceramic piece warms slightly against your ribs. Green vaults wait at the basin's heart. Overhead the metal groans as the wind presses on it."
+   "page": "Beneath a massive flange of rusted iron pipe, you pause and lash the Seedkey inside your tunic with a length of braided hemp cord. The cold ceramic piece warms slightly against your ribs. Green vaults wait at the basin's heart. Overhead the metal groans as the wind presses on it. Racing blindly through the mirror storm without shielding your lamp invites a plunge onto jagged shale."
   },
   {
    "id": "sg-4-1-3-15",
@@ -15643,7 +15791,7 @@
     }
    ],
    "title": "The Screaming Pipe",
-   "page": "Shrieking air funnels through the rusted throat of the giant drainage flute, turning every breath into a struggle against the pressure. The howling wind rattles your ribs and scours the salt from your boots while you crouch low to keep your balance. Clinging tightly to the cold iron rim of the pipe, you must decide whether to crawl forward into the roaring interior or scramble back toward the shelter of the masonry."
+   "page": "Shrieking air funnels through the rusted throat of the giant drainage flute, turning every breath into a struggle against the pressure. The howling wind rattles your ribs and scours the salt from your boots while you crouch low to keep your balance. You cling tightly to the cold iron rim of the pipe, your boots slipping on the slick metal edge as the interior roars."
   },
   {
    "id": "sg-4-1-4-1",
@@ -16667,7 +16815,7 @@
     }
    ],
    "title": "The Crystal Hollow",
-   "page": "Fine crystal meal fills every fold of your travel-worn garments while you pause to scrape encrusted salt from your burning eyelids. Your muscles ache down to the bone, yet the ember-lamp still holds its vital coal against the swirling dark. The ceramic key feels like a block of river-ice against your chest, anchoring you to your mission as the storm shrieks overhead. Several uncertain paths branch out into the roaring haze, each offering a different gamble against the elements."
+   "page": "Fine crystal meal fills every fold of your travel-worn garments while you pause to scrape encrusted salt from your burning eyelids. Your muscles ache down to the bone, yet the ember-lamp still holds its vital coal against the swirling dark. The ceramic key feels like a block of river-ice against your chest, anchoring you to your mission as the storm shrieks overhead. Rushing blindly through the tempest without cupping your lamp guarantees a fatal slip into a hidden trench of razor-sharp cullet."
   },
   {
    "id": "sg-4-2-3-3",
@@ -17355,7 +17503,15 @@
     }
    ],
    "title": "The Heart of Prism",
-   "page": "Rising from the flat expanse of the dried sea, Prism stands as an imposing maze of tilted lenses, basalt galleries, and quiet courtyards. Glasswright sentries flash warning codes from the upper parapets while rival claimants and weary wanderers crowd the lower approaches. Your journey has brought you to the doorstep of the legendary Rain Vault, and several distinct routes now open before you through the city's labyrinthine avenues."
+   "page": "Rising from the flat expanse of the dried sea, Prism stands as an imposing maze of tilted lenses, basalt galleries, and quiet courtyards. Glasswright sentries flash warning codes from the upper parapets while rival claimants and weary wanderers crowd the lower approaches. Your journey has brought you to the doorstep of the legendary Rain Vault, and several distinct routes now open before you through the city's labyrinthine avenues.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder keeps his head down as you navigate the crowded approaches. He scans the rival claimants, ready to draw his blade if they step too close."
+    }
+   ]
   },
   {
    "id": "sg-5-c1",
@@ -17415,7 +17571,15 @@
     }
    ],
    "title": "The Sentry Terrace",
-   "page": "The wind whips across the vast expanse of the Sentry Terrace, carrying the metallic tang of heated brass and old glass. Ahead, the observation gates block the path toward the heart of Prism, manned by vigilant Glasswrights whose mirrors click like beetles in the dry air. You stand before the watchers' shimmering net, ready to talk your way through if your preparations hold, or to slip past on stealth alone if they do not.\n\nThe air is heavy with tension as you weigh your options against the relentless glare of the midday sun."
+   "page": "The wind whips across the vast expanse of the Sentry Terrace, carrying the metallic tang of heated brass and old glass. Ahead, the observation gates block the path toward the heart of Prism, manned by vigilant Glasswrights whose mirrors click like beetles in the dry air. You stand before the watchers' shimmering net, ready to talk your way through if your preparations hold, or to slip past on stealth alone if they do not.\n\nThe air is heavy with tension as you weigh your options against the relentless glare of the midday sun.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder ducks behind a fractured lens, watching the sentries above. He grips your shoulder and points toward a gap in the patrol."
+    }
+   ]
   },
   {
    "id": "sg-5-out",
@@ -17431,7 +17595,15 @@
     }
    ],
    "title": "Leaving the Observatory",
-   "page": "You leave Prism for the Rain Vault and close this part of the long journey as you look ahead to the dark chambers beneath the ruined city. The doors swing inward with a low scrape of ancient bronze on stone, and a draft of cool damp air pours up from the deep seed halls. Footsteps ring hollow against the ribbed vaults. You leave the dry sun-baked surface world behind for good.\n\nBelow your boots the hidden maze of the old reservoir stretches out in silence, and the stone bins hold the forgotten wealth of a hundred dead towns. Your lantern beam cuts a narrow yellow lane through the mist toward the final doors that hold the survival of Candlemere."
+   "page": "You leave Prism for the Rain Vault and close this part of the long journey as you look ahead to the dark chambers beneath the ruined city. The doors swing inward with a low scrape of ancient bronze on stone, and a draft of cool damp air pours up from the deep seed halls. Footsteps ring hollow against the ribbed vaults. You leave the dry sun-baked surface world behind for good.\n\nBelow your boots the hidden maze of the old reservoir stretches out in silence, and the stone bins hold the forgotten wealth of a hundred dead towns. Your lantern beam cuts a narrow yellow lane through the mist toward the final doors that hold the survival of Candlemere.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder strikes a match to check the air draft before crossing the threshold. He gestures to the downward slope with a silent nod."
+    }
+   ]
   },
   {
    "id": "sg-5-0-0-0",
@@ -19987,7 +20159,7 @@
     }
    ],
    "title": "The Greasy Cable-Run",
-   "page": "You scramble up a vertical cable-run where greasy soot turns every handhold into a slippery gamble. Your fingers catch the braided steel strands, but ancient lubricants smear your palms and try to peel your grip away with every upward pull. The shaft below drops into absolute darkness. Above you, a pale smudge of daylight marks the edge of the terrace you need to reach."
+   "page": "You scramble up a vertical cable-run where greasy soot turns every handhold into a slippery gamble. Your fingers catch the braided steel strands, but ancient lubricants smear your palms and try to peel your grip away with every upward pull. The shaft below drops into absolute darkness. Above you, a pale smudge of daylight marks the edge of the terrace you need to reach. Sprinting openly across that terrace will draw a deadly volley of focused solar beams."
   },
   {
    "id": "sg-5-1-3-14",
@@ -21024,7 +21196,7 @@
     }
    ],
    "title": "The Resin Storeroom",
-   "page": "Crates of dried pine resin and spare lamp-wicks tower around you in the dim supply alcove. Through a narrow gap between two stacked hampers you watch hooked lanterns throw yellow glow across the floorboards, and a patrol searches the racks for intruders. Your fingers tighten around the cold ceramic seedkey in your satchel. Boot murmur draws nearer. Floorboards creak one bay over."
+   "page": "Crates of dried pine resin and spare lamp-wicks tower around you in the dim supply alcove. Through a narrow gap between two stacked hampers you watch hooked lanterns throw yellow glow across the floorboards, and a patrol searches the racks for intruders. Your fingers tighten around the cold ceramic seedkey in your satchel. Boot murmur draws nearer. Floorboards creak one bay over. Smashing through the sentry gate with your lantern will shatter the glass and guarantee certain death in the flooding galleries."
   },
   {
    "id": "sg-5-2-3-0",
@@ -21767,7 +21939,15 @@
     }
    ],
    "title": "Beneath the Glass City",
-   "page": "Arrival in the Rain Vault beneath Prism brings the scent of ancient damp and every old promise coming due as you enter the central hall with several ways forward. Towering pillars of fused quartz and dark basalt stretch upward into the gloom. They hold the observatory-city above while water drips with a rhythmic chime from the ceiling. Your lantern flame holds still in the chilled air and throws long wavering fingers of light across dust-covered stone pathways that branch into the subterranean dark.\n\nDirection sits on your tongue like grit. Each tunnel leads deeper into the labyrinth where the forgotten harvests of the Old Lensfolk sleep beneath their locks. You adjust the strap of your pack and grip the warm handle of your lantern."
+   "page": "Arrival in the Rain Vault beneath Prism brings the scent of ancient damp and every old promise coming due as you enter the central hall with several ways forward. Towering pillars of fused quartz and dark basalt stretch upward into the gloom. They hold the observatory-city above while water drips with a rhythmic chime from the ceiling. Your lantern flame holds still in the chilled air and throws long wavering fingers of light across dust-covered stone pathways that branch into the subterranean dark.\n\nDirection sits on your tongue like grit. Each tunnel leads deeper into the labyrinth where the forgotten harvests of the Old Lensfolk sleep beneath their locks. You adjust the strap of your pack and grip the warm handle of your lantern.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder checks his own lantern against the cold draft blowing from the tunnels. He waits for you to pick the path."
+    }
+   ]
   },
   {
    "id": "sg-6-c1",
@@ -21797,7 +21977,15 @@
     }
    ],
    "title": "The Heart of the Vaults",
-   "page": "Vaulted ceilings stretch into darkness as the massive doors swing inward to reveal the legendary seed halls of Prism, silent and immense. What you find here hangs upon the long-buried truths of the basin, shifting between towering heaps of preserved grain and empty chambers stripped bare by forgotten looters. The cold ceramic key grows heavier in your hand as the silence of the deep earth presses down on your shoulders."
+   "page": "Vaulted ceilings stretch into darkness as the massive doors swing inward to reveal the legendary seed halls of Prism, silent and immense. What you find here hangs upon the long-buried truths of the basin, shifting between towering heaps of preserved grain and empty chambers stripped bare by forgotten looters. The cold ceramic key grows heavier in your hand as the silence of the deep earth presses down on your shoulders.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder runs a gloved hand along the cold wall, his eyes searching the dark corners for traps. He stays close to your flank."
+    }
+   ]
   },
   {
    "id": "sg-6-c2",
@@ -21827,7 +22015,15 @@
     }
    ],
    "title": "The Vault Lock Chamber",
-   "page": "Heavy air settles in the Lock Chamber, tasting of deep stone and dry centuries. Before you looms the great circular seal of the Rain Vault, its cold face etched with the faded map of a flooded basin. If you carry the memory of the well-song given by the Dune Sisters, your voice can coax the ancient tumblers to turn without friction or fury. Without that fragile covenant, however, the lock demands muscle and patience, forcing you to crank the rusted iron levers by hand while the basalt walls groan around your shoulders. Every choice here carries the weight of the coming harvest, and the chamber watches with silent, expectant stillness."
+   "page": "Heavy air settles in the Lock Chamber, tasting of deep stone and dry centuries. Before you looms the great circular seal of the Rain Vault, its cold face etched with the faded map of a flooded basin. If you carry the memory of the well-song given by the Dune Sisters, your voice can coax the ancient tumblers to turn without friction or fury. Without that fragile covenant, however, the lock demands muscle and patience, forcing you to crank the rusted iron levers by hand while the basalt walls groan around your shoulders. Every choice here carries the weight of the coming harvest, and the chamber watches with silent, expectant stillness.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder stands ready by the rusted iron levers. He watches your face to see what you will try first."
+    }
+   ]
   },
   {
    "id": "sg-6-out",
@@ -21855,7 +22051,15 @@
     }
    ],
    "title": "The Final Reckoning",
-   "page": "Cool ceramic rests against your palm as you stand before the towering bronze gates of the Rain Vault, and the monsoon drums against the observatory dome in a deep beat you can feel through the stone. The ancient seed hall is open to whatever comes next, and every parched town from the rim to the sunken basin hangs on what leaves this place. Water pools around your boots, shallow and stubborn. The dry years are done.\n\nOne road out shares the seed among the thirsty millions, another hides it forever behind sealed lead, and a third carries it in secret toward the dying hearths of Candlemere."
+   "page": "Cool ceramic rests against your palm as you stand before the towering bronze gates of the Rain Vault, and the monsoon drums against the observatory dome in a deep beat you can feel through the stone. The ancient seed hall is open to whatever comes next, and every parched town from the rim to the sunken basin hangs on what leaves this place. Water pools around your boots, shallow and stubborn. The dry years are done.\n\nOne road out shares the seed among the thirsty millions, another hides it forever behind sealed lead, and a third carries it in secret toward the dying hearths of Candlemere.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder stands beside the vault doors, wiping rain from his face. He looks at the bronze mechanism, ready to help you turn the locks."
+    }
+   ]
   },
   {
    "id": "sg-6-0-0-0",
@@ -22099,7 +22303,16 @@
     }
    ],
    "title": "The Scored Alcove",
-   "page": "An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor who found no way out before the drought took hold. The metallic tang of rust fills your nose as you shine your banked lantern into the shadowed recess.\n\nYou can advance toward the circular chamber or risk a hidden floor-drop if you are traveling entirely alone without a companion to distract your eye."
+   "page": "An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor who found no way out before the drought took hold. The metallic tang of rust fills your nose as you shine your banked lantern into the shadowed recess.\n\nYou can advance toward the circular chamber or risk a hidden floor-drop if you are traveling entirely alone without a companion to distract your eye.",
+   "variants": [
+    {
+     "when": {
+      "guide": "calder"
+     },
+     "after": "Calder grimaces at the rust and claw marks, gripping his pack straps tight.",
+     "replace": "An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor who found no way out before the drought took hold. The metallic tang of rust fills your nose as you shine your banked lantern into the shadowed recess.\n\nYou can advance toward the circular chamber or risk a hidden floor-drop."
+    }
+   ]
   },
   {
    "id": "sg-6-0-1-4",
@@ -23942,7 +24155,7 @@
     }
    ],
    "title": "The Granary Wall",
-   "page": "Within a vaulted granary echoing with your solitary footsteps, you trace the faded blue stencil of the Old Lensfolk grain mark. The painted emblem - a stylized rain cloud pierced by a needle of light - remains remarkably sharp despite centuries of neglect. Rows of empty storage bays stretch away into the gloom on either side, their earthen floors covered in a fine drift of powdery mineral dust. You pause to listen, hearing only the steady, rhythmic drip of water somewhere in the darkness ahead."
+   "page": "Within a vaulted granary ringing with your solitary footsteps, you trace the faded blue stencil of the Old Lensfolk grain mark. The painted emblem - a stylized rain cloud pierced by a needle of light - remains remarkably sharp despite centuries of neglect. Rows of empty storage bays stretch away into the gloom on either side, their earthen floors covered in a fine drift of powdery mineral dust. You pause to listen, hearing only the rhythmic drip of water somewhere in the darkness ahead. Jamming the Seedkey into a rusted pressure valve here would trigger a catastrophic ceiling collapse."
   },
   {
    "id": "sg-6-1-2-14",
@@ -25129,7 +25342,7 @@
     }
    ],
    "title": "The Chamber of Whispering Lenses",
-   "page": "Hundreds of curved, centuries-old mirrors catch your flickering lantern light, refracting a chaotic web of blinding beams across the damp stone floor. Every movement you make sends dazzling arcs of light dancing across the vaulted ceiling, accompanied by a faint, glassine hum like a swarm of metal bees. The brilliant glare makes it difficult to see where the walkways lead, forcing you to navigate by touch and instinct through the maze of optics.\n\nThe air smells of ozone and static electricity, and you must choose which reflected pathway to follow into the dark."
+   "page": "Hundreds of curved, centuries-old mirrors catch your flickering lantern light, refracting a chaotic web of blinding beams across the damp stone floor. Every movement you make sends dazzling arcs of light dancing across the vaulted ceiling, accompanied by a faint, glassine hum like a swarm of metal bees. The brilliant glare makes it difficult to see where the walkways lead, forcing you to navigate by touch and instinct through the maze of optics.\n\nThe air smells of ozone and static electricity as the reflections cast false pathways into the dark."
   },
   {
    "id": "sg-6-2-2-6",
@@ -25786,7 +25999,7 @@
     }
    ],
    "title": "The Iron Rail",
-   "page": "Across the threshold of the innermost sanctum, the floor drops away into a sheer pit crossed only by a narrow rail of wrought iron. The drop below is swallowed by absolute blackness, save for the faint red embers of your lantern reflecting off the polished metal bar. The wind howls upward from the chasm with a dry, melodic whistle that rattles the teeth in your jaw."
+   "page": "Across the threshold of the innermost sanctum, the floor drops away into a sheer pit crossed only by a narrow rail of wrought iron. The drop below is swallowed by absolute blackness, save for the faint red embers of your lantern reflecting off the polished metal bar. The wind howls upward from the chasm with a dry, melodic whistle that rattles the teeth in your jaw. Forcing the wrong pressure lock will trap you in a deadly surge of foaming brine."
   },
   {
    "id": "sg-6-2-3-14",
@@ -26069,7 +26282,7 @@
     }
    ],
    "title": "Breach of the Conduit",
-   "page": "Yawning stonework marks the breach of the water-conduit, where a torrent of dark, foaming brine surges against the rusted grating with the force of a battering ram. The roar of water fills the low tunnel, drowning out all other sound and sending cold spray misting across your face.\n\nYou must choose whether to break the remaining bars and flood the basin now to save the parched fields above, or shore up the dry vault to keep the ancient seeds safe from the tide. Every second brings a new shudder to the straining masonry around you."
+   "page": "Yawning stonework marks the breach of the water-conduit, where a torrent of dark, foaming brine surges against the rusted grating with the force of a battering ram. The roar of water fills the low tunnel, drowning out all other sound and sending cold spray misting across your face.\n\nThe rusted bars groan under the pressure of the rising tide, separating the parched fields above from the dry vault that holds the ancient seeds. Every second brings a new shudder to the straining masonry around you."
   },
   {
    "id": "sg-6-2-5-2",
