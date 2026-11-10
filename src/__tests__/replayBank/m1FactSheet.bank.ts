@@ -1,14 +1,14 @@
 /**
  * M1 — FactSheet / TurnLog / engine-beat asserts (C7 re-point sample).
  * Asserts on engine state, not prose regex / proseWarden. New-player gate on turns 1–10.
- * M3 flips seven rule-gap ids to pass; gap-parley / gap-steal stay expected-fail for M6.
+ * M3 flipped seven rule-gap ids to pass. M6 flipped gap-parley and gap-steal, so all nine pass.
  */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay } from './bank';
 import { RUNS_ROOT, replayWhole } from './replayRun';
-import { RULE_GAPS, expectRuleGap, expectedFailGapIds, passedGapIds } from './ruleGaps';
+import { RULE_GAPS, expectedFailGapIds, passedGapIds } from './ruleGaps';
 import { buildCompletedEventPacket } from '../../game/completedEventPacket';
 import { buildFactSheet, formatFactSheetForWriter, hashFactSheet } from '../../game/factSheet';
 import { buildTurnLog, sliceState } from '../../game/turnLog';
@@ -147,7 +147,7 @@ describe('replay bank M1 FactSheet + TurnLog', () => {
     }
   });
 
-  it('[M1/M3] nine rule-gap ids stay registered; M3 flips seven to pass', () => {
+  it('[M1/M3/M6] nine rule-gap ids stay registered; all nine pass', () => {
     expect(RULE_GAPS.map((g) => g.id)).toEqual([
       'gap-nat20',
       'gap-nat1',
@@ -166,12 +166,11 @@ describe('replay bank M1 FactSheet + TurnLog', () => {
       'gap-short-rest-hit-dice',
       'gap-sell-half',
       'gap-str-x15',
+      'gap-parley',
       'gap-cap-4',
+      'gap-steal',
     ]);
-    expect(expectedFailGapIds()).toEqual(['gap-parley', 'gap-steal']);
-    for (const id of expectedFailGapIds()) {
-      expect(expectRuleGap(id).expectedFail).toBe(true);
-    }
+    expect(expectedFailGapIds()).toEqual([]);
     for (const g of RULE_GAPS) {
       expect(g.srd).toMatch(/SRD 5\.2\.1/);
     }
