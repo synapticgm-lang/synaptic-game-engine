@@ -101,6 +101,19 @@ export function markConsequenceDelivered(
   };
 }
 
+/** A crisis or ending title already stored on the save. An id with no title is not a sentence. */
+function heldUnlockTitle(state: GameState, id: string | undefined): string {
+  const key = (id ?? '').trim();
+  if (!key) return '';
+  const crisis = (state.arcDirector?.socialCrises ?? []).find((row) => row.id === key);
+  const crisisName = (crisis?.name ?? '').replace(/\s+/g, ' ').trim();
+  if (crisisName && crisisName.toLowerCase() !== key.toLowerCase()) return crisisName;
+  const quest = (state.quests ?? []).find((row) => row.id === key);
+  const questName = (quest?.name ?? '').replace(/\s+/g, ' ').trim();
+  if (questName && questName.toLowerCase() !== key.toLowerCase()) return questName;
+  return '';
+}
+
 // CONSEQUENCE DELIVERY
 
 /**
@@ -143,7 +156,7 @@ export function deliverConsequence(
   }
   
   // Relationship deltas land on each person's stored record (a hidden score). The writer gets the
-  // beat only when one was stored. A blank beat is not filled in.
+  // beat only when one was stored. A blank unlock uses the title the save already holds.
   if (consequence.payload.relationshipDeltas?.length) {
     let stored = next.arcDirector?.npcRelationships;
     for (const delta of consequence.payload.relationshipDeltas) {
@@ -163,9 +176,18 @@ export function deliverConsequence(
   }
 
   // The beat is already on the payload. Id lines stay for the log; the writer reads this sentence.
+  // A blank beat does not invent a scene. It may repeat a crisis or ending title the save already holds.
   const beat = consequence.payload.narrativeBeat?.trim();
   if (beat && !receipts.some((line) => line.includes(beat))) {
     receipts.push(`Remembered: ${beat}`);
+  } else if (!beat) {
+    const title =
+      heldUnlockTitle(state, consequence.payload.unlockCrisisId)
+      || heldUnlockTitle(state, consequence.payload.unlockEndingId);
+    if (title) {
+      const sentence = /[.!?]$/.test(title) ? title : `${title}.`;
+      receipts.push(`Remembered: ${sentence}`);
+    }
   }
   
   // Build mandate for GM

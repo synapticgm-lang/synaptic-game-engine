@@ -89,7 +89,7 @@ describe('writer engine facts', () => {
     expect(isChromeReceipt('Dungeon room: Crypt.')).toBe(false);
   });
 
-  it('uses the stored narrative beat and does not invent one when the beat is blank', () => {
+  it('uses the stored narrative beat, and a blank beat uses the title the save already holds', () => {
     const state = { turn: 8, arcDirector: {} } as GameState;
     const told = deliverConsequence(
       consequence({
@@ -103,7 +103,40 @@ describe('writer engine facts', () => {
     expect(engineResultFact(told.receipts)).not.toMatch(/Ending unlocked:/);
     expect(engineResultFact(told.receipts)).toContain('The gate stays shut');
 
+    const titled = {
+      ...state,
+      quests: [{ id: 'riot-id', name: 'The weigh-house riot', description: 'Held on the save.', status: 'active' as const, type: 'side' as const }],
+    };
     const blank = deliverConsequence(
+      consequence({
+        unlockCrisisId: 'riot-id' as DelayedConsequence['payload']['unlockCrisisId'],
+        narrativeBeat: '   ',
+        journalHint: '',
+      }, 'crisis_unlock'),
+      titled
+    );
+    expect(blank.receipts.some((line) => line.startsWith('Crisis unlocked:'))).toBe(true);
+    expect(blank.receipts.filter((line) => line.startsWith('Remembered:'))).toEqual(['Remembered: The weigh-house riot.']);
+    expect(engineResultFact(blank.receipts)).toBe('Remembered: The weigh-house riot.');
+    expect(engineResultFact(blank.receipts)).not.toMatch(/Crisis unlocked:/);
+    expect(blank.receipts.some((line) => /the cold|remembered a/i.test(line))).toBe(false);
+
+    const ending = deliverConsequence(
+      consequence({
+        unlockEndingId: 'pyoa-end' as DelayedConsequence['payload']['unlockEndingId'],
+        narrativeBeat: '   ',
+        journalHint: '',
+      }),
+      {
+        ...state,
+        quests: [{ id: 'pyoa-end', name: 'The quiet ending', description: 'Held on the save.', status: 'active' as const, type: 'main' as const }],
+      }
+    );
+    expect(ending.receipts.filter((line) => line.startsWith('Remembered:'))).toEqual(['Remembered: The quiet ending.']);
+    expect(engineResultFact(ending.receipts)).toContain('Remembered: The quiet ending.');
+    expect(engineResultFact(ending.receipts)).not.toMatch(/Ending unlocked:/);
+
+    const untitled = deliverConsequence(
       consequence({
         unlockCrisisId: 'riot-id' as DelayedConsequence['payload']['unlockCrisisId'],
         narrativeBeat: '   ',
@@ -111,9 +144,9 @@ describe('writer engine facts', () => {
       }, 'crisis_unlock'),
       state
     );
-    expect(blank.receipts.some((line) => line.startsWith('Crisis unlocked:'))).toBe(true);
-    expect(engineResultFact(blank.receipts)).toBe('');
-    expect(blank.receipts.some((line) => /the cold|the gate|remembered a/i.test(line))).toBe(false);
+    expect(engineResultFact(untitled.receipts)).toBe('');
+    expect(untitled.receipts.some((line) => line.startsWith('Remembered:'))).toBe(false);
+
     const section = buildDelayedConsequencesSituationSection({
       turn: 8,
       arcDirector: { pyoaDelayedConsequences: [consequence({ narrativeBeat: '   ', journalHint: '' }, 'crisis_unlock')] },
