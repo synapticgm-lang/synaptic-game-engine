@@ -44,10 +44,9 @@ import {
 } from './trainLog';
 import {
   clauseCheckerVerdicts,
-  storyAfterClauseCheck,
   type ClauseCheckRecord,
 } from './clauseCheck';
-import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
+import { applyFactGate, isUnsureFactCheckEnabled, makeUnsureFactChecker } from './factGate';
 import { fileKeptRoomProps } from './roomProps';
 import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import {
@@ -2051,12 +2050,12 @@ Do NOT print dice notation or CODE ENFORCED.
         completedEvent: { ...arcState.completedEvent, tokenRefs: writerTurn.refs },
       };
     }
-    // Fact gate. Confident scenery stays. Other spans go through one batched check unless SGM_FACT_CHECK=off.
+    // Code verdicts decide every span. A model runs only for UNSURE, and only when SGM_UNSURE_FACT_CHECK=on.
     {
       const sheet = arcState.completedEvent?.factSheet ?? writerPacket.factSheet;
       const draft = gmText;
       if (sheet && draft.trim()) {
-        const factCheckOn = isFactCheckEnabled();
+        const unsureOn = isUnsureFactCheckEnabled();
         const gate = await applyFactGate({
           prose: draft,
           sheet,
@@ -2064,20 +2063,15 @@ Do NOT print dice notation or CODE ENFORCED.
           allowNames: writerPacket.allowlist,
           recentProse: recentGmBeatTexts(arcState),
           thirdPerson: narratesPcInThirdPerson(pcPov(arcState.character, settings.perspective)),
-          factCheckEnabled: factCheckOn,
-          factCheck: factCheckOn
-            ? makeHostedFactChecker((payload) => callGmCheck(arcState, payload, settings))
+          factCheckEnabled: false,
+          unsureCheckEnabled: unsureOn,
+          unsureCheck: unsureOn
+            ? makeUnsureFactChecker(sheet, (payload) => callGmCheck(arcState, payload, settings))
             : undefined,
         });
         if (gate.objectNotes.length) arcState = fileKeptRoomProps(arcState, gate.objectNotes);
         if (gate.withheld) {
-          const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
-          const published = storyAfterClauseCheck({
-            clause: { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 0 },
-            enginePage: page,
-            draft,
-          });
-          gmText = published.text;
+          gmText = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
           clauseCheckRecords = [];
           renderFallbackUsed = true;
         } else {

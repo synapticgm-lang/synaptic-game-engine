@@ -410,8 +410,10 @@ describe('clause check fail-closed', () => {
     expect(state.gold).toBe(before.gold);
     const live = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
     const fate = readFileSync(resolve(__dirname, './fateAutoplay.ts'), 'utf8');
-    expect(live).toContain('storyAfterClauseCheck');
-    expect(fate).toContain('storyAfterClauseCheck');
+    expect(live).not.toContain('storyAfterClauseCheck');
+    expect(fate).not.toContain('storyAfterClauseCheck');
+    expect(live).not.toContain('checkAndRepairProse');
+    expect(fate).not.toContain('checkAndRepairProse');
     expect(live).toContain('pageWhenClauseWithheld');
     expect(fate).toContain('pageWhenClauseWithheld');
     expect(live).not.toContain('keep writer prose');
