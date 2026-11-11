@@ -251,6 +251,15 @@ describe('XP-D1 OPEN chips + writer fact + System window', () => {
     expect(combined[0]?.toLowerCase()).toBe('sign the pact');
   });
 
+  it('accept and refuse take scene slots: exactly 4 scene pads plus free input', () => {
+    const state = litrpgState('summoned-pact');
+    const pads = ['Look around', 'Wait and listen', 'Ask what they want', 'Travel toward Lowmarket', 'Say something…', 'Do something else…'];
+    const pinned = pinOpeningRiteChip(state, pads);
+    const scene = pinned.filter((c) => !/^(?:Say something|Do something else)/i.test(c));
+    expect(scene).toEqual(['Sign the pact', 'Refuse the pact', 'Look around', 'Wait and listen']);
+    expect(pinned.slice(4)).toEqual(['Say something…', 'Do something else…']);
+  });
+
   it('writer packet carries the pending offer', () => {
     const state = litrpgState('summoned-pact');
     const packet = buildCompletedEventPacket(state, 'Look around');

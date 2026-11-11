@@ -287,27 +287,29 @@ export function applyOpeningRiteTurn(
   return { state: next, receipts: [] };
 }
 
+const RITE_SCENE_SLOTS = 4;
+const isFreeInputPad = (c: string) => /^(?:say something|do something else)\b/i.test((c ?? '').trim());
+
 /**
- * Pin the accept chip first while the rite is open.
- * Does not count against the pad cap — unshift without dropping another chip.
+ * Pin the accept chip first while the rite is open. Accept (and refuse, if pinned)
+ * take scene slots: the scene list stays at 4, dropping the last (weakest) pads.
+ * Free-input chips stay after the scene pads and do not count.
  */
 export function pinOpeningRiteChip(state: GameState, choices: string[]): string[] {
   if (!openingRiteIsOpen(state)) return choices;
   const chip = openingRiteAcceptChip(state);
   if (!chip) return choices;
-  const list = [...choices];
+  const free = choices.filter(isFreeInputPad);
+  const list = choices.filter((c) => !isFreeInputPad(c));
   const want = chip.toLowerCase();
   const idx = list.findIndex((c) => c.toLowerCase() === want);
-  if (idx === 0) return list;
   if (idx > 0) list.splice(idx, 1);
-  list.unshift(chip);
+  if (idx !== 0) list.unshift(chip);
   const refuse = openingRiteRefuseChip(state);
   if (refuse && !list.some((c) => c.toLowerCase() === refuse.toLowerCase())) {
-    // Refuse stays available but does not displace the accept pin.
-    const insertAt = Math.min(1, list.length);
-    list.splice(insertAt, 0, refuse);
+    list.splice(Math.min(1, list.length), 0, refuse);
   }
-  return list;
+  return [...list.slice(0, RITE_SCENE_SLOTS), ...free];
 }
 
 /** Chip families that move the story (quest-profile preference after rite / story pin). */
