@@ -1,0 +1,738 @@
+/**
+ * Seed-stable opening names and places. Hook cards describe roles and pressure;
+ * this module mints a fresh, locked instance for the save so two games never
+ * open on the same catalog proper names.
+ */
+import type {
+  GameState,
+  NpcMemory,
+  OpeningCastMember,
+  OpeningInstance,
+  OpeningOfferChip,
+} from './types';
+import { keyedRng, type Rng } from './seededRng';
+import { nameWords, pickPersonName } from './personNames';
+
+/** A hook snapshot the instance mint can read without importing the hook-deck tree. */
+export interface OpeningHookSnapshot {
+  location?: string;
+  text?: string;
+  page1?: string;
+  fallback?: string;
+  whoHere?: string;
+  openingOffer?: string;
+  pressingNeed?: string;
+  howYouGotHere?: string;
+  whoYouAre?: string;
+  beats?: string[];
+  writerNotes?: string;
+  faction?: string;
+}
+
+const HONORIFIC =
+  /^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High|Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Doctorate|Dame|Baron|Baroness|Chancellor|Warden|Keeper|Auditor|Advocate|Chancellor|Inquisitor|Marshal|Commander|Lieutenant|Corporal|Ensign|Admiral|General|Private|Acolyte|Adept|Seer|Oracle|Abbot|Abbess|Prior|Prioress|Deacon|Reverend|Saint|Squire|Knight|Ranger|Hunter|Miller|Smith|Cooper|Carter|Innkeep|Innkeeper|Barman|Barmaid|Host|Hostess|Clerk|Scribe|Archivist|Warden)\s+/i;
+
+const PLACE_SUFFIX = new Set([
+  'trail', 'road', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'quay', 'mill', 'well', 'bridge',
+  'pass', 'crossing', 'camp', 'market', 'square', 'cathedral', 'temple', 'shrine', 'circle', 'court',
+  'hold', 'manor', 'estate', 'tower', 'docks', 'harbor', 'harbour', 'woods', 'forest', 'marsh', 'moor',
+  'heath', 'hollow', 'wake', 'reach', 'vale', 'spire', 'port', 'station', 'block', 'row', 'lane',
+  'street', 'avenue', 'plaza', 'lab', 'facility', 'ship', 'deck', 'yard', 'green', 'close', 'rise',
+  'fell', 'ridge', 'cliff', 'point', 'head', 'bay', 'sound', 'creek', 'brook', 'river', 'cross',
+  'chapel', 'abbey', 'priory', 'cloister', 'undercroft', 'cellar', 'loft', 'pan', 'works', 'plant',
+  'complex', 'outpost', 'depot', 'wharf', 'pier', 'jetty', 'ferry', 'landing',
+]);
+
+const FACTION_WORDS = new Set([
+  'crown', 'court', 'pact', 'cult', 'company', 'guild', 'house', 'order', 'legion', 'watch', 'guard',
+  'regiment', 'circle', 'choir', 'chapter', 'syndicate', 'cartel', 'crew', 'band', 'clan', 'tribe',
+  'host', 'fleet', 'navy', 'army', 'church', 'temple', 'college', 'school', 'office', 'bureau',
+  'ministry', 'council', 'senate', 'assembly', 'covenant', 'compact', 'league', 'alliance',
+]);
+
+const TITLE_STOP = new Set([
+  'the', 'a', 'an', 'and', 'or', 'of', 'in', 'on', 'at', 'to', 'for', 'from', 'with', 'by', 'as',
+  'you', 'your', 'yours', 'yourself', 'heat', 'light', 'system', 'panel', 'nobody', 'nothing',
+  'something', 'someone', 'anyone', 'everyone', 'both', 'offers', 'offer', 'here', 'this', 'that',
+  'these', 'those', 'who', 'what', 'why', 'how', 'when', 'where', 'already', 'mid', 'pursuit',
+  'lying', 'standing', 'kneeling', 'waking', 'alone', 'just', 'still', 'blue', 'hangs', 'sit',
+  'sits', 'sits', 'raised', 'drawn', 'put', 'blade', 'hand', 'pack', 'gear', 'never', 'put',
+]);
+
+const PLACE_STEMS = [
+  'Brack', 'Hollin', 'Sallow', 'Dunmore', 'Fenwick', 'Marl', 'Cotter', 'Rudd', 'Tew', 'Aske',
+  'Wyle', 'Thatch', 'Merrow', 'Coyne', 'Idra', 'Lisle', 'Cutha', 'Hask', 'Barrow', 'Crane',
+  'Pike', 'Ness', 'Oatley', 'Redd', 'Calder', 'Morrow', 'Halden', 'Birch', 'Rowan', 'Ashen',
+  'Keld', 'Thorpe', 'Wain', 'Mabb', 'Ortle', 'Pell', 'Stane', 'Voss', 'Yarrow', 'Beck',
+];
+
+const MODERN_GIVEN = [
+  'Priya', 'Jonas', 'Mara', 'Theo', 'Nina', 'Luc', 'Asha', 'Kenan', 'Ivy', 'Rafi', 'Sofi', 'Marc',
+];
+const MODERN_FAMILY = [
+  'Adler', 'Vance', 'Rahim', 'Kessler', 'Mori', 'Okoye', 'Silva', 'Berg', 'Cho', 'Perez', 'Nolan', 'Ibarra',
+];
+const SCIFI_GIVEN = [
+  'Rin', 'Kade', 'Nyx', 'Vela', 'Jori', 'Tamsin', 'Sable', 'Ilex', 'Torin', 'Yara', 'Pax', 'Nim',
+];
+const SCIFI_FAMILY = [
+  'Voss', 'Keel', 'Rook', 'Solan', 'Phes', 'Darra', 'Quillan', 'Hex', 'Orry', 'Tal', 'Mire', 'Kett',
+];
+
+/** Catalog stems we never mint and always retire when they appear on a hook. */
+export const CATALOG_NAME_BLOCKLIST = [
+  'Oren', 'Kessa', 'Cinder', 'Cinderwake', 'Pellane', 'Valespire', 'Orel', 'Vane', 'Greyhollow',
+  'Thrynn', 'Madden', 'Lene', 'Sera', 'Quill', 'Aric', 'Bram', 'Cael', 'Dara', 'Eamon', 'Fael',
+];
+
+const TITLE_NAME =
+  /\b((?:(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High|Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Dame|Baron|Baroness|Warden|Keeper|Auditor|Advocate|Inquisitor|Marshal|Commander|Lieutenant|Corporal|Ensign|Admiral|General|Acolyte|Adept|Seer|Oracle|Abbot|Abbess|Prior|Prioress|Deacon|Reverend|Squire|Knight|Ranger|Hunter)[ \t]+){0,2}(?:[A-Z][a-z]+(?:-[A-Z][a-z]+)?[ \t]+){0,2}[A-Z][a-z]+(?:-[A-Z][a-z]+)?)\b/g;
+
+export function escapeRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function givenNameOf(name: string): string {
+  const raw = (name ?? '').replace(HONORIFIC, '').trim();
+  const parts = raw.split(/\s+/).filter(Boolean);
+  return parts[0] || raw || name;
+}
+
+function hay(hook: OpeningHookSnapshot): string {
+  return [
+    hook.location,
+    hook.whoHere,
+    hook.openingOffer,
+    hook.pressingNeed,
+    hook.howYouGotHere,
+    hook.whoYouAre,
+    hook.text,
+    hook.page1,
+    hook.fallback,
+    hook.writerNotes,
+    ...(hook.beats ?? []),
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+
+/** People named in a "Who is here" slot, split on list punctuation — never across lines. */
+export function peopleFromWhoHere(whoHere: string | undefined): string[] {
+  if (!whoHere) return [];
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const part of whoHere.split(/\s*(?:,|;|\/|\band\b|\bplus\b|\bwith\b)\s*/i)) {
+    const chunk = part.replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
+    if (!chunk || /^(?:no one|nobody|none|you are alone|alone)\b/i.test(chunk)) continue;
+    const m = chunk.match(
+      /(?:(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Dame|Warden|Keeper)\s+)?[A-Z][a-z]+(?:-[A-Z][a-z]+)?(?:\s+[A-Z][a-z]+(?:-[A-Z][a-z]+)?){0,2}/
+    );
+    const n = (m?.[0] ?? '').trim();
+    if (!n || n.length < 3) continue;
+    const first = n.split(/\s+/)[0] ?? '';
+    if (TITLE_STOP.has(first.toLowerCase())) continue;
+    // Honorific alone is not a person.
+    if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder)$/i.test(n)) continue;
+    const key = n.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(n);
+  }
+  return out;
+}
+
+export function extractTitleNames(text: string | undefined): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  if (!text) return out;
+  const re = new RegExp(TITLE_NAME.source, 'g');
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    const n = (m[1] ?? '').trim();
+    if (!n) continue;
+    const first = n.split(/\s+/)[0] ?? '';
+    if (TITLE_STOP.has(first.toLowerCase())) continue;
+    if (PLACE_SUFFIX.has(n.toLowerCase())) continue;
+    if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder)$/i.test(n)) continue;
+    if (n.length < 3) continue;
+    const key = n.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(n);
+  }
+  return out;
+}
+
+function lastWord(name: string): string {
+  const bits = name.trim().split(/\s+/);
+  return (bits[bits.length - 1] ?? '').toLowerCase();
+}
+
+function isPlaceName(name: string, field: 'location' | 'who' | 'other'): boolean {
+  if (PLACE_SUFFIX.has(lastWord(name))) return true;
+  if (field === 'location' && !HONORIFIC.test(name)) {
+    // A single Title-Case token in a location line is usually a settlement.
+    if (!/\s/.test(name) && name.length >= 5) return true;
+    if (/\b(?:trail|road|inn|ford|gate|keep|hall|town|city|village|camp)\b/i.test(name)) return true;
+  }
+  return false;
+}
+
+function isFactionName(name: string, context: string): boolean {
+  if (FACTION_WORDS.has(lastWord(name))) return true;
+  const re = new RegExp(`\\b${escapeRe(name)}(?:'s)?\\s+(?:scouts?|soldiers?|men|women|guard|host|court|pact|cult|company|guild|house|order|legion|watch)\\b`, 'i');
+  if (re.test(context)) return true;
+  const pos = new RegExp(`\\b(?:the\\s+)?${escapeRe(name)}\\s+(?:crown|court|pact|realm|throne)\\b`, 'i');
+  return pos.test(context);
+}
+
+function classifyName(
+  name: string,
+  hook: OpeningHookSnapshot
+): 'person' | 'place' | 'faction' {
+  const blob = hay(hook);
+  if (isFactionName(name, blob)) return 'faction';
+  if (isPlaceName(name, 'other')) return 'place';
+  const inLoc = hook.location && new RegExp(`\\b${escapeRe(name)}\\b`).test(hook.location);
+  if (inLoc && isPlaceName(name, 'location')) return 'place';
+  if (inLoc && !hook.whoHere?.includes(name) && name.length >= 5 && !HONORIFIC.test(name) && !/\s/.test(name)) {
+    return 'place';
+  }
+  if (hook.whoHere && new RegExp(`\\b${escapeRe(name)}\\b`).test(hook.whoHere)) return 'person';
+  if (inLoc) return 'place';
+  return 'person';
+}
+
+function inferPlaceKind(hook: OpeningHookSnapshot): string {
+  const loc = (hook.location ?? '').trim();
+  if (!loc) return 'a named place';
+  const lower = loc.toLowerCase();
+  for (const s of PLACE_SUFFIX) {
+    if (new RegExp(`\\b${s}\\b`, 'i').test(lower)) {
+      const adj = lower.match(/\b(ash|scorched|salt|fog|rain|night|dawn|dusk|stone|rural|coastal|frozen|burnt|ruined|crowded|quiet)\b/)?.[1];
+      return adj ? `a ${adj} ${s}` : `a ${s}`;
+    }
+  }
+  return loc.replace(/\b[A-Z][a-zA-Z'’-]{2,}\b/g, '').replace(/\s+/g, ' ').trim() || 'the place you stand';
+}
+
+function inferPlaceSuffix(kind: string): string {
+  const k = kind.toLowerCase();
+  for (const s of ['trail', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'quay', 'mill', 'well', 'bridge', 'pass', 'camp', 'market', 'square', 'cathedral', 'temple', 'shrine', 'circle', 'court', 'hollow', 'road', 'lane', 'wharf', 'ferry', 'outpost', 'station', 'yard']) {
+    if (k.includes(s)) return s[0]!.toUpperCase() + s.slice(1);
+  }
+  return 'Hollow';
+}
+
+function pickUnused(rng: Rng, bank: readonly string[], taken: Set<string>): string {
+  const shuffled = [...bank].sort(() => rng() - 0.5);
+  for (const w of shuffled) {
+    if (!taken.has(w.toLowerCase())) {
+      taken.add(w.toLowerCase());
+      return w;
+    }
+  }
+  const fallback = `${bank[Math.floor(rng() * bank.length)] ?? 'Hollin'}${Math.floor(rng() * 80) + 2}`;
+  taken.add(fallback.toLowerCase());
+  return fallback;
+}
+
+function pickModernOrScifiName(rng: Rng, taken: Set<string>, genre: 'modern' | 'scifi'): string {
+  const givenBank = genre === 'scifi' ? SCIFI_GIVEN : MODERN_GIVEN;
+  const famBank = genre === 'scifi' ? SCIFI_FAMILY : MODERN_FAMILY;
+  for (let i = 0; i < 12; i++) {
+    const given = givenBank[Math.floor(rng() * givenBank.length)]!;
+    const family = famBank[Math.floor(rng() * famBank.length)]!;
+    if (taken.has(given.toLowerCase()) || taken.has(family.toLowerCase())) continue;
+    taken.add(given.toLowerCase());
+    taken.add(family.toLowerCase());
+    return `${given} ${family}`;
+  }
+  return pickPersonName(rng, taken) || pickUnused(rng, givenBank, taken);
+}
+
+function inferGenre(hook: OpeningHookSnapshot, bibleId?: string, engineMode?: string): 'fantasy' | 'modern' | 'scifi' {
+  const id = (bibleId ?? '').toLowerCase();
+  if (id === 'system-integration') return 'modern';
+  if (/umbra|erebus|null-parameter|protocol/.test(id) && /sci|space|cyber|station/.test(id + hay(hook).toLowerCase())) {
+    return 'scifi';
+  }
+  // Fantasy isekai hooks often mention Earth — that is not a modern-earth campaign.
+  if (/summoned-pact|cursed-keep|shattered-coast|thornferry|greyhollow|hero-awakening/.test(id)) {
+    return 'fantasy';
+  }
+  const blob = `${id} ${hay(hook)}`.toLowerCase();
+  if (/\b(airlock|android|orbit|starship|colony|neural|comlink)\b/.test(blob)) return 'scifi';
+  if (/\b(subway|taxi|apartment|denim|office tower|motel)\b/.test(blob)) return 'modern';
+  void engineMode;
+  return 'fantasy';
+}
+
+function mintPerson(rng: Rng, taken: Set<string>, genre: 'fantasy' | 'modern' | 'scifi'): string {
+  if (genre === 'fantasy') {
+    const n = pickPersonName(rng, taken);
+    if (n) return n;
+  }
+  if (genre !== 'fantasy') return pickModernOrScifiName(rng, taken, genre);
+  return pickModernOrScifiName(rng, taken, 'modern');
+}
+
+function mintPlaceName(rng: Rng, kind: string, taken: Set<string>): string {
+  const stem = pickUnused(rng, PLACE_STEMS, taken);
+  const suffix = inferPlaceSuffix(kind);
+  if (suffix.toLowerCase() === 'wake') return `${stem}wake`;
+  return `${stem} ${suffix}`;
+}
+
+function roleForPerson(name: string, hook: OpeningHookSnapshot): string {
+  const who = hook.whoHere ?? '';
+  const idx = who.indexOf(name);
+  if (idx >= 0) {
+    const before = who.slice(Math.max(0, idx - 40), idx).replace(/.*(?:,|and)\s+/i, '').trim();
+    const after = who.slice(idx + name.length).replace(/\s*(?:,|and)\s+.*$/i, '').trim();
+    const pre = before.replace(/[.,;:]+$/g, '').trim();
+    const bits = [pre && !new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(pre) ? pre : '', after.replace(/^[.,;:]+/, '').trim()]
+      .filter((s) => s && s.length < 48 && !/^who is here/i.test(s));
+    if (bits.length) return bits.join(' ').replace(/\s+/g, ' ').trim();
+  }
+  const honor = name.match(HONORIFIC)?.[0]?.trim();
+  if (honor) return honor.toLowerCase();
+  return 'present in the scene';
+}
+
+function shortItem(item: string): string {
+  return item.replace(/^(?:a|an|the)\s+/i, '').replace(/\s+/g, ' ').trim();
+}
+
+function splitOfferItems(offer: string): string[] {
+  const raw = (offer ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return [];
+  const first = raw.split(/(?<=[.!?])\s+/).find((s) => !/^(?:no one|nobody|none|nothing|no|refuse|decline)\b/i.test(s)) ?? raw;
+  const nouns: string[] = [];
+  const seen = new Set<string>();
+  // Prefer concrete nouns: waterskin, scarf, brand-iron, bread, blanket, work, pact.
+  const hits = first.match(
+    /\b(?:waterskin|water|scarf|brand-iron|brandiron|brand iron|bread|blanket|cloak|coat|kit|pact|oath|work|job|contract|hunt|iron|skin)\b/gi
+  ) ?? [];
+  for (const h of hits) {
+    const n = shortItem(h);
+    const k = n.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    nouns.push(n);
+  }
+  if (nouns.length) return nouns;
+  return first
+    .split(/\s*(?:,|\/|\bor\b|\band\b)\s*/i)
+    .map((p) => p.replace(/^(?:a|an|the|some|your|their|his|her)\s+/i, '').replace(/[.,;:]+$/g, '').trim())
+    .filter(
+      (p) =>
+        p
+        && p.split(/\s+/).length <= 3
+        && !/\b(?:whatever|anything|nothing|junk|neither|both|offers?|not your gear|will|share|walk with|take)\b/i.test(p)
+        && !/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?$/.test(p) // drop bare person names as "items"
+    );
+}
+
+
+function attachItemsToCast(items: string[], cast: OpeningCastMember[], offer: string): Array<{ item: string; person?: OpeningCastMember }> {
+  const out: Array<{ item: string; person?: OpeningCastMember }> = [];
+  for (const item of items) {
+    const owner = cast.find((c) => {
+      const full = new RegExp(`\\b${escapeRe(c.name)}(?:'s)?\\b`, 'i');
+      const given = new RegExp(`\\b${escapeRe(givenNameOf(c.name))}(?:'s)?\\b`, 'i');
+      const window = offer.match(new RegExp(`.{0,40}${escapeRe(item)}.{0,40}`, 'i'))?.[0] ?? offer;
+      return full.test(window) || given.test(window);
+    });
+    out.push({ item, person: owner ?? (cast.length === 1 ? cast[0] : undefined) });
+  }
+  // If items didn't attach and we have two people + two item clusters, zip them.
+  if (out.every((o) => !o.person) && cast.length >= 2 && items.length >= 2) {
+    return items.map((item, i) => ({ item, person: cast[Math.min(i, cast.length - 1)] }));
+  }
+  if (out.some((o) => !o.person) && cast.length) {
+    let i = 0;
+    return out.map((o) => (o.person ? o : { ...o, person: cast[i++ % cast.length] }));
+  }
+  return out;
+}
+
+function concreteAcceptLabel(item: string, person?: OpeningCastMember): string {
+  const noun = shortItem(item).replace(/^(?:offer of\s+)?/i, '');
+  if (/^walk with\b/i.test(noun) || /^take\b/i.test(noun) || /^hear \b/i.test(noun)) return noun;
+  const who = person ? givenNameOf(person.name) : '';
+  if (who && /\b(water|waterskin|skin|scarf|bread|food|drink|cloak|blanket|coat)\b/i.test(noun)) {
+    return `Walk with ${who} for ${noun}`;
+  }
+  if (who && /\b(hunt|iron|brand|brand-iron|contract|job|work|rite|pact|brandiron)\b/i.test(noun)) {
+    return `Take ${who}'s ${noun}`;
+  }
+  if (who && noun.split(/\s+/).length <= 3) return `Take ${who}'s offer of ${noun}`;
+  if (who) return `Hear ${who} out`;
+  if (noun.split(/\s+/).length <= 3) return `Take the ${noun}`;
+  return who ? `Hear ${who} out` : 'Step forward';
+}
+
+export function applyReplacements(text: string, map: Array<[string, string]>): string {
+  let out = text ?? '';
+  const sorted = [...map].sort((a, b) => b[0].length - a[0].length);
+  for (const [from, to] of sorted) {
+    if (!from) continue;
+    out = out.replace(new RegExp(`\\b${escapeRe(from)}\\b`, 'g'), to);
+  }
+  return out;
+}
+
+function rewriteBlob(blob: string | undefined, map: Array<[string, string]>): string | undefined {
+  if (!blob) return blob;
+  return applyReplacements(blob, map);
+}
+
+export function hookKey(state: { seed?: string; campaignBibleId?: string | null }): string {
+  return `${state.seed ?? '0'}|${state.campaignBibleId ?? ''}|opening-instance`;
+}
+
+/**
+ * Mint a locked opening instance from the seed and a hook snapshot (roles, not a closed name list).
+ */
+export function mintOpeningInstance(
+  hook: OpeningHookSnapshot,
+  seedKey: string,
+  opts?: { bibleId?: string; engineMode?: string }
+): OpeningInstance {
+  const rng = keyedRng(seedKey);
+  const genre = inferGenre(hook, opts?.bibleId, opts?.engineMode);
+  const taken = nameWords(CATALOG_NAME_BLOCKLIST);
+  const retired: string[] = [];
+  const isGenericToken = (n: string) => {
+    const k = n.trim().toLowerCase();
+    return !k || PLACE_SUFFIX.has(k) || FACTION_WORDS.has(k) || TITLE_STOP.has(k) || /^(they|them|their|this|that|these|those|stay|here|there)$/i.test(k);
+  };
+  const retire = (n: string) => {
+    const t = n.trim();
+    if (!t || isGenericToken(t)) return;
+    if (!retired.some((x) => x.toLowerCase() === t.toLowerCase())) retired.push(t);
+    for (const w of t.split(/\s+/)) {
+      if (w.length >= 3 && !isGenericToken(w)) taken.add(w.toLowerCase());
+    }
+  };
+
+  const whoNames = peopleFromWhoHere(hook.whoHere);
+  const locNames = extractTitleNames(hook.location);
+  const factionPool = extractTitleNames(
+    [hook.pressingNeed, hook.openingOffer, hook.faction, hook.whoYouAre].filter(Boolean).join(' ')
+  ).filter(
+    (n) =>
+      !isGenericToken(n)
+      && !whoNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
+      && !locNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
+  );
+
+  const replacements: Array<[string, string]> = [];
+  const places = locNames.filter((n) => !isGenericToken(n));
+  const factions: Array<{ from: string; kind: string }> = [];
+  for (const n of factionPool) {
+    factions.push({ from: n, kind: lastWord(n) });
+  }
+  const people = whoNames;
+
+  // Always mint a named place, even when the hook only had a generic "scorched circle on the trail".
+  const placeKind = inferPlaceKind(hook);
+  const catalogPlace = places.sort((a, b) => b.length - a.length)[0];
+  if (catalogPlace) retire(catalogPlace);
+  const placeName = mintPlaceName(rng, placeKind, taken);
+  if (catalogPlace) {
+    replacements.push([catalogPlace, placeName]);
+    for (const w of catalogPlace.split(/\s+/)) {
+      if (w.length >= 5 && !PLACE_SUFFIX.has(w.toLowerCase()) && w.toLowerCase() !== lastWord(placeName)) {
+        retire(w);
+        replacements.push([w, placeName.split(/\s+/)[0] ?? placeName]);
+      }
+    }
+  }
+
+  let settlementName: string | undefined;
+  const settlementHits = places.filter((p) => p !== catalogPlace && !PLACE_SUFFIX.has(lastWord(p)));
+  if (settlementHits[0]) {
+    retire(settlementHits[0]);
+    settlementName = pickUnused(rng, PLACE_STEMS, taken);
+    replacements.push([settlementHits[0], settlementName]);
+  }
+
+  let factionName: string | undefined;
+  let factionKind: string | undefined;
+  if (factions[0]) {
+    retire(factions[0].from);
+    factionKind = factions[0].kind || 'company';
+    const stem = pickUnused(rng, PLACE_STEMS, taken);
+    factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
+    replacements.push([factions[0].from, factionName]);
+    for (const w of factions[0].from.split(/\s+/)) {
+      if (w.length >= 4 && !FACTION_WORDS.has(w.toLowerCase())) {
+        retire(w);
+        replacements.push([w, factionName]);
+      }
+    }
+  }
+
+  const seenPeople = new Set<string>();
+  const orderedPeople: string[] = [];
+  for (const n of [...whoNames, ...people]) {
+    const key = n.toLowerCase();
+    if (seenPeople.has(key)) continue;
+    // Skip if this "person" was actually classified as place/faction and already retired as such.
+    if (places.includes(n) || factions.some((f) => f.from === n)) continue;
+    seenPeople.add(key);
+    orderedPeople.push(n);
+  }
+
+  const aloneHint = !orderedPeople.length && /^(?:no one|nobody|none|you are alone|alone)\b/i.test((hook.whoHere ?? '').trim());
+  const cast: OpeningCastMember[] = [];
+  for (const catalog of orderedPeople) {
+    retire(catalog);
+    const minted = mintPerson(rng, taken, genre);
+    replacements.push([catalog, minted]);
+    const bare = catalog.replace(HONORIFIC, '').trim();
+    if (bare && bare !== catalog) {
+      retire(bare);
+      replacements.push([bare, minted]);
+    }
+    for (const w of bare.split(/\s+/)) {
+      if (w.length >= 4) {
+        retire(w);
+        // First/last only — avoid replacing "Trail" etc. Already filtered.
+        replacements.push([w, w === bare.split(/\s+/)[0] ? givenNameOf(minted) : minted.split(/\s+/).slice(-1)[0] ?? minted]);
+      }
+    }
+    const roleSrc = applyReplacements(roleForPerson(catalog, hook), replacements).replace(minted, '').replace(/\s+/g, ' ').trim();
+    cast.push({ name: minted, role: roleSrc || 'present in the scene' });
+  }
+
+  const offerRaw = hook.openingOffer?.trim() ?? '';
+  const offerScrubbed = offerRaw ? applyReplacements(offerRaw, replacements) : '';
+  const items = splitOfferItems(offerScrubbed).filter((it) => {
+    // Drop leftover catalog names and refuse clauses.
+    if (/^(?:refuse|decline|keep your|neither)\b/i.test(it)) return false;
+    return it.length >= 2;
+  });
+  const attached = attachItemsToCast(items, cast, offerScrubbed);
+  const offerChips: OpeningOfferChip[] = [];
+  const seenLabel = new Set<string>();
+  for (const row of attached) {
+    const label = concreteAcceptLabel(row.item, row.person);
+    if (seenLabel.has(label.toLowerCase())) continue;
+    seenLabel.add(label.toLowerCase());
+    offerChips.push({
+      kind: 'accept',
+      label,
+      note: row.person ? `${row.person.name} offers ${shortItem(row.item)}` : shortItem(row.item),
+    });
+  }
+  const refuse: OpeningOfferChip = {
+    kind: 'refuse',
+    label: 'Keep your own kit',
+    note: 'Refuse whatever is being offered and keep your own kit.',
+  };
+  if (!offerChips.some((c) => c.kind === 'refuse')) offerChips.push(refuse);
+  if (!offerChips.some((c) => c.kind === 'accept') && cast[0]) {
+    offerChips.unshift({
+      kind: 'accept',
+      label: `Hear ${givenNameOf(cast[0].name)} out`,
+      note: `${cast[0].name} is here with a reason — hear it before you decide.`,
+    });
+  }
+
+  const situation = applyReplacements(
+    [
+      hook.whoYouAre,
+      hook.howYouGotHere,
+      hook.pressingNeed,
+      hook.whoHere,
+      hook.location,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim() || `${placeKind} — the scene is already in motion.`,
+    replacements
+  );
+
+  // Always retire well-known catalog names even if this hook didn't mention them,
+  // so a later bible leak cannot walk them onto page 1.
+  const fallbackDest = factionName || settlementName || placeName.split(/\s+/)[0] || placeName;
+  for (const blocked of CATALOG_NAME_BLOCKLIST) {
+    retire(blocked);
+    if (!isGenericToken(blocked) && !replacements.some(([from]) => from.toLowerCase() === blocked.toLowerCase())) {
+      replacements.push([blocked, fallbackDest]);
+    }
+  }
+
+  const nameMap = [...replacements].sort((a, b) => b[0].length - a[0].length);
+  const offerSummary = offerScrubbed
+    ? applyReplacements(offerScrubbed, nameMap)
+    : attached.length
+      ? attached.map((a) => a.item).join(', ')
+      : undefined;
+
+  return {
+    placeName,
+    placeKind,
+    settlementName,
+    factionName,
+    factionKind,
+    cast: cast.map((c) => ({ ...c, role: applyReplacements(c.role, nameMap).replace(/\s+/g, ' ').trim() || c.role })),
+    situation: applyReplacements(situation, nameMap),
+    pressing: hook.pressingNeed ? applyReplacements(hook.pressingNeed, nameMap) : undefined,
+    how: hook.howYouGotHere ? applyReplacements(hook.howYouGotHere, nameMap) : undefined,
+    whoYouAre: hook.whoYouAre ? applyReplacements(hook.whoYouAre, nameMap) : undefined,
+    offerSummary,
+    offerChips,
+    alone: aloneHint || (!cast.length && !/who is here/i.test(hook.text ?? '')),
+    retiredNames: retired.filter((n) => !isGenericToken(n)),
+    nameMap,
+  };
+}
+
+function patchRoster(memories: NpcMemory[] | undefined, instance: OpeningInstance, castNpcIds?: string[]): NpcMemory[] {
+  const next = [...(memories ?? [])];
+  instance.cast.forEach((member, i) => {
+    const id = castNpcIds?.[i];
+    const idx = id ? next.findIndex((m) => m.npcId === id) : -1;
+    if (idx >= 0) {
+      const prev = next[idx]!;
+      next[idx] = {
+        ...prev,
+        npcName: member.name,
+        aliases: [member.role, ...(prev.aliases ?? []).filter((a) => !instance.retiredNames.some((r) => a.toLowerCase().includes(r.toLowerCase())))],
+        roleHint: member.role || prev.roleHint,
+      };
+    } else {
+      next.push({
+        npcId: `opening-cast-${i + 1}`,
+        npcName: member.name,
+        disposition: 'neutral',
+        facts: [member.role].filter(Boolean),
+        lastSeenTurn: 0,
+        roleHint: member.role,
+        aliases: [member.role],
+      });
+    }
+  });
+  // Drop retired catalog names from leftover aliases so they cannot leak.
+  return next.map((m) => ({
+    ...m,
+    aliases: (m.aliases ?? []).filter((a) => !instance.retiredNames.some((r) => new RegExp(`\\b${escapeRe(r)}\\b`, 'i').test(a))),
+    npcName: instance.retiredNames.some((r) => new RegExp(`\\b${escapeRe(r)}\\b`, 'i').test(m.npcName)) && !instance.cast.some((c) => c.name === m.npcName)
+      ? m.npcName // non-opening roster: leave for later travel, but...
+      : m.npcName,
+  }));
+}
+
+/**
+ * Lock the minted instance onto the save: place, pins, scrubbed hook blob, roster names.
+ */
+export function attachOpeningInstance(
+  state: GameState,
+  hook: OpeningHookSnapshot,
+  blob?: string
+): GameState {
+  const existing = state.openingEstablishment?.instance;
+  const instance = existing ?? mintOpeningInstance(hook, hookKey(state), {
+    bibleId: state.campaignBibleId ?? undefined,
+    engineMode: state.engineMode,
+  });
+  const map: Array<[string, string]> = instance.nameMap?.length
+    ? [...instance.nameMap]
+    : [];
+  if (!map.length) {
+    const locNames = extractTitleNames(hook.location);
+    const whoNames = peopleFromWhoHere(hook.whoHere);
+    if (locNames[0]) map.push([locNames[0], instance.placeName]);
+    whoNames.forEach((n, i) => {
+      const minted = instance.cast[i]?.name;
+      if (minted) {
+        map.push([n, minted]);
+        const bare = n.replace(HONORIFIC, '').trim();
+        if (bare && bare !== n) map.push([bare, minted]);
+      }
+    });
+  }
+
+  const scrubbedBlob = rewriteBlob(blob, map);
+  const scrubbedHook = hook.text ? applyReplacements(hook.text, map) : scrubbedBlob;
+  const est = state.openingEstablishment;
+  const pinned = instance.cast.map((c) => c.name);
+  const memories = patchRoster(state.npcMemories, instance, est?.castNpcIds);
+
+  return {
+    ...state,
+    currentLocation: instance.placeName,
+    npcMemories: memories,
+    openingEstablishment: {
+      ...(est ?? { pending: [], answers: {}, complete: true }),
+      instance,
+      pickedHook: scrubbedHook ?? est?.pickedHook,
+      pinnedNpcNames: pinned.length ? pinned : est?.pinnedNpcNames,
+      pinnedAt: instance.placeName,
+      authoredPage1Retired: hook.page1 || hook.fallback || est?.authoredPage1Retired,
+      // Do not carry authored page 1 as a player-facing fallback.
+      pickedHookFallback: undefined,
+      page1: undefined,
+      answers: { ...(est?.answers ?? {}), where: instance.placeName },
+      card: est?.card
+        ? {
+            ...est.card,
+            place: instance.placeName,
+            cast: instance.cast.length ? instance.cast.map((c) => c.name).join(' and ') : est.card.cast,
+            castNames: pinned,
+            names: [
+              instance.placeName,
+              ...pinned,
+              ...(instance.factionName ? [instance.factionName] : []),
+              ...(instance.settlementName ? [instance.settlementName] : []),
+            ],
+            offer: est.card.offer
+              ? {
+                  ...est.card.offer,
+                  items: instance.offerChips.filter((c) => c.kind === 'accept').map((c) => c.note),
+                  accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? est.card.offer.accept,
+                  refuse: instance.offerChips.find((c) => c.kind === 'refuse')?.label ?? 'Keep your own kit',
+                }
+              : est.card.offer,
+          }
+        : est?.card,
+    },
+  };
+}
+
+export function openingInstanceOf(state: GameState): OpeningInstance | undefined {
+  return state.openingEstablishment?.instance;
+}
+
+
+export function snapshotFromPickedHook(
+  picked?: (OpeningHookSnapshot & {
+    who?: string;
+    how?: string;
+    pressing?: string;
+    where?: string;
+    writerNotes?: string;
+    beats?: string[];
+  }) | null
+): OpeningHookSnapshot {
+  if (!picked) return {};
+  return {
+    location: picked.location ?? picked.where,
+    text: picked.text,
+    page1: picked.page1,
+    fallback: picked.fallback,
+    whoHere: picked.whoHere,
+    openingOffer: picked.openingOffer,
+    pressingNeed: picked.pressingNeed ?? picked.pressing,
+    howYouGotHere: picked.howYouGotHere ?? picked.how,
+    whoYouAre: picked.whoYouAre ?? picked.who,
+    beats: picked.beats,
+    writerNotes: picked.writerNotes,
+  };
+}

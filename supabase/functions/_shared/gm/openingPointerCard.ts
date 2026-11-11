@@ -4,6 +4,7 @@
  */
 
 import type { GameState, SceneFacts } from './types.ts';
+import { formatOpeningWriterNotes } from './openingWriterNotes.ts';
 import { filterChromeFromPresent, realPresentPeople } from './chromeAuthority.ts';
 import { syncPresentToCount } from './crowdAuthority.ts';
 import { openingCastLabel } from './openingEstablishment.ts';
@@ -184,6 +185,10 @@ export function formatOpeningCardChrome(state: GameState): string {
 export function buildOpeningGmPlayerInput(state: GameState, playerInput?: string): string {
   const typed = (playerInput ?? '').trim();
   if (typed && typed !== '(opening)') return typed;
+  if (state.engineMode !== 'pyoa' && state.openingEstablishment && !state.openingEstablishment.sceneWritten) {
+    const notes = formatOpeningWriterNotes(state);
+    if (notes.trim()) return notes;
+  }
   const slots = compilePointerCardSlots(state);
   const lastGm = [...(state.log ?? [])].reverse().find((e) => e?.role === 'gm')?.content?.trim();
   const locked = lastGm

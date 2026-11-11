@@ -21,6 +21,7 @@ import { compileLitrpgCoreIdentity } from './openingPointerCard.ts';
 import { formatGoldShapeForPrompt } from './fluidProseRails.ts';
 import { formatLikedKeeperForPrompt } from './craftKeepers.ts';
 import { formatPerspectiveRule, pcPov, povExample, type PcPov } from './narrativePov.ts';
+import { formatOpeningPage1Rail } from './openingWriterNotes.ts';
 
 /** Story-prose example lines in the mode blocks, rendered in the configured POV. System/choice examples stay "you". */
 const STORY_EXAMPLES: Array<{ second: string; third: string; first: string }> = [
@@ -572,6 +573,8 @@ ${playerRules}
 ${contentRules}
 
 ${formatMaturityRules(settings, { nsfw })}
+
+${formatOpeningPage1Rail(state)}
 `.trim();
 }
 

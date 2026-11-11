@@ -1776,8 +1776,14 @@ export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefin
   if (place && key(state.currentLocation) !== place) return undefined;
   return offer;
 }
-/** "Accept the work" / "Refuse the work" while the card's offer is open. */
+/** Concrete offer chips from the locked opening instance, else a last-resort accept/refuse. */
 export function openingOfferPads(state: GameState): string[] {
+  const chips = state.openingEstablishment?.instance?.offerChips;
+  if (chips?.length) {
+    const offer = openOpeningOffer(state);
+    if (!offer && state.openingEstablishment?.offerTaken) return [];
+    return chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse').map((c) => c.label);
+  }
   const offer = openOpeningOffer(state);
   if (!offer) return [];
   return [`Accept the ${offer.noun}`, `Refuse the ${offer.noun}`];
@@ -3360,16 +3366,13 @@ export async function applyOpeningAnswer(
       state: {
         ...nextState,
         openingEstablishment: {
+          ...est,
           pending: stillPending,
           answers,
           complete: false,
           registrar,
           declinedFields: declined,
           sceneWritten: est.sceneWritten,
-          mode: est.mode,
-          pickedHook: est.pickedHook,
-          pickedHookFallback: est.pickedHookFallback,
-          aloneArrival: est.aloneArrival,
         },
         choices: coverChoices,
         log: [
@@ -3400,16 +3403,13 @@ export async function applyOpeningAnswer(
       currentLocation: lockedWhere,
       campaignPremise: premise,
       openingEstablishment: {
+        ...est,
         pending: [],
         answers,
         complete: true,
         registrar,
         declinedFields: declined,
         sceneWritten: est.sceneWritten,
-        mode: est.mode,
-        pickedHook: est.pickedHook,
-        pickedHookFallback: est.pickedHookFallback,
-        aloneArrival: est.aloneArrival,
       },
       quests: seedLocalStarterQuest(
         nextState.quests ?? [],
@@ -3492,4 +3492,4 @@ export function sanitizeOpeningNarration(text: string): string {
     .replace(/\b([Oo]n you:)\s*my\b/g, '$1')
     .replace(/\b([Ii]n your pockets:)\s*my\b/g, '$1')
     .replace(/\bmy (wallet|phone|headphones|keys|house keys|leatherman|jeans|boots|t-?shirt)\b/gi, '$1');
-}
+}
