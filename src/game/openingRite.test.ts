@@ -55,7 +55,6 @@ describe('XP-D1 OPEN table coverage', () => {
       expect(entry!.offerSentence.trim().length).toBeGreaterThan(0);
       expect(entry!.acceptChip.trim().length).toBeGreaterThan(0);
       expect(entry!.completionLine).toMatch(/Level 2/i);
-      expect(entry!.forcedLine).toMatch(/Level 2/i);
       // Authored rows cover the known catalog; blank unknown still falls back.
       if (authoredOpeningRite(bible.id)) {
         expect(OPENING_RITE_TABLE.some((e) => e.scenarioId === bible.id)).toBe(true);
@@ -133,39 +132,38 @@ describe('XP-D1 OPEN completion paths', () => {
     expect(state.character.level).toBe(2);
   });
 
-  it('refuse forces System completion with same XP', () => {
+  it('refuse completes the rite with the same XP and no System-seals-anyway line', () => {
     const { state, receipts } = applyOpeningRiteTurn(litrpgState('summoned-pact'), 'no');
     expect(state.openingRite?.done).toBe(true);
     expect(state.openingRite?.forced).toBe(true);
     expect(state.character.level).toBe(2);
-    expect(receipts.some((r) => /seals the pact for you|registers you/i.test(r))).toBe(true);
+    expect(receipts.join('\n')).not.toMatch(/seals the pact for you|registers you anyway/i);
   });
 
-  it('OPEN9: backstop completes by end of player turn 2', () => {
+  it('an unresolved rite stays open after non-accept turns; there is no safety-timer completion', () => {
     let s = litrpgState('hero-awakening', { turn: 0 });
-    for (const line of ['who are you?', 'Look around']) {
+    for (const line of ['who are you?', 'Look around', 'Wait and listen']) {
       const r = applyOpeningRiteTurn(s, line);
       s = r.state;
-      if (!s.openingRite?.done) s = { ...s, turn: (s.turn ?? 0) + 1 };
+      s = { ...s, turn: (s.turn ?? 0) + 1 };
     }
-    expect(s.openingRite?.done).toBe(true);
-    expect(s.openingRite?.forced).toBe(true);
-    expect(s.openingRite?.turn).toBeLessThanOrEqual(3);
-    expect(s.character.level).toBe(2);
+    expect(s.openingRite?.done).toBeFalsy();
+    expect(s.character.level).toBe(1);
+    const rite = (s.quests ?? []).find((q) => q.id === 'opening-rite:hero-awakening');
+    expect(rite?.status).toBe('active');
+    expect(rite?.type).toBe('side');
   });
 
-  it('every LitRPG authored rite completes by turn 3 in the simulated none-flow', () => {
+  it('every LitRPG authored rite stays open in a simulated none-flow', () => {
     for (const entry of OPENING_RITE_TABLE) {
       let s = litrpgState(entry.scenarioId, { turn: 1 });
       for (let i = 0; i < 3; i++) {
-        if (s.openingRite?.done) break;
         const r = applyOpeningRiteTurn(s, 'Look around');
         s = r.state;
-        if (!s.openingRite?.done) s = { ...s, turn: (s.turn ?? 0) + 1 };
+        s = { ...s, turn: (s.turn ?? 0) + 1 };
       }
-      expect(s.openingRite?.done, entry.scenarioId).toBe(true);
-      expect(s.character.level, entry.scenarioId).toBe(2);
-      expect(s.openingRite?.completedAtTurn ?? 99, entry.scenarioId).toBeLessThanOrEqual(3);
+      expect(s.openingRite?.done, entry.scenarioId).toBeFalsy();
+      expect(s.character.level, entry.scenarioId).toBe(1);
     }
   });
 
@@ -251,6 +249,17 @@ describe('XP-D1 OPEN chips + writer fact + System window', () => {
     const afterA2 = pinStoryChipInTop(state, base, 3);
     const combined = pinOpeningRiteChip(state, afterA2);
     expect(combined[0]?.toLowerCase()).toBe('sign the pact');
+  });
+
+  it('accept and refuse take scene slots: exactly 4 scene pads plus free input', () => {
+    const state = litrpgState('summoned-pact');
+    const pads = ['Look around', 'Wait and listen', 'Ask what they want', 'Travel toward Lowmarket', 'Say something…', 'Do something else…'];
+    const pinned = pinOpeningRiteChip(state, pads);
+    const scene = pinned.filter((c) => !/^(?:Say something|Do something else)/i.test(c));
+    expect(scene).toEqual(['Sign the pact', 'Refuse the pact', 'Look around', 'Wait and listen']);
+    expect(pinned.slice(4)).toEqual(['Say something…', 'Do something else…']);
+    const withRefuse = pinOpeningRiteChip(state, ['Look around', 'Wait and listen', 'Ask what they want', 'Refuse the pact', 'Say something…']);
+    expect(withRefuse).toEqual(['Sign the pact', 'Refuse the pact', 'Look around', 'Wait and listen', 'Say something…']);
   });
 
   it('writer packet carries the pending offer', () => {

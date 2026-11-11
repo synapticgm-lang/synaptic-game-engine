@@ -89,8 +89,9 @@ export function resolveOpeningPinnedNames(
   const fromHook = extractNamesFromHookText(
     state.openingEstablishment?.pickedHook ?? state.openingEstablishment?.pickedHookFallback
   );
-  const fromBible = openingNpcFromBible(bible);
-  const merged = [...fromHook, ...fromBible];
+  // Never fall back to bible keyNPCs[0..1] (catalog Orel / Sera on an unnamed hook).
+  // Pins after attach come from the minted opening cast.
+  const merged = [...fromHook];
   const out: string[] = [];
   const bibleId = state.campaignBibleId ?? bible?.id;
   for (const n of merged) {

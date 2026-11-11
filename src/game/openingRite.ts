@@ -1,6 +1,6 @@
 /**
  * XP-D1 OPEN — LitRPG Opening Rite engine.
- * Deterministic accept/refuse/backstop; engine-owned XP fill to Level 2.
+ * Deterministic accept/refuse; engine-owned XP fill to Level 2.
  * Never runs for tabletop / RPG / PYOA.
  */
 import { applyCharacterXpGain } from './characterXp';
@@ -193,7 +193,8 @@ function completeRite(
     state.openingEstablishment?.answers?.name?.trim()
     || state.character?.name?.trim()
     || 'Adventurer';
-  const line = fillName(opts.forced ? entry.forcedLine : entry.completionLine, name);
+  // Refuse still completes the rite (player chose), but never a System-seals-it-anyway line.
+  const line = opts.forced ? '' : fillName(entry.completionLine, name);
   const xpPaid = openingRiteXpFill(state);
   const leveled = applyCharacterXpGain(
     state.character,
@@ -214,7 +215,7 @@ function completeRite(
     `Quest complete: ${entry.title}`,
     ...(xpPaid > 0 ? [`XP Gained: ${xpPaid} (opening rite: ${entry.title})`] : []),
     ...leveled.notes,
-    line,
+    ...(line ? [line] : []),
   ];
   // Guard key — excluded from repeat ladder logic; flag is the pay gate.
   const awardKeys = [...(state.sandboxAwardKeys ?? [])];
@@ -252,9 +253,8 @@ function completeRite(
 
 /**
  * Apply one player turn against the open rite.
- * Accept → complete now. Refuse → forced complete now (same XP).
- * Neither → count the turn; force-complete by player-turn 2 or save turn 2
- * (whichever comes first) so every LitRPG lands L2 around turn 2 (OPEN9).
+ * Accept → complete now. Refuse → complete now (same XP).
+ * Neither → the rite stays open as a side quest. There is no safety-timer completion.
  */
 export function applyOpeningRiteTurn(
   state: GameState,
@@ -267,8 +267,6 @@ export function applyOpeningRiteTurn(
   if (!entry) return { state: next, receipts: [] };
 
   const turnCount = (next.openingRite?.turn ?? 0) + 1;
-  // Upcoming commit turn on the save (apply runs before turn++).
-  const commitTurn = (next.turn ?? 0) + 1;
   next = {
     ...next,
     openingRite: { ...next.openingRite!, turn: turnCount },
@@ -279,41 +277,41 @@ export function applyOpeningRiteTurn(
   };
 
   const kind = classifyOpeningRiteInput(playerInput, entry);
-  if (kind === 'accept') {
+  const offerTaken = next.openingEstablishment?.offerTaken;
+  if (kind === 'accept' || (kind === 'none' && offerTaken === 'accepted')) {
     return completeRite(next, entry, { forced: false, turnCount });
   }
-  if (kind === 'refuse') {
-    return completeRite(next, entry, { forced: true, turnCount });
-  }
-  // OPEN9 — backstop by player-turn 2 / save commit turn 2 so L2 lands ~T2 (was turn 3).
-  if (turnCount >= 2 || commitTurn >= 2) {
+  if (kind === 'refuse' || (kind === 'none' && offerTaken === 'refused')) {
     return completeRite(next, entry, { forced: true, turnCount });
   }
   return { state: next, receipts: [] };
 }
 
+const RITE_SCENE_SLOTS = 4;
+const isFreeInputPad = (c: string) => /^(?:say something|do something else)\b/i.test((c ?? '').trim());
+
 /**
- * Pin the accept chip first while the rite is open (turns 1–2).
- * Does not count against the pad cap — unshift without dropping another chip.
+ * Pin the accept chip first while the rite is open. Accept (and refuse, if pinned)
+ * take scene slots: the scene list stays at 4, dropping the last (weakest) pads.
+ * Free-input chips stay after the scene pads and do not count.
  */
 export function pinOpeningRiteChip(state: GameState, choices: string[]): string[] {
   if (!openingRiteIsOpen(state)) return choices;
-  if ((state.openingRite?.turn ?? 0) >= 3) return choices;
   const chip = openingRiteAcceptChip(state);
   if (!chip) return choices;
-  const list = [...choices];
+  const free = choices.filter(isFreeInputPad);
+  const list = choices.filter((c) => !isFreeInputPad(c));
   const want = chip.toLowerCase();
   const idx = list.findIndex((c) => c.toLowerCase() === want);
-  if (idx === 0) return list;
   if (idx > 0) list.splice(idx, 1);
-  list.unshift(chip);
+  if (idx !== 0) list.unshift(chip);
   const refuse = openingRiteRefuseChip(state);
-  if (refuse && !list.some((c) => c.toLowerCase() === refuse.toLowerCase())) {
-    // Refuse stays available but does not displace the accept pin.
-    const insertAt = Math.min(1, list.length);
-    list.splice(insertAt, 0, refuse);
+  if (refuse) {
+    const r = list.findIndex((c, i) => i > 0 && c.toLowerCase() === refuse.toLowerCase());
+    if (r > 0) list.splice(r, 1);
+    if (refuse.toLowerCase() !== want) list.splice(Math.min(1, list.length), 0, refuse);
   }
-  return list;
+  return [...list.slice(0, RITE_SCENE_SLOTS), ...free];
 }
 
 /** Chip families that move the story (quest-profile preference after rite / story pin). */

@@ -647,6 +647,11 @@ function uniquePush(out: string[], seen: Set<string>, label: string): void {
   out.push(tidy(label));
 }
 
+/** Check System / Check notices is inbox chrome, never a scene pad. */
+function isSystemInboxChip(label: string): boolean {
+  return /^(?:check system|check notices)\b/i.test((label ?? '').trim());
+}
+
 /**
  * Built-in fallbacks per slot when the candidate pool has nothing legal.
  * Only emit engine-backed labels (story / hub travel / rest / fight verbs already in candidates
@@ -743,10 +748,6 @@ export function fourSlotFallback(
         ?? tryLabel('Ask about training', { requireCandidate: true });
       if (hit) return hit;
     }
-    if (state.engineMode === 'litrpg') {
-      const sys = tryLabel('Check System');
-      if (sys) return sys;
-    }
     return tryLabel('Look around') ?? null;
   }
 
@@ -830,7 +831,7 @@ export function assembleFourSlotPads(
     pools[slot].push(label);
   };
 
-  const candList = candidates.map(tidy).filter(Boolean);
+  const candList = candidates.map(tidy).filter((c) => !!c && !isSystemInboxChip(c));
   for (const c of candidates) consider(c);
   // Hurt journey: seed the exclusive road list so Walk on / Turn back survive Rest reshape.
   const roadUnderway = isJourneyUnderway(state) && !liveFight(state);
@@ -1007,6 +1008,7 @@ export function assembleFourSlotPads(
   const canPad = (label: string) =>
     !!label
     && !isFreeInputChip(label)
+    && !isSystemInboxChip(label)
     && isFourSlotLegal(state, label)
     && !isFourSlotRepeat(state, label, prev)
     && !namedTalkTopicSpent(state, label);
@@ -1051,7 +1053,7 @@ export function assembleFourSlotPads(
     if (fourSeen.has(low(hub)) || !canPad(hub)) continue;
     uniquePush(four, fourSeen, hub);
   }
-  // Safe engine fallbacks to reach 4 (Look/Wait/Check System / exit Travel).
+  // Safe engine fallbacks to reach 4 (Look/Wait / exit Travel).
   // Leave when hurt needs a route to a safe spot (closed camp / tabletop outdoor Rest illegal).
   // Full-HP sealed openings never take this branch — transitStuck Leave-unbound stays fixed.
   const exitTravels = recordedTravelDestinations(state).map((r) => `Travel toward ${r.label}`);
@@ -1067,15 +1069,13 @@ export function assembleFourSlotPads(
         ...(gatherModeOk(state) ? ['Gather herbs and resources nearby'] : []),
         ...(hurt ? [OUTDOOR_REST_CHIP, OUTDOOR_CAMP_CHIP] : []),
         ...seatedTalk,
-        ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
-      ]
+              ]
     : [
         ...seatedTalk,
         ...exitTravels,
         ...outdoorHubTravelChoices(state, 4),
         ...leaveWhenHurtRoute,
-        ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
-        OUTDOOR_REST_CHIP,
+                OUTDOOR_REST_CHIP,
         OUTDOOR_CAMP_CHIP,
         ...(state.engineMode === 'dnd' ? [TABLETOP_SHORT_REST_CHIP] : []),
         // Look/Wait only when filler streak has not already starved them.
@@ -1117,8 +1117,7 @@ export function assembleFourSlotPads(
       ...exitTravels,
       ...candList,
       'Study the report',
-      ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
-    ];
+          ];
     for (const g of lastResort) {
       if (four.length >= 4) break;
       if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g) || namedTalkTopicSpent(state, g)) continue;

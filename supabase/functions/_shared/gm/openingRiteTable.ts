@@ -20,8 +20,6 @@ export interface OpeningRiteEntry {
   refuseChip?: string;
   /** Diegetic System line (≤2 lines); may include `<name>`. Ends with level-up. */
   completionLine: string;
-  /** Used when the System registers them anyway (refuse / backstop). */
-  forcedLine: string;
 }
 
 /** Authored Opening Rite per LitRPG scenario id. */
@@ -34,7 +32,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Sign the pact',
     refuseChip: 'Refuse the pact',
     completionLine: 'Pact sealed. The System recognises you. Level 2.',
-    forcedLine: 'The System seals the pact for you. You are registered. Level 2.',
   },
   {
     scenarioId: 'system-integration',
@@ -44,7 +41,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Give your name and register',
     refuseChip: 'Refuse to register',
     completionLine: 'Registration complete. Congratulations, <name>. Level 2.',
-    forcedLine: 'The System registers you anyway. Welcome, <name>. Level 2.',
   },
   {
     scenarioId: 'hero-awakening',
@@ -54,7 +50,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Accept the awakening',
     refuseChip: 'Refuse the awakening',
     completionLine: 'Awakening accepted. The Wake Ledger stamps you. Level 2.',
-    forcedLine: 'The Wake Ledger stamps you anyway. Level 2.',
   },
   {
     scenarioId: 'void-audience',
@@ -64,7 +59,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Accept the trial terms',
     refuseChip: 'Refuse the trial',
     completionLine: 'Trial terms accepted. The Void Audience takes note. Level 2.',
-    forcedLine: 'The Auditor files your acceptance. The trial begins. Level 2.',
   },
   {
     scenarioId: 'dungeon-transport',
@@ -74,7 +68,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Take the Descent Mark',
     refuseChip: 'Refuse the Mark',
     completionLine: 'Descent Mark applied. Floor 1 is open. Level 2.',
-    forcedLine: 'The System brands the Descent Mark anyway. Level 2.',
   },
   {
     scenarioId: 'fabled-legacy',
@@ -84,7 +77,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Take the village oath',
     refuseChip: 'Refuse the oath',
     completionLine: 'Oath taken. Mossford counts you among its own. Level 2.',
-    forcedLine: 'The Old Faith binds you to Mossford anyway. Level 2.',
   },
   {
     scenarioId: 'ascending-spire',
@@ -94,7 +86,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Claim the Climber\u2019s Tag',
     refuseChip: 'Refuse the Tag',
     completionLine: 'Climber\u2019s Tag claimed. The Ranking Board lists you. Level 2.',
-    forcedLine: 'The Gate stamps your Tag anyway. Level 2.',
   },
   {
     scenarioId: 'inkbound-academy',
@@ -104,7 +95,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Enroll and claim your class',
     refuseChip: 'Refuse enrollment',
     completionLine: 'Enrollment sealed. Your Class Codex unlocks. Level 2.',
-    forcedLine: 'The Academy enrolls you anyway. Level 2.',
   },
   {
     scenarioId: 'hollow-core',
@@ -114,7 +104,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Claim the Hollow',
     refuseChip: 'Refuse the claim',
     completionLine: 'Hollow claimed. Core binding holds. Level 2.',
-    forcedLine: 'The Hollow binds you anyway. Level 2.',
   },
   {
     scenarioId: 'gatebreak-ward',
@@ -124,7 +113,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Take the Ward oath',
     refuseChip: 'Refuse the oath',
     completionLine: 'Ward oath taken. Armband issued. Level 2.',
-    forcedLine: 'Militia registers you for Ward 9 anyway. Level 2.',
   },
   {
     scenarioId: 'blank-canvas',
@@ -134,7 +122,6 @@ export const OPENING_RITE_TABLE: ReadonlyArray<OpeningRiteEntry> = [
     acceptChip: 'Accept the Author\u2019s Authority',
     refuseChip: 'Refuse the stamp',
     completionLine: 'Authority accepted. Your story is stamped. Level 2.',
-    forcedLine: 'The System stamps Author\u2019s Authority anyway. Level 2.',
   },
 ];
 
@@ -161,7 +148,6 @@ export function fallbackOpeningRite(bible: OpeningRiteBibleFields): OpeningRiteE
     acceptChip: `Accept your place in ${short}`,
     refuseChip: 'Refuse',
     completionLine: `Accepted. The System welcomes you to ${short}. Level 2.`,
-    forcedLine: `The System registers you in ${short} anyway. Level 2.`,
   };
 }
 

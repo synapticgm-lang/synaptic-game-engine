@@ -1,5 +1,5 @@
 /**
- * XP-D1 OPEN9 FIX 5–6 — Opening Rite L2 by ~T2; simple Your-upperclassman prose scrub.
+ * XP-D1 OPEN9 FIX 5–6 — Opening Rite L2 on accept; simple Your-upperclassman prose scrub.
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
@@ -28,7 +28,7 @@ function inkbound(over: Partial<GameState> = {}): GameState {
 }
 
 describe('XP-D1 OPEN9 Opening Rite pace', () => {
-  it('accept on first chip lands L2; backstop on second non-accept also lands L2', () => {
+  it('accept on first chip lands L2; non-accept leaves the rite open', () => {
     const chip = openingRiteAcceptChip(inkbound());
     expect(chip).toMatch(/enroll/i);
     const accepted = applyOpeningRiteTurn(inkbound({ turn: 1 }), chip!);
@@ -40,8 +40,8 @@ describe('XP-D1 OPEN9 Opening Rite pace', () => {
     expect(s.openingRite?.done).toBe(false);
     s = { ...s, turn: 1 };
     s = applyOpeningRiteTurn(s, 'Look around').state;
-    expect(s.openingRite?.done).toBe(true);
-    expect(s.character.level).toBe(2);
+    expect(s.openingRite?.done).toBe(false);
+    expect(s.character.level).toBe(1);
   });
 
   it('bars stay rising (L1 < L2 < L3 < L4) — xpPace pin unchanged', () => {
