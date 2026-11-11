@@ -171,6 +171,7 @@ import {
   applySuccessfulLiveOpening,
   applyFailedLiveOpening,
   isBlankOpeningProse,
+  openingProseLeaksStructuredJson,
   originOnlyOpeningText,
   STORYTELLER_RETRY_MESSAGE,
   STORYTELLER_RETRY_CHIP,
@@ -698,7 +699,7 @@ async function paintLiveOpeningPage(
   prose = ensureSystemReceipt(state, sanitizeOpeningNarration(prose));
   prose = enforcePerspective(prose, settings, state.character.name);
   if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
-  if (isBlankOpeningProse(prose)) {
+  if (isBlankOpeningProse(prose) || openingProseLeaksStructuredJson(prose)) {
     return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
   }
   const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads, journalTitle: result.journal.title });
@@ -2564,7 +2565,7 @@ export function useGame() {
         }
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
-        if (isBlankOpeningProse(cleanOpening)) {
+        if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
           const failed = failedLiveOpeningPageState(openingState);
           stateRef.current = failed;
           setState(failed);
@@ -5823,7 +5824,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
-      if (isBlankOpeningProse(cleanOpening)) {
+      if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
         const failed = failedLiveOpeningPageState(newState);
         stateRef.current = failed;
         setState(failed);

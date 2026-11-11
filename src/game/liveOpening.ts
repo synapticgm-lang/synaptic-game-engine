@@ -9,12 +9,15 @@ import {
   isCommonOpeningLexeme,
   looksLikeOpeningStructuredText,
   openingChoiceCount,
+  openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
   recoverOpeningNarration,
   retiredNameNeedles,
   STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
 } from './openingWriterNotes';
+
+export { openingProseLeaksStructuredJson };
 
 export { formatOpeningWriterNotes, openingChoiceCount, STORYTELLER_RETRY_CHIP, STORYTELLER_RETRY_MESSAGE };
 
@@ -565,7 +568,9 @@ export function applySuccessfulLiveOpening(
   prose: string,
   extras?: { pads?: string[]; journalTitle?: string }
 ): GameState {
-  if (isBlankOpeningProse(prose)) return applyFailedLiveOpening(state);
+  if (isBlankOpeningProse(prose) || openingProseLeaksStructuredJson(prose)) {
+    return applyFailedLiveOpening(state);
+  }
   const pads = extras?.pads?.length ? extras.pads : shapeOpeningPads(state, prose);
   const journal = derivedJournalQuest(state, prose, extras?.journalTitle);
   const privateSpineId = state.openingEstablishment?.privateSpineId;
@@ -697,6 +702,8 @@ export async function writeLiveOpening(
   }
 
   if (!proseOk(draft)) return fail();
+  // Final leak gate — independent of detection. Never commit keys or JSON punctuation.
+  if (openingProseLeaksStructuredJson(draft.prose)) return fail();
   return {
     ok: true,
     prose: draft.prose,

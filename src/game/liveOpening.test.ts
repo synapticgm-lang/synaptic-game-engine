@@ -19,10 +19,12 @@ import {
   extractOpeningJsonStringField,
   formatLaterTurnNameRail,
   looksLikeOpeningStructuredText,
+  openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
   recoverOpeningNarration,
   unescapeExtractedString,
 } from './openingWriterNotes';
+import { headlessOpeningContinueTurn } from './liveDrive';
 import { riteEntryForState } from './openingRiteFacts';
 import { ensureSystemReceipt, sanitizeOpeningNarration } from './openingEstablishment';
 import { formatOpeningCardChrome } from './openingPointerCard';
@@ -567,6 +569,113 @@ describe('liveOpening', () => {
     expect(extracted).not.toMatch(/\\n/);
     expect(extracted).toMatch(/Heat rises\.\s+You wake at the loft/);
     expect(readOpeningStructuredOutput(truncated)?.prose).toMatch(/Heat rises\.\s+You wake at the loft/);
+  });
+
+
+  it('recovers unwrapped and typographic almost-JSON dumps, or fails closed without keys on the page', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const prose = mockLiveOpeningProse(state);
+    const title = `${inst.cast[0]!.name.split(/\s+/)[0]} at ${inst.placeName}`;
+    const options = shapeOpeningPads(state, prose);
+    const unwrapped = `"prose": ${JSON.stringify(prose)}, "options": ${JSON.stringify(options)}, "journalTitle": ${JSON.stringify(title)}`;
+    expect(unwrapped.trim().startsWith('{')).toBe(false);
+    expect(looksLikeOpeningStructuredText(unwrapped)).toBe(true);
+    expect(readOpeningStructuredOutput(unwrapped)?.prose).toBe(prose);
+    expect(recoverOpeningNarration(unwrapped)).toBe(prose);
+
+    const typographic = [
+      `“prose”: “${prose.replace(/"/g, '\\"')}”`,
+      `“options”: ${JSON.stringify(options)}`,
+      `“journalTitle”: “${title}”`,
+    ].join(', ');
+    expect(typographic.trim().startsWith('{')).toBe(false);
+    expect(looksLikeOpeningStructuredText(typographic)).toBe(true);
+    expect(readOpeningStructuredOutput(typographic)?.prose).toBe(prose);
+    expect(recoverOpeningNarration(typographic)).toBe(prose);
+
+    const trailing = `${prose} { "options": ${JSON.stringify(options)} }`;
+    expect(looksLikeOpeningStructuredText(trailing)).toBe(true);
+    expect(readOpeningStructuredOutput(trailing)?.prose).toBe(prose.replace(/\s+/g, ' ').trim());
+    expect(recoverOpeningNarration(trailing)).toBe(prose.replace(/\s+/g, ' ').trim());
+
+    for (const raw of [unwrapped, typographic, trailing]) {
+      const result = await writeLiveOpening(state, settings, { writer: async () => raw });
+      if (result.ok) {
+        expect(result.prose).toBe(prose.replace(/\s+/g, ' ').trim());
+        expect(result.prose).not.toMatch(/["'\u201C\u201D]\s*(?:prose|options|journalTitle)\s*["'\u201C\u201D]\s*:/i);
+        expect(result.prose.startsWith('{')).toBe(false);
+        expect(result.prose).not.toBe(STORYTELLER_RETRY_MESSAGE);
+      } else {
+        expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
+      }
+    }
+  });
+
+  it('fails options-only JSON after a short preamble instead of committing keys', async () => {
+    const state = game();
+    const raw = 'Here you go:\n{"options":["Look around first","Study the loft"], "journalTitle": "Under you. The offer"}';
+    expect(looksLikeOpeningStructuredText(raw)).toBe(true);
+    expect(readOpeningStructuredOutput(raw)).toBeNull();
+    expect(recoverOpeningNarration(raw)).toBe('');
+    const result = await writeLiveOpening(state, settings, { writer: async () => raw });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
+  });
+
+  it('final leak gate rejects JSON injected after extraction and is independent of detection', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const prose = mockLiveOpeningProse(state);
+    const typographic = [
+      `“Talk is done,” ${inst.cast[0]!.name} says at ${inst.placeName}.`,
+      'The place is already named and ordinary, not a blur.',
+      'First move is yours — the plan, the cut, or the walk.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    const withOptions = [
+      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} has not looked away.`,
+      'The choice is written on the crate as "options": walk or stay, but the crew is still waiting.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    const withWard = [
+      `${inst.placeName} sits by the {ward stones, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} is already in motion.`,
+      'Heat still rises off the packed earth.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    expect(openingProseLeaksStructuredJson(prose)).toBe(false);
+    expect(openingProseLeaksStructuredJson(typographic)).toBe(false);
+    expect(openingProseLeaksStructuredJson(withOptions)).toBe(false);
+    expect(openingProseLeaksStructuredJson(withWard)).toBe(false);
+
+    const injected = `${prose} { "options": ["Look around first"] }`;
+    expect(openingProseLeaksStructuredJson(injected)).toBe(true);
+    const next = applySuccessfulLiveOpening(state, injected);
+    expect(next.openingEstablishment?.sceneWritten).not.toBe(true);
+    expect(next.openingEstablishment?.sceneWriteError).toBe(STORYTELLER_RETRY_MESSAGE);
+    expect(next.choices).toEqual([STORYTELLER_RETRY_CHIP]);
+
+    const punct = `${prose}\n}, { "journalTitle": "Arrival" }`;
+    expect(openingProseLeaksStructuredJson(punct)).toBe(true);
+    const punctState = applySuccessfulLiveOpening(state, punct);
+    expect(punctState.openingEstablishment?.sceneWritten).not.toBe(true);
+  });
+
+  it('does not stitch authored page 1 when a live opening is still unwritten', async () => {
+    const state = game();
+    expect(state.openingEstablishment?.sceneWritten).not.toBe(true);
+    const prose = mockLiveOpeningProse(state);
+    const next = await headlessOpeningContinueTurn(state, 'Look around', {
+      writer: async () => prose,
+      settings,
+    });
+    expect(next.gmText).not.toMatch(/lying on your back in a scorched circle/i);
+    expect(next.gmText).not.toMatch(/["']\s*(?:prose|options|journalTitle)\s*["']\s*:/i);
+    expect(next.gmText).toBe(prose);
+    expect(next.state.openingEstablishment?.sceneWritten).toBe(true);
+    expect(next.offeredChoices.length).toBeGreaterThan(0);
   });
 
   it('two seeds produce different mock openings', () => {
