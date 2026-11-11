@@ -11,6 +11,7 @@ import {
   openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
   retiredNameNeedles,
+  rewriteOpeningMarkup,
   STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
 } from './openingWriterNotes';
@@ -77,9 +78,52 @@ function sentenceCount(text: string): number {
   return (text.match(/[.!?]["']?\s+[A-Z]|[.!?]["']?\s*$/g) ?? []).length;
 }
 
-function mentionsName(text: string, name: string): boolean {
-  const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 4)];
+/** Person names match the full name, or the first or last name on its own. */
+export function mentionsName(text: string, name: string): boolean {
+  const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 2 && !isCommonOpeningLexeme(p))];
   return parts.some((p) => new RegExp(`\\b${escapeRe(p)}\\b`, 'i').test(text));
+}
+
+/** Distinctive tokens of a minted place — never a generic suffix such as Trail or Crossing. */
+export function distinctivePlaceTokens(placeName: string): string[] {
+  return (placeName ?? '')
+    .split(/\s+/)
+    .map((p) => p.replace(/['’]s$/i, ''))
+    .filter((p) => p.length >= 4 && !isCommonOpeningLexeme(p));
+}
+
+/**
+ * Required places match the full minted name (case-insensitive), or a distinctive
+ * non-generic token (for example "Vossleigh" from "Vossleigh Crossing").
+ * A generic suffix alone (Trail, Road, Hollow, Crossing) is not enough.
+ */
+export function mentionsPlaceName(text: string, placeName: string): boolean {
+  const place = (placeName ?? '').trim();
+  if (!place) return false;
+  if (new RegExp(`\\b${escapeRe(place)}\\b`, 'i').test(text)) return true;
+  return distinctivePlaceTokens(place).some((p) => new RegExp(`\\b${escapeRe(p)}\\b`, 'i').test(text));
+}
+
+function lockedPlaceNames(state: GameState): string[] {
+  const inst = openingInstanceOf(state);
+  return [inst?.placeName, inst?.settlementName, inst?.nearbyLandmark].filter(Boolean) as string[];
+}
+
+/** Resolve a label to a locked place (full name or distinctive token), if it is one. */
+function lockedPlaceFor(state: GameState, name: string): string | undefined {
+  const key = (name ?? '').trim().toLowerCase();
+  if (!key) return undefined;
+  for (const place of lockedPlaceNames(state)) {
+    if (place.toLowerCase() === key) return place;
+    if (distinctivePlaceTokens(place).some((t) => t.toLowerCase() === key)) return place;
+  }
+  return undefined;
+}
+
+function mentionsOpeningName(state: GameState, text: string, name: string): boolean {
+  const place = lockedPlaceFor(state, name);
+  if (place) return mentionsPlaceName(text, place);
+  return mentionsName(text, name);
 }
 
 const COMMON_STORY_WORDS = new Set([
@@ -116,7 +160,7 @@ export function validateLiveOpeningProse(state: GameState, prose: string): strin
     errors.push('pointer dump');
   }
   const inst = openingInstanceOf(state);
-  if (inst?.placeName && !mentionsName(text, inst.placeName)) {
+  if (inst?.placeName && !mentionsPlaceName(text, inst.placeName)) {
     errors.push(`missing place ${inst.placeName}`);
   }
   if (inst && !inst.alone && inst.cast.length) {
@@ -271,7 +315,7 @@ export function prosePronounForName(prose: string, name: string): 'he' | 'she' |
   return 'unknown';
 }
 
-/** Light check: self-introductions and subject/possessive pronouns must match minted gender. */
+/** Light check: self-introductions and explicit appositives must match minted gender. */
 export function validateOpeningCastVoice(state: GameState, prose: string): string[] {
   const errors: string[] = [];
   const inst = openingInstanceOf(state);
@@ -298,33 +342,30 @@ export function validateOpeningCastVoice(state: GameState, prose: string): strin
     }
   }
 
-  const sentences = text.split(/(?<=[.!?])(?:\s+|$)/).map((s) => s.trim()).filter(Boolean);
+  const descriptor = 'woman|lady|girl|female|man|gentleman|boy|male|fellow';
+  const descriptorGender = (noun: string): 'male' | 'female' | undefined => {
+    if (/^(?:woman|lady|girl|female)$/i.test(noun)) return 'female';
+    if (/^(?:man|gentleman|boy|male|fellow)$/i.test(noun)) return 'male';
+    return undefined;
+  };
   for (const member of inst.cast) {
     if (!member.gender) continue;
     const given = givenNameOf(member.name);
-    const nameRe = new RegExp(`\\b${escapeRe(member.name)}\\b|\\b${escapeRe(given)}\\b`, 'i');
-    const want = member.gender === 'female' ? 'she' : 'he';
-    for (let i = 0; i < sentences.length; i++) {
-      const sentence = sentences[i]!;
-      const at = sentence.search(nameRe);
-      if (at < 0) continue;
-      const rest = sentence.slice(at).replace(nameRe, '');
-      if (inst.cast.some((c) => c !== member && mentionsName(rest, c.name))) continue;
-      if (i + 1 < sentences.length) {
-        const next = sentences[i + 1]!;
-        const start = next.match(/^(He|She|His|Her)\b/);
-        const kinship = /^(His|Her)\s+(?:brother|sister|father|mother|son|daughter|family|friend|name|kin)\b/i.test(next);
-        const exclusive = !inst.cast.some((c) => c !== member && mentionsName(sentence, c.name));
-        if (start && exclusive && !kinship) {
-          const got = /^(She|Her)/i.test(start[1]!) ? 'she' : 'he';
-          if (got !== want) errors.push(`pronoun does not match minted gender for ${member.name}`);
+    const namePat = `${escapeRe(member.name)}|${escapeRe(given)}`;
+    const patterns = [
+      new RegExp(`\\b(?:the|a|an)\\s+(${descriptor})\\s*,\\s*(?:${namePat})\\b`, 'gi'),
+      new RegExp(`\\b(?:the|a|an)\\s+(${descriptor})\\s+(?:${namePat})\\b`, 'gi'),
+      new RegExp(`\\b(?:${namePat})\\s*,\\s*(?:a|an|the)\\s+(${descriptor})\\b`, 'gi'),
+      new RegExp(`\\b(?:${namePat})\\s+the\\s+(${descriptor})\\b`, 'gi'),
+    ];
+    for (const re of patterns) {
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text))) {
+        const noun = m[1]!;
+        const got = descriptorGender(noun);
+        if (got && got !== member.gender) {
+          errors.push(`descriptor does not match minted gender for ${member.name}`);
         }
-      }
-      const poss = rest.match(/\b(?:on|in|at|across|from|with|of|by)\s+(his|her)\s+\w+/i) || rest.match(/\b(he|she)\b/i);
-      if (poss) {
-        const token = poss[1] ?? poss[0]!;
-        const got = /she|her/i.test(token) ? 'she' : 'he';
-        if (got !== want) errors.push(`pronoun does not match minted gender for ${member.name}`);
       }
     }
   }
@@ -364,7 +405,7 @@ function properNamesInOption(label: string, state: GameState): string[] {
   const known = knownOpeningNames(state);
   const found: string[] = [];
   for (const n of known) {
-    if (mentionsName(label, n) && !found.some((f) => f.toLowerCase() === n.toLowerCase())) found.push(n);
+    if (mentionsOpeningName(state, label, n) && !found.some((f) => f.toLowerCase() === n.toLowerCase())) found.push(n);
   }
   const spans = label.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g) ?? [];
   for (const span of spans) {
@@ -398,7 +439,7 @@ export function validateOpeningOptions(state: GameState, prose: string, options:
       }
     }
     for (const name of properNamesInOption(label, state)) {
-      if (!mentionsName(prose, name)) errors.push(`option names ${name}, which is not in the prose`);
+      if (!mentionsOpeningName(state, prose, name)) errors.push(`option names ${name}, which is not in the prose`);
     }
     errors.push(...optionPronounErrors(label, prose, names));
     const member = inst?.cast.find((c) => mentionsName(label, c.name));
@@ -467,7 +508,7 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
     if (labels.some((x) => optionsAreNearDuplicates(x, t))) return;
     if ((inst?.retiredNames ?? []).some((r) => retiredNameNeedles(r).some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(t)))) return;
     const names = properNamesInOption(t, state);
-    if (names.some((nm) => !mentionsName(prose, nm))) return;
+    if (names.some((nm) => !mentionsOpeningName(state, prose, nm))) return;
     if (optionPronounErrors(t, prose, knownOpeningNames(state)).length) return;
     labels.push(t);
   };
@@ -677,11 +718,13 @@ export function applySuccessfulLiveOpening(
   prose: string,
   extras?: { pads?: string[]; journalTitle?: string }
 ): GameState {
-  if (isBlankOpeningProse(prose) || openingProseLeaksStructuredJson(prose)) {
+  // parse (caller) → rewrite markup → leak gate
+  const clean = rewriteOpeningMarkup(prose, state.engineMode).trim();
+  if (isBlankOpeningProse(clean) || openingProseLeaksStructuredJson(clean)) {
     return applyFailedLiveOpening(state);
   }
-  const pads = extras?.pads?.length ? extras.pads : shapeOpeningPads(state, prose);
-  const journal = derivedJournalQuest(state, prose, extras?.journalTitle);
+  const pads = extras?.pads?.length ? extras.pads : shapeOpeningPads(state, clean);
+  const journal = derivedJournalQuest(state, clean, extras?.journalTitle);
   const privateSpineId = state.openingEstablishment?.privateSpineId;
   const quests = [...(state.quests ?? [])];
   const idx = quests.findIndex((q) => q.id === journal.id);
@@ -728,7 +771,9 @@ async function runWriter(
 ): Promise<OpeningDraft> {
   const input = formatOpeningWriterNotes(state, retryErrors) || '(opening)';
   const raw = await writer(state, input, settings);
-  return draftFromWriterRaw(raw);
+  const parsed = draftFromWriterRaw(raw);
+  // parse → rewrite markup → leak gate (proseOk)
+  return { ...parsed, prose: rewriteOpeningMarkup(parsed.prose, state.engineMode).trim() };
 }
 
 function withFallbackPadsAndTitle(
@@ -772,6 +817,7 @@ export async function writeLiveOpening(
   // A writer retry already existed for a failed first draft (and for bad structured options).
   // Parse failures and leak-gate failures now use that same single automatic retry
   // before "Try again"; a second failure does not call the writer again.
+  // draft.prose has already been rewritten in runWriter (parse → rewrite → gate)
   const proseOk = (d: OpeningDraft) =>
     !!d.prose.trim()
     && !openingProseLeaksStructuredJson(d.prose)

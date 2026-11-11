@@ -2,15 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { attachOpeningInstance, mintOpeningInstance, type OpeningHookSnapshot } from './openingInstance';
 import {
+  applySuccessfulLiveOpening,
   fallbackOpeningPads,
+  mentionsName,
+  mentionsPlaceName,
   mockLiveOpeningProse,
   shapeOpeningPads,
+  STORYTELLER_RETRY_MESSAGE,
   validateLiveOpeningProse,
   validateOpeningCastVoice,
   validateOpeningJournalTitle,
   validateOpeningOptions,
   writeLiveOpening,
 } from './liveOpening';
+import { proseForSpeech } from './useVoice';
 import {
   closeUnbalancedBraces,
   formatLaterTurnNameRail,
@@ -78,27 +83,89 @@ describe('PR31 live-opening follow-ups', () => {
     const typographic = `“Talk is done,” ${inst.cast[0]!.name} says at ${inst.placeName}.`;
     expect(rewriteOpeningMarkup(typographic, 'litrpg')).toBe(typographic);
     expect(sanitizeOpeningNarration(typographic)).toBe(typographic);
+    expect(rewriteOpeningMarkup('The **ash** was already hot.', 'litrpg')).toBe('The ash was already hot.');
+    expect(rewriteOpeningMarkup('__Scarves__ hang by the door.', 'litrpg')).toBe('Scarves hang by the door.');
+    expect(rewriteOpeningMarkup('# The loft is already named.\nThe crew waits.', 'litrpg')).toBe('The loft is already named.\nThe crew waits.');
   });
 
-  it('leak gate fails on raw angle-bracket tags and writeLiveOpening retries then fails closed if they persist', async () => {
-    const state = game();
+  it('commits the live Cinderwake-C <system> shape as [ SYSTEM ] text with a clean page and TTS', async () => {
+    const state = game('litrpg');
     const inst = state.openingEstablishment!.instance!;
-    const tagged =
-      `${inst.placeName} is already under you, named and ordinary, not a blur. ` +
-      `${inst.cast[0]!.name} is already in motion. ` +
-      `<system>Registration pending. Designation required.</system> ` +
-      'You keep your own kit if you refuse.';
-    expect(openingProseLeaksStructuredJson(tagged)).toBe(true);
-    expect(openingProseLeaksStructuredJson(tagged.replace(/<system>[\s\S]*?<\/system>/, 'The air is counted.'))).toBe(false);
+    const raw =
+      `Heat shimmered off the ash in slow waves along ${inst.placeName}, bending the line of the trail until it looked like the ground itself was breathing. ` +
+      `The newcomer's clothes were wrong for this place — city cotton, a cheap jacket, shoes with no grip — and the **ash** had already worked its way into every seam. ` +
+      `Down the trail, two figures had stopped mid-stride. ${inst.cast[0]!.name} was broad and sun-scorched, a pilgrim's scarf wound loose at the throat, a water skin hanging from one hand. ` +
+      `${inst.cast[1]!.name} crouched low over the road, one palm flat against a print in the ash, and did not look up. ` +
+      `Above the newcomer's head, faint letters turned like a slow clock no one else seemed to notice.\n\n` +
+      `<system>Registration pending. Designation required.</system>\n\n` +
+      `The crouched one finally lifted her head. The broad one watched without moving, water still in hand, waiting to see what name would come out of the stranger's mouth. ` +
+      `You keep your own kit if you refuse.`;
+    expect(openingProseLeaksStructuredJson(raw)).toBe(true);
+    const rewritten = rewriteOpeningMarkup(raw, 'litrpg');
+    expect(rewritten).toContain('[ SYSTEM ]');
+    expect(rewritten).toContain('Registration pending. Designation required.');
+    expect(rewritten).not.toMatch(/<\/?system/i);
+    expect(rewritten).not.toContain('**');
+    expect(openingProseLeaksStructuredJson(rewritten)).toBe(false);
+    const options = [
+      `Walk with ${inst.cast[0]!.name} for water and the pilgrim scarf`,
+      `Stay for ${inst.cast[1]!.name} and look at the prints`,
+      'Keep your own kit and refuse both offers',
+      `Look around ${inst.placeName}`,
+    ];
+    expect(validateLiveOpeningProse(state, rewritten)).toEqual([]);
+    expect(validateOpeningOptions(state, rewritten, options)).toEqual([]);
     let calls = 0;
     const result = await writeLiveOpening(state, settings, {
       writer: async () => {
         calls += 1;
-        return asJson(state, tagged);
+        return asJson(state, raw, { options, journalTitle: `The prints at ${inst.placeName}` });
+      },
+    });
+    expect(calls).toBe(1);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.prose).toContain('[ SYSTEM ]');
+    expect(result.prose).toContain('Registration pending. Designation required.');
+    expect(result.prose).not.toMatch(/<\/?[A-Za-z]/);
+    expect(result.prose).not.toContain('**');
+    const page = ensureSystemReceipt(state, sanitizeOpeningNarration(result.prose));
+    expect(openingProseLeaksStructuredJson(page)).toBe(false);
+    expect(page).toContain('[ SYSTEM ]');
+    expect(page).not.toMatch(/<\/?[A-Za-z]/);
+    const committed = applySuccessfulLiveOpening(state, raw, { pads: result.pads, journalTitle: result.journal.title });
+    expect(committed.openingEstablishment?.sceneWritten).toBe(true);
+    const tts = proseForSpeech(page);
+    expect(tts).toContain('Registration pending. Designation required.');
+    expect(tts).toContain(inst.placeName);
+    expect(tts).not.toMatch(/<\/?system/i);
+    expect(tts).not.toMatch(/\[\s*SYSTEM\s*\]/i);
+    expect(tts).not.toContain('<');
+    expect(tts).not.toContain('**');
+  });
+
+  it('leak gate rejects leftover unclosed tags after rewrite, and writeLiveOpening fails closed if they persist', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const leftover =
+      `${inst.placeName} is already under you, named and ordinary, not a blur. ` +
+      `${inst.cast[0]!.name} is already in motion. ` +
+      '<system Registration pending. Designation required. ' +
+      'You keep your own kit if you refuse. Heat rises off the ash for this run.';
+    expect(rewriteOpeningMarkup(leftover, 'litrpg')).toContain('<system Registration');
+    expect(openingProseLeaksStructuredJson(rewriteOpeningMarkup(leftover, 'litrpg'))).toBe(true);
+    expect(openingProseLeaksStructuredJson(`${inst.placeName} is ordinary. A sign says 3 < 5 and the count is honest.`)).toBe(false);
+    expect(openingProseLeaksStructuredJson(`${inst.placeName} sits by the <ward stones.`)).toBe(true);
+    let calls = 0;
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => {
+        calls += 1;
+        return asJson(state, leftover);
       },
     });
     expect(calls).toBe(2);
     expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
   });
 
   it('keeps round-5 and round-6 leak shapes failing closed, and loosens plain colons', () => {
@@ -116,6 +183,14 @@ describe('PR31 live-opening follow-ups', () => {
     expect(openingProseLeaksStructuredJson('The scene: a dusty warehouse loft above the salt dock.')).toBe(false);
     expect(openingProseLeaksStructuredJson("The miners': share is already on the table.")).toBe(false);
     expect(openingProseLeaksStructuredJson('Hobb: “The water is already going at 12:00.”')).toBe(false);
+    expect(openingProseLeaksStructuredJson('Your options: "walk" or "stay."')).toBe(false);
+    expect(openingProseLeaksStructuredJson('The scene: "a dusty loft"')).toBe(false);
+    expect(openingProseLeaksStructuredJson('options: "walk", "choices": "stay"')).toBe(true);
+
+    const withSystem = 'The ash trail is already named.\n[ SYSTEM ]\nRegistration pending.\nThe air is counted.';
+    expect(openingProseLeaksStructuredJson(withSystem)).toBe(false);
+    expect(openingProseLeaksStructuredJson('[ SYSTEM NOTICE ]\nRegistration pending.')).toBe(true);
+    expect(openingProseLeaksStructuredJson('[ "Walk with Idra" ]')).toBe(true);
   });
 
   it('closeUnbalancedBraces counts only braces outside strings', () => {
@@ -160,18 +235,84 @@ describe('PR31 live-opening follow-ups', () => {
     expect(validateOpeningCastVoice(state, swapped).some((e) => /self-introduction gender mismatch/i.test(e))).toBe(true);
     expect(validateLiveOpeningProse(state, swapped).length).toBeGreaterThan(0);
 
-    // Cinderwake A: next-sentence pronoun disagrees with minted gender.
-    const wrongPronoun =
+    // Next-sentence He/She and "sat with his brother" are not high-precision enough to reject.
+    const nellCrouched =
       `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `${woman.name} was the first to speak. He crouched by the dead fire. ` +
-      `${man.name} has not looked away. You keep your own kit if you refuse.`;
-    expect(validateOpeningCastVoice(state, wrongPronoun).some((e) => /pronoun does not match minted gender/i.test(e))).toBe(true);
+      `${woman.name} crouched by the dead fire. He watched from the other side of the prints. ` +
+      `${man.name} has not looked away. You keep your own kit if you refuse. ` +
+      'Heat rises off the ash, but the sentences are newly written for this run.';
+    expect(validateOpeningCastVoice(state, nellCrouched)).toEqual([]);
+    expect(validateLiveOpeningProse(state, nellCrouched)).toEqual([]);
 
-    const ok =
+    const withBrother =
       `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `${woman.name} was the first to speak. She crouched by the dead fire. ` +
-      `${man.name} has not looked away. You keep your own kit if you refuse.`;
-    expect(validateOpeningCastVoice(state, ok)).toEqual([]);
+      `${woman.name} sat with his brother near the dead fire. ` +
+      `${man.name} has not looked away. You keep your own kit if you refuse. ` +
+      'Heat rises off the ash, but the sentences are newly written for this run.';
+    expect(validateOpeningCastVoice(state, withBrother)).toEqual([]);
+    expect(validateLiveOpeningProse(state, withBrother)).toEqual([]);
+
+    // Explicit appositive / descriptor next to the name still fails when it conflicts.
+    const appositive =
+      `${inst.placeName} is already named and ordinary, not a blur. ` +
+      `The woman, ${man.name}, knelt at the edge of the marks. ` +
+      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
+    expect(validateOpeningCastVoice(state, appositive).some((e) => /descriptor does not match minted gender/i.test(e))).toBe(true);
+
+    const appositiveAfter =
+      `${inst.placeName} is already named and ordinary, not a blur. ` +
+      `${man.name}, a woman, knelt at the edge of the marks. ` +
+      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
+    expect(validateOpeningCastVoice(state, appositiveAfter).some((e) => /descriptor does not match minted gender/i.test(e))).toBe(true);
+
+    const matchingDescriptor =
+      `${inst.placeName} is already named and ordinary, not a blur. ` +
+      `The man, ${man.name}, knelt at the edge of the marks. ` +
+      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
+    expect(validateOpeningCastVoice(state, matchingDescriptor)).toEqual([]);
+
+    expect(formatOpeningPage1Rail(state)).toMatch(/he\/him\/his/i);
+  });
+
+  it('requires the full minted place name or a distinctive token, never a generic suffix alone', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const place = inst.placeName;
+    const tokens = place.split(/\s+/);
+    expect(tokens.length).toBeGreaterThanOrEqual(2);
+    const suffix = tokens[tokens.length - 1]!;
+    expect(suffix).toMatch(/Trail|Road|Hollow|Crossing|Camp|Inn|Gate|Keep|Hall/i);
+    const distinctive = tokens[0]!;
+    expect(mentionsPlaceName(`They stood on ${place} in the heat.`, place)).toBe(true);
+    expect(mentionsPlaceName(`They stood at ${place.toLowerCase()} in the heat.`, place)).toBe(true);
+    expect(mentionsPlaceName(`The wind off ${distinctive} was already hot.`, place)).toBe(true);
+    expect(mentionsPlaceName('They walked the trail until the heat broke.', place)).toBe(false);
+    expect(mentionsPlaceName(`They walked the ${suffix} until the heat broke.`, place)).toBe(false);
+    expect(mentionsPlaceName('They crossed the road, then the hollow, then a crossing.', place)).toBe(false);
+    expect(mentionsPlaceName('Vossleigh was already under them.', 'Vossleigh Crossing')).toBe(true);
+    expect(mentionsPlaceName('They waited at the crossing.', 'Vossleigh Crossing')).toBe(false);
+
+    const trailOnly =
+      `They walk the trail, named and ordinary, not a blur. ` +
+      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away. ` +
+      'The offer is water and a scarf, or a brand-iron, or you keep your own kit. ' +
+      'Heat rises off the ash, but the sentences are newly written for this run.';
+    expect(validateLiveOpeningProse(state, trailOnly).some((e) => new RegExp(`missing place ${place}`, 'i').test(e))).toBe(true);
+
+    const distinctiveOnly =
+      `${distinctive} is already under you, named and ordinary, not a blur. ` +
+      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away. ` +
+      'The offer is water and a scarf, or a brand-iron, or you keep your own kit. ' +
+      'Heat rises off the ash, but the sentences are newly written for this run.';
+    expect(validateLiveOpeningProse(state, distinctiveOnly)).toEqual([]);
+
+    // Person names still match by first or last name.
+    const first = inst.cast[0]!.name.split(/\s+/)[0]!;
+    const last = inst.cast[0]!.name.split(/\s+/).slice(-1)[0]!;
+    expect(mentionsName(`Then ${first} looked up from the prints.`, inst.cast[0]!.name)).toBe(true);
+    expect(mentionsName(`Then ${last} looked up from the prints.`, inst.cast[0]!.name)).toBe(true);
+    expect(mentionsName(`${inst.cast[0]!.name} looked up from the prints.`, inst.cast[0]!.name)).toBe(true);
+    expect(mentionsName('Nobody named them in this sentence.', inst.cast[0]!.name)).toBe(false);
   });
 
   it('rejects a comma-separated list of names and places as a journal title', () => {

@@ -45,6 +45,7 @@ export function formatOpeningPage1Rail(state: GameState): string {
     optionHint,
     "If an option uses a gendered pronoun (he/she), it must match that person's locked gender. Otherwise phrase the option without a pronoun.",
     "A speaker who introduces themselves (\"Name. I track.\") must be that locked person, with that person's gender and role. Do not put one person's name in another person's mouth.",
+    'Use he/him/his for a locked man and she/her/hers for a locked woman. Do not swap those pronouns.',
     'journalTitle: a short title, at most 8 whole words, naming a person, place, or goal from the scene. Do not write a comma-separated list of names and places.',
     `LOCKED PLACE: ${inst.placeName} (${inst.placeKind}) — use this full name in the prose, not a generic word like trail or road.`,
     near,
@@ -484,8 +485,6 @@ export function recoverOpeningNarration(raw: string): string {
 }
 
 const STRUCTURED_KEY = 'prose|options|choices|journalTitle|journal_title|story|title|text|narration|scene';
-const JSON_VALUE_START = '["\u201C\u201D\u2018\u2019\\[\\{]';
-
 function looksLikeQuotedJsonKeyColon(text: string): boolean {
   const quotedKey = new RegExp(
     `["\u201C\u201D](?:${STRUCTURED_KEY})["\u201C\u201D]\\s*:`,
@@ -500,30 +499,54 @@ function looksLikeQuotedJsonKeyColon(text: string): boolean {
 
 function schemaKeyThenJsonValue(text: string): boolean {
   return new RegExp(
-    `\\b(?:${STRUCTURED_KEY})\\b\\s*["'\u201C\u201D\u2018\u2019]?\\s*:\\s*${JSON_VALUE_START}`,
+    `\\b(?:${STRUCTURED_KEY})\\b\\s*["'\u201C\u201D\u2018\u2019]?\\s*:\\s*[\\[\\{]`,
     'i'
   ).test(text);
+}
+
+function schemaKeyThenCommaQuoteKey(text: string): boolean {
+  return new RegExp(
+    `\\b(?:${STRUCTURED_KEY})\\b\\s*["'\u201C\u201D\u2018\u2019]?\\s*:\\s*["\u201C\u201D\u2018\u2019'].*?["\u201C\u201D\u2018\u2019']\\s*,\\s*["\u201C\u201D\u2018\u2019'][A-Za-z]`,
+    'i'
+  ).test(text);
+}
+
+function bareSchemaKeyQuotedValueLine(text: string): boolean {
+  const re = new RegExp(
+    `^(?:${STRUCTURED_KEY})\\s*:\\s*["\u201C\u201D\u2018\u2019'].*["\u201C\u201D\u2018\u2019']\\s*$`,
+    'i'
+  );
+  return text.split(/\n/).some((line) => re.test(line.trim()));
 }
 
 /**
  * Independent final leak gate for already-extracted (or caller-supplied) prose.
  * Written separately from the parser and must not call parser/detection helpers.
- * Failing closed on rare legitimate phrases is acceptable.
+ * Callers must parse, then rewrite markup, then run this gate — never gate raw
+ * writer text that still contains `<system>` tags the rewrite would convert.
  *
  * Plain colons after ordinary words ("The scene:", "Your options:", "the miners':",
- * speaker colons) do not fail. A colon only fails when it is followed by a JSON
- * value start (`"`, `[`, `{`) or the line is a quoted/schema key/value structure.
- * Raw angle-bracket tags also fail.
+ * speaker colons) do not fail, including when what follows is a plain quoted
+ * phrase such as `Your options: "walk" or "stay."`. A colon only fails when it
+ * is a quoted/schema key, is followed by `[` or `{`, the quoted value is
+ * followed by a comma-quote-key pattern, or a line is a bare `key: "value"`
+ * field. The game's own `[ SYSTEM ]` registrar line is allowed; any other
+ * line that starts with `[` / `{` / `}` / `]` fails. Leftover tag-like
+ * `<` followed by a letter (including unclosed forms) also fails.
  */
 export function openingProseLeaksStructuredJson(prose: string): boolean {
   const text = prose ?? '';
   if (!text.trim()) return false;
-  if (/<\/?[A-Za-z][\w:-]*\b[^>]*>/.test(text)) return true;
+  if (/<\/?[A-Za-z]/.test(text)) return true;
   for (const line of text.split(/\n/)) {
     const trimmed = line.replace(/^\s+/, '');
+    if (/^\[\s*SYSTEM\s*\]\s*$/.test(trimmed)) continue;
     if (/^[{}\[\]]/.test(trimmed)) return true;
   }
-  if (looksLikeQuotedJsonKeyColon(text) || schemaKeyThenJsonValue(text)) return true;
+  if (looksLikeQuotedJsonKeyColon(text)) return true;
+  if (schemaKeyThenJsonValue(text) || schemaKeyThenCommaQuoteKey(text) || bareSchemaKeyQuotedValueLine(text)) {
+    return true;
+  }
   for (const line of text.split(/\n/)) {
     const compact = line.trim().replace(/\s+/g, '');
     if (compact.length < 3) continue;
@@ -536,16 +559,25 @@ export function openingProseLeaksStructuredJson(prose: string): boolean {
 const SYSTEM_TAG_BLOCK = /<system\b[^>]*>([\s\S]*?)<\/system>/gi;
 const ANY_TAG = /<\/?[A-Za-z][\w:-]*\b[^>]*>/g;
 
+/** Strip Markdown emphasis (`**`, `__`) and leading heading markers (`#`). */
+function stripOpeningMarkdown(text: string): string {
+  let s = text.replace(/(\*\*|__)([\s\S]+?)\1/g, '$2');
+  s = s.replace(/\*\*|__/g, '');
+  s = s.replace(/^[ \t]*#{1,6}[ \t]+/gm, '');
+  return s;
+}
+
 /**
  * Convert or strip raw markup in opening narration.
  * LitRPG `<system>` blocks become the same `[ SYSTEM ]` registrar lines later turns use
  * (FormattedText already renders those as an in-world System panel). Other tags are
- * stripped, inner text kept. Text with no tags is returned unchanged.
+ * stripped, inner text kept. Markdown emphasis and heading markers are stripped.
+ * Text with no markup is returned unchanged.
  */
 export function rewriteOpeningMarkup(text: string, engineMode?: string): string {
   const raw = text ?? '';
-  if (!/<\/?[A-Za-z]/.test(raw)) return raw;
-  let s = raw;
+  let s = stripOpeningMarkdown(raw);
+  if (!/<\/?[A-Za-z]/.test(s)) return s;
   if (engineMode === 'litrpg') {
     s = s.replace(SYSTEM_TAG_BLOCK, (_full, body: string) => {
       const inner = String(body ?? '')
