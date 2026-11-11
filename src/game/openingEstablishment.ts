@@ -29,7 +29,6 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
-import { recoverOpeningNarration } from './openingWriterNotes';
 import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 /**
@@ -3487,9 +3486,10 @@ Do not add weapons to the sheet. Do not invent named people or places beyond WHE
 }
 /** If the GM quotes the player, rewrite first-person leftovers. */
 export function sanitizeOpeningNarration(text: string): string {
-  const recovered = recoverOpeningNarration(text);
-  if (!recovered) return '';
-  return recovered
+  // Already-extracted prose only. Structured-output recovery runs once on the raw
+  // writer response at parse time — never re-run it here, or typographic dialogue
+  // and other legitimate prose get wiped to an empty page.
+  return (text ?? '')
     .replace(/\b([Yy]ou are wearing)\s+my\b/g, '$1')
     .replace(/\b([Ww]earing)\s+my\b/g, '$1')
     .replace(/\b([Oo]n you:)\s*my\b/g, '$1')

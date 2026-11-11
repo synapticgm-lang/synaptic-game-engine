@@ -543,6 +543,11 @@ function hideCatalogStarter(q: Quest, privateSpineId?: string): Quest {
 
 export const failedOpeningPads = [STORYTELLER_RETRY_CHIP];
 
+/** True when opening prose is empty or whitespace-only and must not be committed. */
+export function isBlankOpeningProse(text: string | undefined | null): boolean {
+  return !(text ?? '').replace(/\s+/g, ' ').trim();
+}
+
 export function applyFailedLiveOpening(state: GameState): GameState {
   return {
     ...state,
@@ -560,6 +565,7 @@ export function applySuccessfulLiveOpening(
   prose: string,
   extras?: { pads?: string[]; journalTitle?: string }
 ): GameState {
+  if (isBlankOpeningProse(prose)) return applyFailedLiveOpening(state);
   const pads = extras?.pads?.length ? extras.pads : shapeOpeningPads(state, prose);
   const journal = derivedJournalQuest(state, prose, extras?.journalTitle);
   const privateSpineId = state.openingEstablishment?.privateSpineId;

@@ -25,6 +25,12 @@ import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import { enforcePerspective } from './perspectiveWarden';
 import { stripChoiceList } from './parser';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
+import {
+  applyFailedLiveOpening,
+  isBlankOpeningProse,
+  STORYTELLER_RETRY_CHIP,
+  STORYTELLER_RETRY_MESSAGE,
+} from './liveOpening';
 import type { EngineMode, GameState, LogEntry } from './types';
 
 export type LiveDriveFlag = {
@@ -367,6 +373,26 @@ export async function headlessOpeningContinueTurn(
   // M4 — proseWarden retired; opening stitch is engine-authored (clause check is post-writer).
   openingText = enforcePerspective(openingText, { perspective: 'second-person' }, openingState.character.name);
   const cleanOpening = stripChoiceList(openingText);
+  if (isBlankOpeningProse(cleanOpening)) {
+    const failed = applyFailedLiveOpening(openingState);
+    const gm: LogEntry = {
+      id: uid(),
+      turn: failed.turn,
+      role: 'gm',
+      content: STORYTELLER_RETRY_MESSAGE,
+      timestamp: Date.now(),
+      systemLog: [],
+    };
+    const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+    const next: GameState = {
+      ...failed,
+      log: [...prior, gm],
+      choices: [STORYTELLER_RETRY_CHIP],
+      pendingGeneratedOpening: true,
+      lastUpdated: Date.now(),
+    };
+    return { state: next, gmText: STORYTELLER_RETRY_MESSAGE, offeredChoices: [STORYTELLER_RETRY_CHIP] };
+  }
   const harvested = openingState.openingEstablishment
     ? applyHarvestedOpeningCovers(openingState.openingEstablishment, cleanOpening)
     : openingState.openingEstablishment;

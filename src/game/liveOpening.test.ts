@@ -5,17 +5,26 @@ import {
   applySuccessfulLiveOpening,
   deriveOpeningJournal,
   askPadFor,
+  isBlankOpeningProse,
   mockLiveOpeningProse,
   optionsAreNearDuplicates,
   shapeOpeningPads,
   validateLiveOpeningProse,
   validateOpeningOptions,
   writeLiveOpening,
+  STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
 } from './liveOpening';
-import { formatLaterTurnNameRail, readOpeningStructuredOutput, recoverOpeningNarration } from './openingWriterNotes';
+import {
+  extractOpeningJsonStringField,
+  formatLaterTurnNameRail,
+  looksLikeOpeningStructuredText,
+  readOpeningStructuredOutput,
+  recoverOpeningNarration,
+  unescapeExtractedString,
+} from './openingWriterNotes';
 import { riteEntryForState } from './openingRiteFacts';
-import { sanitizeOpeningNarration } from './openingEstablishment';
+import { ensureSystemReceipt, sanitizeOpeningNarration } from './openingEstablishment';
 import { formatOpeningCardChrome } from './openingPointerCard';
 import type { GameState, Settings } from './types';
 
@@ -375,7 +384,8 @@ describe('liveOpening', () => {
         expect(result.prose).not.toMatch(/"prose"\s*:/);
         expect(result.pads).toEqual(options);
         expect(result.journal.title).toBe(title);
-        expect(sanitizeOpeningNarration(raw)).toBe(prose);
+        expect(sanitizeOpeningNarration(prose)).toBe(prose);
+        expect(ensureSystemReceipt(state, sanitizeOpeningNarration(prose))).toBe(prose);
         expect(recoverOpeningNarration(raw)).toBe(prose);
       }
     }
@@ -386,7 +396,7 @@ describe('liveOpening', () => {
     const raw = '{"options":[ "Look around first", ], "journalTitle": "Under you. The offer",';
     expect(readOpeningStructuredOutput(raw)).toBeNull();
     expect(recoverOpeningNarration(raw)).toBe('');
-    expect(sanitizeOpeningNarration(raw)).toBe('');
+    expect(sanitizeOpeningNarration(raw)).toBe(raw);
     const result = await writeLiveOpening(state, settings, { writer: async () => raw });
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
@@ -455,6 +465,108 @@ describe('liveOpening', () => {
       expect(result.pads).toEqual(options);
       expect(result.journal.title).toBe(title);
     }
+  });
+
+
+  it('keeps dialogue-first typographic prose through structured parse and post-extraction sanitise', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const typographic = [
+      `“Talk is done,” ${inst.cast[0]!.name} says at ${inst.placeName}.`,
+      'The place is already named and ordinary, not a blur.',
+      'First move is yours — the plan, the cut, or the walk.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    expect(looksLikeOpeningStructuredText(typographic)).toBe(false);
+    expect(recoverOpeningNarration(typographic)).toBe(typographic);
+    expect(sanitizeOpeningNarration(typographic)).toBe(typographic);
+    expect(ensureSystemReceipt(state, sanitizeOpeningNarration(typographic))).toBe(typographic);
+    const options = shapeOpeningPads(state, typographic);
+    const title = `${inst.cast[0]!.name.split(/\s+/)[0]} at ${inst.placeName}`;
+    const raw = JSON.stringify({ prose: typographic, options, journalTitle: title });
+    const result = await writeLiveOpening(state, settings, { writer: async () => raw });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.prose).toBe(typographic);
+      expect(result.prose.startsWith('{')).toBe(false);
+      expect(sanitizeOpeningNarration(result.prose)).toBe(typographic);
+      expect(ensureSystemReceipt(state, sanitizeOpeningNarration(result.prose))).toBe(typographic);
+    }
+  });
+
+  it('keeps dialogue-first typographic prose on the free-prose path', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const typographic = [
+      `“Talk is done,” ${inst.cast[0]!.name} says at ${inst.placeName}.`,
+      'The place is already named and ordinary, not a blur.',
+      'First move is yours — the plan, the cut, or the walk.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    const result = await writeLiveOpening(state, settings, { writer: async () => typographic });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.prose).toBe(typographic);
+      expect(result.prose).not.toBe(STORYTELLER_RETRY_MESSAGE);
+      expect(result.pads).toHaveLength(4);
+      expect(sanitizeOpeningNarration(result.prose)).toContain('“Talk is done,”');
+    }
+  });
+
+  it('does not treat a bare "options" phrase or an unbalanced {ward in prose as structured JSON', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const withOptions = [
+      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} has not looked away.`,
+      'The choice is written on the crate as "options": walk or stay, but the crew is still waiting.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    const withWard = [
+      `${inst.placeName} sits by the {ward stones, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} is already in motion.`,
+      'Heat still rises off the packed earth.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    for (const prose of [withOptions, withWard]) {
+      expect(looksLikeOpeningStructuredText(prose)).toBe(false);
+      expect(recoverOpeningNarration(prose)).toBe(prose);
+      expect(sanitizeOpeningNarration(prose)).toBe(prose);
+      const result = await writeLiveOpening(state, settings, { writer: async () => prose });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.prose).toBe(prose);
+        expect(result.prose).not.toBe(STORYTELLER_RETRY_MESSAGE);
+      }
+    }
+    expect(withOptions).toContain('"options": walk or stay');
+    expect(withWard).toContain('{ward');
+  });
+
+  it('refuses to commit empty opening prose and does not set sceneWritten', () => {
+    const state = game();
+    expect(isBlankOpeningProse('')).toBe(true);
+    expect(isBlankOpeningProse('   \n\t')).toBe(true);
+    expect(isBlankOpeningProse('“Talk is done,”')).toBe(false);
+    const next = applySuccessfulLiveOpening(state, '  \n  ');
+    expect(next.openingEstablishment?.sceneWritten).not.toBe(true);
+    expect(next.openingEstablishment?.sceneWriteError).toBe(STORYTELLER_RETRY_MESSAGE);
+    expect(next.choices).toEqual([STORYTELLER_RETRY_CHIP]);
+    const good = applySuccessfulLiveOpening(state, mockLiveOpeningProse(state));
+    expect(good.openingEstablishment?.sceneWritten).toBe(true);
+  });
+
+  it('unescapes \\n, \\" and \\\\ once in a truncated opening response', () => {
+    expect(unescapeExtractedString('Heat rises.\\nYou wake at the loft.')).toBe('Heat rises.\nYou wake at the loft.');
+    expect(unescapeExtractedString('She said \\\"stay\\". Path \\\\ward')).toBe('She said "stay". Path \\ward');
+    const truncated = '{"prose": "Heat rises.\\nYou wake at the loft. The crew is here.';
+    expect(truncated.includes('}')).toBe(false);
+    expect(looksLikeOpeningStructuredText(truncated)).toBe(true);
+    const extracted = extractOpeningJsonStringField(truncated, 'prose');
+    expect(extracted).toBeTruthy();
+    expect(extracted).not.toMatch(/\\n/);
+    expect(extracted).toMatch(/Heat rises\.\s+You wake at the loft/);
+    expect(readOpeningStructuredOutput(truncated)?.prose).toMatch(/Heat rises\.\s+You wake at the loft/);
   });
 
   it('two seeds produce different mock openings', () => {

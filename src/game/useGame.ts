@@ -170,6 +170,7 @@ import {
   writeLiveOpening,
   applySuccessfulLiveOpening,
   applyFailedLiveOpening,
+  isBlankOpeningProse,
   originOnlyOpeningText,
   STORYTELLER_RETRY_MESSAGE,
   STORYTELLER_RETRY_CHIP,
@@ -666,34 +667,40 @@ export function extractChoicesFromText(text: string, state?: GameState, storyPro
   }
   return validatedChoices;
 }
+function failedLiveOpeningPageState(state: GameState): GameState {
+  const failed = applyFailedLiveOpening(state);
+  const gm: LogEntry = {
+    id: uid(),
+    turn: failed.turn,
+    role: 'gm',
+    content: STORYTELLER_RETRY_MESSAGE,
+    timestamp: Date.now(),
+  };
+  const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+  return beginTabletopCreation({
+    ...failed,
+    log: [...prior, gm],
+    choices: [STORYTELLER_RETRY_CHIP],
+    pendingGeneratedOpening: true,
+    lastUpdated: Date.now(),
+  });
+}
+
 async function paintLiveOpeningPage(
   state: GameState,
   settings: Settings
 ): Promise<{ state: GameState; prose: string; failed: boolean; unlocks: Quest[] }> {
   const result = await writeLiveOpening(state, settings);
   if (!result.ok) {
-    const failed = applyFailedLiveOpening(state);
-    const gm: LogEntry = {
-      id: uid(),
-      turn: failed.turn,
-      role: 'gm',
-      content: STORYTELLER_RETRY_MESSAGE,
-      timestamp: Date.now(),
-    };
-    const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
-    const next: GameState = beginTabletopCreation({
-      ...failed,
-      log: [...prior, gm],
-      choices: [STORYTELLER_RETRY_CHIP],
-      pendingGeneratedOpening: true,
-      lastUpdated: Date.now(),
-    });
-    return { state: next, prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+    return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
   }
   let prose = stripChoiceList(result.prose);
   prose = ensureSystemReceipt(state, sanitizeOpeningNarration(prose));
   prose = enforcePerspective(prose, settings, state.character.name);
   if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
+  if (isBlankOpeningProse(prose)) {
+    return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+  }
   const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads, journalTitle: result.journal.title });
   const turn = (state.turn ?? 0) + 1;
   const unlocks = newlyRevealedQuests(state.quests ?? [], applied.quests ?? []);
@@ -2557,6 +2564,14 @@ export function useGame() {
         }
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
+        if (isBlankOpeningProse(cleanOpening)) {
+          const failed = failedLiveOpeningPageState(openingState);
+          stateRef.current = failed;
+          setState(failed);
+          void persist(failed);
+          setRestoreDraft(null);
+          return;
+        }
         const openingBible = getCampaignBibleById(openingState.campaignBibleId ?? '');
         const journalReady =
           !questsLockedDuringOpening(openingState)
@@ -5808,6 +5823,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
+      if (isBlankOpeningProse(cleanOpening)) {
+        const failed = failedLiveOpeningPageState(newState);
+        stateRef.current = failed;
+        setState(failed);
+        void persist(failed);
+      } else {
       const openingBible = resolveActiveCampaignBible(newState) ?? getCampaignBibleById(newState.campaignBibleId ?? '');
       // Never unlock / modal during name-look covers — dim overlay blocked play on mobile.
       const journalReady =
@@ -5931,6 +5952,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           heroImage: false,
           bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
         });
+      }
       }
       }
     } catch (err) {

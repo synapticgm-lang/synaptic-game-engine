@@ -241,17 +241,36 @@ export interface OpeningStructuredOutput {
   journalTitle: string;
 }
 
-/** True when raw text is (or was meant to be) the opening JSON object, not free prose. */
+/**
+ * True when a raw writer reply is (or was meant to be) the opening JSON object.
+ * Only for the raw response, once, at parse time — never for already-extracted prose.
+ * After fences and preamble are stripped, the text must start with an ASCII `{` or `[`,
+ * or have an ASCII `"prose"` / `"journalTitle"` key immediately beside a brace.
+ * Typographic quotes, a bare `"options"` key, and braces inside prose never count.
+ */
 export function looksLikeOpeningStructuredText(raw: string): boolean {
-  const t = (raw ?? '').trim();
+  const t = stripOpeningFencesAndPreamble(raw ?? '').trim();
   if (!t) return false;
-  if (t.startsWith('{') || t.startsWith('```')) return true;
-  if (t.startsWith('\u201C') || t.startsWith('\u201D')) return true;
-  if (/["'\u201C\u201D]\s*(?:prose|options|journalTitle|title|text)\s*["'\u201C\u201D]\s*:/i.test(t)) return true;
-  const opens = (t.match(/{/g) ?? []).length;
-  const closes = (t.match(/}/g) ?? []).length;
-  if (opens !== closes && opens + closes > 0) return true;
+  if (t.startsWith('{') || t.startsWith('[')) return true;
+  if (/\{\s*["'](?:prose|journalTitle)["']\s*:/i.test(t)) return true;
   return false;
+}
+
+/** Strip markdown fences; only treat a mid-text `{` as preamble when a real prose/title key sits beside it. */
+function stripOpeningFencesAndPreamble(raw: string): string {
+  let text = (raw ?? '').replace(/^\uFEFF/, '').trim();
+  if (!text) return '';
+  if (/^```/.test(text)) {
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```(?:\s*)$/i, '').trim();
+  } else if (text.includes('```')) {
+    const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    if (fenced?.[1]) text = fenced[1].trim();
+  }
+  const start = text.indexOf('{');
+  if (start > 0 && /["']\s*(?:prose|journalTitle)\s*["']\s*:/i.test(text.slice(start))) {
+    text = text.slice(start).trim();
+  }
+  return text;
 }
 
 function stripFencesAndPreamble(raw: string): string {
@@ -317,11 +336,12 @@ function tryParseJsonObject(slice: string): Record<string, unknown> | null {
   return null;
 }
 
-function unescapeExtractedString(raw: string): string {
+/** Turn JSON string escapes into real characters once (for almost-JSON field extraction). */
+export function unescapeExtractedString(raw: string): string {
   const t = (raw ?? '').trim();
   if (!t) return '';
   try {
-    return String(JSON.parse(`"${t.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`));
+    return String(JSON.parse(`"${t}"`));
   } catch {
     return t.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\').trim();
   }
