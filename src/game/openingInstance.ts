@@ -10,8 +10,10 @@ import type {
   OpeningInstance,
   OpeningOfferChip,
 } from './types';
-import { keyedRng, type Rng } from './seededRng';
+import { hashSeed, keyedRng, type Rng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
+import { isCommonOpeningLexeme } from './openingWriterNotes';
+import { campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot {
@@ -23,10 +25,14 @@ export interface OpeningHookSnapshot {
   openingOffer?: string;
   pressingNeed?: string;
   howYouGotHere?: string;
+  summonIntent?: string;
   whoYouAre?: string;
   beats?: string[];
   writerNotes?: string;
   faction?: string;
+  /** Catalog NPC names already resolved from the hook's castNpcIds. */
+  catalogNpcNames?: string[];
+  castNpcIds?: string[];
 }
 
 const HONORIFIC =
@@ -36,7 +42,7 @@ const PLACE_SUFFIX = new Set([
   'trail', 'road', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'quay', 'mill', 'well', 'bridge',
   'pass', 'crossing', 'camp', 'market', 'square', 'cathedral', 'temple', 'shrine', 'circle', 'court',
   'hold', 'manor', 'estate', 'tower', 'docks', 'harbor', 'harbour', 'woods', 'forest', 'marsh', 'moor',
-  'heath', 'hollow', 'wake', 'reach', 'vale', 'spire', 'port', 'station', 'block', 'row', 'lane',
+  'heath', 'hollow', 'wake', 'reach', 'vale', 'spire', 'port', 'station', 'waystation', 'block', 'row', 'lane',
   'street', 'avenue', 'plaza', 'lab', 'facility', 'ship', 'deck', 'yard', 'green', 'close', 'rise',
   'fell', 'ridge', 'cliff', 'point', 'head', 'bay', 'sound', 'creek', 'brook', 'river', 'cross',
   'chapel', 'abbey', 'priory', 'cloister', 'undercroft', 'cellar', 'loft', 'pan', 'works', 'plant',
@@ -63,7 +69,17 @@ const PLACE_STEMS = [
   'Brack', 'Hollin', 'Sallow', 'Dunmore', 'Fenwick', 'Marl', 'Cotter', 'Rudd', 'Tew', 'Aske',
   'Wyle', 'Thatch', 'Merrow', 'Coyne', 'Idra', 'Lisle', 'Cutha', 'Hask', 'Barrow', 'Crane',
   'Pike', 'Ness', 'Oatley', 'Redd', 'Calder', 'Morrow', 'Halden', 'Birch', 'Rowan', 'Ashen',
-  'Keld', 'Thorpe', 'Wain', 'Mabb', 'Ortle', 'Pell', 'Stane', 'Voss', 'Yarrow', 'Beck',
+  'Keld', 'Thorpe', 'Wain', 'Mabb', 'Ortle', 'Stane', 'Voss', 'Yarrow', 'Beck',
+  'Alden', 'Bramley', 'Caer', 'Durn', 'Esk', 'Flint', 'Goss', 'Harth', 'Ilme', 'Jorren',
+  'Kemp', 'Larn', 'Moss', 'Nairn', 'Ockley', 'Pratt', 'Quen', 'Rill', 'Selk', 'Torr',
+  'Ulm', 'Verra', 'Wex', 'Yale', 'Zost', 'Brindle', 'Callow', 'Dapple', 'Elwick', 'Farrow',
+  'Gild', 'Hewes', 'Ingo', 'Jarrow', 'Loden', 'Mux', 'Noll', 'Orwick', 'Pendreth', 'Reston',
+  'Shand', 'Tulley', 'Upton', 'Varley', 'Welby', 'Yarn', 'Amberly', 'Beltane', 'Corven', 'Drewe',
+];
+
+const PLACE_MIDS = [
+  'fen', 'mere', 'wick', 'stead', 'hurst', 'leigh', 'croft', 'moor', 'ridge',
+  'haven', 'field', 'bury', 'ham', 'shaw', 'holt', 'vale', 'kirk', 'dell',
 ];
 
 const MODERN_GIVEN = [
@@ -130,6 +146,7 @@ export function peopleFromWhoHere(whoHere: string | undefined): string[] {
     );
     const n = (m?.[0] ?? '').trim();
     if (!n || n.length < 3) continue;
+    if (!isLikelyProperName(n) || isPlaceName(n, 'who')) continue;
     const first = n.split(/\s+/)[0] ?? '';
     if (TITLE_STOP.has(first.toLowerCase())) continue;
     // Honorific alone is not a person.
@@ -142,6 +159,74 @@ export function peopleFromWhoHere(whoHere: string | undefined): string[] {
   return out;
 }
 
+/** A role-only who-here ("an enforcer", "the scout") with no proper name. */
+export function impliedRoleFromWhoHere(whoHere: string | undefined): string | undefined {
+  if (!whoHere) return undefined;
+  if (peopleFromWhoHere(whoHere).length) return undefined;
+  const t = whoHere.replace(/\s+/g, ' ').trim();
+  if (!t || /^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return undefined;
+  const groupOnly = /^(?:the\s+)?(?:crew|faces|people|crowd|company|watchmen|hirelings|others)\b/i.test(t);
+  const hasRole = /\b(?:enforcer|thief|scout|innkeep|innkeeper|muscle|cutter|lockpick|priest|captain|bouncer|tracker|sister|brother|father|merchant)\b/i.test(t);
+  if (groupOnly && !hasRole) return undefined;
+  const role = t
+    .replace(/^(?:a|an|the)\s+/i, '')
+    .replace(/[,.;].*$/, '')
+    .replace(/\s+is waiting\b.*$/i, '')
+    .replace(/\s+beside you\b.*$/i, '')
+    .replace(/\s+on the porch\b.*$/i, '')
+    .trim();
+  if (role.length < 3 || role.length > 48) return undefined;
+  return role;
+}
+
+export function whoHereImpliesPresent(whoHere: string | undefined): boolean {
+  const t = (whoHere ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return false;
+  return true;
+}
+
+export function isCatalogStem(word: string): boolean {
+  const k = (word ?? '').trim().toLowerCase();
+  return !!k && CATALOG_NAME_BLOCKLIST.some((b) => b.toLowerCase() === k);
+}
+
+/**
+ * A sound proper-noun test: Title-Case alone is not enough.
+ * Rejects sentence-initial verbs and common nouns (Walk, Stay, Salt, Glass, Earth, They).
+ * Accepts multi-word places ("Salt Road waystation"), honorific + name, and distinctive stems.
+ */
+/** Hook/card field labels — not names, even when Title-Cased in compiled text. */
+export const HOOK_FIELD_LABELS = new Set([
+  'talk', 'location', 'armed', 'twenty', 'dawn', 'abort', 'first', 'move', 'who', 'what',
+  'pressing', 'offer', 'cost', 'summon', 'intent', 'faction', 'beats', 'page', 'how',
+  'where', 'why', 'when',
+]);
+
+export function isLikelyProperName(name: string): boolean {
+  const t = (name ?? '').trim().replace(/[.,;:]+$/, '');
+  if (t.length < 3) return false;
+  const parts = t.split(/\s+/).filter(Boolean);
+  if (!parts.length) return false;
+  const first = parts[0]!;
+  const last = parts[parts.length - 1]!;
+  if (TITLE_STOP.has(first.toLowerCase())) return false;
+  if (parts.length === 1 && HOOK_FIELD_LABELS.has(first.toLowerCase())) return false;
+  if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder|High|Chanter)$/i.test(t)) {
+    return false;
+  }
+  if (parts.length >= 2 && PLACE_SUFFIX.has(last.toLowerCase())) {
+    return true;
+  }
+  if (parts.length >= 2) {
+    const distinctive = parts.some((p) => !isCommonOpeningLexeme(p) || isCatalogStem(p));
+    return distinctive && parts.every((p) => !TITLE_STOP.has(p.toLowerCase()));
+  }
+  if (PLACE_SUFFIX.has(first.toLowerCase()) || FACTION_WORDS.has(first.toLowerCase())) return false;
+  if (isCommonOpeningLexeme(first) && !isCatalogStem(first)) return false;
+  return /^(?:[A-Z][a-z]+(?:-[A-Z][a-z]+)?)$/.test(first);
+}
+
 export function extractTitleNames(text: string | undefined): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
@@ -149,12 +234,15 @@ export function extractTitleNames(text: string | undefined): string[] {
   const re = new RegExp(TITLE_NAME.source, 'g');
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
-    const n = (m[1] ?? '').trim();
+    let n = (m[1] ?? '').trim();
     if (!n) continue;
-    const first = n.split(/\s+/)[0] ?? '';
-    if (TITLE_STOP.has(first.toLowerCase())) continue;
+    const after = text.slice(m.index + m[0].length);
+    const suf = after.match(/^\s+([a-z][a-z-]+)/);
+    if (suf && PLACE_SUFFIX.has(suf[1]!.toLowerCase())) {
+      n = `${n} ${suf[1]}`;
+    }
+    if (!isLikelyProperName(n)) continue;
     if (PLACE_SUFFIX.has(n.toLowerCase())) continue;
-    if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder)$/i.test(n)) continue;
     if (n.length < 3) continue;
     const key = n.toLowerCase();
     if (seen.has(key)) continue;
@@ -278,10 +366,30 @@ function mintPerson(rng: Rng, taken: Set<string>, genre: 'fantasy' | 'modern' | 
   return pickModernOrScifiName(rng, taken, 'modern');
 }
 
-function mintPlaceName(rng: Rng, kind: string, taken: Set<string>): string {
-  const stem = pickUnused(rng, PLACE_STEMS, taken);
+function joinStemMid(stem: string, mid: string): string {
+  if (stem.toLowerCase().endsWith(mid[0]!)) return stem + mid.slice(1);
+  return stem + mid;
+}
+
+function mintPlaceName(rng: Rng, kind: string, taken: Set<string>, salt = ''): string {
   const suffix = inferPlaceSuffix(kind);
-  if (suffix.toLowerCase() === 'wake') return `${stem}wake`;
+  const space = PLACE_STEMS.length * PLACE_MIDS.length;
+  const h = hashSeed(`${salt}|${kind}|place`);
+  const start = h % space;
+  const step = (h % (space - 1)) + 1;
+  for (let i = 0; i < space; i++) {
+    const slot = (start + i * step) % space;
+    const stem = PLACE_STEMS[Math.floor(slot / PLACE_MIDS.length)]!;
+    const mid = PLACE_MIDS[slot % PLACE_MIDS.length]!;
+    const join = joinStemMid(stem, mid);
+    const name = suffix.toLowerCase() === 'wake' ? join : `${join} ${suffix}`;
+    if (taken.has(join.toLowerCase()) || taken.has(name.toLowerCase())) continue;
+    taken.add(join.toLowerCase());
+    taken.add(name.toLowerCase());
+    return name;
+  }
+  const stem = pickUnused(rng, PLACE_STEMS, taken);
+  if (suffix.toLowerCase() === 'wake') return `${stem}croft`;
   return `${stem} ${suffix}`;
 }
 
@@ -379,7 +487,9 @@ export function applyReplacements(text: string, map: Array<[string, string]>): s
   const sorted = [...map].sort((a, b) => b[0].length - a[0].length);
   for (const [from, to] of sorted) {
     if (!from) continue;
-    out = out.replace(new RegExp(`\\b${escapeRe(from)}\\b`, 'g'), to);
+    // Never remap a lone common lexeme (Walk, Salt, They) even if it slipped into the map.
+    if (from.split(/\s+/).length === 1 && isCommonOpeningLexeme(from) && !isCatalogStem(from)) continue;
+    out = out.replace(new RegExp(`\\b${escapeRe(from)}\\b`, 'gi'), to);
   }
   return out;
 }
@@ -396,6 +506,64 @@ export function hookKey(state: { seed?: string; campaignBibleId?: string | null 
 /**
  * Mint a locked opening instance from the seed and a hook snapshot (roles, not a closed name list).
  */
+
+/** A map hub this opening may sit near — never the hook's own catalog place, nor a page-1 ban. */
+function pickNearbyLandmark(
+  bibleId: string | undefined,
+  catalogPlace: string | undefined,
+  placeName: string,
+  retired: string[],
+  seedKey: string
+): string | undefined {
+  const banned = new Set(
+    [catalogPlace, placeName, ...(retired ?? []), ...(catalogPlace ? catalogPlace.split(/\s+/) : [])]
+      .map((s) => (s ?? '').trim().toLowerCase())
+      .filter(Boolean)
+  );
+  const isEligible = (lab: string) => {
+    const k = lab.toLowerCase();
+    if (banned.has(k)) return false;
+    if ([...banned].some((b) => b.length >= 5 && (k.includes(b) || b.includes(k)))) return false;
+    return true;
+  };
+  const labels = campaignHubLabels(bibleId).filter(isEligible);
+  const coined = labels.filter((lab) => lab.split(/\s+/).length === 1 && lab.length >= 7);
+  const pool = coined.length ? coined : labels;
+  if (!pool.length) return undefined;
+  const idx = hashSeed(`${seedKey}|nearby-landmark`) % pool.length;
+  return pool[idx];
+}
+
+function structuredBanHay(hook: OpeningHookSnapshot): string {
+  return [
+    hook.whoYouAre,
+    hook.whoHere,
+    hook.pressingNeed,
+    hook.summonIntent,
+    hook.openingOffer,
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+/** Catalog factions that must not open page 1 when they appear in structured hook text. */
+const CATALOG_FACTION_NAMES = ['Pellane', 'Ash Court'];
+
+/** Catalog given names / surnames for campaign cast (not place stems). */
+const CATALOG_CAST_NAMES = [
+  'Oren', 'Kessa', 'Orel', 'Vane', 'Thrynn', 'Madden', 'Lene', 'Sera', 'Quill',
+  'Aric', 'Bram', 'Cael', 'Dara', 'Eamon', 'Fael',
+];
+
+function groupLabelFromWhoHere(whoHere: string | undefined): string | undefined {
+  if (!whoHere || peopleFromWhoHere(whoHere).length) return undefined;
+  const t = whoHere.replace(/\s+/g, ' ').trim();
+  if (!t || /^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return undefined;
+  const m = t.match(/^(?:the\s+)?(crew|faces|people|crowd|company|watchmen|hirelings|others|hands|outfit|gang)\b/i);
+  if (!m?.[1]) return undefined;
+  return `the ${m[1]!.toLowerCase()}`;
+}
+
 export function mintOpeningInstance(
   hook: OpeningHookSnapshot,
   seedKey: string,
@@ -404,30 +572,45 @@ export function mintOpeningInstance(
   const rng = keyedRng(seedKey);
   const genre = inferGenre(hook, opts?.bibleId, opts?.engineMode);
   const taken = nameWords(CATALOG_NAME_BLOCKLIST);
+  for (const lab of campaignHubLabels(opts?.bibleId)) {
+    for (const w of lab.split(/\s+/)) {
+      if (w.length >= 3 && !isCommonOpeningLexeme(w)) taken.add(w.toLowerCase());
+    }
+  }
   const retired: string[] = [];
   const isGenericToken = (n: string) => {
     const k = n.trim().toLowerCase();
-    return !k || PLACE_SUFFIX.has(k) || FACTION_WORDS.has(k) || TITLE_STOP.has(k) || /^(they|them|their|this|that|these|those|stay|here|there)$/i.test(k);
+    return !k || PLACE_SUFFIX.has(k) || FACTION_WORDS.has(k) || TITLE_STOP.has(k) || isCommonOpeningLexeme(k);
   };
-  const retire = (n: string) => {
+  const retire = (n: string, flags?: { evenIfHub?: boolean }) => {
     const t = n.trim();
     if (!t || isGenericToken(t)) return;
+    // Never retire a single common English word or field label on its own (Cinder, First, Talk).
+    if (t.split(/\s+/).length === 1 && (isCommonOpeningLexeme(t) || HOOK_FIELD_LABELS.has(t.toLowerCase()))) return;
+    // Hubs this opening actually replaced (its catalog place or faction) are banned on page 1
+    // even though they stay on the map for later turns.
+    if (!flags?.evenIfHub && isCampaignHubToken(t, opts?.bibleId)) return;
     if (!retired.some((x) => x.toLowerCase() === t.toLowerCase())) retired.push(t);
     for (const w of t.split(/\s+/)) {
       if (w.length >= 3 && !isGenericToken(w)) taken.add(w.toLowerCase());
     }
   };
 
-  const whoNames = peopleFromWhoHere(hook.whoHere);
+  // Names come only from structured hook fields (who / castNpcIds / location / faction),
+  // never from free sentences (pressing, page1, "First move is yours", compiled labels).
+  const whoNames = [
+    ...peopleFromWhoHere(hook.whoHere),
+    ...(hook.catalogNpcNames ?? []).map((n) => n.trim()).filter(Boolean),
+  ];
   const locNames = extractTitleNames(hook.location);
-  const factionPool = extractTitleNames(
-    [hook.pressingNeed, hook.openingOffer, hook.faction, hook.whoYouAre].filter(Boolean).join(' ')
-  ).filter(
-    (n) =>
-      !isGenericToken(n)
-      && !whoNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
-      && !locNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
-  );
+  // Structured faction field only — even a bare catalog name like Pellane is banned on page 1.
+  const factionPool = extractTitleNames(hook.faction)
+    .filter(
+      (n) =>
+        !isGenericToken(n)
+        && !whoNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
+        && !locNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
+    );
 
   const replacements: Array<[string, string]> = [];
   const places = locNames.filter((n) => !isGenericToken(n));
@@ -437,23 +620,34 @@ export function mintOpeningInstance(
   }
   const people = whoNames;
 
-  // Always mint a named place, even when the hook only had a generic "scorched circle on the trail".
+  // Always mint the opening place for this game. Never lock page 1 to a campaign hub
+  // (Cinderwake Trail / Greyhollow Inn / Salt Road Waystation). The minted spot may
+  // sit near a different hub, which stays on the map for later turns.
   const placeKind = inferPlaceKind(hook);
-  const catalogPlace = places.sort((a, b) => b.length - a.length)[0];
-  if (catalogPlace) retire(catalogPlace);
-  const placeName = mintPlaceName(rng, placeKind, taken);
-  if (catalogPlace) {
+  const hubPlace = hubCanonicalNameForLocation(hook.location, opts?.bibleId);
+  const catalogPlace = hubPlace || places.sort((a, b) => b.length - a.length)[0];
+  const placeName = mintPlaceName(rng, placeKind, taken, seedKey);
+  if (catalogPlace && catalogPlace.toLowerCase() !== placeName.toLowerCase()) {
+    retire(catalogPlace, { evenIfHub: true });
     replacements.push([catalogPlace, placeName]);
-    for (const w of catalogPlace.split(/\s+/)) {
-      if (w.length >= 5 && !PLACE_SUFFIX.has(w.toLowerCase()) && w.toLowerCase() !== lastWord(placeName)) {
-        retire(w);
-        replacements.push([w, placeName.split(/\s+/)[0] ?? placeName]);
-      }
+    // Distinctive coined stem (Cinderwake) only — never a common English word (Cinder, Salt).
+    const first = catalogPlace.split(/\s+/)[0] ?? '';
+    if (
+      first.length >= 8
+      && !PLACE_SUFFIX.has(first.toLowerCase())
+      && !isCommonOpeningLexeme(first)
+      && first.toLowerCase() !== lastWord(placeName)
+    ) {
+      retire(first, { evenIfHub: true });
+      replacements.push([first, placeName.split(/\s+/)[0] ?? placeName]);
     }
   }
+  const nearbyLandmark = pickNearbyLandmark(opts?.bibleId, catalogPlace, placeName, retired, seedKey);
 
   let settlementName: string | undefined;
-  const settlementHits = places.filter((p) => p !== catalogPlace && !PLACE_SUFFIX.has(lastWord(p)));
+  const settlementHits = places.filter(
+    (p) => p !== catalogPlace && !PLACE_SUFFIX.has(lastWord(p)) && !isCampaignHubToken(p, opts?.bibleId)
+  );
   if (settlementHits[0]) {
     retire(settlementHits[0]);
     settlementName = pickUnused(rng, PLACE_STEMS, taken);
@@ -463,16 +657,51 @@ export function mintOpeningInstance(
   let factionName: string | undefined;
   let factionKind: string | undefined;
   if (factions[0]) {
-    retire(factions[0].from);
+    retire(factions[0].from, { evenIfHub: true });
     factionKind = factions[0].kind || 'company';
     const stem = pickUnused(rng, PLACE_STEMS, taken);
     factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
     replacements.push([factions[0].from, factionName]);
-    for (const w of factions[0].from.split(/\s+/)) {
-      if (w.length >= 4 && !FACTION_WORDS.has(w.toLowerCase())) {
-        retire(w);
-        replacements.push([w, factionName]);
+  }
+
+  // Ban catalog faction and cast names found in structured hook text (who / whoHere /
+  // pressing / summonIntent / openingOffer) so a name like Pellane cannot open Cinderwake.
+  const banHay = structuredBanHay(hook);
+  if (banHay) {
+    const already = (n: string) =>
+      retired.some((x) => x.toLowerCase() === n.toLowerCase())
+      || replacements.some(([from]) => from.toLowerCase() === n.toLowerCase());
+    const mentioned = (n: string) => new RegExp(`\\b${escapeRe(n)}\\b`, 'i').test(banHay);
+    for (const faction of [
+      ...CATALOG_FACTION_NAMES,
+      ...extractTitleNames(hook.faction).filter((n) => !isGenericToken(n)),
+    ]) {
+      if (!mentioned(faction) || already(faction)) continue;
+      retire(faction, { evenIfHub: true });
+      if (!factionName) {
+        factionKind = lastWord(faction) || 'company';
+        const stem = pickUnused(rng, PLACE_STEMS, taken);
+        factionName = /^(house|order|guild|company|court)$/i.test(factionKind)
+          ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}`
+          : stem;
       }
+      replacements.push([faction, factionName]);
+      const first = faction.split(/\s+/)[0] ?? '';
+      if (
+        first.length >= 7
+        && first.toLowerCase() !== faction.toLowerCase()
+        && !isGenericToken(first)
+        && !already(first)
+      ) {
+        retire(first, { evenIfHub: true });
+        replacements.push([first, factionName.split(/\s+/)[0] ?? factionName]);
+      }
+    }
+    for (const person of [...CATALOG_CAST_NAMES, ...(hook.catalogNpcNames ?? [])]) {
+      if (!mentioned(person) || already(person)) continue;
+      // Ban the catalog person on page 1, but do not add them to the opening cast
+      // unless they were already listed in whoHere / castNpcIds (handled below).
+      retire(person, { evenIfHub: true });
     }
   }
 
@@ -483,6 +712,7 @@ export function mintOpeningInstance(
     if (seenPeople.has(key)) continue;
     // Skip if this "person" was actually classified as place/faction and already retired as such.
     if (places.includes(n) || factions.some((f) => f.from === n)) continue;
+    if (isCampaignHubToken(n, opts?.bibleId)) continue;
     seenPeople.add(key);
     orderedPeople.push(n);
   }
@@ -498,15 +728,19 @@ export function mintOpeningInstance(
       retire(bare);
       replacements.push([bare, minted]);
     }
-    for (const w of bare.split(/\s+/)) {
-      if (w.length >= 4) {
-        retire(w);
-        // First/last only — avoid replacing "Trail" etc. Already filtered.
-        replacements.push([w, w === bare.split(/\s+/)[0] ? givenNameOf(minted) : minted.split(/\s+/).slice(-1)[0] ?? minted]);
-      }
+    const given = bare.split(/\s+/)[0] ?? '';
+    if (given && given !== bare && given.length >= 3 && !isCommonOpeningLexeme(given) && !HOOK_FIELD_LABELS.has(given.toLowerCase())) {
+      retire(given);
+      replacements.push([given, givenNameOf(minted)]);
     }
     const roleSrc = applyReplacements(roleForPerson(catalog, hook), replacements).replace(minted, '').replace(/\s+/g, ' ').trim();
     cast.push({ name: minted, role: roleSrc || 'present in the scene' });
+  }
+
+  const impliedRole = impliedRoleFromWhoHere(hook.whoHere);
+  if (!cast.length && impliedRole) {
+    const minted = mintPerson(rng, taken, genre);
+    cast.push({ name: minted, role: impliedRole });
   }
 
   const offerRaw = hook.openingOffer?.trim() ?? '';
@@ -558,16 +792,8 @@ export function mintOpeningInstance(
     replacements
   );
 
-  // Always retire well-known catalog names even if this hook didn't mention them,
-  // so a later bible leak cannot walk them onto page 1.
-  const fallbackDest = factionName || settlementName || placeName.split(/\s+/)[0] || placeName;
-  for (const blocked of CATALOG_NAME_BLOCKLIST) {
-    retire(blocked);
-    if (!isGenericToken(blocked) && !replacements.some(([from]) => from.toLowerCase() === blocked.toLowerCase())) {
-      replacements.push([blocked, fallbackDest]);
-    }
-  }
-
+  // Do not retire the global catalog blocklist. Hubs like Greyhollow and Valespire
+  // stay on the map; only names this opening actually replaced are banned.
   const nameMap = [...replacements].sort((a, b) => b[0].length - a[0].length);
   const offerSummary = offerScrubbed
     ? applyReplacements(offerScrubbed, nameMap)
@@ -588,7 +814,9 @@ export function mintOpeningInstance(
     whoYouAre: hook.whoYouAre ? applyReplacements(hook.whoYouAre, nameMap) : undefined,
     offerSummary,
     offerChips,
-    alone: aloneHint || (!cast.length && !/who is here/i.test(hook.text ?? '')),
+    alone: aloneHint || (!cast.length && !whoHereImpliesPresent(hook.whoHere)),
+    nearbyLandmark,
+    groupLabel: groupLabelFromWhoHere(hook.whoHere),
     retiredNames: retired.filter((n) => !isGenericToken(n)),
     nameMap,
   };
@@ -638,17 +866,27 @@ export function attachOpeningInstance(
   blob?: string
 ): GameState {
   const existing = state.openingEstablishment?.instance;
-  const instance = existing ?? mintOpeningInstance(hook, hookKey(state), {
-    bibleId: state.campaignBibleId ?? undefined,
-    engineMode: state.engineMode,
-  });
+  const catalogNpcNames = [
+    ...(hook.catalogNpcNames ?? []),
+    ...(hook.castNpcIds ?? []).map((id) => (state.npcMemories ?? []).find((m) => m.npcId === id)?.npcName ?? ''),
+  ].filter(Boolean);
+  const instance = existing ?? mintOpeningInstance(
+    { ...hook, catalogNpcNames },
+    hookKey(state),
+    {
+      bibleId: state.campaignBibleId ?? undefined,
+      engineMode: state.engineMode,
+    }
+  );
   const map: Array<[string, string]> = instance.nameMap?.length
     ? [...instance.nameMap]
     : [];
   if (!map.length) {
     const locNames = extractTitleNames(hook.location);
     const whoNames = peopleFromWhoHere(hook.whoHere);
-    if (locNames[0]) map.push([locNames[0], instance.placeName]);
+    if (locNames[0] && !isCampaignHubToken(locNames[0], state.campaignBibleId ?? undefined)) {
+      map.push([locNames[0], instance.placeName]);
+    }
     whoNames.forEach((n, i) => {
       const minted = instance.cast[i]?.name;
       if (minted) {
@@ -715,10 +953,13 @@ export function snapshotFromPickedHook(
   picked?: (OpeningHookSnapshot & {
     who?: string;
     how?: string;
+    summonIntent?: string;
     pressing?: string;
     where?: string;
     writerNotes?: string;
     beats?: string[];
+    faction?: string;
+    castNpcIds?: string[];
   }) | null
 ): OpeningHookSnapshot {
   if (!picked) return {};
@@ -727,12 +968,15 @@ export function snapshotFromPickedHook(
     text: picked.text,
     page1: picked.page1,
     fallback: picked.fallback,
-    whoHere: picked.whoHere,
+    whoHere: picked.whoHere ?? picked.faction,
     openingOffer: picked.openingOffer,
     pressingNeed: picked.pressingNeed ?? picked.pressing,
     howYouGotHere: picked.howYouGotHere ?? picked.how,
+    summonIntent: picked.summonIntent,
     whoYouAre: picked.whoYouAre ?? picked.who,
     beats: picked.beats,
     writerNotes: picked.writerNotes,
+    faction: picked.faction,
+    castNpcIds: picked.castNpcIds,
   };
 }

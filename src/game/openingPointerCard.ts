@@ -4,7 +4,7 @@
  */
 
 import type { GameState, SceneFacts } from './types';
-import { formatOpeningWriterNotes } from './openingWriterNotes';
+import { filterRetiredFromAllowlist, formatOpeningWriterNotes } from './openingWriterNotes';
 import { filterChromeFromPresent, realPresentPeople } from './chromeAuthority';
 import { syncPresentToCount } from './crowdAuthority';
 import { openingCastLabel } from './openingEstablishment';
@@ -165,8 +165,32 @@ export function formatPointerCardForSnapshot(state: GameState): string {
 ${formatPointerCardSlotBlock(slots, est?.sceneWritten ? 'continue' : 'establish')}`;
 }
 
+/** Chapter One chrome for an unnamed present group — never "Someone is here." */
+export function groupPresenceChrome(groupLabel?: string): string {
+  const bare = (groupLabel ?? '').replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  if (!bare) return 'Someone is here.';
+  const plural = /^(?:faces|people|watchmen|hirelings|others|hands)$/i.test(bare) || (/s$/i.test(bare) && !/ss$/i.test(bare) && !/crew|company|crowd|outfit|gang/i.test(bare));
+  if (/^crew$/i.test(bare)) return 'The crew is here.';
+  return `The ${bare} ${plural ? 'are' : 'is'} here.`;
+}
+
 /** Player-facing Chapter One line — not eval language. */
 export function formatOpeningCardChrome(state: GameState): string {
+  const inst = state.openingEstablishment?.instance;
+  if (inst?.placeName) {
+    const names = (inst.cast ?? []).map((c) => c.name).filter(Boolean);
+    const who =
+      inst.alone && names.length === 0
+        ? 'You are alone.'
+        : names.length === 0
+          ? groupPresenceChrome(inst.groupLabel)
+        : names.length === 1
+          ? `${names[0]} is here.`
+          : names.length === 2
+            ? `${names[0]} and ${names[1]} are here.`
+            : `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]} are here.`;
+    return `Chapter One — ${inst.placeName}. ${who}`.slice(0, 220);
+  }
   const slots = compilePointerCardSlots(state);
   if (!slots) return 'Chapter One';
   const who =
@@ -239,7 +263,15 @@ export function pointerCardAllowlist(state: GameState): Set<string> {
   add(state.character?.name);
   for (const p of realPresentPeople(state.sceneFacts?.present)) add(p);
   for (const p of state.openingEstablishment?.pinnedNpcNames ?? []) add(p);
-  return names;
+  const inst = state.openingEstablishment?.instance;
+  if (inst) {
+    add(inst.placeName);
+    add(inst.settlementName);
+    add(inst.factionName);
+    for (const c of inst.cast ?? []) add(c.name);
+  }
+  const kept = filterRetiredFromAllowlist([...names], inst?.retiredNames);
+  return new Set(kept.map((n) => n.toLowerCase()));
 }
 
 function considerInventedName(n: string, allow: Set<string>, found: string[]): void {

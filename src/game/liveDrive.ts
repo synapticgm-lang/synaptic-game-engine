@@ -25,7 +25,18 @@ import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import { enforcePerspective } from './perspectiveWarden';
 import { stripChoiceList } from './parser';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
-import type { EngineMode, GameState, LogEntry } from './types';
+import {
+  applyFailedLiveOpening,
+  applySuccessfulLiveOpening,
+  isBlankOpeningProse,
+  openingProseLeaksStructuredJson,
+  writeLiveOpening,
+  STORYTELLER_RETRY_CHIP,
+  STORYTELLER_RETRY_MESSAGE,
+  type LiveOpeningWriter,
+} from './liveOpening';
+import { isUnwrittenLiveOpening } from './openingWriterNotes';
+import type { EngineMode, GameState, LogEntry, Settings } from './types';
 
 export type LiveDriveFlag = {
   code: string;
@@ -344,9 +355,31 @@ export function criticLiveDriveTurn(input: {
   return flags;
 }
 
+function failedHeadlessOpening(state: GameState): { state: GameState; gmText: string; offeredChoices: string[] } {
+  const failed = applyFailedLiveOpening(state);
+  const gm: LogEntry = {
+    id: uid(),
+    turn: failed.turn,
+    role: 'gm',
+    content: STORYTELLER_RETRY_MESSAGE,
+    timestamp: Date.now(),
+    systemLog: [],
+  };
+  const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+  const next: GameState = {
+    ...failed,
+    log: [...prior, gm],
+    choices: [STORYTELLER_RETRY_CHIP],
+    pendingGeneratedOpening: true,
+    lastUpdated: Date.now(),
+  };
+  return { state: next, gmText: STORYTELLER_RETRY_MESSAGE, offeredChoices: [STORYTELLER_RETRY_CHIP] };
+}
+
 export async function headlessOpeningContinueTurn(
   state: GameState,
-  playerInput: string
+  playerInput: string,
+  deps?: { writer?: LiveOpeningWriter; settings?: Settings }
 ): Promise<{ state: GameState; gmText: string; offeredChoices: string[] }> {
   const playerEntry: LogEntry = {
     id: uid(),
@@ -360,6 +393,78 @@ export async function headlessOpeningContinueTurn(
     playerInput
   );
   const openingState = { ...stepped.state, pendingGeneratedOpening: false };
+  // Non-PYOA unwritten openings must never stitch authored page 1. Use the live
+  // writer path, or fail closed to "Try again".
+  if (isUnwrittenLiveOpening(openingState)) {
+    const settings = deps?.settings ?? ({ contentMode: 'adult' } as Settings);
+    let result;
+    try {
+      result = await writeLiveOpening(
+        openingState,
+        settings,
+        deps?.writer ? { writer: deps.writer } : undefined
+      );
+    } catch {
+      return failedHeadlessOpening(openingState);
+    }
+    if (
+      !result.ok
+      || isBlankOpeningProse(result.prose)
+      || openingProseLeaksStructuredJson(result.prose)
+    ) {
+      return failedHeadlessOpening(openingState);
+    }
+    let liveProse = stripChoiceList(result.prose);
+    liveProse = ensureSystemReceipt(openingState, sanitizeOpeningNarration(liveProse));
+    liveProse = enforcePerspective(liveProse, { perspective: 'second-person' }, openingState.character.name);
+    if (isBlankOpeningProse(liveProse) || openingProseLeaksStructuredJson(liveProse)) {
+      return failedHeadlessOpening(openingState);
+    }
+    const applied = applySuccessfulLiveOpening(openingState, liveProse, {
+      pads: result.pads,
+      journalTitle: result.journal.title,
+    });
+    if (!applied.openingEstablishment?.sceneWritten) {
+      return failedHeadlessOpening(openingState);
+    }
+    const openingTurn = openingState.turn + 1;
+    const gmBase: LogEntry = {
+      id: uid(),
+      turn: openingState.turn,
+      role: 'gm',
+      content: liveProse,
+      timestamp: Date.now(),
+      systemLog: [],
+    };
+    const openingGm = withLitrpgSystemWindow(
+      withOfferedChoices(gmBase, {
+        ...applied,
+        choices: applied.choices,
+        log: [...(applied.log ?? []), gmBase],
+      }),
+      applied,
+      playerInput
+    );
+    const seeded = seedOpeningSceneFacts({ ...applied, turn: openingTurn });
+    const sceneFacts = applyCommittedNarrative(
+      { ...applied, sceneFacts: seeded, turn: openingTurn },
+      liveProse,
+      openingTurn
+    );
+    return {
+      state: {
+        ...applied,
+        turn: openingTurn,
+        sceneFacts,
+        log: [...(applied.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE), openingGm],
+        choices: applied.choices,
+        pendingGeneratedOpening: false,
+        lastUpdated: Date.now(),
+      },
+      gmText: liveProse,
+      offeredChoices: openingGm.offeredChoices ?? applied.choices ?? [],
+    };
+  }
   let openingText = openingState.openingEstablishment?.sceneWritten
     ? stitchOpeningContinue(openingState, playerInput)
     : stitchOpeningScene(openingState);
@@ -367,6 +472,9 @@ export async function headlessOpeningContinueTurn(
   // M4 — proseWarden retired; opening stitch is engine-authored (clause check is post-writer).
   openingText = enforcePerspective(openingText, { perspective: 'second-person' }, openingState.character.name);
   const cleanOpening = stripChoiceList(openingText);
+  if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
+    return failedHeadlessOpening(openingState);
+  }
   const harvested = openingState.openingEstablishment
     ? applyHarvestedOpeningCovers(openingState.openingEstablishment, cleanOpening)
     : openingState.openingEstablishment;

@@ -170,6 +170,8 @@ import {
   writeLiveOpening,
   applySuccessfulLiveOpening,
   applyFailedLiveOpening,
+  isBlankOpeningProse,
+  openingProseLeaksStructuredJson,
   originOnlyOpeningText,
   STORYTELLER_RETRY_MESSAGE,
   STORYTELLER_RETRY_CHIP,
@@ -666,35 +668,41 @@ export function extractChoicesFromText(text: string, state?: GameState, storyPro
   }
   return validatedChoices;
 }
+function failedLiveOpeningPageState(state: GameState): GameState {
+  const failed = applyFailedLiveOpening(state);
+  const gm: LogEntry = {
+    id: uid(),
+    turn: failed.turn,
+    role: 'gm',
+    content: STORYTELLER_RETRY_MESSAGE,
+    timestamp: Date.now(),
+  };
+  const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+  return beginTabletopCreation({
+    ...failed,
+    log: [...prior, gm],
+    choices: [STORYTELLER_RETRY_CHIP],
+    pendingGeneratedOpening: true,
+    lastUpdated: Date.now(),
+  });
+}
+
 async function paintLiveOpeningPage(
   state: GameState,
   settings: Settings
 ): Promise<{ state: GameState; prose: string; failed: boolean; unlocks: Quest[] }> {
   const result = await writeLiveOpening(state, settings);
   if (!result.ok) {
-    const failed = applyFailedLiveOpening(state);
-    const gm: LogEntry = {
-      id: uid(),
-      turn: failed.turn,
-      role: 'gm',
-      content: STORYTELLER_RETRY_MESSAGE,
-      timestamp: Date.now(),
-    };
-    const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
-    const next: GameState = beginTabletopCreation({
-      ...failed,
-      log: [...prior, gm],
-      choices: [STORYTELLER_RETRY_CHIP],
-      pendingGeneratedOpening: true,
-      lastUpdated: Date.now(),
-    });
-    return { state: next, prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+    return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
   }
   let prose = stripChoiceList(result.prose);
   prose = ensureSystemReceipt(state, sanitizeOpeningNarration(prose));
   prose = enforcePerspective(prose, settings, state.character.name);
   if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
-  const applied = applySuccessfulLiveOpening(state, prose);
+  if (isBlankOpeningProse(prose) || openingProseLeaksStructuredJson(prose)) {
+    return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+  }
+  const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads, journalTitle: result.journal.title });
   const turn = (state.turn ?? 0) + 1;
   const unlocks = newlyRevealedQuests(state.quests ?? [], applied.quests ?? []);
   const gmBase: LogEntry = {
@@ -2527,10 +2535,26 @@ export function useGame() {
           setRestoreDraft(null);
           return;
         }
-        // Hall-talk continue after page 1 may still stitch locally.
+        // Non-PYOA must never fall through to authored page 1. If the live page
+        // still hasn't been written, write it now rather than stitching catalog prose.
+        if (openingState.engineMode !== 'pyoa' && openingState.openingEstablishment?.sceneWritten !== true) {
+          const painted = await paintLiveOpeningPage(openingState, settingsRef.current);
+          stateRef.current = painted.state;
+          setState(painted.state);
+          if (!painted.failed && settingsRef.current.ttsEnabled) {
+            const last = [...painted.state.log].reverse().find((e) => e.role === 'gm');
+            if (last) voice.speak(painted.prose, { entryId: last.id });
+          }
+          void persist(painted.state);
+          if (painted.unlocks.length) setUnlockedQuests(painted.unlocks);
+          setRestoreDraft(null);
+          return;
+        }
+        // Hall-talk continue after page 1 may still stitch locally. Authored
+        // stitchOpeningScene is PYOA-only.
         const openingRaw = '';
         let openingText =
-          openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
+          openingState.engineMode !== 'pyoa' || openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
             ? stitchOpeningContinue(openingState, contentSanitized)
             : stitchOpeningScene(openingState);
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
@@ -2541,6 +2565,14 @@ export function useGame() {
         }
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
+        if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
+          const failed = failedLiveOpeningPageState(openingState);
+          stateRef.current = failed;
+          setState(failed);
+          void persist(failed);
+          setRestoreDraft(null);
+          return;
+        }
         const openingBible = getCampaignBibleById(openingState.campaignBibleId ?? '');
         const journalReady =
           !questsLockedDuringOpening(openingState)
@@ -5635,22 +5667,22 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           },
         };
     const pinnedState = ensureOpeningNpcPinned(withPinnedPresent, bible);
-    let newState = ensureOpeningRite(
-      seedOpeningCastLocations(
-        mergePreferredProfileIntoOpening(
-          withUpdatedHookArc(
-            ensureCampaignContract(
-              {
-                ...pinnedState,
-                quests: enrichQuests(pinnedState.quests ?? []),
-                recentBeatFingerprints: [],
-                stateTxLog: [],
-              },
-              bible
-            )
+    // Seed the rite only after attachOpeningInstance so the journal uses minted
+    // names, not a pre-attached catalog "Sign the pact" / Orel Vane quest.
+    let newState = seedOpeningCastLocations(
+      mergePreferredProfileIntoOpening(
+        withUpdatedHookArc(
+          ensureCampaignContract(
+            {
+              ...pinnedState,
+              quests: enrichQuests(pinnedState.quests ?? []),
+              recentBeatFingerprints: [],
+              stateTxLog: [],
+            },
+            bible
           )
-        ).state
-      )
+        )
+      ).state
     );
     if (!umbraBookNew) {
       const spineCtx = hookCtxFromState({
@@ -5673,8 +5705,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           },
         };
       }
-      newState = ensureOpeningRite(newState);
     }
+    newState = ensureOpeningRite(newState);
     setState(newState);
     stateRef.current = newState;
     clearActionDraft();
@@ -5792,6 +5824,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
+      if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
+        const failed = failedLiveOpeningPageState(newState);
+        stateRef.current = failed;
+        setState(failed);
+        void persist(failed);
+      } else {
       const openingBible = resolveActiveCampaignBible(newState) ?? getCampaignBibleById(newState.campaignBibleId ?? '');
       // Never unlock / modal during name-look covers — dim overlay blocked play on mobile.
       const journalReady =
@@ -5915,6 +5953,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           heroImage: false,
           bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
         });
+      }
       }
       }
     } catch (err) {

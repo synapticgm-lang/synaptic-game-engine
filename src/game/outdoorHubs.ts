@@ -214,6 +214,122 @@ export function hubsForBible(bible: CampaignBible | undefined | null): OutdoorHu
   return hubsForBibleId(bible?.id);
 }
 
+const GENERIC_HUB_ALIAS = /^(?:the\s+|a\s+|an\s+)?(?:inn|church|chapel|tavern|quay|palace|graveyard|churchyard|waystation|safehouse|fence|market|checkpoint|wall|close|harbor|harbour|camp|road|yard|engine|hollow|march|scar|ledger|kitchen|saint|cup|hall|court|gate|alley|trail|ash|rise|wagon)$/i;
+
+function stripHubArticle(raw: string): string {
+  return raw.replace(/^(?:the|a|an)\s+/i, '').trim();
+}
+
+function escapeHubRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Whole-name / whole-phrase match — never "Hollow" inside "Hollowmere" or "Cinder" inside "Cinderwake". */
+export function hasWholeHubPhrase(haystack: string, needle: string): boolean {
+  const n = stripHubArticle(needle);
+  if (!n) return false;
+  return new RegExp(`(?:^|[^A-Za-z0-9])${escapeHubRe(n)}(?:[^A-Za-z0-9]|$)`, 'i').test(haystack);
+}
+
+/**
+ * First tokens that are coined proper place-names (Greyhollow, Cinderwake, Pellane).
+ * Ordinary English and facility words stay out so "a hollow", "the kitchen", or Hollowmere
+ * cannot snap to a hub.
+ */
+function isCoinedHubStem(word: string): boolean {
+  const t = word.replace(/['’]s$/i, '').replace(/[^A-Za-z]/g, '');
+  if (t.length < 7) return false;
+  if (GENERIC_HUB_ALIAS.test(t)) return false;
+  if (/^(west|east|north|south|old|new)$/i.test(t)) return false;
+  if (/^(cathedral|kitchen|contract|approach|palace|harbor|harbour|market|treeline)$/i.test(t)) return false;
+  if (/(?:ing|tion|ment|ness|ance|ence|able|ible|ous|ive|ary|ery|ory|house|point)$/i.test(t)) return false;
+  return true;
+}
+
+function distinctiveHubLabels(hub: OutdoorHub): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const push = (raw: string) => {
+    const t = stripHubArticle(raw);
+    if (!t || t.length < 4 || GENERIC_HUB_ALIAS.test(t)) return;
+    const k = t.toLowerCase();
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(t);
+  };
+  push(hub.name);
+  for (const a of hub.aliases ?? []) push(a);
+  const first = stripHubArticle(hub.name).split(/\s+/)[0] ?? '';
+  if (isCoinedHubStem(first)) push(first);
+  for (const a of hub.aliases ?? []) {
+    const f = stripHubArticle(a).split(/\s+/)[0] ?? '';
+    if (isCoinedHubStem(f)) push(f);
+  }
+  return out;
+}
+
+function genericHubAliases(hub: OutdoorHub): string[] {
+  const out: string[] = [];
+  for (const a of hub.aliases ?? []) {
+    const t = stripHubArticle(a);
+    if (t && GENERIC_HUB_ALIAS.test(t)) out.push(t);
+  }
+  return out;
+}
+
+/** Distinctive hub names and coined stems still on this campaign's map (Greyhollow, Valespire, Cinderflow, Salt Road). */
+export function campaignHubLabels(bibleId?: string | null): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const h of hubsForBibleId(bibleId)) {
+    for (const lab of distinctiveHubLabels(h)) {
+      const k = lab.toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k);
+      out.push(lab);
+    }
+  }
+  return out;
+}
+
+export function isCampaignHubToken(token: string, bibleId?: string | null): boolean {
+  const t = stripHubArticle(token ?? '');
+  if (!t || GENERIC_HUB_ALIAS.test(t)) return false;
+  for (const lab of campaignHubLabels(bibleId)) {
+    if (t.toLowerCase() === lab.toLowerCase()) return true;
+    // Token names the hub (or a longer phrase that contains it).
+    if (hasWholeHubPhrase(t, lab)) return true;
+    // A coined stem or multi-word token that appears as a whole name inside the label
+    // (Greyhollow ⊂ Greyhollow Inn). Never a common word like Salt or Hollow.
+    if ((isCoinedHubStem(t) || t.split(/\s+/).length >= 2) && hasWholeHubPhrase(lab, t)) return true;
+  }
+  return false;
+}
+
+/** Canonical hub name if this location is (or sits inside) a campaign hub. */
+export function hubCanonicalNameForLocation(location: string | undefined, bibleId?: string | null): string | undefined {
+  const raw = (location ?? '').trim();
+  if (!raw) return undefined;
+  let best: { name: string; score: number } | undefined;
+  for (const h of hubsForBibleId(bibleId)) {
+    let score = 0;
+    let distinctive = false;
+    for (const lab of distinctiveHubLabels(h)) {
+      if (hasWholeHubPhrase(raw, lab) || stripHubArticle(raw).toLowerCase() === lab.toLowerCase()) {
+        score += lab.length + (stripHubArticle(raw).toLowerCase() === lab.toLowerCase() ? 10 : 0);
+        distinctive = true;
+      }
+    }
+    if (!distinctive) continue;
+    for (const g of genericHubAliases(h)) {
+      if (hasWholeHubPhrase(raw, g)) score += 5;
+    }
+    if (!best || score > best.score) best = { name: h.name, score };
+  }
+  return best?.name;
+}
+
+
 function hubToPlace(
   hub: OutdoorHub,
   atlas?: { settlements?: Array<{ name: string; aliases?: string[]; biome?: string; regionId?: string; allowsDungeon?: boolean }> } | null

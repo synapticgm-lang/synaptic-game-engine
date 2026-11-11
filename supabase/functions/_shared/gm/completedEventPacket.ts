@@ -3,6 +3,7 @@
  * Code resolves facts first; the writer only narrates a completed event in past tense.
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types.ts';
+import { filterRetiredFromAllowlist } from './openingWriterNotes.ts';
 function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName.ts';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
@@ -16,6 +17,7 @@ import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import {
   hubsForBibleId,
+  isCampaignHubToken,
   matchHub,
   outdoorHubTravelChoices,
   parseTravelDestination,
@@ -653,7 +655,12 @@ export function compileNounAllowlist(
       at = beat.indexOf(name, at + 1);
     }
   }
-  return out;
+  const retired = state.openingEstablishment?.instance?.retiredNames;
+  const dropped = filterRetiredFromAllowlist(out, retired);
+  const keptHubs = out.filter(
+    (n) => isCampaignHubToken(n, state.campaignBibleId) && !dropped.some((f) => f.toLowerCase() === n.toLowerCase())
+  );
+  return keptHubs.length ? [...dropped, ...keptHubs] : dropped;
 }
 /** Two cast labels name one person when one's words run whole inside the other's ("faces" / "the exhausted faces"). */
 function sameCastPerson(a: string, b: string): boolean {

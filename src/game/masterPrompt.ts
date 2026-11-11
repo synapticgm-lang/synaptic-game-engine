@@ -21,7 +21,7 @@ import { compileLitrpgCoreIdentity } from './openingPointerCard';
 import { formatGoldShapeForPrompt } from './fluidProseRails';
 import { formatLikedKeeperForPrompt } from './craftKeepers';
 import { formatPerspectiveRule, pcPov, povExample, type PcPov } from './narrativePov';
-import { formatOpeningPage1Rail } from './openingWriterNotes';
+import { formatLaterTurnNameRail, formatOpeningPage1Rail } from './openingWriterNotes';
 
 /** Story-prose example lines in the mode blocks, rendered in the configured POV. System/choice examples stay "you". */
 const STORY_EXAMPLES: Array<{ second: string; third: string; first: string }> = [
@@ -575,6 +575,7 @@ ${contentRules}
 ${formatMaturityRules(settings, { nsfw })}
 
 ${formatOpeningPage1Rail(state)}
+${formatLaterTurnNameRail(state)}
 `.trim();
 }
 

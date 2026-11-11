@@ -27,6 +27,7 @@ import {
   pinOpeningRiteChip,
 } from './openingRite';
 import type { GameState } from './types';
+import { attachOpeningInstance, type OpeningHookSnapshot } from './openingInstance';
 
 const litrpgBibles = ALL_CAMPAIGN_BIBLES.filter((b) => b.engineMode === 'litrpg');
 
@@ -347,5 +348,36 @@ describe('XP-D1 OPEN cover pin', () => {
       expect(pads.some((p) => /^Accept the /i.test(p))).toBe(true);
       expect(pads[0]?.toLowerCase()).not.toBe('sign the pact');
     }
+  });
+});
+
+const cinderHook: OpeningHookSnapshot = {
+  location: 'the ash-heat of Cinderwake Trail',
+  whoHere: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
+  openingOffer:
+    "Brother Oren's waterskin and a scarf, or Kessa's brand-iron, or neither — both are offers, not your gear.",
+  pressingNeed: 'The Pellane scouts want an answer.',
+};
+
+describe('opening rite refresh after a live instance is attached', () => {
+  it('rewrites an existing catalog opening-rite quest from riteEntryForState', () => {
+    const before = litrpgState('summoned-pact');
+    const prior = (before.quests ?? []).find((q) => /^opening-rite:/.test(q.id ?? ''));
+    expect(prior).toBeTruthy();
+    expect(prior!.giver).toMatch(/Orel Vane/i);
+    expect(prior!.objectives?.[0]?.description).toBe('Sign the pact');
+
+    const attached = attachOpeningInstance(before, cinderHook, undefined);
+    expect(attached.openingEstablishment?.instance).toBeTruthy();
+    const after = ensureOpeningRite(attached);
+    const riteQ = (after.quests ?? []).find((q) => q.id === prior!.id);
+    expect(riteQ).toBeTruthy();
+    expect(riteQ!.giver).not.toMatch(/Orel Vane/i);
+    expect(riteQ!.description).not.toMatch(/Orel Vane|Sign the pact/i);
+    expect(riteQ!.objectives?.[0]?.description).not.toBe('Sign the pact');
+    const inst = after.openingEstablishment!.instance!;
+    expect(riteQ!.giver).toMatch(new RegExp(inst.cast[0]!.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    expect(openingRiteAcceptChip(after)).not.toBe('Sign the pact');
+    expect(after.openingRite?.title).not.toMatch(/Sign the pact/i);
   });
 });
