@@ -23,18 +23,24 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
     expect(aiService).toContain('callOpeningGm');
   });
 
-  it('cover-continue does not callOpeningGm — local stitch only', () => {
-    const start = useGame.indexOf('Cover-continue stays local');
-    expect(start).toBeGreaterThan(-1);
-    expect(useGame).not.toMatch(/await callOpeningGm\(/);
+  it('origin covers stay local; non-PYOA page 1 is a live opening write', () => {
+    expect(useGame).toContain('paintLiveOpeningPage');
+    expect(useGame).toContain('originOnlyOpeningText');
+    expect(useGame).toContain('STORYTELLER_RETRY_MESSAGE');
+    expect(useGame).toContain('wantsLivePage');
   });
 
-  it('New Game keeps the committed stitch — no later GM swap of page 1', () => {
-    const start = useGame.indexOf('Stitch first — page 1 is a committed card scene');
-    const fail = useGame.indexOf('Opening stitch failed');
-    expect(start).toBeGreaterThan(-1);
-    expect(fail).toBeGreaterThan(start);
-    expect(useGame.slice(start, fail)).not.toContain('callOpeningGm');
+  it('New Game does not fall back to authored stitch when the live opening write fails', () => {
+    expect(useGame).toContain("logger.error('new-game', 'Opening write failed'");
+    expect(useGame).toContain('applyFailedLiveOpening');
+    expect(useGame).not.toContain('Opening stitch failed');
+    const fail = useGame.indexOf("logger.error('new-game', 'Opening write failed'");
+    expect(fail).toBeGreaterThan(-1);
+    const failBlock = useGame.slice(fail, fail + 2500);
+    expect(failBlock).toContain('applyFailedLiveOpening');
+    expect(failBlock).toContain('STORYTELLER_RETRY_MESSAGE');
+    // Authored stitch is only in the PYOA / umbra catch branch, never the default non-PYOA path.
+    expect(failBlock).toContain('if (umbraBookNew)');
   });
 
   it('phantom callback name classifies as client_bug not unknown', () => {

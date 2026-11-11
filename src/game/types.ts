@@ -852,6 +852,40 @@ export interface PlaceThreat {
   /** How the last try ended while it stayed: still live, the player lost, the player fled, or nothing settled it. */
   lastOutcome?: 'pending' | 'live' | 'defeat' | 'unsettled' | 'escaped';
 }
+/** One person locked for this save's opening: a minted name plus a private role note. */
+export interface OpeningCastMember {
+  role: string;
+  name: string;
+}
+/** A player-facing opening chip that names the actual offer. */
+export interface OpeningOfferChip {
+  kind: 'accept' | 'refuse' | 'alt';
+  label: string;
+  note: string;
+}
+/**
+ * Fresh names and places minted from the seed at New Game, then locked for the rest of the save.
+ * Hook cards describe roles; this record is the only proper-name list the opening may use.
+ */
+export interface OpeningInstance {
+  placeName: string;
+  placeKind: string;
+  settlementName?: string;
+  factionName?: string;
+  factionKind?: string;
+  cast: OpeningCastMember[];
+  situation: string;
+  pressing?: string;
+  how?: string;
+  whoYouAre?: string;
+  offerSummary?: string;
+  offerChips: OpeningOfferChip[];
+  alone: boolean;
+  /** Catalog proper names retired for this save (must not appear in opening prose). */
+  retiredNames: string[];
+  /** Catalog name → locked name, longest first, for scrubbing leftover hook text. */
+  nameMap?: Array<[string, string]>;
+}
 export interface OpeningEstablishment {
   pending: Array<{
     id: string;
@@ -877,8 +911,19 @@ export interface OpeningEstablishment {
   pickedHook?: string;
   /** Short card id (location slug) for packet / contract. */
   pickedHookId?: string;
-  /** Player-facing fallback if the writer call fails. */
+  /**
+   * Catalog / authored first-page copy kept for PYOA and old saves.
+   * Never shown to the player as a silent backup when a live opening write fails.
+   */
   pickedHookFallback?: string;
+  /** Seed-minted names, places, and offer chips locked for this save. */
+  instance?: OpeningInstance;
+  /** Writer failed validation or the call died; UI shows a retry, never authored prose. */
+  sceneWriteError?: string;
+  /** Matched campaign spine id — private writer rail only, never a journal title. */
+  privateSpineId?: string;
+  /** Authored page 1 retired from the player view; used only to reject reprints. */
+  authoredPage1Retired?: string;
   /** True when this run’s opener has no summoners on page one. */
   aloneArrival?: boolean;
   /** 29c — opening NPC names pinned into scene presence for early turns. */

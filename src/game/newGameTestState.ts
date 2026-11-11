@@ -15,6 +15,7 @@ import {
   type SystemPartId,
 } from './systemHousing';
 import type { GameState, NpcMemory } from './types';
+import { attachOpeningInstance, snapshotFromPickedHook } from './openingInstance';
 
 /**
  * A LitRPG save whose housing is pinned: the seed rolls `housing`, so the starter kit is built for it,
@@ -48,7 +49,7 @@ export function seedPickingCast(bible: CampaignBible, npcId: string) {
 
 export function newGameState(
   bibleId: string,
-  opts: { npcId?: string; seed?: string; storyName?: string; engineMode?: GameState['engineMode'] } = {}
+  opts: { npcId?: string; seed?: string; storyName?: string; engineMode?: GameState['engineMode']; liveOpening?: boolean } = {}
 ): GameState {
   const bible = getCampaignBibleById(bibleId)!;
   const hit = opts.npcId ? seedPickingCast(bible, opts.npcId) : undefined;
@@ -58,7 +59,7 @@ export function newGameState(
     { ...createInitialState(opts.storyName ?? bible.title, opts.engineMode ?? bible.engineMode), seed },
     bible
   );
-  return {
+  const withEst: GameState = {
     ...seeded,
     openingEstablishment: {
       pending: [],
@@ -70,6 +71,10 @@ export function newGameState(
       ...(picked?.card ? { card: picked.card } : {}),
     },
   };
+  // Default keeps catalog names so playtests can pin Wren/Vessa. New Game itself mints a locked instance.
+  return opts.liveOpening
+    ? attachOpeningInstance(withEst, snapshotFromPickedHook(picked), picked?.text)
+    : withEst;
 }
 
 /** Bible roster record by name or alias, optionally marked as met. */

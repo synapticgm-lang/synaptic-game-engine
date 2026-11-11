@@ -165,6 +165,15 @@ import {
   stitchOpeningContinue,
   stitchOpeningScene,
 } from './openingStitch';
+import { attachOpeningInstance, snapshotFromPickedHook } from './openingInstance';
+import {
+  writeLiveOpening,
+  applySuccessfulLiveOpening,
+  applyFailedLiveOpening,
+  originOnlyOpeningText,
+  STORYTELLER_RETRY_MESSAGE,
+  STORYTELLER_RETRY_CHIP,
+} from './liveOpening';
 import {
   classifyOpeningContinue,
   compactTrafficGist,
@@ -657,6 +666,74 @@ export function extractChoicesFromText(text: string, state?: GameState, storyPro
   }
   return validatedChoices;
 }
+async function paintLiveOpeningPage(
+  state: GameState,
+  settings: Settings
+): Promise<{ state: GameState; prose: string; failed: boolean; unlocks: Quest[] }> {
+  const result = await writeLiveOpening(state, settings);
+  if (!result.ok) {
+    const failed = applyFailedLiveOpening(state);
+    const gm: LogEntry = {
+      id: uid(),
+      turn: failed.turn,
+      role: 'gm',
+      content: STORYTELLER_RETRY_MESSAGE,
+      timestamp: Date.now(),
+    };
+    const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+    const next: GameState = beginTabletopCreation({
+      ...failed,
+      log: [...prior, gm],
+      choices: [STORYTELLER_RETRY_CHIP],
+      pendingGeneratedOpening: true,
+      lastUpdated: Date.now(),
+    });
+    return { state: next, prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+  }
+  let prose = stripChoiceList(result.prose);
+  prose = ensureSystemReceipt(state, sanitizeOpeningNarration(prose));
+  prose = enforcePerspective(prose, settings, state.character.name);
+  if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
+  const applied = applySuccessfulLiveOpening(state, prose);
+  const turn = (state.turn ?? 0) + 1;
+  const unlocks = newlyRevealedQuests(state.quests ?? [], applied.quests ?? []);
+  const gmBase: LogEntry = {
+    id: uid(),
+    turn: state.turn,
+    role: 'gm',
+    content: prose,
+    timestamp: Date.now(),
+    systemLog: [
+      formatOpeningCardChrome(applied),
+      ...litrpgOpeningSystemPing(applied),
+      ...unlocks.map((q) => `Quest Unlocked: ${q.name}`),
+    ],
+  };
+  const gm = withLitrpgSystemWindow(
+    withOfferedChoices(gmBase, {
+      ...applied,
+      choices: applied.choices,
+      log: [...(applied.log ?? []), gmBase],
+    }),
+    applied
+  );
+  const seeded = seedOpeningSceneFacts({ ...applied, turn });
+  const sceneFacts = applyCommittedNarrative({ ...applied, sceneFacts: seeded, turn }, prose, turn);
+  const prior = (applied.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+  const committed = beginTabletopCreation(
+    placeQuestGivers({
+      ...applied,
+      turn,
+      sceneFacts,
+      log: [...prior, gm],
+      choices: applied.choices,
+      pendingGeneratedOpening: false,
+      lastUpdated: Date.now(),
+    })
+  );
+  return { state: committed, prose, failed: false, unlocks };
+}
+
 export type SyncPhase = 'idle' | 'syncing';
 export type BootPhase = 'welcome' | 'auth' | 'setup' | 'hub' | 'syncing' | 'ready';
 export function useGame() {
@@ -2396,6 +2473,18 @@ export function useGame() {
         shouldStitchOpeningContinue(liveCurrent, contentSanitized)
         || (
           !openingSceneWritten
+          && liveCurrent.engineMode !== 'pyoa'
+          && (
+            !!liveCurrent.openingEstablishment?.sceneWriteError
+            || /^try again$/i.test(contentSanitized)
+            || (
+              liveCurrent.openingEstablishment?.complete === true
+              && !!liveCurrent.pendingGeneratedOpening
+            )
+          )
+        )
+        || (
+          !openingSceneWritten
           && (
             isOpeningCoverTurn(current)
             || isOpeningCoverTurn(liveCurrent)
@@ -2417,7 +2506,28 @@ export function useGame() {
           return;
         } else {
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
-        // Cover-continue stays local — never callOpeningGm / packet lecture.
+        const wantsLivePage =
+          openingState.engineMode !== 'pyoa'
+          && openingState.openingEstablishment?.sceneWritten !== true
+          && (
+            openingState.openingEstablishment?.complete === true
+            || !!openingState.openingEstablishment?.sceneWriteError
+            || /^try again$/i.test(contentSanitized)
+          );
+        if (wantsLivePage) {
+          const painted = await paintLiveOpeningPage(openingState, settingsRef.current);
+          stateRef.current = painted.state;
+          setState(painted.state);
+          if (!painted.failed && settingsRef.current.ttsEnabled) {
+            const last = [...painted.state.log].reverse().find((e) => e.role === 'gm');
+            if (last) voice.speak(painted.prose, { entryId: last.id });
+          }
+          void persist(painted.state);
+          if (painted.unlocks.length) setUnlockedQuests(painted.unlocks);
+          setRestoreDraft(null);
+          return;
+        }
+        // Hall-talk continue after page 1 may still stitch locally.
         const openingRaw = '';
         let openingText =
           openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
@@ -5542,6 +5652,29 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ).state
       )
     );
+    if (!umbraBookNew) {
+      const spineCtx = hookCtxFromState({
+        ...newState,
+        openingEstablishment: {
+          ...(newState.openingEstablishment ?? { pending: [], answers: {}, complete: false }),
+          pickedHook: picked?.text,
+          pickedHookFallback: picked?.page1 || picked?.fallback,
+        },
+      });
+      const spineMatch = withMatchedLitRpgSpine(bible?.starterQuests ?? [], spineCtx);
+      const privateSpineId = spineMatch.find((s) => /-spine-/.test(s.id))?.id;
+      newState = attachOpeningInstance(newState, snapshotFromPickedHook(picked), picked?.text);
+      if (privateSpineId || newState.openingEstablishment) {
+        newState = {
+          ...newState,
+          openingEstablishment: {
+            ...newState.openingEstablishment!,
+            ...(privateSpineId ? { privateSpineId } : {}),
+          },
+        };
+      }
+      newState = ensureOpeningRite(newState);
+    }
     setState(newState);
     stateRef.current = newState;
     clearActionDraft();
@@ -5563,6 +5696,49 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     try {
       // q50-MAP2 — opening HERE on the place record with hub-graph exits (no atlas / discovered write).
       newState = ensurePlaceOnMap(newState, newState.currentLocation);
+      if (!umbraBookNew) {
+        const pendingNow = newState.openingEstablishment?.pending ?? [];
+        if (pendingNow.length && newState.openingEstablishment?.complete !== true) {
+          const originText = originOnlyOpeningText(newState);
+          const originChoices = establishmentChoices(pendingNow, newState);
+          const originGm = withLitrpgSystemWindow(
+            {
+              id: uid(),
+              turn: newState.turn,
+              role: 'gm',
+              content: originText,
+              timestamp: Date.now(),
+              systemLog: litrpgOpeningSystemPing(newState),
+            },
+            newState
+          );
+          const committed = beginTabletopCreation({
+            ...newState,
+            turn: (newState.turn ?? 0) + 1,
+            log: [originGm],
+            choices: originChoices,
+            pendingGeneratedOpening: true,
+            openingEstablishment: {
+              ...newState.openingEstablishment!,
+              sceneWritten: false,
+            },
+            lastUpdated: Date.now(),
+          });
+          stateRef.current = committed;
+          setState(committed);
+          void persist(committed);
+        } else {
+          const painted = await paintLiveOpeningPage(newState, settingsRef.current);
+          stateRef.current = painted.state;
+          setState(painted.state);
+          if (!painted.failed && settingsRef.current.ttsEnabled) {
+            const last = [...painted.state.log].reverse().find((e) => e.role === 'gm');
+            if (last) voice.speak(painted.prose, { entryId: last.id });
+          }
+          void persist(painted.state);
+          if (painted.unlocks.length) setUnlockedQuests(painted.unlocks);
+        }
+      } else {
       // Stitch first — page 1 is a committed card scene. GM continues that lock.
       const stitchText = stitchOpeningScene(newState);
       const openingTurnEarly = newState.turn + 1;
@@ -5740,51 +5916,68 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
         });
       }
+      }
     } catch (err) {
-      logger.error('new-game', 'Opening stitch failed', { err: String(err) });
-      // Still land a playable first page — never leave HUD-only blank play.
-      try {
-        const fallbackText = stitchOpeningScene(newState);
-        const fallbackChoices = newState.openingEstablishment?.pending?.length
-          ? establishmentChoices(newState.openingEstablishment.pending, newState)
-          : umbraBookNew
-            ? spineChoiceLabels(ensurePyoaSpine(newState))
-            : undefined;
-        const fallbackEst = newState.openingEstablishment
-          ? { ...newState.openingEstablishment, sceneWritten: true }
-          : newState.openingEstablishment;
-        const fallbackGmBase: LogEntry = {
-          id: uid(),
-          turn: newState.turn,
-          role: 'gm',
-          content: fallbackText,
-          timestamp: Date.now(),
-          systemLog: litrpgOpeningSystemPing(newState),
-        };
-        const fallbackGm = withLitrpgSystemWindow(
-          withOfferedChoices(fallbackGmBase, {
+      logger.error('new-game', 'Opening write failed', { err: String(err) });
+      if (umbraBookNew) {
+        try {
+          const fallbackText = authoredPyoaPageText(authoredBoot ?? newState) || authoredStartPage() || stitchOpeningScene(newState);
+          const fallbackChoices = spineChoiceLabels(ensurePyoaSpine(newState));
+          const fallbackEst = newState.openingEstablishment
+            ? { ...newState.openingEstablishment, sceneWritten: true, complete: true, pending: [] }
+            : newState.openingEstablishment;
+          const fallbackGmBase: LogEntry = {
+            id: uid(),
+            turn: newState.turn,
+            role: 'gm',
+            content: fallbackText,
+            timestamp: Date.now(),
+            systemLog: litrpgOpeningSystemPing(newState),
+          };
+          const fallbackGm = withLitrpgSystemWindow(
+            withOfferedChoices(fallbackGmBase, {
+              ...newState,
+              choices: fallbackChoices,
+              openingEstablishment: fallbackEst,
+              log: [fallbackGmBase],
+            }),
+            newState
+          );
+          const fallback: GameState = beginTabletopCreation({
             ...newState,
+            turn: newState.turn + 1,
+            log: [fallbackGm],
             choices: fallbackChoices,
+            pendingGeneratedOpening: false,
             openingEstablishment: fallbackEst,
-            log: [fallbackGmBase],
-          }),
-          newState
-        );
-        const fallback: GameState = beginTabletopCreation({
-          ...newState,
-          turn: newState.turn + 1,
-          log: [fallbackGm],
-          choices: fallbackChoices,
-          pendingGeneratedOpening: false,
-          openingEstablishment: fallbackEst,
+            lastUpdated: Date.now(),
+          });
+          stateRef.current = fallback;
+          setState(fallback);
+          void persist(fallback);
+        } catch (fallbackErr) {
+          logger.error('new-game', 'Opening fallback failed', { err: String(fallbackErr) });
+          setError('Opening failed to paint. Try New Game again.');
+        }
+      } else {
+        const failed = applyFailedLiveOpening(newState);
+        const gm: LogEntry = {
+          id: uid(),
+          turn: failed.turn,
+          role: 'gm',
+          content: STORYTELLER_RETRY_MESSAGE,
+          timestamp: Date.now(),
+        };
+        const retryState: GameState = beginTabletopCreation({
+          ...failed,
+          log: [...(failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE), gm],
+          choices: [STORYTELLER_RETRY_CHIP],
+          pendingGeneratedOpening: true,
           lastUpdated: Date.now(),
         });
-        stateRef.current = fallback;
-        setState(fallback);
-        void persist(fallback);
-      } catch (fallbackErr) {
-        logger.error('new-game', 'Opening fallback failed', { err: String(fallbackErr) });
-        setError('Opening failed to paint. Try New Game again.');
+        stateRef.current = retryState;
+        setState(retryState);
+        void persist(retryState);
       }
     } finally {
       setBusy(false);

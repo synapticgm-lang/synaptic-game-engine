@@ -10,20 +10,34 @@ import {
 import type { GameState } from './types';
 
 export function riteEntryForState(
-  state: Pick<GameState, 'campaignBibleId' | 'engineMode' | 'storyName'>
+  state: Pick<GameState, 'campaignBibleId' | 'engineMode' | 'storyName' | 'openingEstablishment'>
 ): OpeningRiteEntry | null {
   if (state.engineMode !== 'litrpg') return null;
   const id = state.campaignBibleId?.trim();
   if (!id) return null;
-  return (
+  const base =
     authoredOpeningRite(id)
     ?? fallbackOpeningRite({
       id,
       title: state.storyName?.trim() || id,
       engineMode: 'litrpg',
       keyNPCs: [],
-    })
-  );
+    });
+  if (!base) return null;
+  const inst = state.openingEstablishment?.instance;
+  if (!inst) return base;
+  const accept = inst.offerChips.find((c) => c.kind === 'accept');
+  const refuse = inst.offerChips.find((c) => c.kind === 'refuse');
+  const lead = inst.cast[0]?.name;
+  const offerBit = inst.offerSummary || accept?.note;
+  return {
+    ...base,
+    giver: lead ?? inst.factionName ?? 'the registrar',
+    title: accept ? `Opening: ${accept.label}` : lead ? `Opening: Hear ${lead.split(/\s+/)[0]} out` : 'The opening offer',
+    offerSentence: offerBit ? `Will you take this: ${offerBit}?` : accept ? `Will you: ${accept.label}?` : 'Will you take what is being offered, or keep your own kit?',
+    acceptChip: accept?.label ?? base.acceptChip,
+    refuseChip: refuse?.label ?? 'Keep your own kit',
+  };
 }
 
 export function openingRiteIsOpen(state: Pick<GameState, 'engineMode' | 'openingRite'>): boolean {

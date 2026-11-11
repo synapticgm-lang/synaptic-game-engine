@@ -728,7 +728,28 @@ export function NewGameModal({ contentMode, onStart, onClose, settings, onSettin
                       );
                     })}
                   </div>
-                  {hookPreview ? (
+                  {engineMode !== 'pyoa' ? (
+                    <div
+                      className="mt-2 rounded-lg border border-slate-700 bg-slate-900/70 p-2.5"
+                      data-testid="opening-hook-preview"
+                    >
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                        Opening this run
+                      </span>
+                      <p className="mt-1 text-[11px] leading-snug text-slate-300">
+                        {engineMode === 'litrpg'
+                          ? 'LitRPG'
+                          : engineMode === 'dnd'
+                            ? 'Tabletop'
+                            : 'Story RPG'}
+                        {selectedPremade?.title ? ` · ${selectedPremade.title}` : ''}
+                        {selectedPremade?.genreTag ? ` · ${selectedPremade.genreTag}` : ''}
+                      </p>
+                      <p className="mt-0.5 text-[11px] leading-snug text-slate-400">
+                        The first page will be written when you start.
+                      </p>
+                    </div>
+                  ) : hookPreview ? (
                     <div
                       className="mt-2 rounded-lg border border-slate-700 bg-slate-900/70 p-2.5"
                       data-testid="opening-hook-preview"
@@ -737,32 +758,7 @@ export function NewGameModal({ contentMode, onStart, onClose, settings, onSettin
                         <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                           Opening this run
                         </span>
-                        <button
-                          type="button"
-                          onClick={() => setOpenerSeed(freshOpenerSeed())}
-                          className="text-[10px] text-crimson-300 underline-offset-2 hover:text-crimson-200 hover:underline"
-                        >
-                          Another opening
-                        </button>
                       </div>
-                      {hookPreview.location ? (
-                        <p className="text-[11px] leading-snug text-slate-200">
-                          <span className="text-slate-500">Place · </span>
-                          {hookPreview.location}
-                        </p>
-                      ) : null}
-                      {hookPreview.why ? (
-                        <p className="mt-0.5 text-[11px] leading-snug text-slate-300">
-                          <span className="text-slate-500">Why · </span>
-                          {hookPreview.why}
-                        </p>
-                      ) : null}
-                      {hookPreview.cast ? (
-                        <p className="mt-0.5 text-[11px] leading-snug text-slate-300">
-                          <span className="text-slate-500">Cast · </span>
-                          {hookPreview.cast}
-                        </p>
-                      ) : null}
                       {hookPreview.firstLine ? (
                         <p className="mt-1 text-[11px] italic leading-snug text-slate-400">
                           {hookPreview.firstLine}
