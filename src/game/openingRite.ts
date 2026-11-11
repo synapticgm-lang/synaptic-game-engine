@@ -71,8 +71,9 @@ function makeRiteQuest(entry: OpeningRiteEntry): Quest {
     name: entry.title,
     description: entry.offerSentence,
     status: 'active',
-    type: 'main',
-    revealed: true,
+    // The opening rite is an engine XP beat, never the story's main quest.
+    type: 'side',
+    revealed: false,
     giver: entry.giver,
     objectives: [
       {
@@ -100,7 +101,7 @@ export function ensureOpeningRite(state: GameState): GameState {
       quests[idx] = {
         ...nextQuest,
         status: prev.status,
-        revealed: prev.revealed !== false,
+        revealed: false,
         objectives: nextQuest.objectives.map((obj, i) => ({
           ...obj,
           completed: prev.objectives?.[i]?.completed ?? obj.completed,

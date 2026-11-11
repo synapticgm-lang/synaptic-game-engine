@@ -14,6 +14,7 @@ import { originLine } from './rules/rpgOrigin';
 import { approvalBandLabel, recruitedCompanions } from './rules/companions';
 import { classDisplayName } from './rules/characterClass';
 import { setPlayPhase } from './playPhase';
+import { isOpeningRiteQuestId } from './openingRite';
 
 export const MAIN_QUEST_DONE_TITLE = 'You have completed the main quest.';
 export const ONE_MORE_TURN = 'One more turn';
@@ -52,7 +53,9 @@ function litrpgEpilogue(state: GameState, quest: Quest): string[] {
 /** The finished main quest the popup is about; the LitRPG tutorial quest (First Blood) is not the main quest. */
 function finishedStoryQuest(state: GameState): Quest | null {
   const q = finishedMainQuest(state);
-  return q && !/^tutorial-/.test(q.id) ? q : null;
+  if (!q) return null;
+  if (/^tutorial-/.test(q.id) || isOpeningRiteQuestId(q.id)) return null;
+  return q;
 }
 
 /** The popup to show now, or null (other modes, nothing finished, already answered, run over). */

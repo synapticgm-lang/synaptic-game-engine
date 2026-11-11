@@ -749,6 +749,33 @@ export function mintOpeningInstance(
     factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
     replacements.push([factions[0].from, factionName]);
   }
+  // The structured faction field is a catalog label even when it is not Title-Case
+  // ("A Pact loadout crew and a debt-collector who arrived late"). Always retire it
+  // and mint a name so later turns cannot treat the raw catalog phrase as a person.
+  const factionRaw = (hook.faction ?? '').replace(/\s+/g, ' ').trim();
+  if (factionRaw) {
+    retire(factionRaw, { evenIfHub: true });
+    const leadPhrase = (factionRaw.split(/\s+and\s+|\s*,\s*/i)[0] ?? '').trim();
+    if (leadPhrase && leadPhrase.toLowerCase() !== factionRaw.toLowerCase()) {
+      retire(leadPhrase, { evenIfHub: true });
+    }
+    if (!factionName) {
+      factionKind = lastWord(leadPhrase || factionRaw) || 'company';
+      const stem = pickUnused(rng, PLACE_STEMS, taken);
+      factionName = /^(house|order|guild|company|court)$/i.test(factionKind)
+        ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}`
+        : FACTION_WORDS.has(factionKind)
+          ? `${stem} ${factionKind}`
+          : stem;
+    }
+    if (!replacements.some(([from]) => from.toLowerCase() === factionRaw.toLowerCase())) {
+      replacements.push([factionRaw, factionName]);
+    }
+    if (leadPhrase && leadPhrase.toLowerCase() !== factionRaw.toLowerCase()
+      && !replacements.some(([from]) => from.toLowerCase() === leadPhrase.toLowerCase())) {
+      replacements.push([leadPhrase, factionName]);
+    }
+  }
 
   // Ban catalog faction and cast names found in structured hook text (who / whoHere /
   // pressing / summonIntent / openingOffer) so a name like Pellane cannot open Cinderwake.

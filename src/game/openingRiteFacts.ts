@@ -30,10 +30,11 @@ export function riteEntryForState(
   const refuse = inst.offerChips.find((c) => c.kind === 'refuse');
   const lead = inst.cast[0]?.name;
   const offerBit = inst.offerSummary || accept?.note;
+  // Keep the authored rite title (e.g. "Opening Rite: The Pact"). Never retitle
+  // the rite to the offer chip ("Opening: Take the kit") — that is not the main quest.
   return {
     ...base,
     giver: lead ?? inst.factionName ?? 'the registrar',
-    title: accept ? `Opening: ${accept.label}` : lead ? `Opening: Hear ${lead.split(/\s+/)[0]} out` : 'The opening offer',
     offerSentence: offerBit ? `Will you take this: ${offerBit}?` : accept ? `Will you: ${accept.label}?` : 'Will you take what is being offered, or keep your own kit?',
     acceptChip: accept?.label ?? base.acceptChip,
     refuseChip: refuse?.label ?? 'Keep your own kit',

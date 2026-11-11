@@ -42,6 +42,7 @@ import { ensureSpokenAnswer, stripSpeakerSilence, type SpokenAnswer } from './sp
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isOfferRefuseLine } from './openingOffer';
+import { scrubOpeningTurnProse } from './openingCatalogGuard';
 import { isRoadLabel, roadMeetingOpenerLines, writerEngineResult } from './travelJourney';
 import { engineFactForRepair } from './writerCueLines';
 import { isGiverName } from './questGiver';
@@ -245,14 +246,17 @@ export function runWriterTurn(opts: {
   // OPEN7B — strip act-echo openings before accept (product fix; gate stays strict).
   // OPEN8 — crowd/role Talk must show an answer or acknowledged absence.
   const seated = dropUnseatedSpeakerLines(check.state, spoken.prose);
-  const prose = ensureCrowdOrRoleTalkAnswered(
-    dropInventedPcSpeechOnNonTalk(
-      dropPlayerActEchoOpening(seated, check.playerInput),
-      check.playerInput,
-      check.state.character?.name,
-    ),
+  const prose = scrubOpeningTurnProse(
     check.state,
-    check.playerInput,
+    ensureCrowdOrRoleTalkAnswered(
+      dropInventedPcSpeechOnNonTalk(
+        dropPlayerActEchoOpening(seated, check.playerInput),
+        check.playerInput,
+        check.state.character?.name,
+      ),
+      check.state,
+      check.playerInput,
+    ),
   );
   return {
     ...first,
@@ -604,7 +608,7 @@ export function sealPostWriterProse(
   // FOURSLOT5 — echo strip can peel the destination sentence after withMoveDestination;
   // re-stamp so arrival prose always names the place (deterministic, no AI re-roll).
   return {
-    prose: withMoveDestination(state, answered),
+    prose: scrubOpeningTurnProse(state, withMoveDestination(state, answered)),
     spoken: spoken.answer,
   };
 }

@@ -11,6 +11,7 @@ import { presentNpcNames } from './npcRelationships.ts';
 import * as openingEstablishment from './openingEstablishment.ts';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney.ts';
 import { isOutOfTalkingRange, TALKING_RANGE_FT } from './hereSpot.ts';
+import { isCatalogCastBlockedHere } from './openingCatalogGuard.ts';
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
@@ -114,6 +115,7 @@ export function peopleHere(state: GameState): string[] {
       || isCrowdFillerToken(name)
       || isEmptyRoomPersonSlot(name)
       || isNeverCastTitle(name, state)
+      || isCatalogCastBlockedHere(state, name)
     ) {
       return;
     }

@@ -18,6 +18,7 @@ import { isCrowdFillerToken } from './chromeAuthority';
 import { fuzzyTypedName } from './typedNameMatch';
 import { motiveAnswer, motiveLinesFor, pickNpcSheet, sheetPlaceFor } from './npcSheet';
 import { peopleHere } from './chipLegality';
+import { isCatalogCastBlockedHere, scrubOpeningTurnProse } from './openingCatalogGuard';
 import { matchesLastKillName } from './combatAuthority';
 
 export type SpokenTopic = 'who' | 'want' | 'where';
@@ -84,6 +85,7 @@ function speakersHere(state: GameState): Speaker[] {
   const out: Speaker[] = [];
   const push = (label: string, record?: NpcMemory) => {
     if (isCrowdFillerToken(label) || !isCleanName(label)) return;
+    if (isCatalogCastBlockedHere(state, label)) return;
     const key = label.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
     if (!key || seen.has(key)) return;
     // Merge role-alone with title+given already seated (Innkeep Mara before the innkeep).
