@@ -31,6 +31,7 @@ import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
 import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
+import { openingLockedPersonNames } from './openingCatalogGuard';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 /**
  * Pack 12: Handle instant quick-response button clicks.
@@ -1778,12 +1779,38 @@ export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefin
   return offer;
 }
 /** Concrete offer chips from the locked opening instance, else a last-resort accept/refuse. */
+function offerAcceptGroundedInProse(label: string, prose: string, state: GameState): boolean {
+  const hay = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!hay) return true;
+  const t = (label ?? '').replace(/\s+/g, ' ').trim();
+  const who = t.match(/^(?:Hear|Walk with|Ask|Talk to)\s+(\S+)/i)?.[1] ?? '';
+  if (who && new RegExp(`\\b${who.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(hay)) return true;
+  if (who && openingLockedPersonNames(state).some((n) => n.toLowerCase().includes(who.toLowerCase()) && new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(hay))) {
+    return true;
+  }
+  const nouns = t.toLowerCase().match(/\b(?:kit|crate|tabard|vial|cloak|scarf|waterskin|blade|knife|chit|bread|lamp|gloves|key)\b/g) ?? [];
+  if (nouns.length) return nouns.some((n) => new RegExp(`\\b${n}\\b`, 'i').test(hay));
+  return true;
+}
+function openingCommittedProse(state: GameState): string {
+  return (state.log ?? [])
+    .filter((e) => e.role === 'gm')
+    .map((e) => String(e.content ?? ''))
+    .join(' ');
+}
 export function openingOfferPads(state: GameState): string[] {
   const chips = state.openingEstablishment?.instance?.offerChips;
   if (chips?.length) {
     const offer = openOpeningOffer(state);
     if (!offer && state.openingEstablishment?.offerTaken) return [];
-    return chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse').map((c) => c.label);
+    const labels = chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse');
+    if (state.openingEstablishment?.sceneWritten) {
+      const prose = openingCommittedProse(state);
+      return labels
+        .filter((c) => c.kind !== 'accept' || offerAcceptGroundedInProse(c.label, prose, state))
+        .map((c) => c.label);
+    }
+    return labels.map((c) => c.label);
   }
   const offer = openOpeningOffer(state);
   if (!offer) return [];

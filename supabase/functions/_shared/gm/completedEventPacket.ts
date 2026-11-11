@@ -4,6 +4,7 @@
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types.ts';
 import { filterRetiredFromAllowlist } from './openingWriterNotes.ts';
+import { isCatalogCastBlockedHere, scrubOpeningTurnProse } from './openingCatalogGuard.ts';
 function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName.ts';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
@@ -656,7 +657,7 @@ export function compileNounAllowlist(
     }
   }
   const retired = state.openingEstablishment?.instance?.retiredNames;
-  const dropped = filterRetiredFromAllowlist(out, retired);
+  const dropped = filterRetiredFromAllowlist(out, retired).filter((n) => !isCatalogCastBlockedHere(state, n));
   const keptHubs = out.filter(
     (n) => isCampaignHubToken(n, state.campaignBibleId) && !dropped.some((f) => f.toLowerCase() === n.toLowerCase())
   );
@@ -830,7 +831,10 @@ export function compileRefEnum(
       add(`extra:${slugRefId(extra)}`, extra, 'person');
     }
   }
-  return out;
+  return out.filter((r) => {
+    if (r.klass !== 'person' && r.klass !== 'meeting') return true;
+    return !isCatalogCastBlockedHere(state, r.display);
+  });
 }
 /**
  * Displays + labels the writer was handed this turn. One list for repeated-habit masks,
@@ -2640,7 +2644,8 @@ export function lastResortStoryBody(
     const cleaned = sanitizeLockedNameBeat(state, prose.replace(/\s+/g, ' ').trim());
     // T10AJ — exchange beat from the ledger (motive / absence), never leave stock "said nothing".
     const spoken = ensureSpokenAnswer(cleaned, state, act || 'Look around');
-    return { prose: spoken.prose.replace(/\s+/g, ' ').trim(), status };
+    const sealed = scrubOpeningTurnProse(state, spoken.prose.replace(/\s+/g, ' ').trim());
+    return { prose: sealed, status };
   };
   const record = lastResortUsable(state, writerEngineResult(recordSource, pcName), lastGm);
   if (record) return finish(record, 'Writer page blocked — painted from the turn record');

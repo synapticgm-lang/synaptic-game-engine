@@ -5,6 +5,7 @@
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
 import { isAcceptOfferLine, openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson } from './openingEstablishment';
+import { isBannedOpeningAttribution, openingOfferAttribution } from './openingCatalogGuard';
 import { seat } from './presentAuthority';
 import { openRouteView } from './questRoutes';
 import { applyStructuralEvents } from './structuralEvents';
@@ -50,8 +51,13 @@ export function applyOpeningOfferChoice(
       lootSource: 'story',
     }));
     const granted = applyStructuralEvents(seated, events, { playerInput });
-    // A named person on the card, else the card's group label. A group is not added to the name list.
-    const who = openingCastNames(state)[0] || openingCastLabel(state);
+    // Minted opening person or faction — never a raw catalog group label ("A Pact loadout crew").
+    // A compiled card group ("the field chirurgeons") may still attribute the receipt when it is not retired.
+    const group = openingCastLabel(state);
+    const who =
+      openingOfferAttribution(granted.state)
+      || openingCastNames(state)[0]
+      || (group && !isBannedOpeningAttribution(granted.state, group) ? group : '');
     const from = who ? ` from ${who}` : '';
     return {
       state: { ...granted.state, openingEstablishment: { ...est, offerTaken: 'accepted' } },
