@@ -414,7 +414,9 @@ export async function headlessOpeningContinueTurn(
     ) {
       return failedHeadlessOpening(openingState);
     }
-    const liveProse = stripChoiceList(result.prose);
+    let liveProse = stripChoiceList(result.prose);
+    liveProse = ensureSystemReceipt(openingState, sanitizeOpeningNarration(liveProse));
+    liveProse = enforcePerspective(liveProse, { perspective: 'second-person' }, openingState.character.name);
     if (isBlankOpeningProse(liveProse) || openingProseLeaksStructuredJson(liveProse)) {
       return failedHeadlessOpening(openingState);
     }

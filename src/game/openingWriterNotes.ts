@@ -242,37 +242,7 @@ export interface OpeningStructuredOutput {
 }
 
 /**
- * ASCII or typographic quotes that may wrap a JSON key or string value.
- * Typographic dialogue quotes in prose are only relevant when they wrap these keys.
- */
-const JSON_STRING_QUOTE = '["\'\u201C\u201D\u00AB\u00BB\u201E\u201F]';
-const JSON_VALUE_START = '["\'\u201C\u201D\u00AB\u00BB\u201E\u201F[{]';
-const OPENING_STRUCTURED_KEYS = 'prose|options|journalTitle';
-
-/** Key + colon + a JSON value start (quote, `[`, or `{`). A bare-word value does not match. */
-export function openingStructuredKeyValueRe(): RegExp {
-  return new RegExp(
-    `${JSON_STRING_QUOTE}\\s*(?:${OPENING_STRUCTURED_KEYS})\\s*${JSON_STRING_QUOTE}\\s*:\\s*${JSON_VALUE_START}`,
-    'i'
-  );
-}
-
-/**
- * True when a raw writer reply contains a structured opening key with a JSON value start,
- * anywhere in the text (after fences are stripped). Does not guess from the first character.
- * A bare-word value such as `"options": walk or stay` does not count.
- * Only for the raw response, once, at parse time — never a substitute for the commit-time leak gate.
- */
-export function looksLikeOpeningStructuredText(raw: string): boolean {
-  const t = stripFencesAndPreamble(raw ?? '');
-  if (!t) return false;
-  return openingStructuredKeyValueRe().test(t);
-}
-
-/**
- * Strip BOM and markdown fences. Do not slice from the first `{` — leading story prose
- * before a trailing JSON block must stay available for cut-and-keep recovery, and a
- * missing opening brace must not hide an unwrapped `"prose":` dump.
+ * Strip BOM and markdown fences only. Further repairs happen on a `{ ... }` slice.
  */
 export function stripFencesAndPreamble(raw: string): string {
   let text = (raw ?? '').replace(/^\uFEFF/, '').trim();
@@ -286,10 +256,146 @@ export function stripFencesAndPreamble(raw: string): string {
   return text;
 }
 
-function normalizeSmartQuotes(text: string): string {
-  return (text ?? '')
-    .replace(/[\u201C\u201D\u00AB\u00BB\u201E\u201F]/g, '"')
-    .replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'");
+function isTypographicDoubleQuote(ch: string): boolean {
+  return /[\u201C\u201D\u00AB\u00BB\u201E\u201F]/.test(ch);
+}
+
+function isTypographicSingleQuote(ch: string): boolean {
+  return /[\u2018\u2019\u201A\u201B]/.test(ch);
+}
+
+function isTypographicQuote(ch: string): boolean {
+  return isTypographicDoubleQuote(ch) || isTypographicSingleQuote(ch);
+}
+
+function typographicFamily(ch: string): 'double' | 'single' | null {
+  if (isTypographicDoubleQuote(ch)) return 'double';
+  if (isTypographicSingleQuote(ch)) return 'single';
+  return null;
+}
+
+function skipEscaped(s: string, i: number): number {
+  return s[i] === '\\' && i + 1 < s.length ? i + 2 : -1;
+}
+
+/**
+ * Normalise typographic quotes that delimit JSON keys or string values.
+ * Typographic quotes inside an already ASCII-quoted string are left alone.
+ * A typographic closer is only treated as the end of a value when it sits
+ * before a comma, brace, bracket, colon, or the end of the slice, so
+ * dialogue like “Talk is done,” inside a typographic value is preserved.
+ */
+function normalizeTypographicQuotesAroundKeys(slice: string): string {
+  const s = slice ?? '';
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const ch = s[i]!;
+    if (ch === '"') {
+      out += ch;
+      i += 1;
+      while (i < s.length) {
+        const escaped = skipEscaped(s, i);
+        if (escaped > 0) {
+          out += s.slice(i, escaped);
+          i = escaped;
+          continue;
+        }
+        out += s[i];
+        i += 1;
+        if (s[i - 1] === '"') break;
+      }
+      continue;
+    }
+    const family = typographicFamily(ch);
+    if (family) {
+      i += 1;
+      let body = '';
+      let closed = -1;
+      while (i < s.length) {
+        const escaped = skipEscaped(s, i);
+        if (escaped > 0) {
+          body += s.slice(i, escaped);
+          i = escaped;
+          continue;
+        }
+        const c = s[i]!;
+        if (typographicFamily(c) === family) {
+          const after = s.slice(i + 1).match(/^\s*([,}\]:]|$)/);
+          if (after) {
+            closed = i;
+            break;
+          }
+        }
+        if (c === '"') body += '\\"';
+        else body += c;
+        i += 1;
+      }
+      out += `"${body}"`;
+      if (closed >= 0) i = closed + 1;
+      continue;
+    }
+    out += ch;
+    i += 1;
+  }
+  return out;
+}
+
+function skipJsonString(s: string, i: number): number {
+  const ch = s[i]!;
+  if (ch === '"') {
+    i += 1;
+    while (i < s.length) {
+      const escaped = skipEscaped(s, i);
+      if (escaped > 0) {
+        i = escaped;
+        continue;
+      }
+      if (s[i] === '"') return i + 1;
+      i += 1;
+    }
+    return i;
+  }
+  const family = typographicFamily(ch);
+  if (!family) return i + 1;
+  i += 1;
+  while (i < s.length) {
+    const escaped = skipEscaped(s, i);
+    if (escaped > 0) {
+      i = escaped;
+      continue;
+    }
+    if (typographicFamily(s[i]!) === family) {
+      const after = s.slice(i + 1).match(/^\s*([,}\]:]|$)/);
+      if (after) return i + 1;
+    }
+    i += 1;
+  }
+  return i;
+}
+
+/** First `{` to its matching `}`, or the last `}` if the close is missing. */
+function jsonObjectSlice(text: string): string | null {
+  const start = text.indexOf('{');
+  if (start < 0) return null;
+  let depth = 0;
+  let i = start;
+  while (i < text.length) {
+    const ch = text[i]!;
+    if (ch === '"' || isTypographicQuote(ch)) {
+      i = skipJsonString(text, i);
+      continue;
+    }
+    if (ch === '{') depth += 1;
+    else if (ch === '}') {
+      depth -= 1;
+      if (depth === 0) return text.slice(start, i + 1);
+    }
+    i += 1;
+  }
+  const last = text.lastIndexOf('}');
+  if (last > start) return text.slice(start, last + 1);
+  return closeUnbalancedBraces(text.slice(start));
 }
 
 function stripTrailingCommas(text: string): string {
@@ -303,21 +409,13 @@ function closeUnbalancedBraces(slice: string): string {
   return slice;
 }
 
-function jsonObjectSlice(text: string): string | null {
-  const start = text.indexOf('{');
-  if (start < 0) return null;
-  const end = text.lastIndexOf('}');
-  if (end > start) return text.slice(start, end + 1);
-  return closeUnbalancedBraces(text.slice(start));
-}
-
 function tryParseJsonObject(slice: string): Record<string, unknown> | null {
   const variants = [
     slice,
     stripTrailingCommas(slice),
-    normalizeSmartQuotes(slice),
-    stripTrailingCommas(normalizeSmartQuotes(slice)),
-    closeUnbalancedBraces(stripTrailingCommas(normalizeSmartQuotes(slice))),
+    normalizeTypographicQuotesAroundKeys(slice),
+    stripTrailingCommas(normalizeTypographicQuotesAroundKeys(slice)),
+    closeUnbalancedBraces(stripTrailingCommas(normalizeTypographicQuotesAroundKeys(slice))),
   ];
   const seen = new Set<string>();
   for (const v of variants) {
@@ -327,211 +425,71 @@ function tryParseJsonObject(slice: string): Record<string, unknown> | null {
       const obj = JSON.parse(v) as unknown;
       if (obj && typeof obj === 'object' && !Array.isArray(obj)) return obj as Record<string, unknown>;
     } catch {
-      /* try the next repair */
+      /* try the next allowed repair */
     }
   }
   return null;
 }
 
-/** Turn JSON string escapes into real characters once (for almost-JSON field extraction). */
-export function unescapeExtractedString(raw: string): string {
-  const t = (raw ?? '').trim();
-  if (!t) return '';
-  try {
-    return String(JSON.parse(`"${t}"`));
-  } catch {
-    return t.replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\').trim();
-  }
-}
-
-/** Pull a JSON string field out of almost-JSON, even when parse still fails. */
-export function extractOpeningJsonStringField(raw: string, key: string): string | undefined {
-  const text = normalizeSmartQuotes(stripFencesAndPreamble(raw));
-  if (!text) return undefined;
-  const keys = key === 'prose' ? ['prose', 'text'] : key === 'journalTitle' ? ['journalTitle', 'title'] : [key];
-  for (const k of keys) {
-    const re = new RegExp(`["']${k}["']\\s*:\\s*["']`, 'i');
-    const m = re.exec(text);
-    if (!m) continue;
-    const quote = text[m.index + m[0].length - 1] ?? '"';
-    let i = m.index + m[0].length;
-    let out = '';
-    while (i < text.length) {
-      const ch = text[i]!;
-      if (ch === '\\' && i + 1 < text.length) {
-        out += ch + text[i + 1];
-        i += 2;
-        continue;
-      }
-      if (ch === quote) break;
-      out += ch;
-      i += 1;
-    }
-    const value = unescapeExtractedString(out).replace(/\s+/g, ' ').trim();
-    if (value) return value;
-  }
-  return undefined;
-}
-
-function extractOpeningJsonStringArray(raw: string, key: string): string[] {
-  const text = normalizeSmartQuotes(stripFencesAndPreamble(raw));
-  const re = new RegExp(`["']${key}["']\\s*:\\s*\\[([^\\]]*)\\]`, 'i');
-  const m = re.exec(text);
-  if (!m?.[1]) return [];
-  const body = m[1];
-  const out: string[] = [];
-  const item = /["']([^"']*)["']/g;
-  let hit: RegExpExecArray | null;
-  while ((hit = item.exec(body))) {
-    const v = (hit[1] ?? '').replace(/\s+/g, ' ').trim();
-    if (v) out.push(v);
-  }
-  return out;
-}
-
 function fieldsFromObject(obj: Record<string, unknown>): OpeningStructuredOutput | null {
-  const prose = String(obj.prose ?? obj.text ?? '').replace(/\s+/g, ' ').trim();
+  if (typeof obj.prose !== 'string') return null;
+  const prose = obj.prose.replace(/\s+/g, ' ').trim();
   if (!prose) return null;
   const options = Array.isArray(obj.options)
     ? obj.options.map((s) => String(s ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean)
     : [];
-  const journalTitle = String(obj.journalTitle ?? obj.title ?? '').replace(/\s+/g, ' ').trim();
+  const journalTitle = typeof obj.journalTitle === 'string' ? obj.journalTitle.replace(/\s+/g, ' ').trim() : '';
   return { prose, options, journalTitle };
 }
 
-function isStructuredRemainder(rest: string): boolean {
-  const t = (rest ?? '').trim();
-  if (!t || !openingStructuredKeyValueRe().test(t)) return false;
-  if (t.startsWith('{') || t.startsWith('[') || /^["'\u201C\u201D]/.test(t)) {
-    if (t.startsWith('{')) {
-      const slice = jsonObjectSlice(t);
-      if (slice && tryParseJsonObject(slice)) return true;
-    }
-    return true;
-  }
-  return false;
-}
-
-function looksLikeGoodLeadingProse(text: string): boolean {
-  const t = (text ?? '').replace(/\s+/g, ' ').trim();
-  if (t.length < 80) return false;
-  if (!/[.!?]/.test(t)) return false;
-  if (openingStructuredKeyValueRe().test(t)) return false;
-  return true;
-}
-
 /**
- * If extraction of a prose field fails, keep good leading narration and drop a trailing
- * JSON object or key block (`{ "options": [...] }` or a bare `"options": [` dump).
- */
-function splitLeadingProseFromTrailingStructured(text: string): OpeningStructuredOutput | null {
-  const re = openingStructuredKeyValueRe();
-  const m = re.exec(text);
-  if (!m) return null;
-  const keyAt = m.index;
-  const before = text.slice(0, keyAt);
-  const brace = before.lastIndexOf('{');
-  let blockStart = keyAt;
-  if (brace >= 0 && before.slice(0, brace).trim()) blockStart = brace;
-  const leading = text.slice(0, blockStart).replace(/\s+/g, ' ').trim();
-  const rest = text.slice(blockStart).trim();
-  if (!looksLikeGoodLeadingProse(leading) || !isStructuredRemainder(rest)) return null;
-  return {
-    prose: leading,
-    options: extractOpeningJsonStringArray(rest, 'options'),
-    journalTitle: extractOpeningJsonStringField(rest, 'journalTitle') ?? '',
-  };
-}
-
-function parseUnwrappedStructuredObject(text: string): Record<string, unknown> | null {
-  const normalized = normalizeSmartQuotes(text).trim();
-  if (!normalized || normalized.startsWith('{') || normalized.startsWith('[')) return null;
-  if (!/^["'](?:prose|options|journalTitle)["']\s*:/.test(normalized)) return null;
-  return tryParseJsonObject(closeUnbalancedBraces(stripTrailingCommas(`{${normalized}`)));
-}
-
-/**
- * Final leak gate for already-extracted (or caller-supplied) prose. Independent of
- * looksLikeOpeningStructuredText: even if detection missed, this must fail closed.
- * A bare-word `"options": walk or stay` does not trip the key pattern; typographic
- * dialogue and mid-prose `{ward` do not count as JSON-punctuation lines.
- */
-export function openingProseLeaksStructuredJson(prose: string): boolean {
-  const text = (prose ?? '').trim();
-  if (!text) return false;
-  if (openingStructuredKeyValueRe().test(text)) return true;
-  for (const line of text.split(/\n+/)) {
-    if (lineIsMostlyJsonPunctuation(line)) return true;
-  }
-  return false;
-}
-
-function lineIsMostlyJsonPunctuation(line: string): boolean {
-  const compact = (line ?? '').trim().replace(/\s+/g, '');
-  if (compact.length < 3) return false;
-  const jsonChars = (compact.match(/[{}\[\]",:\\]/g) ?? []).length;
-  return jsonChars >= 3 && jsonChars / compact.length >= 0.5;
-}
-
-/**
- * Read prose/options/journalTitle from a structured opening reply.
- * Tolerates fences, preamble, trailing commas, smart quotes, a missing opening or
- * closing brace, and typographic quotes around keys. If parse still fails, pulls
- * the "prose" string field out by regex, or cuts good prose away from a trailing
- * JSON object / key block. Returns null for free prose, or for structured text
- * whose prose cannot be recovered.
+ * Read a strict opening-page object from the writer reply.
+ * Allowed repairs only: strip fences, slice from the first `{` to its matching
+ * or last `}`, add a missing closing brace, fix trailing commas, and normalise
+ * typographic quotes around keys. Anything else is a parse failure.
  */
 export function readOpeningStructuredOutput(raw: string): OpeningStructuredOutput | null {
-  const original = (raw ?? '').trim();
-  if (!original) return null;
-  const text = stripFencesAndPreamble(original);
+  const text = stripFencesAndPreamble(raw ?? '');
   if (!text) return null;
-
   const slice = jsonObjectSlice(text);
-  if (slice) {
-    const obj = tryParseJsonObject(slice);
-    if (obj) {
-      const parsed = fieldsFromObject(obj);
-      if (parsed) return parsed;
-    }
-  }
+  if (!slice) return null;
+  const obj = tryParseJsonObject(slice);
+  if (!obj) return null;
+  return fieldsFromObject(obj);
+}
 
-  const unwrapped = parseUnwrappedStructuredObject(text);
-  if (unwrapped) {
-    const parsed = fieldsFromObject(unwrapped);
-    if (parsed) return parsed;
-  }
-
-  const prose = extractOpeningJsonStringField(text, 'prose');
-  if (prose) {
-    return {
-      prose,
-      options: extractOpeningJsonStringArray(text, 'options'),
-      journalTitle: extractOpeningJsonStringField(text, 'journalTitle') ?? '',
-    };
-  }
-
-  const structured = looksLikeOpeningStructuredText(original) || looksLikeOpeningStructuredText(text);
-  if (structured) {
-    const split = splitLeadingProseFromTrailingStructured(text);
-    if (split?.prose) return split;
-    return null;
-  }
-  return null;
+/** Parsed `prose` or empty. Never falls back to free prose or raw almost-JSON. */
+export function recoverOpeningNarration(raw: string): string {
+  return readOpeningStructuredOutput(raw)?.prose ?? '';
 }
 
 /**
- * Narration the player may hear or read. Recovers prose from almost-JSON;
- * never returns `{`-leading or JSON-looking raw text.
+ * Independent final leak gate for already-extracted (or caller-supplied) prose.
+ * Written separately from the parser and must not call parser/detection helpers.
+ * Failing closed on rare legitimate phrases is acceptable.
  */
-export function recoverOpeningNarration(raw: string): string {
-  const parsed = readOpeningStructuredOutput(raw);
-  if (parsed?.prose) {
-    if (openingProseLeaksStructuredJson(parsed.prose)) return '';
-    return parsed.prose;
+export function openingProseLeaksStructuredJson(prose: string): boolean {
+  const text = prose ?? '';
+  if (!text.trim()) return false;
+  for (const line of text.split(/\n/)) {
+    const trimmed = line.replace(/^\s+/, '');
+    if (/^[{}\[\]]/.test(trimmed)) return true;
   }
-  const text = stripFencesAndPreamble(raw ?? '').trim();
-  if (!text) return '';
-  if (looksLikeOpeningStructuredText(raw) || looksLikeOpeningStructuredText(text)) return '';
-  return text;
+  if (
+    /\b(?:prose|options|choices|journalTitle|journal_title|story|title|text|narration|scene)\b\s*["'\u201C\u201D\u2018\u2019]?\s*:/i.test(
+      text
+    )
+  ) {
+    return true;
+  }
+  if (text.includes('":') || text.includes('\u201D:') || text.includes('\u2019:') || text.includes("':")) {
+    return true;
+  }
+  for (const line of text.split(/\n/)) {
+    const compact = line.trim().replace(/\s+/g, '');
+    if (compact.length < 3) continue;
+    const punct = (compact.match(/[{}\[\]",:\u201C\u201D\u2018\u2019]/g) ?? []).length;
+    if (punct >= 3 && punct / compact.length >= 0.5) return true;
+  }
+  return false;
 }

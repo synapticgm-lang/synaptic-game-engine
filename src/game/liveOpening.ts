@@ -7,11 +7,9 @@ import { openingInstanceOf, givenNameOf, escapeRe } from './openingInstance';
 import {
   formatOpeningWriterNotes,
   isCommonOpeningLexeme,
-  looksLikeOpeningStructuredText,
   openingChoiceCount,
   openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
-  recoverOpeningNarration,
   retiredNameNeedles,
   STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
@@ -597,13 +595,18 @@ type OpeningDraft = { prose: string; options: string[]; journalTitle: string; st
 function draftFromWriterRaw(raw: string): OpeningDraft {
   const parsed = readOpeningStructuredOutput(raw);
   if (parsed) return { ...parsed, structured: true };
-  const recovered = recoverOpeningNarration(raw);
-  if (recovered) return { prose: recovered, options: [], journalTitle: '', structured: false };
-  // JSON-looking text whose prose could not be recovered — never assign it as prose.
-  if (looksLikeOpeningStructuredText(raw)) {
-    return { prose: '', options: [], journalTitle: '', structured: true };
-  }
-  return { prose: '', options: [], journalTitle: '', structured: false };
+  // The opening call is json_schema-only. Never fall back to free prose.
+  return { prose: '', options: [], journalTitle: '', structured: true };
+}
+
+/** Deterministic JSON reply for unit tests so CI never hits the network. */
+export function mockLiveOpeningStructuredReply(state: GameState): string {
+  const prose = mockLiveOpeningProse(state);
+  return JSON.stringify({
+    prose,
+    options: fallbackOpeningPads(state, prose),
+    journalTitle: deriveOpeningJournal(state, prose).title,
+  });
 }
 
 async function runWriter(
@@ -639,7 +642,7 @@ export async function writeLiveOpening(
 ): Promise<LiveOpeningResult> {
   let writer = deps?.writer ?? testWriter;
   if (!writer && isVitestEnv()) {
-    writer = async (s) => mockLiveOpeningProse(s);
+    writer = async (s) => mockLiveOpeningStructuredReply(s);
   }
   if (!writer) {
     const { callOpeningGm } = await import('./aiService');
@@ -652,10 +655,24 @@ export async function writeLiveOpening(
   } catch {
     return { ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads };
   }
-  const proseOk = (d: OpeningDraft) => !!d.prose.trim() && !validateLiveOpeningProse(state, d.prose).length;
   const optionErrors = (d: OpeningDraft, prose = d.prose) => validateOpeningOptions(state, prose, d.options);
   const titleErrors = (d: OpeningDraft) => validateOpeningJournalTitle(state, d.journalTitle);
   const fail = (): LiveOpeningFailure => ({ ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads });
+  // A writer retry already existed for a failed first draft (and for bad structured options).
+  // Parse failures and leak-gate failures now use that same single automatic retry
+  // before "Try again"; a second failure does not call the writer again.
+  const proseOk = (d: OpeningDraft) =>
+    !!d.prose.trim()
+    && !openingProseLeaksStructuredJson(d.prose)
+    && !validateLiveOpeningProse(state, d.prose).length;
+  const parseOrGateErrors = (d: OpeningDraft): string[] => {
+    const errors: string[] = [];
+    if (!d.prose.trim()) errors.push('Reply must be a JSON object with a string prose field.');
+    else if (openingProseLeaksStructuredJson(d.prose)) {
+      errors.push('The prose field must not contain leftover JSON keys or punctuation.');
+    }
+    return errors;
+  };
 
   if (proseOk(draft)) {
     const optionsBad = optionErrors(draft).length > 0;
@@ -683,13 +700,13 @@ export async function writeLiveOpening(
         draft = withFallbackPadsAndTitle(state, draft, kept);
       }
     } else if (optionsBad || titleBad) {
-      // No-schema (free prose) or a title-only miss: do not risk a second call on a usable page.
       draft = withFallbackPadsAndTitle(state, draft, draft.prose);
     }
   } else {
     retried = true;
     try {
       draft = await runWriter(writer, state, settings, [
+        ...parseOrGateErrors(draft),
         ...validateLiveOpeningProse(state, draft.prose),
         ...optionErrors(draft),
         ...titleErrors(draft),
@@ -702,8 +719,6 @@ export async function writeLiveOpening(
   }
 
   if (!proseOk(draft)) return fail();
-  // Final leak gate — independent of detection. Never commit keys or JSON punctuation.
-  if (openingProseLeaksStructuredJson(draft.prose)) return fail();
   return {
     ok: true,
     prose: draft.prose,
