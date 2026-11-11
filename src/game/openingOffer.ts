@@ -4,7 +4,8 @@
  */
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
-import { isAcceptOfferLine, openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson } from './openingEstablishment';
+import { openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson } from './openingEstablishment';
+import { classifyOpeningOfferInput } from './openingOfferRecognize';
 import { isBannedOpeningAttribution, openingOfferAttribution } from './openingCatalogGuard';
 import { seat } from './presentAuthority';
 import { openRouteView } from './questRoutes';
@@ -13,7 +14,8 @@ import { recordPersonSeen } from './timeline';
 
 const OFFER_NOUN = /\b(?:work|job|offer|kit|deal|cots|terms)\b/i;
 
-export function isOfferRefuseLine(raw: string): boolean {
+export function isOfferRefuseLine(raw: string, state?: GameState): boolean {
+  if (state) return classifyOpeningOfferInput(state, raw) === 'refuse';
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
   return /^(?:i\s+)?(?:refuse|decline|turn down|say no to)\b/i.test(t) && OFFER_NOUN.test(t);
 }
@@ -23,7 +25,7 @@ export function applyOpeningOfferChoice(
   playerInput: string
 ): { state: GameState; receipts: string[] } {
   let seated = state;
-  if (isOfferRefuseLine(playerInput)) {
+  if (isOfferRefuseLine(playerInput, state)) {
     // A known person is seated. A group label stays attribution, not a person on the ledger.
     const who = openingCastNames(seated).find((n) => slotNamesOnePerson(n)) ?? '';
     if (who) seated = seat(recordPersonSeen(seated, who, 'made the offer'), who);
@@ -37,13 +39,13 @@ export function applyOpeningOfferChoice(
   const offer = openOpeningOffer(seated);
   const est = seated.openingEstablishment;
   if (!offer || !est) return { state: seated, receipts: [] };
-  if (isOfferRefuseLine(playerInput)) {
+  if (isOfferRefuseLine(playerInput, seated)) {
     return {
       state: { ...seated, openingEstablishment: { ...est, offerTaken: 'refused' } },
       receipts: [`Offer refused: ${offer.refuse || `the ${offer.noun}`}`],
     };
   }
-  if (isAcceptOfferLine(playerInput)) {
+  if (classifyOpeningOfferInput(seated, playerInput) === 'accept') {
     const events: GameEvent[] = offer.items.map((name) => ({
       type: 'item-gain',
       name,
