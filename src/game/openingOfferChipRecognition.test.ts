@@ -8,7 +8,7 @@ import { attachOpeningInstance, type OpeningHookSnapshot } from './openingInstan
 import { applySuccessfulLiveOpening, validateOpeningOptions } from './liveOpening';
 import { applyOpeningOfferChoice, isOfferRefuseLine } from './openingOffer';
 import { isAcceptOfferLine } from './openingEstablishment';
-import { classifyOpeningOfferInput } from './openingOfferRecognize';
+import { classifyOpeningOfferInput, openingOfferPadIdentityMatch } from './openingOfferRecognize';
 import type { GameState } from './types';
 
 const CINDER_HOOK: OpeningHookSnapshot = {
@@ -159,5 +159,32 @@ describe('opening offer chip recognition (live 11 Nov 2026 drafts)', () => {
       'Keep your own kit',
     ]);
     expect(missingPerson.join('\n')).toMatch(/option names Wenna Coyne/i);
+  });
+
+  it('does not treat ordinary take/follow/help lines or "keep your kit close" as offer choices', () => {
+    const opened = applySuccessfulLiveOpening(cinderState(), CINDER_PROSE, {
+      pads: CINDER_PADS,
+      journalTitle: 'The Prints on Nairnvale Trail',
+    });
+    expect(classifyOpeningOfferInput(opened, 'Take a closer look at Wenna')).toBe('none');
+    expect(classifyOpeningOfferInput(opened, 'Follow the prints toward Wenna')).toBe('none');
+    expect(classifyOpeningOfferInput(opened, 'Help Wenna read the tracks')).toBe('none');
+    expect(classifyOpeningOfferInput(opened, 'Join Wenna on the trail')).toBe('none');
+    expect(classifyOpeningOfferInput(opened, 'Keep your kit close and take the gatehouse side of the lane')).toBe('none');
+    expect(applyOpeningOfferChoice(opened, 'Take a closer look at Wenna').receipts).toEqual([]);
+    expect(applyOpeningOfferChoice(opened, 'Keep your kit close and take the gatehouse side of the lane').receipts).toEqual([]);
+    // Clear refusals and tight accept phrases still work.
+    expect(classifyOpeningOfferInput(opened, 'Keep your own kit')).toBe('refuse');
+    expect(classifyOpeningOfferInput(opened, 'Walk with Wenna Coyne for water and the scarf')).toBe('accept');
+  });
+
+  it('does not treat a mid-pad tail as chip identity unless it starts the pad or names the person or verb', () => {
+    const pad = 'Walk with Wenna Coyne for water and the scarf';
+    expect(openingOfferPadIdentityMatch(pad, pad)).toBe(true);
+    expect(openingOfferPadIdentityMatch('Walk with Wenna for water', pad)).toBe(true);
+    expect(openingOfferPadIdentityMatch('Wenna Coyne for water and the scarf', pad)).toBe(true);
+    expect(openingOfferPadIdentityMatch('for water and the scarf', pad)).toBe(false);
+    expect(openingOfferPadIdentityMatch('water and the scarf', pad)).toBe(false);
+    expect(openingOfferPadIdentityMatch('Take a closer look at Wenna', pad)).toBe(false);
   });
 });

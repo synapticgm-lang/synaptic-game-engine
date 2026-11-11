@@ -5,10 +5,11 @@
 import type { GameState } from './types';
 
 const KEEP_OWN_KIT =
-  /\bkeep your own(?:\s+earth)?\s+kit\b|\bkeep your kit\b|\bkeep your own(?:\s+earth)?\s+(?:gear|clothes)\b/i;
+  /\bkeep your own(?:\s+earth)?\s+(?:kit|gear|clothes)\b/i;
 
+/** Tight accept phrases only — bare take/follow/help/join plus a name is an ordinary action. */
 const ACCEPT_PERSONA_VERBS =
-  /\b(?:walk with|go with|stay for|follow|join|help|take)\b/i;
+  /\b(?:walk with|go with|stay for)\b/i;
 
 const CLASSIC_ACCEPT = (
   /\b(?:i )?(?:agree|accept)\b/i.source
@@ -44,20 +45,40 @@ function mentionsPerson(text: string, name: string): boolean {
   return given.length >= 2 && new RegExp(`\\b${given.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(hay);
 }
 
-/** Order-preserving word match so a short chip ("Walk with Wenna for water") hits the full pad. */
-export function openingOfferPadIdentityMatch(input: string, label: string): boolean {
-  const a = words(input);
-  const b = words(label);
-  if (!a.length || !b.length) return false;
-  if (a.join(' ') === b.join(' ')) return true;
-  const [short, long] = a.length <= b.length ? [a, b] : [b, a];
-  if (short.length < 3) return false;
+function isSubsequence(short: string[], long: string[]): boolean {
   let i = 0;
   for (const w of long) {
     if (w === short[i]) i += 1;
     if (i === short.length) return true;
   }
   return false;
+}
+
+const TIGHT_ACCEPT_PHRASE = /\b(?:walk with|go with|stay for)\b/i;
+
+function fragmentHasPersonOrVerb(shortWords: string[], label: string): boolean {
+  const frag = shortWords.join(' ');
+  const lab = norm(label);
+  if (TIGHT_ACCEPT_PHRASE.test(frag) && TIGHT_ACCEPT_PHRASE.test(lab)) return true;
+  const nameToks = lab.split(' ').slice(1).filter((w) => /^[A-Z]/.test(w));
+  return nameToks.some((n) => new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(frag));
+}
+
+/**
+ * Short-chip identity: exact match, or a 3+ word subsequence that starts the pad
+ * or includes the pad's person / tight accept verb. A mid-pad tail such as
+ * "for water and the scarf" does not match on its own.
+ */
+export function openingOfferPadIdentityMatch(input: string, label: string): boolean {
+  const a = words(input);
+  const b = words(label);
+  if (!a.length || !b.length) return false;
+  if (a.join(' ') === b.join(' ')) return true;
+  const [short, long] = a.length <= b.length ? [a, b] : [b, a];
+  const shortIsInput = a.length <= b.length;
+  if (short.length < 3 || !isSubsequence(short, long)) return false;
+  if (short[0] === long[0]) return true;
+  return fragmentHasPersonOrVerb(short, shortIsInput ? label : input);
 }
 
 function classicAccept(raw: string): boolean {
@@ -104,7 +125,8 @@ function personaAccept(state: GameState, raw: string): boolean {
 
 /**
  * Classify a page-1 / later-turn line as accepting or refusing the opening offer.
- * Refuse is decided first so "Keep your own kit" (and "stay with both") stays refuse.
+ * Refuse is decided first, but only for clear refusals ("keep your own kit",
+ * a tagged refuse pad, or "I refuse the offer") — not "keep your kit close".
  */
 export function classifyOpeningOfferInput(state: GameState, raw: string): 'accept' | 'refuse' | 'none' {
   const t = norm(raw);
