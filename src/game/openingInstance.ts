@@ -14,6 +14,8 @@ import { hashSeed, keyedRng, type Rng } from './seededRng';
 import { genderForPersonName, nameWords, pickPersonName, type PersonGender } from './personNames';
 import { isCommonOpeningLexeme } from './openingWriterNotes';
 import { campaignCanonicalHubNames, campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
+import { applyPresenceFacts } from './presentAuthority';
+import { isCatalogCastBlockedHere } from './openingCatalogGuard';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot {
@@ -159,6 +161,9 @@ export function peopleFromWhoHere(whoHere: string | undefined): string[] {
   return out;
 }
 
+const IMPLIED_ROLE_NOUN =
+  'enforcers?|thieves|thief|scouts?|innkeeps?|innkeepers?|muscle|cutters?|lockpicks?|priests?|priestesses?|captains?|bouncers?|trackers?|sisters?|brothers?|fathers?|merchants?';
+
 /** A role-only who-here ("an enforcer", "the scout") with no proper name. */
 export function impliedRoleFromWhoHere(whoHere: string | undefined): string | undefined {
   if (!whoHere) return undefined;
@@ -166,17 +171,39 @@ export function impliedRoleFromWhoHere(whoHere: string | undefined): string | un
   const t = whoHere.replace(/\s+/g, ' ').trim();
   if (!t || /^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return undefined;
   const groupOnly = /^(?:the\s+)?(?:crew|faces|people|crowd|company|watchmen|hirelings|others)\b/i.test(t);
-  const hasRole = /\b(?:enforcer|thief|scout|innkeep|innkeeper|muscle|cutter|lockpick|priest|captain|bouncer|tracker|sister|brother|father|merchant)\b/i.test(t);
+  const hasRole = new RegExp(`\\b(?:${IMPLIED_ROLE_NOUN})\\b`, 'i').test(t);
   if (groupOnly && !hasRole) return undefined;
-  const role = t
+  let role = t
     .replace(/^(?:a|an|the)\s+/i, '')
     .replace(/[,.;].*$/, '')
     .replace(/\s+is waiting\b.*$/i, '')
     .replace(/\s+beside you\b.*$/i, '')
     .replace(/\s+on the porch\b.*$/i, '')
     .trim();
+  // Long faction sentences ("Ash Court priests who will swear…") still yield a role.
+  if (role.length > 48) {
+    const sliced = role.match(new RegExp(`^((?:[A-Z][\\w-]+(?:\\s+[A-Z][\\w-]+){0,2}\\s+)?(?:${IMPLIED_ROLE_NOUN}))\\b`, 'i'));
+    if (sliced?.[1]) role = sliced[1].trim();
+    else {
+      const noun = role.match(new RegExp(`\\b(?:${IMPLIED_ROLE_NOUN})\\b`, 'i'));
+      if (noun) role = noun[0];
+    }
+  }
   if (role.length < 3 || role.length > 48) return undefined;
   return singularizeGroupRole(role);
+}
+
+/** How many people to mint for a role-only occupancy. Capped at 2. */
+export function impliedOccupancyCount(whoHere: string | undefined): number {
+  const t = (whoHere ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return 0;
+  const numbered = t.match(/^(?:the\s+)?(two|three|four|five|six|seven|eight|nine|ten|a pair of|a couple of|several|some|both|\d+)\b/i);
+  if (numbered) return 2;
+  if (/^(?:a|an|one)\s+/i.test(t)) return 1;
+  if (new RegExp(`\\b(?:${IMPLIED_ROLE_NOUN})\\b`, 'i').test(t) && /s\b/i.test(t.match(new RegExp(`\\b(?:${IMPLIED_ROLE_NOUN})\\b`, 'i'))?.[0] ?? '')) {
+    return 2;
+  }
+  return 1;
 }
 
 /** "two militia" / "a pair of scouts" is a group, not one person's role. */
@@ -852,8 +879,11 @@ export function mintOpeningInstance(
 
   const impliedRole = impliedRoleFromWhoHere(hook.whoHere);
   if (!cast.length && impliedRole) {
-    const minted = mintPerson(rng, taken, genre);
-    cast.push({ name: minted.name, role: sanitizeMintedRole(impliedRole), gender: minted.gender });
+    const n = Math.max(1, Math.min(2, impliedOccupancyCount(hook.whoHere) || 1));
+    for (let i = 0; i < n; i++) {
+      const minted = mintPerson(rng, taken, genre);
+      cast.push({ name: minted.name, role: sanitizeMintedRole(impliedRole), gender: minted.gender });
+    }
   }
 
   const offerRaw = hook.openingOffer?.trim() ?? '';
@@ -1017,7 +1047,7 @@ export function attachOpeningInstance(
   const pinned = instance.cast.map((c) => c.name);
   const memories = patchRoster(state.npcMemories, instance, est?.castNpcIds);
 
-  return {
+  const next: GameState = {
     ...state,
     currentLocation: instance.placeName,
     npcMemories: memories,
@@ -1025,7 +1055,8 @@ export function attachOpeningInstance(
       ...(est ?? { pending: [], answers: {}, complete: true }),
       instance,
       pickedHook: scrubbedHook ?? est?.pickedHook,
-      pinnedNpcNames: pinned.length ? pinned : est?.pinnedNpcNames,
+      // Always the minted cast — never keep a pre-attach bible catalog pin.
+      pinnedNpcNames: pinned,
       pinnedAt: instance.placeName,
       authoredPage1Retired: hook.page1 || hook.fallback || est?.authoredPage1Retired,
       // Do not carry authored page 1 as a player-facing fallback.
@@ -1056,6 +1087,18 @@ export function attachOpeningInstance(
         : est?.card,
     },
   };
+  const priorPins = est?.pinnedNpcNames ?? [];
+  const present = (state.sceneFacts?.present ?? []).filter((p) => {
+    const label = (p ?? '').replace(/\s+/g, ' ').trim();
+    if (!label) return false;
+    if (priorPins.some((n) => n.toLowerCase() === label.toLowerCase())) return false;
+    if (isCatalogCastBlockedHere(next, label)) return false;
+    return true;
+  });
+  for (const name of pinned) {
+    if (!present.some((p) => p.toLowerCase() === name.toLowerCase())) present.push(name);
+  }
+  return applyPresenceFacts(next, { present });
 }
 
 export function openingInstanceOf(state: GameState): OpeningInstance | undefined {

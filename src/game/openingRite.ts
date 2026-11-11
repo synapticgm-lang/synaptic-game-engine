@@ -253,8 +253,9 @@ function completeRite(
 /**
  * Apply one player turn against the open rite.
  * Accept → complete now. Refuse → forced complete now (same XP).
- * Neither → count the turn; force-complete by player-turn 2 or save turn 2
- * (whichever comes first) so every LitRPG lands L2 around turn 2 (OPEN9).
+ * Neither → count the rite turn; force-complete once the player has taken two
+ * non-accept actions (turnCount >= 2). Do not use the save's commit turn — page 1
+ * already increments it, and a first-action question must not seal the pact.
  */
 export function applyOpeningRiteTurn(
   state: GameState,
@@ -267,8 +268,6 @@ export function applyOpeningRiteTurn(
   if (!entry) return { state: next, receipts: [] };
 
   const turnCount = (next.openingRite?.turn ?? 0) + 1;
-  // Upcoming commit turn on the save (apply runs before turn++).
-  const commitTurn = (next.turn ?? 0) + 1;
   next = {
     ...next,
     openingRite: { ...next.openingRite!, turn: turnCount },
@@ -279,14 +278,15 @@ export function applyOpeningRiteTurn(
   };
 
   const kind = classifyOpeningRiteInput(playerInput, entry);
-  if (kind === 'accept') {
+  const offerTaken = next.openingEstablishment?.offerTaken;
+  if (kind === 'accept' || (kind === 'none' && offerTaken === 'accepted')) {
     return completeRite(next, entry, { forced: false, turnCount });
   }
-  if (kind === 'refuse') {
+  if (kind === 'refuse' || (kind === 'none' && offerTaken === 'refused')) {
     return completeRite(next, entry, { forced: true, turnCount });
   }
-  // OPEN9 — backstop by player-turn 2 / save commit turn 2 so L2 lands ~T2 (was turn 3).
-  if (turnCount >= 2 || commitTurn >= 2) {
+  // OPEN9 — backstop on the second player rite turn so L2 lands ~T2, not on the first question.
+  if (turnCount >= 2) {
     return completeRite(next, entry, { forced: true, turnCount });
   }
   return { state: next, receipts: [] };

@@ -259,7 +259,8 @@ describe('FOURSLOT3 verdant travel loop + Check System + deaths', () => {
       'Check System',
       'Look around',
     ]);
-    expect(pads.some((c) => /^Check System/i.test(c))).toBe(true);
+    expect(pads.some((c) => /^Check System/i.test(c))).toBe(false);
+    expect(pads.filter((c) => !/^(?:Say something|Do something else)/i.test(c))).toHaveLength(4);
   });
 
   it('deathCount ignores foe went-down victories; counts real DEFEAT / Lifeline', () => {

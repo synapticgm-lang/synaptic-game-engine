@@ -176,9 +176,17 @@ export function ensureXpNarration(cleanText: string, systemLog: string[]): strin
     return cleanText;
   }
   const amount = xpLine.match(/(\d+)/)?.[1];
+  const fight = systemLog.some((l) =>
+    /\b(?:defeated|slain|killed|combat|fight|encounter|victory|last kill)\b/i.test(l)
+    && !/\bopening rite\b/i.test(l)
+  );
   const line = amount
-    ? `The clash leaves you wiser — you gain ${amount} XP.`
-    : `The clash leaves you wiser — you gain experience.`;
+    ? fight
+      ? `The clash leaves you wiser — you gain ${amount} XP.`
+      : `You gain ${amount} XP.`
+    : fight
+      ? `The clash leaves you wiser — you gain experience.`
+      : `You gain experience.`;
   return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
 }
 
