@@ -165,6 +165,15 @@ export function formatPointerCardForSnapshot(state: GameState): string {
 ${formatPointerCardSlotBlock(slots, est?.sceneWritten ? 'continue' : 'establish')}`;
 }
 
+/** Chapter One chrome for an unnamed present group — never "Someone is here." */
+export function groupPresenceChrome(groupLabel?: string): string {
+  const bare = (groupLabel ?? '').replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  if (!bare) return 'Someone is here.';
+  const plural = /^(?:faces|people|watchmen|hirelings|others|hands)$/i.test(bare) || (/s$/i.test(bare) && !/ss$/i.test(bare) && !/crew|company|crowd|outfit|gang/i.test(bare));
+  if (/^crew$/i.test(bare)) return 'The crew is here.';
+  return `The ${bare} ${plural ? 'are' : 'is'} here.`;
+}
+
 /** Player-facing Chapter One line — not eval language. */
 export function formatOpeningCardChrome(state: GameState): string {
   const inst = state.openingEstablishment?.instance;
@@ -174,7 +183,7 @@ export function formatOpeningCardChrome(state: GameState): string {
       inst.alone && names.length === 0
         ? 'You are alone.'
         : names.length === 0
-          ? 'Someone is here.'
+          ? groupPresenceChrome(inst.groupLabel)
         : names.length === 1
           ? `${names[0]} is here.`
           : names.length === 2

@@ -42,7 +42,7 @@ describe('openingInstance', () => {
     expect(a.retiredNames.join(' ')).toMatch(/Kessa/i);
     expect(a.retiredNames.join(' ')).toMatch(/Cinderwake/i);
     expect(a.retiredNames.some((n) => /^cinder$/i.test(n))).toBe(false);
-    expect(a.retiredNames.join(' ')).not.toMatch(/Pellane/i);
+    expect(a.retiredNames.join(' ')).toMatch(/Pellane/i);
     expect(a.retiredNames.join(' ')).not.toMatch(/Greyhollow|Valespire/i);
     expect(a.cast.some((c) => /Oren|Kessa|Cinder/i.test(c.name))).toBe(false);
   });
@@ -68,6 +68,12 @@ describe('openingInstance', () => {
     );
     expect(places.every((p) => p && !/cinderwake/i.test(p))).toBe(true);
     expect(new Set(places).size).toBe(7);
+    const landmarks = Array.from({ length: 7 }, (_, i) =>
+      mintOpeningInstance(cinder, `cinder-seed-${i}|summoned-pact|opening-instance`, { bibleId: 'summoned-pact' }).nearbyLandmark
+    );
+    expect(landmarks.every((l) => l && !/cinderwake/i.test(l))).toBe(true);
+    expect(new Set(landmarks).size).toBeGreaterThan(1);
+    expect(landmarks.every((l) => /^Lowmarket$/i.test(l ?? ''))).toBe(false);
   });
 
   it('names the actual offer on chips and always offers keeping your own kit', () => {
@@ -133,6 +139,16 @@ describe('openingInstance', () => {
       engineMode: 'rpg',
     });
     expect(inst.retiredNames.some((n) => /^(First|Talk|Location|Armed|Twenty|Dawn|Abort)$/i.test(n))).toBe(false);
+    expect(inst.groupLabel).toMatch(/crew/i);
+    expect(inst.alone).toBe(false);
+    const chrome = formatOpeningCardChrome({
+      ...createInitialState('Salt Road Heist', 'rpg'),
+      campaignBibleId: 'salt-road-heist',
+      engineMode: 'rpg',
+      openingEstablishment: { pending: [], answers: {}, complete: true, instance: inst },
+    } as import('./types').GameState);
+    expect(chrome).toMatch(/The crew is here\./);
+    expect(chrome).not.toMatch(/Someone is here\./);
   });
 
   it('keeps Salt Road Waystation as a campaign hub and names the waystation enforcer', () => {

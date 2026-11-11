@@ -13,8 +13,10 @@ import {
   writeLiveOpening,
   STORYTELLER_RETRY_MESSAGE,
 } from './liveOpening';
-import { formatLaterTurnNameRail } from './openingWriterNotes';
+import { formatLaterTurnNameRail, readOpeningStructuredOutput, recoverOpeningNarration } from './openingWriterNotes';
 import { riteEntryForState } from './openingRiteFacts';
+import { sanitizeOpeningNarration } from './openingEstablishment';
+import { formatOpeningCardChrome } from './openingPointerCard';
 import type { GameState, Settings } from './types';
 
 const cinder: OpeningHookSnapshot = {
@@ -250,6 +252,9 @@ describe('liveOpening', () => {
     const sheProse = 'Nell Hask stands on the trail, and she has a waterskin half raised. Osric Dunmore has not looked away.';
     expect(askPadFor(nell, sheProse)).toBe("Ask Nell what she's after");
     expect(askPadFor(osric, sheProse)).toBe('Ask Osric about the deal');
+    const afterHe = 'The trail holds. Nell took the scarf after he tossed it. You keep your own kit.';
+    expect(askPadFor(nell, afterHe)).toBe('Ask Nell about the deal');
+    expect(askPadFor(nell, afterHe)).not.toMatch(/what he's after/i);
   });
 
   it('does not pad a no-offer Salt warehouse hook with look/study/look-around-first duplicates', () => {
@@ -258,9 +263,13 @@ describe('liveOpening', () => {
       whoHere: 'the crew',
       pressingNeed: 'First move is yours — the plan, the cut, or the walk.',
     };
-    const base = game('rpg', 'salt-wh-pads');
     const state = attachOpeningInstance(
-      { ...base, campaignBibleId: 'salt-road-heist', engineMode: 'rpg', seed: 'salt-wh-pads' },
+      {
+        ...createInitialState('Salt Road Heist', 'rpg'),
+        campaignBibleId: 'salt-road-heist',
+        engineMode: 'rpg',
+        seed: 'salt-wh-pads',
+      } as GameState,
       hook
     );
     const inst = state.openingEstablishment!.instance!;
@@ -274,6 +283,10 @@ describe('liveOpening', () => {
     }
     expect(pads.filter((p) => /^(look|study)\b/i.test(p)).length).toBeLessThanOrEqual(1);
     expect(pads.some((p) => /Look around first/i.test(p) && pads.some((q) => /Look around /i.test(q) && q !== p))).toBe(false);
+    const chrome = formatOpeningCardChrome(state);
+    expect(inst.groupLabel).toMatch(/crew/i);
+    expect(chrome).toMatch(/The crew is here\./);
+    expect(chrome).not.toMatch(/Someone is here\./);
   });
 
   it('does not title the journal from a mid-sentence offer or contract', () => {
@@ -318,6 +331,112 @@ describe('liveOpening', () => {
     const later = { ...state, openingEstablishment: { ...state.openingEstablishment!, complete: true, sceneWritten: true } };
     const rail = formatLaterTurnNameRail(later);
     expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*Pellane/i);
+  });
+
+
+  it('bans Pellane on page 1 when it only appears in structured hook text, not hook.faction', () => {
+    const hook: OpeningHookSnapshot = {
+      location: 'the ash-heat of Cinderwake Trail',
+      whoHere: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
+      openingOffer: "Brother Oren's waterskin and a scarf.",
+      pressingNeed: 'The Pellane scouts want an answer.',
+      summonIntent: "Someone upstairs will still call this Pellane's summon.",
+    };
+    const inst = mintOpeningInstance(hook, 'pellane-pressing|summoned-pact|opening-instance', {
+      bibleId: 'summoned-pact',
+    });
+    expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
+    expect(inst.factionName).toBeTruthy();
+    expect(inst.factionName).not.toMatch(/Pellane/i);
+    expect((inst.pressing ?? '') + (inst.offerSummary ?? '')).not.toMatch(/Pellane/i);
+  });
+
+  it('recovers prose from trailing-comma, curly-quoted, or missing-brace opening JSON', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const prose = mockLiveOpeningProse(state);
+    const title = `${inst.cast[0]!.name.split(/\s+/)[0]} at ${inst.placeName}`;
+    const options = shapeOpeningPads(state, prose);
+    const trailing = `{"prose":${JSON.stringify(prose)},"options":${JSON.stringify(options)},"journalTitle":${JSON.stringify(title)},}`;
+    expect(readOpeningStructuredOutput(trailing)?.prose).toBe(prose);
+    const curly = `\u201Cprose\u201D:\u201C${prose.replace(/"/g, '\\"')}\u201D, \u201Coptions\u201D:${JSON.stringify(options)}, \u201CjournalTitle\u201D:\u201C${title}\u201D`;
+    const curlyObj = `{${curly}}`;
+    expect(readOpeningStructuredOutput(curlyObj)?.prose).toBe(prose);
+    const missing = `{"prose":${JSON.stringify(prose)},"options":${JSON.stringify(options)},"journalTitle":${JSON.stringify(title)}`;
+    expect(missing.trim().endsWith('}')).toBe(false);
+    expect(readOpeningStructuredOutput(missing)?.prose).toBe(prose);
+
+    for (const raw of [trailing, curlyObj, missing]) {
+      const result = await writeLiveOpening(state, settings, { writer: async () => raw });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.prose).toBe(prose);
+        expect(result.prose.startsWith('{')).toBe(false);
+        expect(result.prose).not.toMatch(/"prose"\s*:/);
+        expect(result.pads).toEqual(options);
+        expect(result.journal.title).toBe(title);
+        expect(sanitizeOpeningNarration(raw)).toBe(prose);
+        expect(recoverOpeningNarration(raw)).toBe(prose);
+      }
+    }
+  });
+
+  it('does not commit unrecoverable opening JSON as page 1 prose', async () => {
+    const state = game();
+    const raw = '{"options":[ "Look around first", ], "journalTitle": "Under you. The offer",';
+    expect(readOpeningStructuredOutput(raw)).toBeNull();
+    expect(recoverOpeningNarration(raw)).toBe('');
+    expect(sanitizeOpeningNarration(raw)).toBe('');
+    const result = await writeLiveOpening(state, settings, { writer: async () => raw });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
+  });
+
+  it('uses a no-schema free-prose fallback without treating it as JSON', async () => {
+    const state = game();
+    const prose = mockLiveOpeningProse(state);
+    let calls = 0;
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => {
+        calls += 1;
+        return prose;
+      },
+    });
+    expect(calls).toBe(1);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.retried).toBe(false);
+      expect(result.prose).toBe(prose);
+      expect(result.prose.startsWith('{')).toBe(false);
+      expect(result.pads).toHaveLength(4);
+      expect(result.journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
+    }
+  });
+
+  it('keeps a good first prose draft when the options are bad and the retry is worse', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const prose = mockLiveOpeningProse(state);
+    const title = `${inst.cast[0]!.name.split(/\s+/)[0]} at ${inst.placeName}`;
+    const badOptions = ['Look around first', 'Study the loft', 'Look around the loft', 'Study first'];
+    const first = JSON.stringify({ prose, options: badOptions, journalTitle: title });
+    let calls = 0;
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => {
+        calls += 1;
+        if (calls === 1) return first;
+        return '{"prose":';
+      },
+    });
+    expect(calls).toBe(2);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.retried).toBe(true);
+      expect(result.prose).toBe(prose);
+      expect(result.prose.startsWith('{')).toBe(false);
+      expect(result.pads).toHaveLength(4);
+      expect(result.pads.filter((p) => /^(look|study)\b/i.test(p)).length).toBeLessThanOrEqual(1);
+    }
   });
 
   it('uses structured options and a short journal title from the writer JSON', async () => {

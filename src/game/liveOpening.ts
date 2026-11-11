@@ -7,8 +7,10 @@ import { openingInstanceOf, givenNameOf, escapeRe } from './openingInstance';
 import {
   formatOpeningWriterNotes,
   isCommonOpeningLexeme,
+  looksLikeOpeningStructuredText,
   openingChoiceCount,
   readOpeningStructuredOutput,
+  recoverOpeningNarration,
   retiredNameNeedles,
   STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
@@ -210,11 +212,25 @@ export function optionsAreNearDuplicates(a: string, b: string): boolean {
   }
   return false;
 }
+const SUBORDINATORS = /^(?:after|before|when|while|because|as|if|though|although|until|unless|since|once|whereas|whilst)$/i;
+const COORDINATORS = /^(?:and|but|then|or)$/i;
+
+/** The clause immediately containing a pronoun, starting after the nearest coordinator or subordinator. */
+function clauseAround(sentence: string, index: number): { intro: string; body: string } {
+  const before = sentence.slice(0, index);
+  const split = before.split(/\b((?:after|before|when|while|because|as|if|though|although|until|unless|since|once|whereas|whilst|and|but|then|or)\s+)/i);
+  if (split.length === 1) return { intro: '', body: sentence };
+  const intro = (split[split.length - 2] ?? '').trim();
+  const body = (split[split.length - 1] ?? '') + sentence.slice(index);
+  return { intro, body };
+}
 
 /**
- * Gender the prose actually assigns to this person. Only sentences that name them
- * and do not also name another proper person are used — a nearby man's "He" must
- * not attach to Nell.
+ * Gender the prose actually assigns to this person.
+ * Only sentences that name them and do not also name another proper person are used.
+ * A pronoun is accepted only when it is the grammatical subject straight after the
+ * name's own clause, or when the sentence has no other possible referent.
+ * "Nell took the scarf after he tossed it" does not make Nell a "he".
  */
 export function prosePronounForName(prose: string, name: string): 'he' | 'she' | 'unknown' {
   const given = givenNameOf(name);
@@ -230,7 +246,21 @@ export function prosePronounForName(prose: string, name: string): 'he' | 'she' |
       return true;
     });
   });
-  const blob = exclusive.join(' ');
+  const licensed: string[] = [];
+  for (const sentence of exclusive) {
+    const re = /\b(he|him|his|she|her|hers)\b/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(sentence))) {
+      const { intro, body } = clauseAround(sentence, m.index);
+      const introWord = intro.replace(/\s+/g, ' ').trim().replace(/[,:;]+$/, '');
+      if (SUBORDINATORS.test(introWord)) continue;
+      const clauseHasName = nameRe.test(body) || (!introWord && nameRe.test(sentence));
+      const continuesNameClause = COORDINATORS.test(introWord) && nameRe.test(sentence.slice(0, m.index));
+      if (!clauseHasName && !continuesNameClause) continue;
+      licensed.push(m[0]);
+    }
+  }
+  const blob = licensed.join(' ');
   if (!blob) return 'unknown';
   const he = /\b(?:he|him|his)\b/i.test(blob);
   const she = /\b(?:she|her|hers)\b/i.test(blob);
@@ -551,10 +581,18 @@ export function applySuccessfulLiveOpening(
   };
 }
 
-function draftFromWriterRaw(raw: string): { prose: string; options: string[]; journalTitle: string } {
+type OpeningDraft = { prose: string; options: string[]; journalTitle: string; structured: boolean };
+
+function draftFromWriterRaw(raw: string): OpeningDraft {
   const parsed = readOpeningStructuredOutput(raw);
-  if (parsed) return parsed;
-  return { prose: (raw ?? '').trim(), options: [], journalTitle: '' };
+  if (parsed) return { ...parsed, structured: true };
+  const recovered = recoverOpeningNarration(raw);
+  if (recovered) return { prose: recovered, options: [], journalTitle: '', structured: false };
+  // JSON-looking text whose prose could not be recovered — never assign it as prose.
+  if (looksLikeOpeningStructuredText(raw)) {
+    return { prose: '', options: [], journalTitle: '', structured: true };
+  }
+  return { prose: '', options: [], journalTitle: '', structured: false };
 }
 
 async function runWriter(
@@ -562,10 +600,25 @@ async function runWriter(
   state: GameState,
   settings: Settings,
   retryErrors?: string[]
-): Promise<{ prose: string; options: string[]; journalTitle: string }> {
+): Promise<OpeningDraft> {
   const input = formatOpeningWriterNotes(state, retryErrors) || '(opening)';
   const raw = await writer(state, input, settings);
   return draftFromWriterRaw(raw);
+}
+
+function withFallbackPadsAndTitle(
+  state: GameState,
+  draft: OpeningDraft,
+  prose: string
+): OpeningDraft {
+  let next: OpeningDraft = { ...draft, prose };
+  if (validateOpeningOptions(state, prose, next.options).length) {
+    next = { ...next, options: fallbackOpeningPads(state, prose) };
+  }
+  if (validateOpeningJournalTitle(state, next.journalTitle).length) {
+    next = { ...next, journalTitle: deriveOpeningJournal(state, prose).title };
+  }
+  return next;
 }
 
 export async function writeLiveOpening(
@@ -582,39 +635,62 @@ export async function writeLiveOpening(
     writer = (s, input, settings) => callOpeningGm(s, input, settings);
   }
   let retried = false;
-  let draft: { prose: string; options: string[]; journalTitle: string };
+  let draft: OpeningDraft;
   try {
     draft = await runWriter(writer, state, settings);
   } catch {
     return { ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads };
   }
-  const allErrors = (d: typeof draft) => [
-    ...validateLiveOpeningProse(state, d.prose),
-    ...validateOpeningOptions(state, d.prose, d.options),
-    ...validateOpeningJournalTitle(state, d.journalTitle),
-  ];
-  let errors = allErrors(draft);
-  if (errors.length) {
+  const proseOk = (d: OpeningDraft) => !!d.prose.trim() && !validateLiveOpeningProse(state, d.prose).length;
+  const optionErrors = (d: OpeningDraft, prose = d.prose) => validateOpeningOptions(state, prose, d.options);
+  const titleErrors = (d: OpeningDraft) => validateOpeningJournalTitle(state, d.journalTitle);
+  const fail = (): LiveOpeningFailure => ({ ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads });
+
+  if (proseOk(draft)) {
+    const optionsBad = optionErrors(draft).length > 0;
+    const titleBad = titleErrors(draft).length > 0;
+    if (optionsBad && draft.structured) {
+      // First prose is usable — retry only for options, and keep this prose if the retry is worse.
+      retried = true;
+      const kept = draft.prose;
+      try {
+        const second = await runWriter(writer, state, settings, [...optionErrors(draft), ...titleErrors(draft)]);
+        if (second.options.length && !validateOpeningOptions(state, kept, second.options).length) {
+          draft = {
+            prose: kept,
+            options: second.options,
+            journalTitle: second.journalTitle || draft.journalTitle,
+            structured: true,
+          };
+        } else {
+          draft = withFallbackPadsAndTitle(state, draft, kept);
+        }
+        if (validateOpeningJournalTitle(state, draft.journalTitle).length) {
+          draft = { ...draft, journalTitle: deriveOpeningJournal(state, kept).title };
+        }
+      } catch {
+        draft = withFallbackPadsAndTitle(state, draft, kept);
+      }
+    } else if (optionsBad || titleBad) {
+      // No-schema (free prose) or a title-only miss: do not risk a second call on a usable page.
+      draft = withFallbackPadsAndTitle(state, draft, draft.prose);
+    }
+  } else {
     retried = true;
     try {
-      draft = await runWriter(writer, state, settings, errors);
+      draft = await runWriter(writer, state, settings, [
+        ...validateLiveOpeningProse(state, draft.prose),
+        ...optionErrors(draft),
+        ...titleErrors(draft),
+      ]);
     } catch {
-      return { ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads };
+      return fail();
     }
-    const proseErrors = validateLiveOpeningProse(state, draft.prose);
-    if (proseErrors.length || !draft.prose.trim()) {
-      return { ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads };
-    }
-    if (validateOpeningOptions(state, draft.prose, draft.options).length) {
-      draft = { ...draft, options: fallbackOpeningPads(state, draft.prose) };
-    }
-    if (validateOpeningJournalTitle(state, draft.journalTitle).length) {
-      draft = { ...draft, journalTitle: deriveOpeningJournal(state, draft.prose).title };
-    }
+    if (!proseOk(draft)) return fail();
+    draft = withFallbackPadsAndTitle(state, draft, draft.prose);
   }
-  if (!draft.prose.trim()) {
-    return { ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads };
-  }
+
+  if (!proseOk(draft)) return fail();
   return {
     ok: true,
     prose: draft.prose,

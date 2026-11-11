@@ -25,6 +25,7 @@ export interface OpeningHookSnapshot {
   openingOffer?: string;
   pressingNeed?: string;
   howYouGotHere?: string;
+  summonIntent?: string;
   whoYouAre?: string;
   beats?: string[];
   writerNotes?: string;
@@ -511,29 +512,56 @@ function pickNearbyLandmark(
   bibleId: string | undefined,
   catalogPlace: string | undefined,
   placeName: string,
-  retired: string[]
+  retired: string[],
+  seedKey: string
 ): string | undefined {
   const banned = new Set(
     [catalogPlace, placeName, ...(retired ?? []), ...(catalogPlace ? catalogPlace.split(/\s+/) : [])]
       .map((s) => (s ?? '').trim().toLowerCase())
       .filter(Boolean)
   );
-  const labels = campaignHubLabels(bibleId);
-  const coined = labels.find((lab) => {
-    const k = lab.toLowerCase();
-    if (banned.has(k)) return false;
-    if (lab.split(/\s+/).length !== 1) return false;
-    if (lab.length < 7) return false;
-    if ([...banned].some((b) => b && (k.includes(b) || b.includes(k)))) return false;
-    return true;
-  });
-  if (coined) return coined;
-  return labels.find((lab) => {
+  const isEligible = (lab: string) => {
     const k = lab.toLowerCase();
     if (banned.has(k)) return false;
     if ([...banned].some((b) => b.length >= 5 && (k.includes(b) || b.includes(k)))) return false;
     return true;
-  });
+  };
+  const labels = campaignHubLabels(bibleId).filter(isEligible);
+  const coined = labels.filter((lab) => lab.split(/\s+/).length === 1 && lab.length >= 7);
+  const pool = coined.length ? coined : labels;
+  if (!pool.length) return undefined;
+  const idx = hashSeed(`${seedKey}|nearby-landmark`) % pool.length;
+  return pool[idx];
+}
+
+function structuredBanHay(hook: OpeningHookSnapshot): string {
+  return [
+    hook.whoYouAre,
+    hook.whoHere,
+    hook.pressingNeed,
+    hook.summonIntent,
+    hook.openingOffer,
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+/** Catalog factions that must not open page 1 when they appear in structured hook text. */
+const CATALOG_FACTION_NAMES = ['Pellane', 'Ash Court'];
+
+/** Catalog given names / surnames for campaign cast (not place stems). */
+const CATALOG_CAST_NAMES = [
+  'Oren', 'Kessa', 'Orel', 'Vane', 'Thrynn', 'Madden', 'Lene', 'Sera', 'Quill',
+  'Aric', 'Bram', 'Cael', 'Dara', 'Eamon', 'Fael',
+];
+
+function groupLabelFromWhoHere(whoHere: string | undefined): string | undefined {
+  if (!whoHere || peopleFromWhoHere(whoHere).length) return undefined;
+  const t = whoHere.replace(/\s+/g, ' ').trim();
+  if (!t || /^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return undefined;
+  const m = t.match(/^(?:the\s+)?(crew|faces|people|crowd|company|watchmen|hirelings|others|hands|outfit|gang)\b/i);
+  if (!m?.[1]) return undefined;
+  return `the ${m[1]!.toLowerCase()}`;
 }
 
 export function mintOpeningInstance(
@@ -614,7 +642,7 @@ export function mintOpeningInstance(
       replacements.push([first, placeName.split(/\s+/)[0] ?? placeName]);
     }
   }
-  const nearbyLandmark = pickNearbyLandmark(opts?.bibleId, catalogPlace, placeName, retired);
+  const nearbyLandmark = pickNearbyLandmark(opts?.bibleId, catalogPlace, placeName, retired, seedKey);
 
   let settlementName: string | undefined;
   const settlementHits = places.filter(
@@ -634,6 +662,47 @@ export function mintOpeningInstance(
     const stem = pickUnused(rng, PLACE_STEMS, taken);
     factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
     replacements.push([factions[0].from, factionName]);
+  }
+
+  // Ban catalog faction and cast names found in structured hook text (who / whoHere /
+  // pressing / summonIntent / openingOffer) so a name like Pellane cannot open Cinderwake.
+  const banHay = structuredBanHay(hook);
+  if (banHay) {
+    const already = (n: string) =>
+      retired.some((x) => x.toLowerCase() === n.toLowerCase())
+      || replacements.some(([from]) => from.toLowerCase() === n.toLowerCase());
+    const mentioned = (n: string) => new RegExp(`\\b${escapeRe(n)}\\b`, 'i').test(banHay);
+    for (const faction of [
+      ...CATALOG_FACTION_NAMES,
+      ...extractTitleNames(hook.faction).filter((n) => !isGenericToken(n)),
+    ]) {
+      if (!mentioned(faction) || already(faction)) continue;
+      retire(faction, { evenIfHub: true });
+      if (!factionName) {
+        factionKind = lastWord(faction) || 'company';
+        const stem = pickUnused(rng, PLACE_STEMS, taken);
+        factionName = /^(house|order|guild|company|court)$/i.test(factionKind)
+          ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}`
+          : stem;
+      }
+      replacements.push([faction, factionName]);
+      const first = faction.split(/\s+/)[0] ?? '';
+      if (
+        first.length >= 7
+        && first.toLowerCase() !== faction.toLowerCase()
+        && !isGenericToken(first)
+        && !already(first)
+      ) {
+        retire(first, { evenIfHub: true });
+        replacements.push([first, factionName.split(/\s+/)[0] ?? factionName]);
+      }
+    }
+    for (const person of [...CATALOG_CAST_NAMES, ...(hook.catalogNpcNames ?? [])]) {
+      if (!mentioned(person) || already(person)) continue;
+      // Ban the catalog person on page 1, but do not add them to the opening cast
+      // unless they were already listed in whoHere / castNpcIds (handled below).
+      retire(person, { evenIfHub: true });
+    }
   }
 
   const seenPeople = new Set<string>();
@@ -747,6 +816,7 @@ export function mintOpeningInstance(
     offerChips,
     alone: aloneHint || (!cast.length && !whoHereImpliesPresent(hook.whoHere)),
     nearbyLandmark,
+    groupLabel: groupLabelFromWhoHere(hook.whoHere),
     retiredNames: retired.filter((n) => !isGenericToken(n)),
     nameMap,
   };
@@ -883,6 +953,7 @@ export function snapshotFromPickedHook(
   picked?: (OpeningHookSnapshot & {
     who?: string;
     how?: string;
+    summonIntent?: string;
     pressing?: string;
     where?: string;
     writerNotes?: string;
@@ -901,6 +972,7 @@ export function snapshotFromPickedHook(
     openingOffer: picked.openingOffer,
     pressingNeed: picked.pressingNeed ?? picked.pressing,
     howYouGotHere: picked.howYouGotHere ?? picked.how,
+    summonIntent: picked.summonIntent,
     whoYouAre: picked.whoYouAre ?? picked.who,
     beats: picked.beats,
     writerNotes: picked.writerNotes,
