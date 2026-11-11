@@ -856,6 +856,8 @@ export interface PlaceThreat {
 export interface OpeningCastMember {
   role: string;
   name: string;
+  /** Minted gender for this person; pronouns and self-introductions must match it. */
+  gender?: 'male' | 'female';
 }
 /** A player-facing opening chip that names the actual offer. */
 export interface OpeningOfferChip {

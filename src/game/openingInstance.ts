@@ -11,9 +11,9 @@ import type {
   OpeningOfferChip,
 } from './types';
 import { hashSeed, keyedRng, type Rng } from './seededRng';
-import { nameWords, pickPersonName } from './personNames';
+import { genderForPersonName, nameWords, pickPersonName, type PersonGender } from './personNames';
 import { isCommonOpeningLexeme } from './openingWriterNotes';
-import { campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
+import { campaignCanonicalHubNames, campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot {
@@ -357,13 +357,15 @@ function inferGenre(hook: OpeningHookSnapshot, bibleId?: string, engineMode?: st
   return 'fantasy';
 }
 
-function mintPerson(rng: Rng, taken: Set<string>, genre: 'fantasy' | 'modern' | 'scifi'): string {
-  if (genre === 'fantasy') {
-    const n = pickPersonName(rng, taken);
-    if (n) return n;
-  }
-  if (genre !== 'fantasy') return pickModernOrScifiName(rng, taken, genre);
-  return pickModernOrScifiName(rng, taken, 'modern');
+function mintPerson(
+  rng: Rng,
+  taken: Set<string>,
+  genre: 'fantasy' | 'modern' | 'scifi'
+): { name: string; gender: PersonGender } {
+  const name = genre === 'fantasy'
+    ? (pickPersonName(rng, taken) || pickModernOrScifiName(rng, taken, 'modern'))
+    : pickModernOrScifiName(rng, taken, genre);
+  return { name, gender: genderForPersonName(name) };
 }
 
 function joinStemMid(stem: string, mid: string): string {
@@ -526,12 +528,10 @@ function pickNearbyLandmark(
     if ([...banned].some((b) => b.length >= 5 && (k.includes(b) || b.includes(k)))) return false;
     return true;
   };
-  const labels = campaignHubLabels(bibleId).filter(isEligible);
-  const coined = labels.filter((lab) => lab.split(/\s+/).length === 1 && lab.length >= 7);
-  const pool = coined.length ? coined : labels;
-  if (!pool.length) return undefined;
-  const idx = hashSeed(`${seedKey}|nearby-landmark`) % pool.length;
-  return pool[idx];
+  const labels = campaignCanonicalHubNames(bibleId).filter(isEligible);
+  if (!labels.length) return undefined;
+  const idx = hashSeed(`${seedKey}|nearby-landmark`) % labels.length;
+  return labels[idx];
 }
 
 function structuredBanHay(hook: OpeningHookSnapshot): string {
@@ -722,25 +722,25 @@ export function mintOpeningInstance(
   for (const catalog of orderedPeople) {
     retire(catalog);
     const minted = mintPerson(rng, taken, genre);
-    replacements.push([catalog, minted]);
+    replacements.push([catalog, minted.name]);
     const bare = catalog.replace(HONORIFIC, '').trim();
     if (bare && bare !== catalog) {
       retire(bare);
-      replacements.push([bare, minted]);
+      replacements.push([bare, minted.name]);
     }
     const given = bare.split(/\s+/)[0] ?? '';
     if (given && given !== bare && given.length >= 3 && !isCommonOpeningLexeme(given) && !HOOK_FIELD_LABELS.has(given.toLowerCase())) {
       retire(given);
-      replacements.push([given, givenNameOf(minted)]);
+      replacements.push([given, givenNameOf(minted.name)]);
     }
-    const roleSrc = applyReplacements(roleForPerson(catalog, hook), replacements).replace(minted, '').replace(/\s+/g, ' ').trim();
-    cast.push({ name: minted, role: roleSrc || 'present in the scene' });
+    const roleSrc = applyReplacements(roleForPerson(catalog, hook), replacements).replace(minted.name, '').replace(/\s+/g, ' ').trim();
+    cast.push({ name: minted.name, role: roleSrc || 'present in the scene', gender: minted.gender });
   }
 
   const impliedRole = impliedRoleFromWhoHere(hook.whoHere);
   if (!cast.length && impliedRole) {
     const minted = mintPerson(rng, taken, genre);
-    cast.push({ name: minted, role: impliedRole });
+    cast.push({ name: minted.name, role: impliedRole, gender: minted.gender });
   }
 
   const offerRaw = hook.openingOffer?.trim() ?? '';

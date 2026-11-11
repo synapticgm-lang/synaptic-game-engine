@@ -30,6 +30,7 @@ import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
 import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
+import { rewriteOpeningMarkup } from './openingWriterNotes';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 /**
  * Pack 12: Handle instant quick-response button clicks.
@@ -3455,7 +3456,7 @@ export function hasSystemVoice(text: string): boolean {
   return /<system>|\[[^\]]*(SYSTEM|AUDITOR|TALE|STORY)[^\]]*\]/i.test(text);
 }
 export function ensureSystemReceipt(state: GameState, narrative: string): string {
-  return sanitizeOpeningNarration(narrative).trim();
+  return rewriteOpeningMarkup(sanitizeOpeningNarration(narrative), state.engineMode).trim();
 }
 export function buildOpeningSceneMandate(state: GameState, notes?: string): string {
   const extra = notes?.trim() ? `\nPlayer just said/asked: ${notes.trim()}\n` : '';

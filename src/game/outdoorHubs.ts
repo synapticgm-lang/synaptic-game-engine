@@ -292,6 +292,22 @@ export function campaignHubLabels(bibleId?: string | null): string[] {
   return out;
 }
 
+
+/** Canonical hub names only (not generic aliases or truncated stems). Used as nearby landmarks. */
+export function campaignCanonicalHubNames(bibleId?: string | null): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const h of hubsForBibleId(bibleId)) {
+    const name = (h.name ?? '').trim();
+    if (!name) continue;
+    const k = name.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(name);
+  }
+  return out;
+}
+
 export function isCampaignHubToken(token: string, bibleId?: string | null): boolean {
   const t = stripHubArticle(token ?? '');
   if (!t || GENERIC_HUB_ALIAS.test(t)) return false;

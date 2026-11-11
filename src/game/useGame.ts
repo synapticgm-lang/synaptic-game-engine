@@ -696,6 +696,7 @@ async function paintLiveOpeningPage(
     return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
   }
   let prose = stripChoiceList(result.prose);
+  // parse (writeLiveOpening) → rewrite markup → leak gate
   prose = ensureSystemReceipt(state, sanitizeOpeningNarration(prose));
   prose = enforcePerspective(prose, settings, state.character.name);
   if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
