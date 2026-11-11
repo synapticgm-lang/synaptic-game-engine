@@ -140,6 +140,7 @@ export function validateLiveOpeningProse(state: GameState, prose: string): strin
   if (similarToAuthored(text, state.openingEstablishment?.authoredPage1Retired)) {
     errors.push('authored reprint');
   }
+  errors.push(...validateOpeningCastVoice(state, text));
   return errors;
 }
 
@@ -270,6 +271,66 @@ export function prosePronounForName(prose: string, name: string): 'he' | 'she' |
   return 'unknown';
 }
 
+/** Light check: self-introductions and subject/possessive pronouns must match minted gender. */
+export function validateOpeningCastVoice(state: GameState, prose: string): string[] {
+  const errors: string[] = [];
+  const inst = openingInstanceOf(state);
+  if (!inst?.cast.length) return errors;
+  const text = prose ?? '';
+
+  const introRe = /["“]([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\.\s+I\s+[a-z]+/g;
+  let intro: RegExpExecArray | null;
+  while ((intro = introRe.exec(text))) {
+    const introduced = intro[1]!;
+    const member = inst.cast.find(
+      (c) => mentionsName(introduced, c.name) || givenNameOf(c.name).toLowerCase() === givenNameOf(introduced).toLowerCase()
+    );
+    if (!member?.gender) continue;
+    const before = text.slice(Math.max(0, intro.index - 280), intro.index);
+    const window = before.split(/(?<=[.!?])(?:\s+|$)/).slice(-2).join(' ');
+    const femaleCue = /\b(?:she|her|hers|a woman|the woman)\b/i.test(window);
+    const maleCue = /\b(?:he|him|his|a man|the man)\b/i.test(window);
+    if (femaleCue && !maleCue && member.gender === 'male') {
+      errors.push(`self-introduction gender mismatch: ${member.name} is a man`);
+    }
+    if (maleCue && !femaleCue && member.gender === 'female') {
+      errors.push(`self-introduction gender mismatch: ${member.name} is a woman`);
+    }
+  }
+
+  const sentences = text.split(/(?<=[.!?])(?:\s+|$)/).map((s) => s.trim()).filter(Boolean);
+  for (const member of inst.cast) {
+    if (!member.gender) continue;
+    const given = givenNameOf(member.name);
+    const nameRe = new RegExp(`\\b${escapeRe(member.name)}\\b|\\b${escapeRe(given)}\\b`, 'i');
+    const want = member.gender === 'female' ? 'she' : 'he';
+    for (let i = 0; i < sentences.length; i++) {
+      const sentence = sentences[i]!;
+      const at = sentence.search(nameRe);
+      if (at < 0) continue;
+      const rest = sentence.slice(at).replace(nameRe, '');
+      if (inst.cast.some((c) => c !== member && mentionsName(rest, c.name))) continue;
+      if (i + 1 < sentences.length) {
+        const next = sentences[i + 1]!;
+        const start = next.match(/^(He|She|His|Her)\b/);
+        const kinship = /^(His|Her)\s+(?:brother|sister|father|mother|son|daughter|family|friend|name|kin)\b/i.test(next);
+        const exclusive = !inst.cast.some((c) => c !== member && mentionsName(sentence, c.name));
+        if (start && exclusive && !kinship) {
+          const got = /^(She|Her)/i.test(start[1]!) ? 'she' : 'he';
+          if (got !== want) errors.push(`pronoun does not match minted gender for ${member.name}`);
+        }
+      }
+      const poss = rest.match(/\b(?:on|in|at|across|from|with|of|by)\s+(his|her)\s+\w+/i) || rest.match(/\b(he|she)\b/i);
+      if (poss) {
+        const token = poss[1] ?? poss[0]!;
+        const got = /she|her/i.test(token) ? 'she' : 'he';
+        if (got !== want) errors.push(`pronoun does not match minted gender for ${member.name}`);
+      }
+    }
+  }
+  return [...new Set(errors)];
+}
+
 export function optionPronounErrors(label: string, prose: string, names: string[]): string[] {
   const errors: string[] = [];
   const he = /\b(?:he's|he is|he was|what he's)\b/i.test(label) || /\bwhat he\b/i.test(label);
@@ -340,6 +401,13 @@ export function validateOpeningOptions(state: GameState, prose: string, options:
       if (!mentionsName(prose, name)) errors.push(`option names ${name}, which is not in the prose`);
     }
     errors.push(...optionPronounErrors(label, prose, names));
+    const member = inst?.cast.find((c) => mentionsName(label, c.name));
+    if (member?.gender) {
+      const heOpt = /\b(?:he is|he was|he's|what he's)\b/i.test(label) || /\bwhat he\b/i.test(label);
+      const sheOpt = /\b(?:she is|she was|she's|what she's)\b/i.test(label) || /\bwhat she\b/i.test(label);
+      if (heOpt && member.gender !== 'male') errors.push(`option pronoun does not match minted gender for ${member.name}: ${label}`);
+      if (sheOpt && member.gender !== 'female') errors.push(`option pronoun does not match minted gender for ${member.name}: ${label}`);
+    }
   }
   return errors;
 }
@@ -359,6 +427,9 @@ export function validateOpeningJournalTitle(state: GameState, title: string): st
   if (/\b(?:offer|contract)\b/i.test(t) && words.length >= 6) {
     errors.push('journal title is a clipped mid-sentence');
   }
+  if (isCommaSeparatedProperNounList(t)) {
+    errors.push('journal title is a list of names and places');
+  }
   const inst = openingInstanceOf(state);
   for (const r of inst?.retiredNames ?? []) {
     const needles = retiredNameNeedles(r);
@@ -368,6 +439,22 @@ export function validateOpeningJournalTitle(state: GameState, title: string): st
   }
   return errors;
 }
+
+function isCommaSeparatedProperNounList(title: string): boolean {
+  const parts = title.split(',').map((s) => s.trim()).filter(Boolean);
+  if (parts.length < 2) return false;
+  const isProper = (part: string) => {
+    const words = part.split(/\s+/).filter(Boolean);
+    if (!words.length) return false;
+    return (
+      words.every((w) => /^(?:the|of|and|de|la)$/i.test(w) || /^[A-Z][A-Za-z'’-]*$/.test(w))
+      && words.some((w) => /^[A-Z]/.test(w) && !/^(?:The|Of|And|De|La)$/.test(w))
+    );
+  };
+  return parts.every(isProper);
+}
+
+
 
 /** Deterministic pads: distinct verbs, no pronouns, no look/study duplicates. */
 export function fallbackOpeningPads(state: GameState, prose: string): string[] {
@@ -399,12 +486,36 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
   if (inst?.placeName && labels.length < n && mentionsName(prose, inst.placeName)) {
     push(`Look around ${inst.placeName}`);
   }
-  const fillers = ['Wait and listen', 'Stand your ground', 'Watch the road', 'Keep your own kit', 'Take a slow breath'];
+  for (const scenePad of padsFromOpeningProse(prose)) {
+    if (labels.length >= n) break;
+    push(scenePad);
+  }
+  const fillers = ['Watch the road', 'Keep your own kit', 'Take a slow breath', 'Wait and listen', 'Stand your ground'];
   for (const f of fillers) {
     if (labels.length >= n) break;
     push(f);
   }
   return labels.slice(0, n);
+}
+
+function padsFromOpeningProse(prose: string): string[] {
+  const text = prose ?? '';
+  const pairs: Array<[RegExp, string]> = [
+    [/\bcrates?\b/i, 'Check the crates'],
+    [/\bloft\b/i, 'Step down from the loft'],
+    [/\bloading dock\b/i, 'Cross the loading dock'],
+    [/\bthe crew\b/i, 'Join the waiting crew'],
+    [/\bprints?\b/i, 'Study the prints more closely'],
+    [/\bwaterskin\b/i, 'Ask about the waterskin'],
+    [/\bscarf\b/i, 'Ask about the pilgrim scarf'],
+    [/\bbrand-?iron\b/i, 'Ask about the brand-iron'],
+    [/\bwarehouse\b/i, 'Walk the warehouse floor'],
+  ];
+  const out: string[] = [];
+  for (const [re, label] of pairs) {
+    if (re.test(text) && !out.includes(label)) out.push(label);
+  }
+  return out;
 }
 
 export function shapeOpeningPads(state: GameState, prose: string): string[] {
@@ -678,12 +789,15 @@ export async function writeLiveOpening(
     const optionsBad = optionErrors(draft).length > 0;
     const titleBad = titleErrors(draft).length > 0;
     if (optionsBad && draft.structured) {
-      // First prose is usable — retry only for options, and keep this prose if the retry is worse.
+      // First prose is usable — retry once. Prefer a fully valid second draft
+      // (so options follow *that* prose) over first prose plus generic fallback pads.
       retried = true;
       const kept = draft.prose;
       try {
         const second = await runWriter(writer, state, settings, [...optionErrors(draft), ...titleErrors(draft)]);
-        if (second.options.length && !validateOpeningOptions(state, kept, second.options).length) {
+        if (proseOk(second) && !optionErrors(second).length) {
+          draft = second;
+        } else if (second.options.length && !validateOpeningOptions(state, kept, second.options).length) {
           draft = {
             prose: kept,
             options: second.options,
@@ -694,7 +808,7 @@ export async function writeLiveOpening(
           draft = withFallbackPadsAndTitle(state, draft, kept);
         }
         if (validateOpeningJournalTitle(state, draft.journalTitle).length) {
-          draft = { ...draft, journalTitle: deriveOpeningJournal(state, kept).title };
+          draft = { ...draft, journalTitle: deriveOpeningJournal(state, draft.prose).title };
         }
       } catch {
         draft = withFallbackPadsAndTitle(state, draft, kept);

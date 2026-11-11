@@ -4,6 +4,7 @@
  */
 import type { GameState } from './types.ts';
 import { isCampaignHubToken } from './outdoorHubs.ts';
+import { genderNoun } from './personNames.ts';
 
 export const STORYTELLER_RETRY_MESSAGE = "The storyteller didn't answer — Try again";
 export const STORYTELLER_RETRY_CHIP = 'Try again';
@@ -25,7 +26,9 @@ export function formatOpeningPage1Rail(state: GameState): string {
   const n = openingChoiceCount(state);
   const people = inst.alone
     ? 'ALONE: do not invent a welcoming committee.'
-    : `LOCKED PEOPLE (use these names): ${inst.cast.map((c) => `${c.name} — ${c.role}`).join('; ') || 'none'}`;
+    : `LOCKED PEOPLE (use these names, genders, and roles exactly): ${
+        inst.cast.map((c) => `${c.name} — ${genderNoun(c.gender)}, ${c.role}`).join('; ') || 'none'
+      }`;
   const retiredNames = distinctiveRetiredNames(inst.retiredNames);
   const retired = retiredNames.length ? `Do not use retired catalog names: ${retiredNames.slice(0, 24).join(', ')}.` : '';
   const offer = inst.offerSummary ? `THE OFFER must be unmistakable in the prose: ${inst.offerSummary}` : '';
@@ -38,11 +41,12 @@ export function formatOpeningPage1Rail(state: GameState): string {
   return [
     '【 OPENING PAGE 1 】',
     'Return a JSON object with keys prose, options, and journalTitle. No markdown fences.',
-    'prose: the first page the player will read. Novel-quality, concrete, present, no director notes, no menu language, no numbered choice list.',
+    'prose: the first page the player will read. Novel-quality, concrete, present, no director notes, no menu language, no numbered choice list, no XML or angle-bracket tags.',
     optionHint,
-    'If an option uses a gendered pronoun (he/she), it must match how the prose refers to that same person. Otherwise phrase the option without a pronoun.',
-    'journalTitle: a short title, at most 8 whole words, naming a person, place, or goal from the scene.',
-    `LOCKED PLACE: ${inst.placeName} (${inst.placeKind}) — use this name.`,
+    "If an option uses a gendered pronoun (he/she), it must match that person's locked gender. Otherwise phrase the option without a pronoun.",
+    "A speaker who introduces themselves (\"Name. I track.\") must be that locked person, with that person's gender and role. Do not put one person's name in another person's mouth.",
+    'journalTitle: a short title, at most 8 whole words, naming a person, place, or goal from the scene. Do not write a comma-separated list of names and places.',
+    `LOCKED PLACE: ${inst.placeName} (${inst.placeKind}) — use this full name in the prose, not a generic word like trail or road.`,
     near,
     people,
     inst.factionName ? `LOCKED FACTION: ${inst.factionName}${inst.factionKind ? ` (${inst.factionKind})` : ''}` : '',
@@ -51,7 +55,7 @@ export function formatOpeningPage1Rail(state: GameState): string {
     inst.how ? `HOW YOU ARRIVED (private): ${inst.how}` : '',
     offer,
     retired,
-    'Name the locked place and every locked person who is here. No "someone here", "a figure", or unnamed stand-ins when a locked name exists.',
+    'Name the locked place in full and every locked person by name in the prose. No "someone here", "a figure", or unnamed stand-ins when a locked name exists.',
     'Follow the Gamebook / GM writing style already in this system prompt.',
   ]
     .filter(Boolean)
@@ -201,10 +205,14 @@ export function formatLaterTurnNameRail(state: GameState): string {
   const retired = distinctiveRetiredNames(inst.retiredNames)
     .filter((n) => !isCampaignHubToken(n, state.campaignBibleId))
     .slice(0, 20);
-  if (!locked.length && !retired.length) return '';
+  const near = inst.nearbyLandmark
+    ? `${inst.nearbyLandmark} is still on the map and is a usable campaign hub — later turns may go there.`
+    : '';
+  if (!locked.length && !retired.length && !near) return '';
   return [
     '【 LOCKED NAMES 】',
     locked.length ? `Keep using these locked names: ${locked.join(', ')}.` : '',
+    near,
     retired.length ? `Do not use retired catalog names: ${retired.join(', ')}.` : '',
   ]
     .filter(Boolean)
@@ -402,9 +410,21 @@ function stripTrailingCommas(text: string): string {
   return (text ?? '').replace(/,(\s*[}\]])/g, '$1');
 }
 
-function closeUnbalancedBraces(slice: string): string {
-  const opens = (slice.match(/{/g) ?? []).length;
-  const closes = (slice.match(/}/g) ?? []).length;
+/** Count `{` / `}` only outside JSON strings so braces inside prose are not closed. */
+export function closeUnbalancedBraces(slice: string): string {
+  let opens = 0;
+  let closes = 0;
+  let i = 0;
+  while (i < slice.length) {
+    const ch = slice[i]!;
+    if (ch === '"' || isTypographicQuote(ch)) {
+      i = skipJsonString(slice, i);
+      continue;
+    }
+    if (ch === '{') opens += 1;
+    else if (ch === '}') closes += 1;
+    i += 1;
+  }
   if (opens > closes) return slice + '}'.repeat(opens - closes);
   return slice;
 }
@@ -463,28 +483,47 @@ export function recoverOpeningNarration(raw: string): string {
   return readOpeningStructuredOutput(raw)?.prose ?? '';
 }
 
+const STRUCTURED_KEY = 'prose|options|choices|journalTitle|journal_title|story|title|text|narration|scene';
+const JSON_VALUE_START = '["\u201C\u201D\u2018\u2019\\[\\{]';
+
+function looksLikeQuotedJsonKeyColon(text: string): boolean {
+  const quotedKey = new RegExp(
+    `["\u201C\u201D](?:${STRUCTURED_KEY})["\u201C\u201D]\\s*:`,
+    'i'
+  );
+  const typographicOrSingleKey = new RegExp(
+    `[\u2018\u2019'](?:${STRUCTURED_KEY})[\u2018\u2019']\\s*:`,
+    'i'
+  );
+  return quotedKey.test(text) || typographicOrSingleKey.test(text);
+}
+
+function schemaKeyThenJsonValue(text: string): boolean {
+  return new RegExp(
+    `\\b(?:${STRUCTURED_KEY})\\b\\s*["'\u201C\u201D\u2018\u2019]?\\s*:\\s*${JSON_VALUE_START}`,
+    'i'
+  ).test(text);
+}
+
 /**
  * Independent final leak gate for already-extracted (or caller-supplied) prose.
  * Written separately from the parser and must not call parser/detection helpers.
  * Failing closed on rare legitimate phrases is acceptable.
+ *
+ * Plain colons after ordinary words ("The scene:", "Your options:", "the miners':",
+ * speaker colons) do not fail. A colon only fails when it is followed by a JSON
+ * value start (`"`, `[`, `{`) or the line is a quoted/schema key/value structure.
+ * Raw angle-bracket tags also fail.
  */
 export function openingProseLeaksStructuredJson(prose: string): boolean {
   const text = prose ?? '';
   if (!text.trim()) return false;
+  if (/<\/?[A-Za-z][\w:-]*\b[^>]*>/.test(text)) return true;
   for (const line of text.split(/\n/)) {
     const trimmed = line.replace(/^\s+/, '');
     if (/^[{}\[\]]/.test(trimmed)) return true;
   }
-  if (
-    /\b(?:prose|options|choices|journalTitle|journal_title|story|title|text|narration|scene)\b\s*["'\u201C\u201D\u2018\u2019]?\s*:/i.test(
-      text
-    )
-  ) {
-    return true;
-  }
-  if (text.includes('":') || text.includes('\u201D:') || text.includes('\u2019:') || text.includes("':")) {
-    return true;
-  }
+  if (looksLikeQuotedJsonKeyColon(text) || schemaKeyThenJsonValue(text)) return true;
   for (const line of text.split(/\n/)) {
     const compact = line.trim().replace(/\s+/g, '');
     if (compact.length < 3) continue;
@@ -492,4 +531,35 @@ export function openingProseLeaksStructuredJson(prose: string): boolean {
     if (punct >= 3 && punct / compact.length >= 0.5) return true;
   }
   return false;
+}
+
+const SYSTEM_TAG_BLOCK = /<system\b[^>]*>([\s\S]*?)<\/system>/gi;
+const ANY_TAG = /<\/?[A-Za-z][\w:-]*\b[^>]*>/g;
+
+/**
+ * Convert or strip raw markup in opening narration.
+ * LitRPG `<system>` blocks become the same `[ SYSTEM ]` registrar lines later turns use
+ * (FormattedText already renders those as an in-world System panel). Other tags are
+ * stripped, inner text kept. Text with no tags is returned unchanged.
+ */
+export function rewriteOpeningMarkup(text: string, engineMode?: string): string {
+  const raw = text ?? '';
+  if (!/<\/?[A-Za-z]/.test(raw)) return raw;
+  let s = raw;
+  if (engineMode === 'litrpg') {
+    s = s.replace(SYSTEM_TAG_BLOCK, (_full, body: string) => {
+      const inner = String(body ?? '')
+        .replace(/^\s*\[\s*(SYSTEM|THE AUDITOR|THE TALE|THE STORY)\s*\]\s*/i, '')
+        .trim();
+      if (!inner) return '';
+      return `\n[ SYSTEM ]\n${inner}\n`;
+    });
+  } else {
+    s = s.replace(SYSTEM_TAG_BLOCK, (_full, body: string) => {
+      const inner = String(body ?? '').replace(/\[\s*SYSTEM\s*\]/gi, '').trim();
+      return inner ? ` ${inner} ` : ' ';
+    });
+  }
+  s = s.replace(ANY_TAG, ' ');
+  return s.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').replace(/[ \t]{2,}/g, ' ');
 }
