@@ -1,6 +1,6 @@
 /**
  * PR35 — Yalekirk / Ash Court opening: mint occupancy, no bible catalog pins,
- * rite backstop on rite turns only, no invented clash, no Check System scene pad.
+ * no forced rite completion, no invented clash, no Check System scene pad.
  */
 import { describe, expect, it } from 'vitest';
 import { summonedPact } from '@/data/campaigns/summonedPact';
@@ -107,7 +107,7 @@ describe('PR35 Yalekirk Ash Court opening', () => {
     expect(pinned).toEqual([]);
   });
 
-  it('does not force-seal the pact or grant Level 2 on the first post-page-1 question', () => {
+  it('does not force-seal the pact or grant Level 2 when the player only asks a question', () => {
     let s = ensureOpeningRite({
       ...attachAsh(),
       turn: 1,
@@ -118,8 +118,9 @@ describe('PR35 Yalekirk Ash Court opening', () => {
     expect(first.receipts.join('\n')).not.toMatch(/seals the pact|Level 2|XP Gained: 150/i);
 
     const second = applyOpeningRiteTurn(first.state, 'Look around');
-    expect(second.state.openingRite?.done).toBe(true);
-    expect(second.state.character.level).toBe(2);
+    expect(second.state.openingRite?.done).toBeFalsy();
+    expect(second.state.character.level).toBe(1);
+    expect(second.receipts).toEqual([]);
   });
 
   it('does not invent a clash for non-fight XP', () => {

@@ -2983,7 +2983,7 @@ export function useGame() {
       const offerTurn = applyOpeningOfferChoice(liveCurrent, sanitizedInput);
       liveCurrent = offerTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...offerTurn.receipts];
-      // XP-D1 OPEN — LitRPG Opening Rite accept / refuse / turn-4 backstop (engine XP fill to L2).
+      // XP-D1 OPEN — LitRPG Opening Rite accept / refuse (engine XP fill to L2). Unresolved stays open.
       {
         const riteTurn = applyOpeningRiteTurn(liveCurrent, sanitizedInput);
         liveCurrent = riteTurn.state;

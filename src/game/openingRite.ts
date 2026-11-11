@@ -1,6 +1,6 @@
 /**
  * XP-D1 OPEN — LitRPG Opening Rite engine.
- * Deterministic accept/refuse/backstop; engine-owned XP fill to Level 2.
+ * Deterministic accept/refuse; engine-owned XP fill to Level 2.
  * Never runs for tabletop / RPG / PYOA.
  */
 import { applyCharacterXpGain } from './characterXp';
@@ -193,7 +193,8 @@ function completeRite(
     state.openingEstablishment?.answers?.name?.trim()
     || state.character?.name?.trim()
     || 'Adventurer';
-  const line = fillName(opts.forced ? entry.forcedLine : entry.completionLine, name);
+  // Refuse still completes the rite (player chose), but never a System-seals-it-anyway line.
+  const line = opts.forced ? '' : fillName(entry.completionLine, name);
   const xpPaid = openingRiteXpFill(state);
   const leveled = applyCharacterXpGain(
     state.character,
@@ -214,7 +215,7 @@ function completeRite(
     `Quest complete: ${entry.title}`,
     ...(xpPaid > 0 ? [`XP Gained: ${xpPaid} (opening rite: ${entry.title})`] : []),
     ...leveled.notes,
-    line,
+    ...(line ? [line] : []),
   ];
   // Guard key — excluded from repeat ladder logic; flag is the pay gate.
   const awardKeys = [...(state.sandboxAwardKeys ?? [])];
@@ -252,10 +253,8 @@ function completeRite(
 
 /**
  * Apply one player turn against the open rite.
- * Accept → complete now. Refuse → forced complete now (same XP).
- * Neither → count the rite turn; force-complete once the player has taken two
- * non-accept actions (turnCount >= 2). Do not use the save's commit turn — page 1
- * already increments it, and a first-action question must not seal the pact.
+ * Accept → complete now. Refuse → complete now (same XP).
+ * Neither → the rite stays open as a side quest. There is no safety-timer completion.
  */
 export function applyOpeningRiteTurn(
   state: GameState,
@@ -285,20 +284,15 @@ export function applyOpeningRiteTurn(
   if (kind === 'refuse' || (kind === 'none' && offerTaken === 'refused')) {
     return completeRite(next, entry, { forced: true, turnCount });
   }
-  // OPEN9 — backstop on the second player rite turn so L2 lands ~T2, not on the first question.
-  if (turnCount >= 2) {
-    return completeRite(next, entry, { forced: true, turnCount });
-  }
   return { state: next, receipts: [] };
 }
 
 /**
- * Pin the accept chip first while the rite is open (turns 1–2).
+ * Pin the accept chip first while the rite is open.
  * Does not count against the pad cap — unshift without dropping another chip.
  */
 export function pinOpeningRiteChip(state: GameState, choices: string[]): string[] {
   if (!openingRiteIsOpen(state)) return choices;
-  if ((state.openingRite?.turn ?? 0) >= 3) return choices;
   const chip = openingRiteAcceptChip(state);
   if (!chip) return choices;
   const list = [...choices];
