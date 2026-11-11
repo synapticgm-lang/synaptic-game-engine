@@ -3,6 +3,7 @@
  * Code resolves facts first; the writer only narrates a completed event in past tense.
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
+import { filterRetiredFromAllowlist } from './openingWriterNotes';
 import { foeCanSpeak } from './rules/srdMonsters';
 import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
@@ -653,7 +654,7 @@ export function compileNounAllowlist(
       at = beat.indexOf(name, at + 1);
     }
   }
-  return out;
+  return filterRetiredFromAllowlist(out, state.openingEstablishment?.instance?.retiredNames);
 }
 /** Two cast labels name one person when one's words run whole inside the other's ("faces" / "the exhausted faces"). */
 function sameCastPerson(a: string, b: string): boolean {

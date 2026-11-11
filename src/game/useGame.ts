@@ -2527,10 +2527,26 @@ export function useGame() {
           setRestoreDraft(null);
           return;
         }
-        // Hall-talk continue after page 1 may still stitch locally.
+        // Non-PYOA must never fall through to authored page 1. If the live page
+        // still hasn't been written, write it now rather than stitching catalog prose.
+        if (openingState.engineMode !== 'pyoa' && openingState.openingEstablishment?.sceneWritten !== true) {
+          const painted = await paintLiveOpeningPage(openingState, settingsRef.current);
+          stateRef.current = painted.state;
+          setState(painted.state);
+          if (!painted.failed && settingsRef.current.ttsEnabled) {
+            const last = [...painted.state.log].reverse().find((e) => e.role === 'gm');
+            if (last) voice.speak(painted.prose, { entryId: last.id });
+          }
+          void persist(painted.state);
+          if (painted.unlocks.length) setUnlockedQuests(painted.unlocks);
+          setRestoreDraft(null);
+          return;
+        }
+        // Hall-talk continue after page 1 may still stitch locally. Authored
+        // stitchOpeningScene is PYOA-only.
         const openingRaw = '';
         let openingText =
-          openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
+          openingState.engineMode !== 'pyoa' || openingState.openingEstablishment?.sceneWritten || lockedOpeningPcName(openingState)
             ? stitchOpeningContinue(openingState, contentSanitized)
             : stitchOpeningScene(openingState);
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
@@ -5635,22 +5651,22 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           },
         };
     const pinnedState = ensureOpeningNpcPinned(withPinnedPresent, bible);
-    let newState = ensureOpeningRite(
-      seedOpeningCastLocations(
-        mergePreferredProfileIntoOpening(
-          withUpdatedHookArc(
-            ensureCampaignContract(
-              {
-                ...pinnedState,
-                quests: enrichQuests(pinnedState.quests ?? []),
-                recentBeatFingerprints: [],
-                stateTxLog: [],
-              },
-              bible
-            )
+    // Seed the rite only after attachOpeningInstance so the journal uses minted
+    // names, not a pre-attached catalog "Sign the pact" / Orel Vane quest.
+    let newState = seedOpeningCastLocations(
+      mergePreferredProfileIntoOpening(
+        withUpdatedHookArc(
+          ensureCampaignContract(
+            {
+              ...pinnedState,
+              quests: enrichQuests(pinnedState.quests ?? []),
+              recentBeatFingerprints: [],
+              stateTxLog: [],
+            },
+            bible
           )
-        ).state
-      )
+        )
+      ).state
     );
     if (!umbraBookNew) {
       const spineCtx = hookCtxFromState({
@@ -5673,8 +5689,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           },
         };
       }
-      newState = ensureOpeningRite(newState);
     }
+    newState = ensureOpeningRite(newState);
     setState(newState);
     stateRef.current = newState;
     clearActionDraft();

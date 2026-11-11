@@ -758,6 +758,13 @@ export function NewGameModal({ contentMode, onStart, onClose, settings, onSettin
                         <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                           Opening this run
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => setOpenerSeed(freshOpenerSeed())}
+                          className="text-[10px] text-crimson-300 underline-offset-2 hover:text-crimson-200 hover:underline"
+                        >
+                          Another opening
+                        </button>
                       </div>
                       {hookPreview.firstLine ? (
                         <p className="mt-1 text-[11px] italic leading-snug text-slate-400">

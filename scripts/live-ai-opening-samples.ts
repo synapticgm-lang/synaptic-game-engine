@@ -35,8 +35,8 @@ const KEY_RUN = process.env.OPENROUTER_API_KEY_SYNAPTICGM_RUN ?? '';
 const KEY = KEY_RUN || KEY_NAMED;
 
 const MODEL = OPENROUTER_DEEPSEEK_V41_FLASH;
-const OUT = '/workspace/live-ai-opening-samples-20261111.md';
-const MAX_CALLS = 10;
+const OUT = '/workspace/live-ai-opening-review-fixes-20261111.md';
+const MAX_CALLS = 6;
 const MAX_TOKENS = 1200;
 
 const settings = {
@@ -267,12 +267,10 @@ async function main() {
   const samples: Sample[] = [];
 
   const jobs: Array<{ id: string; bibleId: string; mode: EngineMode; seed: string; hook?: typeof cinder; hookLabel: string }> = [
-    { id: 'litrpg-cinderwake-seed-alpha', bibleId: 'summoned-pact', mode: 'litrpg', seed: 'live-alpha-20261111', hook: cinder, hookLabel: 'Cinderwake-like summoned-pact hook (explicit card)' },
-    { id: 'litrpg-cinderwake-seed-beta', bibleId: 'summoned-pact', mode: 'litrpg', seed: 'live-beta-20261111', hook: cinder, hookLabel: 'Cinderwake-like summoned-pact hook (same card, different seed)' },
-    { id: 'litrpg-summoned-pact-seed-pick', bibleId: 'summoned-pact', mode: 'litrpg', seed: 'live-gamma-20261111', hookLabel: 'Seed-picked summoned-pact hook' },
-    { id: 'story-rpg-salt-road', bibleId: 'salt-road-heist', mode: 'rpg', seed: 'live-salt-20261111', hookLabel: 'Story RPG — Salt Road Heist, seed-picked hook' },
-    { id: 'story-rpg-glass-harbor', bibleId: 'glass-harbor-letters', mode: 'rpg', seed: 'live-harbor-20261111', hookLabel: 'Story RPG — Glass Harbor Letters, seed-picked hook' },
-    { id: 'tabletop-cursed-keep', bibleId: 'cursed-keep', mode: 'dnd', seed: 'live-keep-20261111', hookLabel: 'Tabletop — Cursed Keep, seed-picked hook' },
+    { id: 'litrpg-cinderwake', bibleId: 'summoned-pact', mode: 'litrpg', seed: 'review-cinder-20261111', hook: cinder, hookLabel: 'Cinderwake-like summoned-pact hook (explicit card)' },
+    { id: 'story-rpg-salt-road', bibleId: 'salt-road-heist', mode: 'rpg', seed: 'review-salt-20261111', hookLabel: 'Story RPG — Salt Road Heist, seed-picked hook' },
+    { id: 'story-rpg-harbor', bibleId: 'glass-harbor-letters', mode: 'rpg', seed: 'review-harbor-20261111', hookLabel: 'Story RPG — Glass Harbor Letters (harbor hook)' },
+    { id: 'tabletop-cursed-keep', bibleId: 'cursed-keep', mode: 'dnd', seed: 'review-keep-20261111', hookLabel: 'Tabletop — Cursed Keep, seed-picked hook' },
   ];
 
   for (const job of jobs) {

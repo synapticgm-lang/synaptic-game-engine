@@ -4,7 +4,7 @@
  */
 
 import type { GameState, SceneFacts } from './types.ts';
-import { formatOpeningWriterNotes } from './openingWriterNotes.ts';
+import { filterRetiredFromAllowlist, formatOpeningWriterNotes } from './openingWriterNotes.ts';
 import { filterChromeFromPresent, realPresentPeople } from './chromeAuthority.ts';
 import { syncPresentToCount } from './crowdAuthority.ts';
 import { openingCastLabel } from './openingEstablishment.ts';
@@ -167,6 +167,19 @@ ${formatPointerCardSlotBlock(slots, est?.sceneWritten ? 'continue' : 'establish'
 
 /** Player-facing Chapter One line — not eval language. */
 export function formatOpeningCardChrome(state: GameState): string {
+  const inst = state.openingEstablishment?.instance;
+  if (inst?.placeName) {
+    const names = (inst.cast ?? []).map((c) => c.name).filter(Boolean);
+    const who =
+      inst.alone || names.length === 0
+        ? 'You are alone.'
+        : names.length === 1
+          ? `${names[0]} is here.`
+          : names.length === 2
+            ? `${names[0]} and ${names[1]} are here.`
+            : `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]} are here.`;
+    return `Chapter One — ${inst.placeName}. ${who}`.slice(0, 220);
+  }
   const slots = compilePointerCardSlots(state);
   if (!slots) return 'Chapter One';
   const who =
@@ -239,7 +252,15 @@ export function pointerCardAllowlist(state: GameState): Set<string> {
   add(state.character?.name);
   for (const p of realPresentPeople(state.sceneFacts?.present)) add(p);
   for (const p of state.openingEstablishment?.pinnedNpcNames ?? []) add(p);
-  return names;
+  const inst = state.openingEstablishment?.instance;
+  if (inst) {
+    add(inst.placeName);
+    add(inst.settlementName);
+    add(inst.factionName);
+    for (const c of inst.cast ?? []) add(c.name);
+  }
+  const kept = filterRetiredFromAllowlist([...names], inst?.retiredNames);
+  return new Set(kept.map((n) => n.toLowerCase()));
 }
 
 function considerInventedName(n: string, allow: Set<string>, found: string[]): void {

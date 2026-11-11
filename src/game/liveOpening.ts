@@ -7,6 +7,7 @@ import { openingInstanceOf, givenNameOf, escapeRe } from './openingInstance';
 import {
   formatOpeningWriterNotes,
   openingChoiceCount,
+  retiredNameNeedles,
   STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
 } from './openingWriterNotes';
@@ -123,14 +124,11 @@ export function validateLiveOpeningProse(state: GameState, prose: string): strin
     inst?.factionName,
     ...(inst?.cast ?? []).map((c) => c.name),
   ].filter(Boolean) as string[];
-  const suffix = /^(trail|road|inn|ford|gate|keep|hall|ward|circle|court|offer|brother|sister|hollow|lane|camp|waystation|station|harbor|harbour|market|square)$/i;
-  const stop = /^(they|them|their|this|that|these|those|with|from|have|been|were|stay|here|there|what|when|your|you)$/i;
   for (const r of inst?.retiredNames ?? []) {
-    if (stop.test(r)) continue;
-    const distinctive = r.split(/\s+/).filter((w) => w.length >= 4 && !suffix.test(w) && !stop.test(w));
-    if (!distinctive.length) continue;
-    if (locked.some((n) => distinctive.every((w) => n.toLowerCase().includes(w.toLowerCase())))) continue;
-    if (distinctive.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(text))) {
+    const needles = retiredNameNeedles(r);
+    if (!needles.length) continue;
+    if (locked.some((n) => needles.every((w) => n.toLowerCase().includes(w.toLowerCase())))) continue;
+    if (needles.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(text))) {
       errors.push(`retired name ${r}`);
     }
   }
@@ -200,13 +198,29 @@ export function shapeOpeningPads(state: GameState, prose: string): string[] {
   return labels.slice(0, n);
 }
 
+function clipJournalTitle(raw: string, max = 72): string {
+  let t = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
+  t = t.replace(/^(?:the offer on the table:\s*)/i, '');
+  if (!t) return '';
+  if (/^hear \S+ out$/i.test(t)) return '';
+  if (t.length > max) t = t.slice(0, max - 1).replace(/\s+\S*$/, '').replace(/[.,;:]+$/, '') + '…';
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
 export function deriveOpeningJournal(state: GameState, prose?: string): DerivedOpeningJournal {
   const inst = openingInstanceOf(state);
   const lead = inst?.cast[0];
   const place = inst?.placeName || state.currentLocation || 'this place';
   const offer = inst?.offerSummary || inst?.offerChips.find((c) => c.kind === 'accept')?.note;
-  const title = lead ? `Hear ${givenNameOf(lead.name)} out` : `Get your bearings in ${place}`;
+  const accept = inst?.offerChips.find((c) => c.kind === 'accept');
   const fromScene = (prose ?? '').replace(/\s+/g, ' ').trim();
+  const itemFromNote = accept?.note?.replace(/^.*?\boffers\s+/i, '').trim();
+  const title =
+    clipJournalTitle(itemFromNote && lead ? `${givenNameOf(lead.name)}'s ${itemFromNote}` : itemFromNote || '')
+    || clipJournalTitle(offer ?? '')
+    || clipJournalTitle(accept?.label ?? '')
+    || clipJournalTitle((fromScene.match(/([^.!?]{0,20}\b(?:waterskin|scarf|brand-iron|brand iron|offer|pact|hunt|blanket|bread|cloak|work|contract)[^.!?]{0,40})/i)?.[1]) ?? '')
+    || (lead ? `${givenNameOf(lead.name)} at ${place}` : `Arrival at ${place}`);
   const description = [
     lead ? `${lead.name} is here — ${lead.role}.` : `You are on your own at ${place}.`,
     offer ? `The offer on the table: ${offer}` : '',

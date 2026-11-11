@@ -91,19 +91,31 @@ export function ensureOpeningRite(state: GameState): GameState {
   const entry = riteEntryForState(state);
   if (!entry) return state;
   const id = openingRiteQuestId(entry.scenarioId);
-  let quests = state.quests ?? [];
-  if (!quests.some((q) => q.id === id)) {
-    quests = [makeRiteQuest(entry), ...quests];
-  }
-  if (state.openingRite?.id === id && !state.openingRite.done) {
-    return { ...state, quests };
+  const nextQuest = makeRiteQuest(entry);
+  let quests = [...(state.quests ?? [])];
+  const idx = quests.findIndex((q) => q.id === id);
+  if (idx >= 0) {
+    const prev = quests[idx]!;
+    if (prev.status !== 'completed') {
+      quests[idx] = {
+        ...nextQuest,
+        status: prev.status,
+        revealed: prev.revealed !== false,
+        objectives: nextQuest.objectives.map((obj, i) => ({
+          ...obj,
+          completed: prev.objectives?.[i]?.completed ?? obj.completed,
+        })),
+      };
+    }
+  } else {
+    quests = [nextQuest, ...quests];
   }
   return {
     ...state,
     quests,
     openingRite: state.openingRite?.done
       ? state.openingRite
-      : { id, done: false, turn: 0, title: entry.title },
+      : { id, done: false, turn: state.openingRite?.turn ?? 0, title: entry.title },
   };
 }
 

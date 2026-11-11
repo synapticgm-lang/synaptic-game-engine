@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import {
+  applyReplacements,
   attachOpeningInstance,
+  extractTitleNames,
+  isLikelyProperName,
   mintOpeningInstance,
   type OpeningHookSnapshot,
 } from './openingInstance';
+import { formatOpeningCardChrome } from './openingPointerCard';
+import { validateLiveOpeningProse } from './liveOpening';
 
 const cinder: OpeningHookSnapshot = {
   location: 'the ash-heat of Cinderwake Trail',
@@ -59,5 +64,74 @@ describe('openingInstance', () => {
     expect(state.openingEstablishment?.pickedHookFallback).toBeUndefined();
     expect(state.openingEstablishment?.page1).toBeUndefined();
     expect(state.openingEstablishment?.authoredPage1Retired).toMatch(/Cinderwake/);
+  });
+
+  it('does not treat title-case offer verbs or common nouns as catalog names', () => {
+    expect(isLikelyProperName('Walk')).toBe(false);
+    expect(isLikelyProperName('Stay')).toBe(false);
+    expect(isLikelyProperName('Salt')).toBe(false);
+    expect(isLikelyProperName('Glass')).toBe(false);
+    expect(isLikelyProperName('Earth')).toBe(false);
+    expect(isLikelyProperName('They')).toBe(false);
+    expect(isLikelyProperName('Oren')).toBe(true);
+    expect(isLikelyProperName('Cinderwake Trail')).toBe(true);
+    expect(isLikelyProperName('Salt Road waystation')).toBe(true);
+    expect(extractTitleNames('Walk with Oren for water and a scarf')).toEqual(
+      expect.arrayContaining(['Oren'])
+    );
+    expect(extractTitleNames('Walk with Oren for water and a scarf').some((n) => /^walk$/i.test(n))).toBe(false);
+    expect(extractTitleNames('Stay and watch the road').some((n) => /^stay$/i.test(n))).toBe(false);
+    expect(extractTitleNames('They wait. Earth hangs in the heat.').some((n) => /^(they|earth)$/i.test(n))).toBe(false);
+  });
+
+  it('scrubs catalog places case-insensitively without remapping Walk or bare salt', () => {
+    const hook: OpeningHookSnapshot = {
+      location: 'Salt Road waystation',
+      whoHere: 'no one — you are alone',
+      openingOffer: 'Walk with Oren for water and a scarf, or stay and watch the road.',
+    };
+    const state = attachOpeningInstance(
+      { ...seededState('salt-verb-seed'), campaignBibleId: 'salt-road-heist', engineMode: 'rpg' },
+      hook,
+      hook.page1
+    );
+    const inst = state.openingEstablishment!.instance!;
+    expect(inst.retiredNames.some((n) => /^walk$/i.test(n))).toBe(false);
+    expect(inst.retiredNames.some((n) => /^salt$/i.test(n))).toBe(false);
+    expect(inst.retiredNames.join(' ')).toMatch(/Salt Road/i);
+    expect(inst.offerSummary ?? '').toMatch(/\bWalk with\b/i);
+    const scrubbed = applyReplacements(
+      'Salt Road waystation sits under a chalk eve. The salt wind pulls at the canvas.',
+      inst.nameMap ?? []
+    );
+    expect(scrubbed).not.toMatch(/Salt Road/i);
+    expect(scrubbed).toMatch(/salt wind/i);
+    expect(scrubbed).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+
+    const chrome = formatOpeningCardChrome(state);
+    expect(chrome).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    expect(chrome).not.toMatch(/Salt Road/i);
+    if (inst.cast[0]) expect(chrome).toMatch(new RegExp(inst.cast[0].name.split(/\s+/)[0]!, 'i'));
+
+    const okProse = [
+      `${inst.placeName} sits under a chalk eve, named and ordinary.`,
+      'The salt wind pulls at the canvas and at the dry grass along the berm.',
+      'Walk with the first stranger for water, or stay and watch the road.',
+      'You keep your own kit if you refuse.',
+    ].join(' ');
+    expect(validateLiveOpeningProse({ ...state, openingEstablishment: { ...state.openingEstablishment!, instance: inst } }, okProse)).toEqual([]);
+
+    const leak = `${okProse} You can still see Salt Road waystation from here.`;
+    expect(validateLiveOpeningProse({ ...state, openingEstablishment: { ...state.openingEstablishment!, instance: inst } }, leak).some((e) => /retired name/i.test(e))).toBe(true);
+  });
+
+  it('mints a wide variety of place names so two seeds rarely collide', () => {
+    const names = new Set<string>();
+    for (let i = 0; i < 40; i++) {
+      const inst = mintOpeningInstance(cinder, `variety-${i}|summoned-pact|opening-instance`);
+      names.add(inst.placeName);
+      expect(inst.placeName).not.toMatch(/Cinderwake/i);
+    }
+    expect(names.size).toBeGreaterThanOrEqual(36);
   });
 });

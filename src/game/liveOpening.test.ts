@@ -70,6 +70,7 @@ describe('liveOpening', () => {
     const prose = mockLiveOpeningProse(state);
     const journal = deriveOpeningJournal(state, prose);
     expect(journal.title).not.toMatch(/Pellane/i);
+    expect(journal.title).not.toMatch(/^Hear \S+ out$/i);
     expect(journal.description).not.toMatch(/Pellane/i);
     expect(journal.title + journal.description).toMatch(
       new RegExp(state.openingEstablishment!.instance!.cast[0]!.name.split(/\s+/)[0]!, 'i')
@@ -116,7 +117,39 @@ describe('liveOpening', () => {
     expect(validateLiveOpeningProse(state, prose)).toEqual([]);
   });
 
+  it('does not fail validation on a common word from a multi-word retired place', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const retired = inst.retiredNames.join(' ');
+    expect(retired).toMatch(/Cinderwake/i);
+    const prose = [
+      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
+      'They walk the trail. The salt wind and the heat are ordinary weather, not a catalog place.',
+      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
+    ].join(' ');
+    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
+    const leak = `${prose} Cinderwake Trail still burns behind you.`;
+    expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
+  });
+
+  it('does not treat the honorific "brother" as a retired-name leak', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    expect(inst.retiredNames.join(' ')).toMatch(/Oren/i);
+    const prose = [
+      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
+      'His brother is not in this scene, and no catalog chanter is named.',
+      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
+    ].join(' ');
+    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
+    const leak = `${prose} Brother Oren is still standing on the old trail.`;
+    expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
+  });
+
   it('two seeds produce different mock openings', () => {
+
     const a = game('litrpg', 'seed-a');
     const b = game('litrpg', 'seed-b');
     const pa = mockLiveOpeningProse(a);

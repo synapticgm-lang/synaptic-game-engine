@@ -10,8 +10,9 @@ import type {
   OpeningInstance,
   OpeningOfferChip,
 } from './types';
-import { keyedRng, type Rng } from './seededRng';
+import { hashSeed, keyedRng, type Rng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
+import { isCommonOpeningLexeme } from './openingWriterNotes';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot {
@@ -36,7 +37,7 @@ const PLACE_SUFFIX = new Set([
   'trail', 'road', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'quay', 'mill', 'well', 'bridge',
   'pass', 'crossing', 'camp', 'market', 'square', 'cathedral', 'temple', 'shrine', 'circle', 'court',
   'hold', 'manor', 'estate', 'tower', 'docks', 'harbor', 'harbour', 'woods', 'forest', 'marsh', 'moor',
-  'heath', 'hollow', 'wake', 'reach', 'vale', 'spire', 'port', 'station', 'block', 'row', 'lane',
+  'heath', 'hollow', 'wake', 'reach', 'vale', 'spire', 'port', 'station', 'waystation', 'block', 'row', 'lane',
   'street', 'avenue', 'plaza', 'lab', 'facility', 'ship', 'deck', 'yard', 'green', 'close', 'rise',
   'fell', 'ridge', 'cliff', 'point', 'head', 'bay', 'sound', 'creek', 'brook', 'river', 'cross',
   'chapel', 'abbey', 'priory', 'cloister', 'undercroft', 'cellar', 'loft', 'pan', 'works', 'plant',
@@ -64,6 +65,16 @@ const PLACE_STEMS = [
   'Wyle', 'Thatch', 'Merrow', 'Coyne', 'Idra', 'Lisle', 'Cutha', 'Hask', 'Barrow', 'Crane',
   'Pike', 'Ness', 'Oatley', 'Redd', 'Calder', 'Morrow', 'Halden', 'Birch', 'Rowan', 'Ashen',
   'Keld', 'Thorpe', 'Wain', 'Mabb', 'Ortle', 'Pell', 'Stane', 'Voss', 'Yarrow', 'Beck',
+  'Alden', 'Bramley', 'Caer', 'Durn', 'Esk', 'Flint', 'Goss', 'Harth', 'Ilme', 'Jorren',
+  'Kemp', 'Larn', 'Moss', 'Nairn', 'Ockley', 'Pratt', 'Quen', 'Rill', 'Selk', 'Torr',
+  'Ulm', 'Verra', 'Wex', 'Yale', 'Zost', 'Brindle', 'Callow', 'Dapple', 'Elwick', 'Farrow',
+  'Gild', 'Hewes', 'Ingo', 'Jarrow', 'Loden', 'Mux', 'Noll', 'Orwick', 'Pendreth', 'Reston',
+  'Shand', 'Tulley', 'Upton', 'Varley', 'Welby', 'Yarn', 'Amberly', 'Beltane', 'Corven', 'Drewe',
+];
+
+const PLACE_MIDS = [
+  'fen', 'mere', 'wick', 'stead', 'hurst', 'leigh', 'croft', 'moor', 'ridge',
+  'haven', 'field', 'bury', 'ham', 'shaw', 'holt', 'vale', 'kirk', 'dell',
 ];
 
 const MODERN_GIVEN = [
@@ -130,6 +141,7 @@ export function peopleFromWhoHere(whoHere: string | undefined): string[] {
     );
     const n = (m?.[0] ?? '').trim();
     if (!n || n.length < 3) continue;
+    if (!isLikelyProperName(n) || isPlaceName(n, 'who')) continue;
     const first = n.split(/\s+/)[0] ?? '';
     if (TITLE_STOP.has(first.toLowerCase())) continue;
     // Honorific alone is not a person.
@@ -142,6 +154,39 @@ export function peopleFromWhoHere(whoHere: string | undefined): string[] {
   return out;
 }
 
+export function isCatalogStem(word: string): boolean {
+  const k = (word ?? '').trim().toLowerCase();
+  return !!k && CATALOG_NAME_BLOCKLIST.some((b) => b.toLowerCase() === k);
+}
+
+/**
+ * A sound proper-noun test: Title-Case alone is not enough.
+ * Rejects sentence-initial verbs and common nouns (Walk, Stay, Salt, Glass, Earth, They).
+ * Accepts multi-word places ("Salt Road waystation"), honorific + name, and distinctive stems.
+ */
+export function isLikelyProperName(name: string): boolean {
+  const t = (name ?? '').trim().replace(/[.,;:]+$/, '');
+  if (t.length < 3) return false;
+  const parts = t.split(/\s+/).filter(Boolean);
+  if (!parts.length) return false;
+  const first = parts[0]!;
+  const last = parts[parts.length - 1]!;
+  if (TITLE_STOP.has(first.toLowerCase())) return false;
+  if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder|High|Chanter)$/i.test(t)) {
+    return false;
+  }
+  if (parts.length >= 2 && PLACE_SUFFIX.has(last.toLowerCase())) {
+    return true;
+  }
+  if (parts.length >= 2) {
+    const distinctive = parts.some((p) => !isCommonOpeningLexeme(p) || isCatalogStem(p));
+    return distinctive && parts.every((p) => !TITLE_STOP.has(p.toLowerCase()));
+  }
+  if (PLACE_SUFFIX.has(first.toLowerCase()) || FACTION_WORDS.has(first.toLowerCase())) return false;
+  if (isCommonOpeningLexeme(first) && !isCatalogStem(first)) return false;
+  return /^(?:[A-Z][a-z]+(?:-[A-Z][a-z]+)?)$/.test(first);
+}
+
 export function extractTitleNames(text: string | undefined): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
@@ -149,12 +194,15 @@ export function extractTitleNames(text: string | undefined): string[] {
   const re = new RegExp(TITLE_NAME.source, 'g');
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
-    const n = (m[1] ?? '').trim();
+    let n = (m[1] ?? '').trim();
     if (!n) continue;
-    const first = n.split(/\s+/)[0] ?? '';
-    if (TITLE_STOP.has(first.toLowerCase())) continue;
+    const after = text.slice(m.index + m[0].length);
+    const suf = after.match(/^\s+([a-z][a-z-]+)/);
+    if (suf && PLACE_SUFFIX.has(suf[1]!.toLowerCase())) {
+      n = `${n} ${suf[1]}`;
+    }
+    if (!isLikelyProperName(n)) continue;
     if (PLACE_SUFFIX.has(n.toLowerCase())) continue;
-    if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder)$/i.test(n)) continue;
     if (n.length < 3) continue;
     const key = n.toLowerCase();
     if (seen.has(key)) continue;
@@ -278,10 +326,30 @@ function mintPerson(rng: Rng, taken: Set<string>, genre: 'fantasy' | 'modern' | 
   return pickModernOrScifiName(rng, taken, 'modern');
 }
 
-function mintPlaceName(rng: Rng, kind: string, taken: Set<string>): string {
-  const stem = pickUnused(rng, PLACE_STEMS, taken);
+function joinStemMid(stem: string, mid: string): string {
+  if (stem.toLowerCase().endsWith(mid[0]!)) return stem + mid.slice(1);
+  return stem + mid;
+}
+
+function mintPlaceName(rng: Rng, kind: string, taken: Set<string>, salt = ''): string {
   const suffix = inferPlaceSuffix(kind);
-  if (suffix.toLowerCase() === 'wake') return `${stem}wake`;
+  const space = PLACE_STEMS.length * PLACE_MIDS.length;
+  const h = hashSeed(`${salt}|${kind}|place`);
+  const start = h % space;
+  const step = (h % (space - 1)) + 1;
+  for (let i = 0; i < space; i++) {
+    const slot = (start + i * step) % space;
+    const stem = PLACE_STEMS[Math.floor(slot / PLACE_MIDS.length)]!;
+    const mid = PLACE_MIDS[slot % PLACE_MIDS.length]!;
+    const join = joinStemMid(stem, mid);
+    const name = suffix.toLowerCase() === 'wake' ? join : `${join} ${suffix}`;
+    if (taken.has(join.toLowerCase()) || taken.has(name.toLowerCase())) continue;
+    taken.add(join.toLowerCase());
+    taken.add(name.toLowerCase());
+    return name;
+  }
+  const stem = pickUnused(rng, PLACE_STEMS, taken);
+  if (suffix.toLowerCase() === 'wake') return `${stem}croft`;
   return `${stem} ${suffix}`;
 }
 
@@ -379,7 +447,9 @@ export function applyReplacements(text: string, map: Array<[string, string]>): s
   const sorted = [...map].sort((a, b) => b[0].length - a[0].length);
   for (const [from, to] of sorted) {
     if (!from) continue;
-    out = out.replace(new RegExp(`\\b${escapeRe(from)}\\b`, 'g'), to);
+    // Never remap a lone common lexeme (Walk, Salt, They) even if it slipped into the map.
+    if (from.split(/\s+/).length === 1 && isCommonOpeningLexeme(from) && !isCatalogStem(from)) continue;
+    out = out.replace(new RegExp(`\\b${escapeRe(from)}\\b`, 'gi'), to);
   }
   return out;
 }
@@ -407,11 +477,12 @@ export function mintOpeningInstance(
   const retired: string[] = [];
   const isGenericToken = (n: string) => {
     const k = n.trim().toLowerCase();
-    return !k || PLACE_SUFFIX.has(k) || FACTION_WORDS.has(k) || TITLE_STOP.has(k) || /^(they|them|their|this|that|these|those|stay|here|there)$/i.test(k);
+    return !k || PLACE_SUFFIX.has(k) || FACTION_WORDS.has(k) || TITLE_STOP.has(k) || isCommonOpeningLexeme(k);
   };
   const retire = (n: string) => {
     const t = n.trim();
     if (!t || isGenericToken(t)) return;
+    if (t.split(/\s+/).length === 1 && isCommonOpeningLexeme(t) && !isCatalogStem(t)) return;
     if (!retired.some((x) => x.toLowerCase() === t.toLowerCase())) retired.push(t);
     for (const w of t.split(/\s+/)) {
       if (w.length >= 3 && !isGenericToken(w)) taken.add(w.toLowerCase());
@@ -441,11 +512,16 @@ export function mintOpeningInstance(
   const placeKind = inferPlaceKind(hook);
   const catalogPlace = places.sort((a, b) => b.length - a.length)[0];
   if (catalogPlace) retire(catalogPlace);
-  const placeName = mintPlaceName(rng, placeKind, taken);
+  const placeName = mintPlaceName(rng, placeKind, taken, seedKey);
   if (catalogPlace) {
     replacements.push([catalogPlace, placeName]);
     for (const w of catalogPlace.split(/\s+/)) {
-      if (w.length >= 5 && !PLACE_SUFFIX.has(w.toLowerCase()) && w.toLowerCase() !== lastWord(placeName)) {
+      if (
+        w.length >= 5
+        && !PLACE_SUFFIX.has(w.toLowerCase())
+        && !isCommonOpeningLexeme(w)
+        && w.toLowerCase() !== lastWord(placeName)
+      ) {
         retire(w);
         replacements.push([w, placeName.split(/\s+/)[0] ?? placeName]);
       }
@@ -469,7 +545,7 @@ export function mintOpeningInstance(
     factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
     replacements.push([factions[0].from, factionName]);
     for (const w of factions[0].from.split(/\s+/)) {
-      if (w.length >= 4 && !FACTION_WORDS.has(w.toLowerCase())) {
+      if (w.length >= 4 && !FACTION_WORDS.has(w.toLowerCase()) && !isCommonOpeningLexeme(w)) {
         retire(w);
         replacements.push([w, factionName]);
       }
@@ -499,7 +575,7 @@ export function mintOpeningInstance(
       replacements.push([bare, minted]);
     }
     for (const w of bare.split(/\s+/)) {
-      if (w.length >= 4) {
+      if (w.length >= 4 && !isCommonOpeningLexeme(w)) {
         retire(w);
         // First/last only — avoid replacing "Trail" etc. Already filtered.
         replacements.push([w, w === bare.split(/\s+/)[0] ? givenNameOf(minted) : minted.split(/\s+/).slice(-1)[0] ?? minted]);
