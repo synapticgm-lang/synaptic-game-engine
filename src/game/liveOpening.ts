@@ -104,6 +104,35 @@ export function mentionsPlaceName(text: string, placeName: string): boolean {
   return distinctivePlaceTokens(place).some((p) => new RegExp(`\\b${escapeRe(p)}\\b`, 'i').test(text));
 }
 
+/** Generic suffix of a minted place (Well, Trail, Gate) — never a coined stem. */
+export function placeGenericSuffix(placeName: string): string | undefined {
+  const parts = (placeName ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return undefined;
+  const last = parts[parts.length - 1]!.replace(/['’]s$/i, '');
+  if (last.length < 3 || !isCommonOpeningLexeme(last)) return undefined;
+  return last.toLowerCase();
+}
+
+/** True when the prose uses the definite generic for this place ("the well", "the well's lip"). */
+export function proseUsesDefiniteGeneric(prose: string, placeName: string): boolean {
+  const generic = placeGenericSuffix(placeName);
+  if (!generic) return false;
+  return new RegExp(`\\bthe\\s+${escapeRe(generic)}(?:['’]s)?\\b`, 'i').test(prose);
+}
+
+/**
+ * Locked place is mentioned when the prose uses the full name or a distinctive token,
+ * or when the journal title already names it and the prose uses the definite generic
+ * ("the well"). A bare "trail" / "road" with no coined stem still fails.
+ */
+export function mentionsRequiredPlace(prose: string, placeName: string, journalTitle?: string): boolean {
+  const place = (placeName ?? '').trim();
+  if (!place) return false;
+  if (mentionsPlaceName(prose, place)) return true;
+  const title = (journalTitle ?? '').trim();
+  return !!title && mentionsPlaceName(title, place) && proseUsesDefiniteGeneric(prose, place);
+}
+
 function lockedPlaceNames(state: GameState): string[] {
   const inst = openingInstanceOf(state);
   return [inst?.placeName, inst?.settlementName, inst?.nearbyLandmark].filter(Boolean) as string[];
@@ -148,7 +177,7 @@ function similarToAuthored(text: string, authored: string | undefined): boolean 
   return hit / wordsA.length > 0.85;
 }
 
-export function validateLiveOpeningProse(state: GameState, prose: string): string[] {
+export function validateLiveOpeningProse(state: GameState, prose: string, journalTitle?: string): string[] {
   const errors: string[] = [];
   const text = (prose ?? '').replace(/\s+/g, ' ').trim();
   if (text.length < 180) errors.push('too short');
@@ -160,7 +189,7 @@ export function validateLiveOpeningProse(state: GameState, prose: string): strin
     errors.push('pointer dump');
   }
   const inst = openingInstanceOf(state);
-  if (inst?.placeName && !mentionsPlaceName(text, inst.placeName)) {
+  if (inst?.placeName && !mentionsRequiredPlace(text, inst.placeName, journalTitle)) {
     errors.push(`missing place ${inst.placeName}`);
   }
   if (inst && !inst.alone && inst.cast.length) {
@@ -214,9 +243,25 @@ export function mockLiveOpeningProse(state: GameState): string {
     .join(' ');
 }
 
-function chipFollowsProse(label: string, prose: string): boolean {
-  const words = label.split(/\s+/).filter((w) => w.length >= 4 && !/^(with|from|your|their|this|that|keep|take|walk|hear|offer|own)$/i.test(w));
-  if (!words.length) return true;
+const PAD_ITEM_NOUNS = /^(?:kit|crates?|loft|scarf|waterskin|skin|brand-?iron|iron|hunt|cloak|coat|bread|blanket|water|pact|contract|work|job|dock)$/i;
+const PAD_STOP_WORDS = /^(?:with|from|your|their|this|that|keep|take|walk|hear|offer|own|the|and|for|you|a|an)$/i;
+
+/** Item nouns named by an accept chip (kit, crate, scarf, …) that the page-1 prose must mention. */
+function acceptChipItemNouns(label: string): string[] {
+  return (label ?? '')
+    .split(/\s+/)
+    .map((w) => w.replace(/['’]s$/i, '').replace(/[^A-Za-z-]/g, ''))
+    .filter((w) => PAD_ITEM_NOUNS.test(w));
+}
+
+function chipFollowsProse(label: string, prose: string, kind?: 'accept' | 'refuse' | 'alt'): boolean {
+  if (kind === 'refuse') return true;
+  const missingItem = acceptChipItemNouns(label).some(
+    (w) => !new RegExp(`\\b${escapeRe(w)}s?\\b`, 'i').test(prose)
+  );
+  if (missingItem) return false;
+  const words = label.split(/\s+/).filter((w) => w.length >= 4 && !PAD_STOP_WORDS.test(w));
+  if (!words.length) return acceptChipItemNouns(label).length === 0 || !missingItem;
   return words.some((w) => new RegExp(`\\b${escapeRe(w.replace(/'s$/, ''))}\\b`, 'i').test(prose));
 }
 
@@ -372,7 +417,12 @@ export function validateOpeningCastVoice(state: GameState, prose: string): strin
   return [...new Set(errors)];
 }
 
-export function optionPronounErrors(label: string, prose: string, names: string[]): string[] {
+export function optionPronounErrors(
+  label: string,
+  prose: string,
+  names: string[],
+  state?: GameState
+): string[] {
   const errors: string[] = [];
   const he = /\b(?:he's|he is|he was|what he's)\b/i.test(label) || /\bwhat he\b/i.test(label);
   const she = /\b(?:she's|she is|she was|what she's)\b/i.test(label) || /\bwhat she\b/i.test(label);
@@ -383,7 +433,12 @@ export function optionPronounErrors(label: string, prose: string, names: string[
     errors.push(`option uses a pronoun without a named person: ${label}`);
     return errors;
   }
-  const g = prosePronounForName(prose, target);
+  let g = prosePronounForName(prose, target);
+  if (g === 'unknown' && state) {
+    const member = openingInstanceOf(state)?.cast.find((c) => mentionsName(target, c.name) || mentionsName(c.name, target));
+    if (member?.gender === 'male') g = 'he';
+    if (member?.gender === 'female') g = 'she';
+  }
   if (he && g !== 'he') errors.push(`option pronoun does not match the prose for ${givenNameOf(target)}: ${label}`);
   if (she && g !== 'she') errors.push(`option pronoun does not match the prose for ${givenNameOf(target)}: ${label}`);
   return errors;
@@ -407,10 +462,14 @@ function properNamesInOption(label: string, state: GameState): string[] {
   for (const n of known) {
     if (mentionsOpeningName(state, label, n) && !found.some((f) => f.toLowerCase() === n.toLowerCase())) found.push(n);
   }
+  const leadingVerb = /^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak)\s+/i;
   const spans = label.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g) ?? [];
-  for (const span of spans) {
+  for (const raw of spans) {
+    const span = raw.replace(leadingVerb, '').trim();
+    if (!span) continue;
     if (isCommonOpeningLexeme(span) || INSPECT_VERBS.test(span)) continue;
-    if (/^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse)$/i.test(span)) continue;
+    if (/^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak)$/i.test(span)) continue;
+    if (span.split(/\s+/).every((w) => isCommonOpeningLexeme(w) || INSPECT_VERBS.test(w))) continue;
     if (found.some((f) => f.toLowerCase() === span.toLowerCase() || f.toLowerCase().includes(span.toLowerCase()))) continue;
     found.push(span);
   }
@@ -441,7 +500,7 @@ export function validateOpeningOptions(state: GameState, prose: string, options:
     for (const name of properNamesInOption(label, state)) {
       if (!mentionsOpeningName(state, prose, name)) errors.push(`option names ${name}, which is not in the prose`);
     }
-    errors.push(...optionPronounErrors(label, prose, names));
+    errors.push(...optionPronounErrors(label, prose, names, state));
     const member = inst?.cast.find((c) => mentionsName(label, c.name));
     if (member?.gender) {
       const heOpt = /\b(?:he is|he was|he's|what he's)\b/i.test(label) || /\bwhat he\b/i.test(label);
@@ -468,7 +527,7 @@ export function validateOpeningJournalTitle(state: GameState, title: string): st
   if (/\b(?:offer|contract)\b/i.test(t) && words.length >= 6) {
     errors.push('journal title is a clipped mid-sentence');
   }
-  if (isCommaSeparatedProperNounList(t)) {
+  if (isCommaSeparatedProperNounList(t, state)) {
     errors.push('journal title is a list of names and places');
   }
   const inst = openingInstanceOf(state);
@@ -481,18 +540,33 @@ export function validateOpeningJournalTitle(state: GameState, title: string): st
   return errors;
 }
 
-function isCommaSeparatedProperNounList(title: string): boolean {
-  const parts = title.split(',').map((s) => s.trim()).filter(Boolean);
+const TITLE_FUNCTION_WORDS = /^(?:the|a|an|and|or|of|to|for|from|with|on|at|in|into|by|as|after|before|their|them|his|her|its|dark|light|over|under|upon|what|who|when|how|why)$/i;
+
+function isLockedTitlePart(state: GameState, part: string): boolean {
+  const inst = openingInstanceOf(state);
+  if (!inst) return false;
+  if (lockedPlaceFor(state, part) || (inst.placeName && mentionsPlaceName(part, inst.placeName))) return true;
+  if (inst.settlementName && mentionsPlaceName(part, inst.settlementName)) return true;
+  if (inst.nearbyLandmark && mentionsPlaceName(part, inst.nearbyLandmark)) return true;
+  if (inst.factionName && mentionsName(part, inst.factionName)) return true;
+  return (inst.cast ?? []).some((c) => mentionsName(part, c.name));
+}
+
+function isBareProperListItem(part: string): boolean {
+  const words = part.split(/\s+/).filter(Boolean);
+  if (words.length < 1 || words.length > 2) return false;
+  if (words.some((w) => TITLE_FUNCTION_WORDS.test(w))) return false;
+  return words.every((w) => /^[A-Z][A-Za-z'’-]*$/.test(w));
+}
+
+/** Reject only real name/place lists, not scene titles such as "The Gate, After Dark". */
+function isCommaSeparatedProperNounList(title: string, state: GameState): boolean {
+  const commaParts = title.split(',').map((s) => s.trim()).filter(Boolean);
+  if (commaParts.length < 2) return false;
+  const parts = commaParts.flatMap((p) => p.split(/\s+and\s+/i).map((s) => s.trim()).filter(Boolean));
   if (parts.length < 2) return false;
-  const isProper = (part: string) => {
-    const words = part.split(/\s+/).filter(Boolean);
-    if (!words.length) return false;
-    return (
-      words.every((w) => /^(?:the|of|and|de|la)$/i.test(w) || /^[A-Z][A-Za-z'’-]*$/.test(w))
-      && words.some((w) => /^[A-Z]/.test(w) && !/^(?:The|Of|And|De|La)$/.test(w))
-    );
-  };
-  return parts.every(isProper);
+  if (parts.every((p) => isLockedTitlePart(state, p))) return true;
+  return parts.every((p) => isBareProperListItem(p) || isLockedTitlePart(state, p)) && parts.some((p) => isBareProperListItem(p) || isLockedTitlePart(state, p));
 }
 
 
@@ -509,13 +583,22 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
     if ((inst?.retiredNames ?? []).some((r) => retiredNameNeedles(r).some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(t)))) return;
     const names = properNamesInOption(t, state);
     if (names.some((nm) => !mentionsOpeningName(state, prose, nm))) return;
-    if (optionPronounErrors(t, prose, knownOpeningNames(state)).length) return;
+    if (optionPronounErrors(t, prose, knownOpeningNames(state), state).length) return;
     labels.push(t);
   };
   const chips = inst?.offerChips ?? [];
-  const preferred = chips.filter((c) => chipFollowsProse(c.label, prose));
-  const rest = chips.filter((c) => !preferred.includes(c));
-  for (const c of [...preferred, ...rest]) {
+  const refuse = chips.filter((c) => c.kind === 'refuse');
+  const acceptFollow = chips.filter((c) => c.kind !== 'refuse' && chipFollowsProse(c.label, prose, c.kind));
+  for (const c of refuse) {
+    if (labels.length >= n) break;
+    push(c.label);
+  }
+  // Prefer pads derived from the committed prose over accept chips that name an unseen item.
+  for (const scenePad of padsFromOpeningProse(prose)) {
+    if (labels.length >= n) break;
+    push(scenePad);
+  }
+  for (const c of acceptFollow) {
     if (labels.length >= n) break;
     push(c.label);
   }
@@ -526,10 +609,6 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
   }
   if (inst?.placeName && labels.length < n && mentionsName(prose, inst.placeName)) {
     push(`Look around ${inst.placeName}`);
-  }
-  for (const scenePad of padsFromOpeningProse(prose)) {
-    if (labels.length >= n) break;
-    push(scenePad);
   }
   const fillers = ['Watch the road', 'Keep your own kit', 'Take a slow breath', 'Wait and listen', 'Stand your ground'];
   for (const f of fillers) {
@@ -821,7 +900,7 @@ export async function writeLiveOpening(
   const proseOk = (d: OpeningDraft) =>
     !!d.prose.trim()
     && !openingProseLeaksStructuredJson(d.prose)
-    && !validateLiveOpeningProse(state, d.prose).length;
+    && !validateLiveOpeningProse(state, d.prose, d.journalTitle).length;
   const parseOrGateErrors = (d: OpeningDraft): string[] => {
     const errors: string[] = [];
     if (!d.prose.trim()) errors.push('Reply must be a JSON object with a string prose field.');
@@ -867,7 +946,7 @@ export async function writeLiveOpening(
     try {
       draft = await runWriter(writer, state, settings, [
         ...parseOrGateErrors(draft),
-        ...validateLiveOpeningProse(state, draft.prose),
+        ...validateLiveOpeningProse(state, draft.prose, draft.journalTitle),
         ...optionErrors(draft),
         ...titleErrors(draft),
       ]);
