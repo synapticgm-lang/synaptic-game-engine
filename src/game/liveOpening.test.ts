@@ -4,6 +4,7 @@ import { attachOpeningInstance, mintOpeningInstance, type OpeningHookSnapshot } 
 import {
   applySuccessfulLiveOpening,
   deriveOpeningJournal,
+  askPadFor,
   mockLiveOpeningProse,
   shapeOpeningPads,
   validateLiveOpeningProse,
@@ -71,7 +72,10 @@ describe('liveOpening', () => {
     const journal = deriveOpeningJournal(state, prose);
     expect(journal.title).not.toMatch(/Pellane/i);
     expect(journal.title).not.toMatch(/^Hear \S+ out$/i);
-    expect(journal.description).not.toMatch(/Pellane/i);
+    expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
+    expect(journal.title).not.toMatch(/\w…|…\w/);
+    // Pellane is a summoned-pact hub still on the map; pressing may mention the scouts.
+    expect(journal.description).not.toMatch(/Orel Vane|High Chanter/i);
     expect(journal.title + journal.description).toMatch(
       new RegExp(state.openingEstablishment!.instance!.cast[0]!.name.split(/\s+/)[0]!, 'i')
     );
@@ -121,7 +125,8 @@ describe('liveOpening', () => {
     const state = game();
     const inst = state.openingEstablishment!.instance!;
     const retired = inst.retiredNames.join(' ');
-    expect(retired).toMatch(/Cinderwake/i);
+    expect(retired).toMatch(/Oren/i);
+    expect(retired).not.toMatch(/Cinderwake/i);
     const prose = [
       `${inst.placeName} is already under you, named and ordinary, not a blur.`,
       `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
@@ -129,7 +134,7 @@ describe('liveOpening', () => {
       'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
     ].join(' ');
     expect(validateLiveOpeningProse(state, prose)).toEqual([]);
-    const leak = `${prose} Cinderwake Trail still burns behind you.`;
+    const leak = `${prose} Brother Oren is still standing on the old trail.`;
     expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
   });
 
@@ -148,13 +153,92 @@ describe('liveOpening', () => {
     expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
   });
 
+  it('does not fail validation on the common word cinder', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const prose = [
+      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
+      'A cinder stuck to his shoe, ordinary ash, not a catalog surname.',
+      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
+    ].join(' ');
+    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
+  });
+
+  it('phrases ask-pads from the prose pronoun and does not default to they', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const he = inst.cast[0]!;
+    const proseHe = `${inst.placeName} holds. ${he.name} stands in the ash. He has a waterskin half raised. The offer is water, or you keep your own kit.`;
+    expect(askPadFor(he.name, proseHe)).toMatch(new RegExp(`Ask ${he.name.split(/\s+/)[0]} what he's after`));
+    expect(askPadFor(he.name, proseHe)).not.toMatch(/what they want/i);
+    const theyProse = `${inst.placeName} holds. ${he.name} is here. The offer is water, or you keep your own kit.`;
+    expect(askPadFor(he.name, theyProse)).toMatch(/about the deal/i);
+    const noOffer: GameState = {
+      ...state,
+      openingEstablishment: {
+        ...state.openingEstablishment!,
+        instance: { ...inst, offerChips: inst.offerChips.filter((c) => c.kind === 'refuse') },
+      },
+    };
+    const pads = shapeOpeningPads(noOffer, proseHe);
+    expect(pads).toHaveLength(4);
+    expect(pads.some((p) => /what they want/i.test(p))).toBe(false);
+    expect(pads.some((p) => new RegExp(he.name.split(/\s+/)[0]!, 'i').test(p) || new RegExp(inst.placeName, 'i').test(p))).toBe(true);
+  });
+
+  it('derives a short whole-word journal title and does not clip inside working', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const emptyOffer: GameState = {
+      ...state,
+      openingEstablishment: {
+        ...state.openingEstablishment!,
+        instance: { ...inst, offerSummary: undefined, offerChips: inst.offerChips.filter((c) => c.kind === 'refuse') },
+      },
+    };
+    const prose = `${inst.placeName} is under you. ${inst.cast[0]!.name} waits. Long-handled scrapers working the ash are not an offer. Heat rises. You keep your own kit.`;
+    const journal = deriveOpeningJournal(emptyOffer, prose);
+    expect(journal.title).not.toMatch(/Ng-handled|scrapers working/i);
+    expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
+    expect(journal.title.length).toBeGreaterThan(3);
+  });
+
+  it('does not title the journal from a hear-them-out reason note', () => {
+    const state = game('dnd', 'journal-reason');
+    const inst = state.openingEstablishment!.instance!;
+    const withReason: GameState = {
+      ...state,
+      openingEstablishment: {
+        ...state.openingEstablishment!,
+        instance: {
+          ...inst,
+          offerSummary: undefined,
+          offerChips: [
+            { kind: 'accept', label: `Hear ${inst.cast[0]!.name.split(/\s+/)[0]} out`, note: `${inst.cast[0]!.name} is here with a reason — hear it before you decide.` },
+            inst.offerChips.find((c) => c.kind === 'refuse')!,
+          ],
+        },
+      },
+    };
+    const prose = `${inst.placeName} keeps still. ${inst.cast[0]!.name} waits among the stones with a lantern. You keep your own kit.`;
+    const journal = deriveOpeningJournal(withReason, prose);
+    expect(journal.title).not.toMatch(/is here with a reason/i);
+    expect(journal.title).not.toMatch(new RegExp(`${inst.cast[0]!.name.split(/\s+/)[0]}'s ${inst.cast[0]!.name}`, 'i'));
+    expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
+    expect(journal.title).toMatch(new RegExp(inst.cast[0]!.name.split(/\s+/)[0]!, 'i'));
+  });
+
   it('two seeds produce different mock openings', () => {
+
 
     const a = game('litrpg', 'seed-a');
     const b = game('litrpg', 'seed-b');
     const pa = mockLiveOpeningProse(a);
     const pb = mockLiveOpeningProse(b);
     expect(pa).not.toBe(pb);
-    expect(a.openingEstablishment?.instance?.placeName).not.toBe(b.openingEstablishment?.instance?.placeName);
+    expect(a.openingEstablishment?.instance?.cast.map((c) => c.name).join()).not.toBe(
+      b.openingEstablishment?.instance?.cast.map((c) => c.name).join()
+    );
   });
 });

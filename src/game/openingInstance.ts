@@ -13,6 +13,7 @@ import type {
 import { hashSeed, keyedRng, type Rng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
 import { isCommonOpeningLexeme } from './openingWriterNotes';
+import { campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot {
@@ -28,6 +29,9 @@ export interface OpeningHookSnapshot {
   beats?: string[];
   writerNotes?: string;
   faction?: string;
+  /** Catalog NPC names already resolved from the hook's castNpcIds. */
+  catalogNpcNames?: string[];
+  castNpcIds?: string[];
 }
 
 const HONORIFIC =
@@ -64,7 +68,7 @@ const PLACE_STEMS = [
   'Brack', 'Hollin', 'Sallow', 'Dunmore', 'Fenwick', 'Marl', 'Cotter', 'Rudd', 'Tew', 'Aske',
   'Wyle', 'Thatch', 'Merrow', 'Coyne', 'Idra', 'Lisle', 'Cutha', 'Hask', 'Barrow', 'Crane',
   'Pike', 'Ness', 'Oatley', 'Redd', 'Calder', 'Morrow', 'Halden', 'Birch', 'Rowan', 'Ashen',
-  'Keld', 'Thorpe', 'Wain', 'Mabb', 'Ortle', 'Pell', 'Stane', 'Voss', 'Yarrow', 'Beck',
+  'Keld', 'Thorpe', 'Wain', 'Mabb', 'Ortle', 'Stane', 'Voss', 'Yarrow', 'Beck',
   'Alden', 'Bramley', 'Caer', 'Durn', 'Esk', 'Flint', 'Goss', 'Harth', 'Ilme', 'Jorren',
   'Kemp', 'Larn', 'Moss', 'Nairn', 'Ockley', 'Pratt', 'Quen', 'Rill', 'Selk', 'Torr',
   'Ulm', 'Verra', 'Wex', 'Yale', 'Zost', 'Brindle', 'Callow', 'Dapple', 'Elwick', 'Farrow',
@@ -154,6 +158,33 @@ export function peopleFromWhoHere(whoHere: string | undefined): string[] {
   return out;
 }
 
+/** A role-only who-here ("an enforcer", "the scout") with no proper name. */
+export function impliedRoleFromWhoHere(whoHere: string | undefined): string | undefined {
+  if (!whoHere) return undefined;
+  if (peopleFromWhoHere(whoHere).length) return undefined;
+  const t = whoHere.replace(/\s+/g, ' ').trim();
+  if (!t || /^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return undefined;
+  const groupOnly = /^(?:the\s+)?(?:crew|faces|people|crowd|company|watchmen|hirelings|others)\b/i.test(t);
+  const hasRole = /\b(?:enforcer|thief|scout|innkeep|innkeeper|muscle|cutter|lockpick|priest|captain|bouncer|tracker|sister|brother|father|merchant)\b/i.test(t);
+  if (groupOnly && !hasRole) return undefined;
+  const role = t
+    .replace(/^(?:a|an|the)\s+/i, '')
+    .replace(/[,.;].*$/, '')
+    .replace(/\s+is waiting\b.*$/i, '')
+    .replace(/\s+beside you\b.*$/i, '')
+    .replace(/\s+on the porch\b.*$/i, '')
+    .trim();
+  if (role.length < 3 || role.length > 48) return undefined;
+  return role;
+}
+
+export function whoHereImpliesPresent(whoHere: string | undefined): boolean {
+  const t = (whoHere ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^(?:no one|nobody|none|you are alone|alone)\b/i.test(t)) return false;
+  return true;
+}
+
 export function isCatalogStem(word: string): boolean {
   const k = (word ?? '').trim().toLowerCase();
   return !!k && CATALOG_NAME_BLOCKLIST.some((b) => b.toLowerCase() === k);
@@ -164,6 +195,13 @@ export function isCatalogStem(word: string): boolean {
  * Rejects sentence-initial verbs and common nouns (Walk, Stay, Salt, Glass, Earth, They).
  * Accepts multi-word places ("Salt Road waystation"), honorific + name, and distinctive stems.
  */
+/** Hook/card field labels — not names, even when Title-Cased in compiled text. */
+export const HOOK_FIELD_LABELS = new Set([
+  'talk', 'location', 'armed', 'twenty', 'dawn', 'abort', 'first', 'move', 'who', 'what',
+  'pressing', 'offer', 'cost', 'summon', 'intent', 'faction', 'beats', 'page', 'how',
+  'where', 'why', 'when',
+]);
+
 export function isLikelyProperName(name: string): boolean {
   const t = (name ?? '').trim().replace(/[.,;:]+$/, '');
   if (t.length < 3) return false;
@@ -172,6 +210,7 @@ export function isLikelyProperName(name: string): boolean {
   const first = parts[0]!;
   const last = parts[parts.length - 1]!;
   if (TITLE_STOP.has(first.toLowerCase())) return false;
+  if (parts.length === 1 && HOOK_FIELD_LABELS.has(first.toLowerCase())) return false;
   if (/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Tracker|Scout|Novice|Elder|High|Chanter)$/i.test(t)) {
     return false;
   }
@@ -474,6 +513,11 @@ export function mintOpeningInstance(
   const rng = keyedRng(seedKey);
   const genre = inferGenre(hook, opts?.bibleId, opts?.engineMode);
   const taken = nameWords(CATALOG_NAME_BLOCKLIST);
+  for (const lab of campaignHubLabels(opts?.bibleId)) {
+    for (const w of lab.split(/\s+/)) {
+      if (w.length >= 3 && !isCommonOpeningLexeme(w)) taken.add(w.toLowerCase());
+    }
+  }
   const retired: string[] = [];
   const isGenericToken = (n: string) => {
     const k = n.trim().toLowerCase();
@@ -482,23 +526,30 @@ export function mintOpeningInstance(
   const retire = (n: string) => {
     const t = n.trim();
     if (!t || isGenericToken(t)) return;
-    if (t.split(/\s+/).length === 1 && isCommonOpeningLexeme(t) && !isCatalogStem(t)) return;
+    // Never retire a single common English word or field label on its own (Cinder, First, Talk).
+    if (t.split(/\s+/).length === 1 && (isCommonOpeningLexeme(t) || HOOK_FIELD_LABELS.has(t.toLowerCase()))) return;
+    if (isCampaignHubToken(t, opts?.bibleId)) return;
     if (!retired.some((x) => x.toLowerCase() === t.toLowerCase())) retired.push(t);
     for (const w of t.split(/\s+/)) {
       if (w.length >= 3 && !isGenericToken(w)) taken.add(w.toLowerCase());
     }
   };
 
-  const whoNames = peopleFromWhoHere(hook.whoHere);
+  // Names come only from structured hook fields (who / castNpcIds / location / faction),
+  // never from free sentences (pressing, page1, "First move is yours", compiled labels).
+  const whoNames = [
+    ...peopleFromWhoHere(hook.whoHere),
+    ...(hook.catalogNpcNames ?? []).map((n) => n.trim()).filter(Boolean),
+  ];
   const locNames = extractTitleNames(hook.location);
-  const factionPool = extractTitleNames(
-    [hook.pressingNeed, hook.openingOffer, hook.faction, hook.whoYouAre].filter(Boolean).join(' ')
-  ).filter(
-    (n) =>
-      !isGenericToken(n)
-      && !whoNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
-      && !locNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
-  );
+  const factionPool = extractTitleNames(hook.faction)
+    .filter((n) => FACTION_WORDS.has(lastWord(n)) || isFactionName(n, hook.faction ?? ''))
+    .filter(
+      (n) =>
+        !isGenericToken(n)
+        && !whoNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
+        && !locNames.some((w) => w.toLowerCase() === n.toLowerCase() || w.toLowerCase().includes(n.toLowerCase()))
+    );
 
   const replacements: Array<[string, string]> = [];
   const places = locNames.filter((n) => !isGenericToken(n));
@@ -508,28 +559,32 @@ export function mintOpeningInstance(
   }
   const people = whoNames;
 
-  // Always mint a named place, even when the hook only had a generic "scorched circle on the trail".
+  // Always have a named place. Campaign hubs stay fixed on the map.
   const placeKind = inferPlaceKind(hook);
-  const catalogPlace = places.sort((a, b) => b.length - a.length)[0];
-  if (catalogPlace) retire(catalogPlace);
-  const placeName = mintPlaceName(rng, placeKind, taken, seedKey);
-  if (catalogPlace) {
+  const hubPlace = hubCanonicalNameForLocation(hook.location, opts?.bibleId);
+  const catalogPlace = hubPlace ? undefined : places.sort((a, b) => b.length - a.length)[0];
+  const placeName = hubPlace || mintPlaceName(rng, placeKind, taken, seedKey);
+  if (catalogPlace && !isCampaignHubToken(catalogPlace, opts?.bibleId)) {
+    retire(catalogPlace);
     replacements.push([catalogPlace, placeName]);
-    for (const w of catalogPlace.split(/\s+/)) {
-      if (
-        w.length >= 5
-        && !PLACE_SUFFIX.has(w.toLowerCase())
-        && !isCommonOpeningLexeme(w)
-        && w.toLowerCase() !== lastWord(placeName)
-      ) {
-        retire(w);
-        replacements.push([w, placeName.split(/\s+/)[0] ?? placeName]);
-      }
+    // Distinctive coined stem (Cinderwake) only — never a common English word (Cinder, Salt).
+    const first = catalogPlace.split(/\s+/)[0] ?? '';
+    if (
+      first.length >= 8
+      && !PLACE_SUFFIX.has(first.toLowerCase())
+      && !isCommonOpeningLexeme(first)
+      && !isCampaignHubToken(first, opts?.bibleId)
+      && first.toLowerCase() !== lastWord(placeName)
+    ) {
+      retire(first);
+      replacements.push([first, placeName.split(/\s+/)[0] ?? placeName]);
     }
   }
 
   let settlementName: string | undefined;
-  const settlementHits = places.filter((p) => p !== catalogPlace && !PLACE_SUFFIX.has(lastWord(p)));
+  const settlementHits = places.filter(
+    (p) => p !== catalogPlace && !PLACE_SUFFIX.has(lastWord(p)) && !isCampaignHubToken(p, opts?.bibleId)
+  );
   if (settlementHits[0]) {
     retire(settlementHits[0]);
     settlementName = pickUnused(rng, PLACE_STEMS, taken);
@@ -538,18 +593,12 @@ export function mintOpeningInstance(
 
   let factionName: string | undefined;
   let factionKind: string | undefined;
-  if (factions[0]) {
+  if (factions[0] && !isCampaignHubToken(factions[0].from, opts?.bibleId)) {
     retire(factions[0].from);
     factionKind = factions[0].kind || 'company';
     const stem = pickUnused(rng, PLACE_STEMS, taken);
     factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
     replacements.push([factions[0].from, factionName]);
-    for (const w of factions[0].from.split(/\s+/)) {
-      if (w.length >= 4 && !FACTION_WORDS.has(w.toLowerCase()) && !isCommonOpeningLexeme(w)) {
-        retire(w);
-        replacements.push([w, factionName]);
-      }
-    }
   }
 
   const seenPeople = new Set<string>();
@@ -559,6 +608,7 @@ export function mintOpeningInstance(
     if (seenPeople.has(key)) continue;
     // Skip if this "person" was actually classified as place/faction and already retired as such.
     if (places.includes(n) || factions.some((f) => f.from === n)) continue;
+    if (isCampaignHubToken(n, opts?.bibleId)) continue;
     seenPeople.add(key);
     orderedPeople.push(n);
   }
@@ -574,15 +624,19 @@ export function mintOpeningInstance(
       retire(bare);
       replacements.push([bare, minted]);
     }
-    for (const w of bare.split(/\s+/)) {
-      if (w.length >= 4 && !isCommonOpeningLexeme(w)) {
-        retire(w);
-        // First/last only — avoid replacing "Trail" etc. Already filtered.
-        replacements.push([w, w === bare.split(/\s+/)[0] ? givenNameOf(minted) : minted.split(/\s+/).slice(-1)[0] ?? minted]);
-      }
+    const given = bare.split(/\s+/)[0] ?? '';
+    if (given && given !== bare && given.length >= 3 && !isCommonOpeningLexeme(given) && !HOOK_FIELD_LABELS.has(given.toLowerCase())) {
+      retire(given);
+      replacements.push([given, givenNameOf(minted)]);
     }
     const roleSrc = applyReplacements(roleForPerson(catalog, hook), replacements).replace(minted, '').replace(/\s+/g, ' ').trim();
     cast.push({ name: minted, role: roleSrc || 'present in the scene' });
+  }
+
+  const impliedRole = impliedRoleFromWhoHere(hook.whoHere);
+  if (!cast.length && impliedRole) {
+    const minted = mintPerson(rng, taken, genre);
+    cast.push({ name: minted, role: impliedRole });
   }
 
   const offerRaw = hook.openingOffer?.trim() ?? '';
@@ -634,16 +688,8 @@ export function mintOpeningInstance(
     replacements
   );
 
-  // Always retire well-known catalog names even if this hook didn't mention them,
-  // so a later bible leak cannot walk them onto page 1.
-  const fallbackDest = factionName || settlementName || placeName.split(/\s+/)[0] || placeName;
-  for (const blocked of CATALOG_NAME_BLOCKLIST) {
-    retire(blocked);
-    if (!isGenericToken(blocked) && !replacements.some(([from]) => from.toLowerCase() === blocked.toLowerCase())) {
-      replacements.push([blocked, fallbackDest]);
-    }
-  }
-
+  // Do not retire the global catalog blocklist. Hubs like Greyhollow and Valespire
+  // stay on the map; only names this opening actually replaced are banned.
   const nameMap = [...replacements].sort((a, b) => b[0].length - a[0].length);
   const offerSummary = offerScrubbed
     ? applyReplacements(offerScrubbed, nameMap)
@@ -664,8 +710,8 @@ export function mintOpeningInstance(
     whoYouAre: hook.whoYouAre ? applyReplacements(hook.whoYouAre, nameMap) : undefined,
     offerSummary,
     offerChips,
-    alone: aloneHint || (!cast.length && !/who is here/i.test(hook.text ?? '')),
-    retiredNames: retired.filter((n) => !isGenericToken(n)),
+    alone: aloneHint || (!cast.length && !whoHereImpliesPresent(hook.whoHere)),
+    retiredNames: retired.filter((n) => !isGenericToken(n) && !isCampaignHubToken(n, opts?.bibleId)),
     nameMap,
   };
 }
@@ -714,17 +760,27 @@ export function attachOpeningInstance(
   blob?: string
 ): GameState {
   const existing = state.openingEstablishment?.instance;
-  const instance = existing ?? mintOpeningInstance(hook, hookKey(state), {
-    bibleId: state.campaignBibleId ?? undefined,
-    engineMode: state.engineMode,
-  });
+  const catalogNpcNames = [
+    ...(hook.catalogNpcNames ?? []),
+    ...(hook.castNpcIds ?? []).map((id) => (state.npcMemories ?? []).find((m) => m.npcId === id)?.npcName ?? ''),
+  ].filter(Boolean);
+  const instance = existing ?? mintOpeningInstance(
+    { ...hook, catalogNpcNames },
+    hookKey(state),
+    {
+      bibleId: state.campaignBibleId ?? undefined,
+      engineMode: state.engineMode,
+    }
+  );
   const map: Array<[string, string]> = instance.nameMap?.length
     ? [...instance.nameMap]
     : [];
   if (!map.length) {
     const locNames = extractTitleNames(hook.location);
     const whoNames = peopleFromWhoHere(hook.whoHere);
-    if (locNames[0]) map.push([locNames[0], instance.placeName]);
+    if (locNames[0] && !isCampaignHubToken(locNames[0], state.campaignBibleId ?? undefined)) {
+      map.push([locNames[0], instance.placeName]);
+    }
     whoNames.forEach((n, i) => {
       const minted = instance.cast[i]?.name;
       if (minted) {
@@ -795,6 +851,8 @@ export function snapshotFromPickedHook(
     where?: string;
     writerNotes?: string;
     beats?: string[];
+    faction?: string;
+    castNpcIds?: string[];
   }) | null
 ): OpeningHookSnapshot {
   if (!picked) return {};
@@ -803,12 +861,14 @@ export function snapshotFromPickedHook(
     text: picked.text,
     page1: picked.page1,
     fallback: picked.fallback,
-    whoHere: picked.whoHere,
+    whoHere: picked.whoHere ?? picked.faction,
     openingOffer: picked.openingOffer,
     pressingNeed: picked.pressingNeed ?? picked.pressing,
     howYouGotHere: picked.howYouGotHere ?? picked.how,
     whoYouAre: picked.whoYouAre ?? picked.who,
     beats: picked.beats,
     writerNotes: picked.writerNotes,
+    faction: picked.faction,
+    castNpcIds: picked.castNpcIds,
   };
 }

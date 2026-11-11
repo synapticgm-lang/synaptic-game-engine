@@ -171,8 +171,10 @@ export function formatOpeningCardChrome(state: GameState): string {
   if (inst?.placeName) {
     const names = (inst.cast ?? []).map((c) => c.name).filter(Boolean);
     const who =
-      inst.alone || names.length === 0
+      inst.alone && names.length === 0
         ? 'You are alone.'
+        : names.length === 0
+          ? 'Someone is here.'
         : names.length === 1
           ? `${names[0]} is here.`
           : names.length === 2

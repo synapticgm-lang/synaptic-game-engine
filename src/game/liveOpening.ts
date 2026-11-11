@@ -190,7 +190,13 @@ export function shapeOpeningPads(state: GameState, prose: string): string[] {
   for (const member of inst?.cast ?? []) {
     if (labels.length >= n) break;
     if (!mentionsName(prose, member.name)) continue;
-    push(`Ask ${givenNameOf(member.name)} what they want`);
+    push(askPadFor(member.name, prose));
+  }
+  if (inst?.placeName && labels.length < n && mentionsName(prose, inst.placeName)) {
+    push(`Look around ${inst.placeName}`);
+  }
+  if (inst?.placeName && labels.length < n && mentionsName(prose, inst.placeName)) {
+    push(`Study ${inst.placeName}`);
   }
   if (labels.length < n) push('Look around first');
   if (labels.length < n) push('Wait and listen');
@@ -198,13 +204,63 @@ export function shapeOpeningPads(state: GameState, prose: string): string[] {
   return labels.slice(0, n);
 }
 
-function clipJournalTitle(raw: string, max = 72): string {
+/** Use the prose pronoun, or phrase the ask without one. */
+export function askPadFor(name: string, prose: string): string {
+  const given = givenNameOf(name);
+  const idx = prose.search(new RegExp(`\\b${escapeRe(name)}\\b|\\b${escapeRe(given)}\\b`, 'i'));
+  const window = idx >= 0 ? prose.slice(Math.max(0, idx - 40), idx + name.length + 80) : prose;
+  if (/\b(?:he|him|his)\b/i.test(window) && !/\b(?:she|her|hers)\b/i.test(window)) {
+    return `Ask ${given} what he's after`;
+  }
+  if (/\b(?:she|her|hers)\b/i.test(window) && !/\b(?:he|him|his)\b/i.test(window)) {
+    return `Ask ${given} what she's after`;
+  }
+  return `Ask ${given} about the deal`;
+}
+
+function clipJournalTitle(raw: string, maxWords = 8): string {
   let t = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
   t = t.replace(/^(?:the offer on the table:\s*)/i, '');
   if (!t) return '';
   if (/^hear \S+ out$/i.test(t)) return '';
-  if (t.length > max) t = t.slice(0, max - 1).replace(/\s+\S*$/, '').replace(/[.,;:]+$/, '') + '…';
-  return t.charAt(0).toUpperCase() + t.slice(1);
+  const words = t.split(' ').filter(Boolean);
+  if (!words.length) return '';
+  const clipped = words.slice(0, maxWords).join(' ');
+  return clipped.charAt(0).toUpperCase() + clipped.slice(1);
+}
+
+function titleFromScene(prose: string, leadName: string | undefined, place: string): string {
+  const fromScene = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!fromScene) return '';
+  const hit = fromScene.match(/\b(?:waterskin|scarf|brand-iron|brand iron|offer|pact|hunt|blanket|bread|cloak|contract)\b/i);
+  if (!hit || hit.index == null) return '';
+  const words = fromScene.split(' ').filter(Boolean);
+  // Find the word that contains the match; take a short whole-word window around it.
+  let acc = 0;
+  let at = 0;
+  for (let i = 0; i < words.length; i++) {
+    if (acc <= hit.index && hit.index < acc + words[i]!.length + 1) {
+      at = i;
+      break;
+    }
+    acc += words[i]!.length + 1;
+  }
+  const slice = words.slice(Math.max(0, at - 3), at + 5);
+  return clipJournalTitle(slice.join(' '));
+}
+
+
+/** Only turn a concrete offered object into a title fragment — not "X is here with a reason". */
+function concreteOfferItem(note: string | undefined, leadName?: string): string {
+  const t = (note ?? '').replace(/^.*?\boffers\s+/i, '').replace(/\s+/g, ' ').trim();
+  if (!t) return '';
+  if (/\bis here with a reason\b/i.test(t)) return '';
+  if (/^hear \S+ out$/i.test(t)) return '';
+  const lead = leadName ? givenNameOf(leadName) : '';
+  if (lead && t.toLowerCase().startsWith(lead.toLowerCase())) return '';
+  const words = t.split(' ').filter(Boolean);
+  if (words.length > 6) return '';
+  return t.replace(/[.,;:]+$/, '');
 }
 
 export function deriveOpeningJournal(state: GameState, prose?: string): DerivedOpeningJournal {
@@ -214,13 +270,14 @@ export function deriveOpeningJournal(state: GameState, prose?: string): DerivedO
   const offer = inst?.offerSummary || inst?.offerChips.find((c) => c.kind === 'accept')?.note;
   const accept = inst?.offerChips.find((c) => c.kind === 'accept');
   const fromScene = (prose ?? '').replace(/\s+/g, ' ').trim();
-  const itemFromNote = accept?.note?.replace(/^.*?\boffers\s+/i, '').trim();
+  const itemFromNote = concreteOfferItem(accept?.note, lead?.name);
+  const sceneDefault = lead ? `${givenNameOf(lead.name)} at ${place}` : `Arrival at ${place}`;
   const title =
     clipJournalTitle(itemFromNote && lead ? `${givenNameOf(lead.name)}'s ${itemFromNote}` : itemFromNote || '')
-    || clipJournalTitle(offer ?? '')
-    || clipJournalTitle(accept?.label ?? '')
-    || clipJournalTitle((fromScene.match(/([^.!?]{0,20}\b(?:waterskin|scarf|brand-iron|brand iron|offer|pact|hunt|blanket|bread|cloak|work|contract)[^.!?]{0,40})/i)?.[1]) ?? '')
-    || (lead ? `${givenNameOf(lead.name)} at ${place}` : `Arrival at ${place}`);
+    || clipJournalTitle(concreteOfferItem(offer, lead?.name))
+    || clipJournalTitle(accept?.label && !/^hear \S+ out$/i.test(accept.label) ? accept.label : '')
+    || titleFromScene(fromScene, lead?.name, place)
+    || sceneDefault;
   const description = [
     lead ? `${lead.name} is here — ${lead.role}.` : `You are on your own at ${place}.`,
     offer ? `The offer on the table: ${offer}` : '',

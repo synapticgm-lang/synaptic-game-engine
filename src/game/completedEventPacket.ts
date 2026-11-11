@@ -17,6 +17,7 @@ import { splitProseSentences } from './proseSentences';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine';
 import {
   hubsForBibleId,
+  isCampaignHubToken,
   matchHub,
   outdoorHubTravelChoices,
   parseTravelDestination,
@@ -654,7 +655,12 @@ export function compileNounAllowlist(
       at = beat.indexOf(name, at + 1);
     }
   }
-  return filterRetiredFromAllowlist(out, state.openingEstablishment?.instance?.retiredNames);
+  const retired = state.openingEstablishment?.instance?.retiredNames;
+  const dropped = filterRetiredFromAllowlist(out, retired);
+  const keptHubs = out.filter(
+    (n) => isCampaignHubToken(n, state.campaignBibleId) && !dropped.some((f) => f.toLowerCase() === n.toLowerCase())
+  );
+  return keptHubs.length ? [...dropped, ...keptHubs] : dropped;
 }
 /** Two cast labels name one person when one's words run whole inside the other's ("faces" / "the exhausted faces"). */
 function sameCastPerson(a: string, b: string): boolean {

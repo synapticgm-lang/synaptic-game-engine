@@ -6,6 +6,7 @@ import { createInitialState } from './defaults';
 import { compileNounAllowlist } from './completedEventPacket';
 import { buildMasterPrompt } from './masterPrompt';
 import { attachOpeningInstance, type OpeningHookSnapshot } from './openingInstance';
+import { campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 import { formatLaterTurnNameRail } from './openingWriterNotes';
 import type { GameState } from './types';
 
@@ -55,30 +56,96 @@ describe('PR29 review follow-up', () => {
     );
   });
 
-  it('drops retired catalog names from the later-turn noun allowlist and system prompt', () => {
+  it('bans only this opening\'s replaced names and keeps campaign hubs allowed', () => {
     const state = liveState();
     const inst = state.openingEstablishment!.instance!;
-    expect(inst.retiredNames.join(' ')).toMatch(/Cinderwake/i);
-    expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
+    expect(inst.placeName).toMatch(/Cinderwake Trail/i);
+    expect(inst.retiredNames.join(' ')).toMatch(/Oren/i);
+    expect(inst.retiredNames.some((n) => /^cinder$/i.test(n))).toBe(false);
+    expect(inst.retiredNames.join(' ')).not.toMatch(/Cinderwake|Pellane|Greyhollow|Valespire|Cinderflow/i);
     const allow = compileNounAllowlist({
       ...state,
       currentLocation: inst.placeName,
     });
     const blob = allow.join(' | ');
-    expect(blob).not.toMatch(/Cinderwake Trail/i);
-    expect(blob).not.toMatch(/\bPellane\b/i);
-    expect(blob).not.toMatch(/Pellane War Camp/i);
+    expect(blob).toMatch(/Cinderwake Trail/i);
+    expect(blob).toMatch(/Valespire/i);
+    expect(blob).toMatch(/Cinderflow Road/i);
     expect(allow.some((n) => n === inst.placeName || n.toLowerCase() === inst.placeName.toLowerCase())).toBe(true);
+    expect(blob).not.toMatch(/\bOren\b/);
 
+    const rail = formatLaterTurnNameRail(state);
     const prompt = buildMasterPrompt(state, { contentMode: 'adult' } as never, []);
-    expect(formatLaterTurnNameRail(state)).toMatch(/LOCKED NAMES/);
-    expect(formatLaterTurnNameRail(state)).toMatch(/Cinderwake/i);
-    expect(formatLaterTurnNameRail(state)).not.toMatch(/\bWalk\b/);
-    expect(prompt).toMatch(/Do not use retired catalog names/i);
-    expect(prompt).toMatch(/Cinderwake/i);
+    expect(rail).toMatch(/LOCKED NAMES/);
+    expect(rail).toMatch(/Cinderwake Trail/i);
+    expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*(Cinderwake|Greyhollow|Valespire|Cinderflow)/i);
+    expect(rail).not.toMatch(/\bWalk\b/);
+    expect(prompt).toMatch(/Cinderwake Trail/i);
+    expect(prompt).not.toMatch(/Do not use retired catalog names:[^\n]*(Cinderwake|Greyhollow|Valespire)/i);
+  });
+
+  it('keeps Greyhollow hubs allowed after a Cursed Keep opening at the inn', () => {
+    const hook: OpeningHookSnapshot = {
+      location: 'Greyhollow, at the inn',
+      whoHere: 'the innkeep',
+    };
+    const base = createInitialState('Cursed Keep', 'dnd') as GameState;
+    const state: GameState = {
+      ...attachOpeningInstance(
+        { ...base, seed: 'ck-hub', campaignBibleId: 'cursed-keep', engineMode: 'dnd' },
+        hook
+      ),
+    };
+    const inst = state.openingEstablishment!.instance!;
+    expect(inst.placeName).toMatch(/Greyhollow Inn/i);
+    expect(inst.retiredNames.join(' ')).not.toMatch(/Greyhollow/i);
+    const later = { ...state, openingEstablishment: { ...state.openingEstablishment!, complete: true, sceneWritten: true } };
+    const allow = compileNounAllowlist(later);
+    const blob = allow.join(' | ');
+    expect(blob).toMatch(/Greyhollow Inn/i);
+    expect(blob).toMatch(/Greyhollow Church/i);
+    expect(blob).toMatch(/Greyhollow Graveyard/i);
+    const rail = formatLaterTurnNameRail(later);
+    expect(rail).toMatch(/Keep using these locked names:.*Greyhollow Inn/i);
+    expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*Greyhollow/i);
+  });
+
+  it('matches campaign hubs as whole names, not English stems inside other words', () => {
+    expect(hubCanonicalNameForLocation('the ash-heat of Cinderwake Trail', 'summoned-pact')).toBe('Cinderwake Trail');
+    expect(hubCanonicalNameForLocation('the ash-heat of Hollowmere Track', 'summoned-pact')).toBeUndefined();
+    expect(hubCanonicalNameForLocation('Greyhollow, at the inn', 'cursed-keep')).toBe('Greyhollow Inn');
+    expect(hubCanonicalNameForLocation('a Salt Road waystation', 'salt-road-heist')).toBe('Salt Road Waystation');
+    expect(hubCanonicalNameForLocation('First move is yours', 'salt-road-heist')).toBeUndefined();
+
+    expect(isCampaignHubToken('Cinderwake Trail', 'summoned-pact')).toBe(true);
+    expect(isCampaignHubToken('Cinderwake', 'summoned-pact')).toBe(true);
+    expect(isCampaignHubToken('Cinderflow Road', 'summoned-pact')).toBe(true);
+    expect(isCampaignHubToken('Pellane', 'summoned-pact')).toBe(true);
+    expect(isCampaignHubToken('Valespire', 'summoned-pact')).toBe(true);
+    expect(isCampaignHubToken('Cinder', 'summoned-pact')).toBe(false);
+    expect(isCampaignHubToken('Hollow', 'summoned-pact')).toBe(false);
+    expect(isCampaignHubToken('Hollowmere', 'summoned-pact')).toBe(false);
+    expect(isCampaignHubToken('Hollowmere Track', 'summoned-pact')).toBe(false);
+    expect(isCampaignHubToken('Salt', 'salt-road-heist')).toBe(false);
+    expect(isCampaignHubToken('Salt Road', 'salt-road-heist')).toBe(true);
+    expect(isCampaignHubToken('Greyhollow', 'cursed-keep')).toBe(true);
+    expect(isCampaignHubToken('Inn', 'cursed-keep')).toBe(false);
+
+    const labels = campaignHubLabels('summoned-pact');
+    const blob = labels.join(' | ');
+    expect(blob).toMatch(/Cinderwake/i);
+    expect(blob).toMatch(/Cinderflow/i);
+    expect(labels.some((l) => /^(hollow|cinder|kitchen|march)$/i.test(l))).toBe(false);
+  });
+
+  it('drops Pell from the place-name stem bank', () => {
+    const src = readFileSync(resolve(here, 'openingInstance.ts'), 'utf8');
+    const stems = src.slice(src.indexOf('const PLACE_STEMS'), src.indexOf('const PLACE_MIDS'));
+    expect(stems).not.toMatch(/'Pell'/);
   });
 
   it('restores the Another opening button for PYOA only', () => {
+
     const src = readFileSync(resolve(here, '../components/NewGameModal.tsx'), 'utf8');
     expect(src).toMatch(/Another opening/);
     const pyoaBranch = src.slice(src.indexOf(") : hookPreview ? ("));

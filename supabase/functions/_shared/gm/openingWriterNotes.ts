@@ -110,30 +110,41 @@ export function isCommonOpeningLexeme(word: string): boolean {
   return !k || COMMON_OPENING_LEXEMES.has(k) || GENERIC_PLACE_BITS.has(k);
 }
 
-/** Full multi-word retired names plus distinctive stems — never single common words. */
+/**
+ * Retired names as whole names. Never a single common English word (cinder, first, talk).
+ * Honorific-stripped full names are included (Brother Oren → Oren).
+ * A long coined stem of a multi-word place (Cinderwake from Cinderwake Trail) may be included.
+ */
 export function distinctiveRetiredNames(retiredNames: string[] | undefined): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
   const push = (n: string) => {
     const k = n.trim();
     if (!k) return;
+    if (k.split(/\s+/).length === 1 && (isCommonOpeningLexeme(k) || GENERIC_PLACE_BITS.has(k.toLowerCase()) || HONORIFIC_BITS.has(k.toLowerCase()))) {
+      return;
+    }
     const key = k.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
     out.push(k);
   };
   for (const r of retiredNames ?? []) {
-    const parts = r.trim().split(/\s+/).filter(Boolean);
-    if (!parts.length) continue;
-    if (parts.length >= 2) push(r.trim());
-    for (const p of parts) {
+    const t = r.trim();
+    if (!t) continue;
+    push(t);
+    const bare = t.replace(/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Dame|Warden|Keeper)\s+/i, '').trim();
+    if (bare && bare.toLowerCase() !== t.toLowerCase()) push(bare);
+    const parts = bare.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      const first = parts[0]!;
       if (
-        p.length >= 4
-        && !isCommonOpeningLexeme(p)
-        && !GENERIC_PLACE_BITS.has(p.toLowerCase())
-        && !HONORIFIC_BITS.has(p.toLowerCase())
+        first.length >= 8
+        && !isCommonOpeningLexeme(first)
+        && !GENERIC_PLACE_BITS.has(first.toLowerCase())
+        && !HONORIFIC_BITS.has(first.toLowerCase())
       ) {
-        push(p);
+        push(first);
       }
     }
   }
