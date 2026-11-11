@@ -30,6 +30,7 @@ import {
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 import { parseGmTurnResponse } from './schemas';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
+import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from './openingWriterNotes';
 
 export type GmProxyMode = 'turn' | 'auto-fight' | 'repair' | 'check';
 
@@ -214,7 +215,9 @@ export async function invokeGmProxy(params: {
       // BYOK passthrough — never logged server-side in responses
       clientApiKey: pickClientApiKey(params.settings) || undefined,
       // The turn's strict Token Prose schema (built with zod here; the edge only forwards the JSON).
-      tokenSchema: params.mode === 'turn' ? tokenBeatSchemaFor(params.state) : undefined,
+      tokenSchema: params.mode === 'turn'
+        ? (isUnwrittenLiveOpening(params.state) ? OPENING_PAGE_JSON_SCHEMA : tokenBeatSchemaFor(params.state))
+        : undefined,
       ...(trainLog
         ? {
             trainLog: true,

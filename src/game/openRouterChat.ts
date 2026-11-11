@@ -310,7 +310,7 @@ export function openRouterChatBody(
   systemPrompt: string,
   prompt: string,
   maxTokens: number,
-  opts?: { tokenProse?: boolean; n?: number; schema?: Record<string, unknown> }
+  opts?: { tokenProse?: boolean; n?: number; schema?: Record<string, unknown>; schemaName?: string; attachNewPlaces?: boolean }
 ) {
   const body: Record<string, unknown> = {
     model,
@@ -369,11 +369,11 @@ export function openRouterChatBody(
     body.response_format = {
       type: 'json_schema',
       json_schema: {
-        name: 'token_prose',
+        name: opts.schemaName ?? 'token_prose',
         strict: true,
         // Strict mode: every property is required (a missing speaker is null), so the schema is the turn's own.
-        // q50-MAP2 — optional structured newPlaces (never mined from prose).
-        schema: withWriterNewPlaces(baseSchema),
+        // q50-MAP2 — optional structured newPlaces (never mined from prose). Opening pages skip that bag.
+        schema: opts.attachNewPlaces === false ? baseSchema : withWriterNewPlaces(baseSchema),
       },
     };
     if (opts.n && opts.n > 1) body.n = opts.n;

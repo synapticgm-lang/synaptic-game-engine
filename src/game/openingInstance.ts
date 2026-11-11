@@ -505,6 +505,37 @@ export function hookKey(state: { seed?: string; campaignBibleId?: string | null 
 /**
  * Mint a locked opening instance from the seed and a hook snapshot (roles, not a closed name list).
  */
+
+/** A map hub this opening may sit near — never the hook's own catalog place, nor a page-1 ban. */
+function pickNearbyLandmark(
+  bibleId: string | undefined,
+  catalogPlace: string | undefined,
+  placeName: string,
+  retired: string[]
+): string | undefined {
+  const banned = new Set(
+    [catalogPlace, placeName, ...(retired ?? []), ...(catalogPlace ? catalogPlace.split(/\s+/) : [])]
+      .map((s) => (s ?? '').trim().toLowerCase())
+      .filter(Boolean)
+  );
+  const labels = campaignHubLabels(bibleId);
+  const coined = labels.find((lab) => {
+    const k = lab.toLowerCase();
+    if (banned.has(k)) return false;
+    if (lab.split(/\s+/).length !== 1) return false;
+    if (lab.length < 7) return false;
+    if ([...banned].some((b) => b && (k.includes(b) || b.includes(k)))) return false;
+    return true;
+  });
+  if (coined) return coined;
+  return labels.find((lab) => {
+    const k = lab.toLowerCase();
+    if (banned.has(k)) return false;
+    if ([...banned].some((b) => b.length >= 5 && (k.includes(b) || b.includes(k)))) return false;
+    return true;
+  });
+}
+
 export function mintOpeningInstance(
   hook: OpeningHookSnapshot,
   seedKey: string,
@@ -523,12 +554,14 @@ export function mintOpeningInstance(
     const k = n.trim().toLowerCase();
     return !k || PLACE_SUFFIX.has(k) || FACTION_WORDS.has(k) || TITLE_STOP.has(k) || isCommonOpeningLexeme(k);
   };
-  const retire = (n: string) => {
+  const retire = (n: string, flags?: { evenIfHub?: boolean }) => {
     const t = n.trim();
     if (!t || isGenericToken(t)) return;
     // Never retire a single common English word or field label on its own (Cinder, First, Talk).
     if (t.split(/\s+/).length === 1 && (isCommonOpeningLexeme(t) || HOOK_FIELD_LABELS.has(t.toLowerCase()))) return;
-    if (isCampaignHubToken(t, opts?.bibleId)) return;
+    // Hubs this opening actually replaced (its catalog place or faction) are banned on page 1
+    // even though they stay on the map for later turns.
+    if (!flags?.evenIfHub && isCampaignHubToken(t, opts?.bibleId)) return;
     if (!retired.some((x) => x.toLowerCase() === t.toLowerCase())) retired.push(t);
     for (const w of t.split(/\s+/)) {
       if (w.length >= 3 && !isGenericToken(w)) taken.add(w.toLowerCase());
@@ -542,8 +575,8 @@ export function mintOpeningInstance(
     ...(hook.catalogNpcNames ?? []).map((n) => n.trim()).filter(Boolean),
   ];
   const locNames = extractTitleNames(hook.location);
+  // Structured faction field only — even a bare catalog name like Pellane is banned on page 1.
   const factionPool = extractTitleNames(hook.faction)
-    .filter((n) => FACTION_WORDS.has(lastWord(n)) || isFactionName(n, hook.faction ?? ''))
     .filter(
       (n) =>
         !isGenericToken(n)
@@ -559,13 +592,15 @@ export function mintOpeningInstance(
   }
   const people = whoNames;
 
-  // Always have a named place. Campaign hubs stay fixed on the map.
+  // Always mint the opening place for this game. Never lock page 1 to a campaign hub
+  // (Cinderwake Trail / Greyhollow Inn / Salt Road Waystation). The minted spot may
+  // sit near a different hub, which stays on the map for later turns.
   const placeKind = inferPlaceKind(hook);
   const hubPlace = hubCanonicalNameForLocation(hook.location, opts?.bibleId);
-  const catalogPlace = hubPlace ? undefined : places.sort((a, b) => b.length - a.length)[0];
-  const placeName = hubPlace || mintPlaceName(rng, placeKind, taken, seedKey);
-  if (catalogPlace && !isCampaignHubToken(catalogPlace, opts?.bibleId)) {
-    retire(catalogPlace);
+  const catalogPlace = hubPlace || places.sort((a, b) => b.length - a.length)[0];
+  const placeName = mintPlaceName(rng, placeKind, taken, seedKey);
+  if (catalogPlace && catalogPlace.toLowerCase() !== placeName.toLowerCase()) {
+    retire(catalogPlace, { evenIfHub: true });
     replacements.push([catalogPlace, placeName]);
     // Distinctive coined stem (Cinderwake) only — never a common English word (Cinder, Salt).
     const first = catalogPlace.split(/\s+/)[0] ?? '';
@@ -573,13 +608,13 @@ export function mintOpeningInstance(
       first.length >= 8
       && !PLACE_SUFFIX.has(first.toLowerCase())
       && !isCommonOpeningLexeme(first)
-      && !isCampaignHubToken(first, opts?.bibleId)
       && first.toLowerCase() !== lastWord(placeName)
     ) {
-      retire(first);
+      retire(first, { evenIfHub: true });
       replacements.push([first, placeName.split(/\s+/)[0] ?? placeName]);
     }
   }
+  const nearbyLandmark = pickNearbyLandmark(opts?.bibleId, catalogPlace, placeName, retired);
 
   let settlementName: string | undefined;
   const settlementHits = places.filter(
@@ -593,8 +628,8 @@ export function mintOpeningInstance(
 
   let factionName: string | undefined;
   let factionKind: string | undefined;
-  if (factions[0] && !isCampaignHubToken(factions[0].from, opts?.bibleId)) {
-    retire(factions[0].from);
+  if (factions[0]) {
+    retire(factions[0].from, { evenIfHub: true });
     factionKind = factions[0].kind || 'company';
     const stem = pickUnused(rng, PLACE_STEMS, taken);
     factionName = /^(house|order|guild|company|court)$/i.test(factionKind) ? `${factionKind[0]!.toUpperCase()}${factionKind.slice(1)} ${stem}` : stem;
@@ -711,7 +746,8 @@ export function mintOpeningInstance(
     offerSummary,
     offerChips,
     alone: aloneHint || (!cast.length && !whoHereImpliesPresent(hook.whoHere)),
-    retiredNames: retired.filter((n) => !isGenericToken(n) && !isCampaignHubToken(n, opts?.bibleId)),
+    nearbyLandmark,
+    retiredNames: retired.filter((n) => !isGenericToken(n)),
     nameMap,
   };
 }

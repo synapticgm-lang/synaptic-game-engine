@@ -6,11 +6,14 @@ import {
   deriveOpeningJournal,
   askPadFor,
   mockLiveOpeningProse,
+  optionsAreNearDuplicates,
   shapeOpeningPads,
   validateLiveOpeningProse,
+  validateOpeningOptions,
   writeLiveOpening,
   STORYTELLER_RETRY_MESSAGE,
 } from './liveOpening';
+import { formatLaterTurnNameRail } from './openingWriterNotes';
 import { riteEntryForState } from './openingRiteFacts';
 import type { GameState, Settings } from './types';
 
@@ -126,7 +129,7 @@ describe('liveOpening', () => {
     const inst = state.openingEstablishment!.instance!;
     const retired = inst.retiredNames.join(' ');
     expect(retired).toMatch(/Oren/i);
-    expect(retired).not.toMatch(/Cinderwake/i);
+    expect(retired).toMatch(/Cinderwake/i);
     const prose = [
       `${inst.placeName} is already under you, named and ordinary, not a blur.`,
       `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
@@ -136,6 +139,8 @@ describe('liveOpening', () => {
     expect(validateLiveOpeningProse(state, prose)).toEqual([]);
     const leak = `${prose} Brother Oren is still standing on the old trail.`;
     expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
+    const placeLeak = `${prose} Cinderwake Trail still burns behind you.`;
+    expect(validateLiveOpeningProse(state, placeLeak).some((e) => /retired name/i.test(e))).toBe(true);
   });
 
   it('does not treat the honorific "brother" as a retired-name leak', () => {
@@ -169,7 +174,7 @@ describe('liveOpening', () => {
     const state = game();
     const inst = state.openingEstablishment!.instance!;
     const he = inst.cast[0]!;
-    const proseHe = `${inst.placeName} holds. ${he.name} stands in the ash. He has a waterskin half raised. The offer is water, or you keep your own kit.`;
+    const proseHe = `${inst.placeName} holds. ${he.name} stands in the ash and he has a waterskin half raised. The offer is water, or you keep your own kit.`;
     expect(askPadFor(he.name, proseHe)).toMatch(new RegExp(`Ask ${he.name.split(/\s+/)[0]} what he's after`));
     expect(askPadFor(he.name, proseHe)).not.toMatch(/what they want/i);
     const theyProse = `${inst.placeName} holds. ${he.name} is here. The offer is water, or you keep your own kit.`;
@@ -227,6 +232,110 @@ describe('liveOpening', () => {
     expect(journal.title).not.toMatch(new RegExp(`${inst.cast[0]!.name.split(/\s+/)[0]}'s ${inst.cast[0]!.name}`, 'i'));
     expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
     expect(journal.title).toMatch(new RegExp(inst.cast[0]!.name.split(/\s+/)[0]!, 'i'));
+  });
+
+  it("does not attach a nearby man's He to Nell in the Osric sentence", () => {
+    const nell = 'Nell Hask';
+    const osric = 'Osric Dunmore';
+    // Reviewer counter-example: a 40/80-character window around Nell also captures Osric's "He".
+    const prose =
+      'The trail holds. Nell Hask has a waterskin half raised, and Osric Dunmore has not looked away. He spat into the ash and kept the brand-iron ready.';
+    expect(askPadFor(nell, prose)).toBe('Ask Nell about the deal');
+    expect(askPadFor(nell, prose)).not.toMatch(/what he's after/i);
+    expect(validateOpeningOptions(
+      game(),
+      prose,
+      ['Walk with Nell for water', "Ask Nell what he's after", 'Keep your own kit', 'Look around the trail']
+    ).some((e) => /pronoun/i.test(e))).toBe(true);
+    const sheProse = 'Nell Hask stands on the trail, and she has a waterskin half raised. Osric Dunmore has not looked away.';
+    expect(askPadFor(nell, sheProse)).toBe("Ask Nell what she's after");
+    expect(askPadFor(osric, sheProse)).toBe('Ask Osric about the deal');
+  });
+
+  it('does not pad a no-offer Salt warehouse hook with look/study/look-around-first duplicates', () => {
+    const hook = {
+      location: 'a warehouse loft',
+      whoHere: 'the crew',
+      pressingNeed: 'First move is yours — the plan, the cut, or the walk.',
+    };
+    const base = game('rpg', 'salt-wh-pads');
+    const state = attachOpeningInstance(
+      { ...base, campaignBibleId: 'salt-road-heist', engineMode: 'rpg', seed: 'salt-wh-pads' },
+      hook
+    );
+    const inst = state.openingEstablishment!.instance!;
+    const prose = `${inst.placeName} is a warehouse loft that already has a name. The crew is here, none of them sitting. First move is yours — the plan, the cut, or the walk. You keep your own kit if you refuse.`;
+    const pads = shapeOpeningPads(state, prose);
+    expect(pads).toHaveLength(4);
+    for (let i = 0; i < pads.length; i++) {
+      for (let j = i + 1; j < pads.length; j++) {
+        expect(optionsAreNearDuplicates(pads[i]!, pads[j]!)).toBe(false);
+      }
+    }
+    expect(pads.filter((p) => /^(look|study)\b/i.test(p)).length).toBeLessThanOrEqual(1);
+    expect(pads.some((p) => /Look around first/i.test(p) && pads.some((q) => /Look around /i.test(q) && q !== p))).toBe(false);
+  });
+
+  it('does not title the journal from a mid-sentence offer or contract', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const emptyOffer: GameState = {
+      ...state,
+      openingEstablishment: {
+        ...state.openingEstablishment!,
+        instance: { ...inst, offerSummary: undefined, offerChips: inst.offerChips.filter((c) => c.kind === 'refuse') },
+      },
+    };
+    const junk = `${inst.placeName} is already under you. The offer is laid on the crate beside a contract none of you have signed. Heat rises. You keep your own kit.`;
+    const journal = deriveOpeningJournal(emptyOffer, junk);
+    expect(journal.title).not.toMatch(/Under you\. The offer is laid on the/i);
+    expect(journal.title).not.toMatch(/the offer is laid/i);
+    expect(journal.title).not.toMatch(/beside a contract/i);
+    expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
+    expect(journal.title.length).toBeGreaterThan(3);
+  });
+
+  it('bans Pellane on page 1 when it is the hook faction', () => {
+    const hook = { ...cinder, faction: 'the Pellane scouts' };
+    const state = attachOpeningInstance(
+      {
+        ...createInitialState('The Summoned Pact', 'litrpg'),
+        seed: 'pellane-page1',
+        campaignBibleId: 'summoned-pact',
+        engineMode: 'litrpg',
+      } as GameState,
+      hook
+    );
+    const inst = state.openingEstablishment!.instance!;
+    expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
+    const prose = [
+      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
+      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
+      'The Pellane scouts want an answer.',
+      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
+    ].join(' ');
+    expect(validateLiveOpeningProse(state, prose).some((e) => /retired name/i.test(e))).toBe(true);
+    const later = { ...state, openingEstablishment: { ...state.openingEstablishment!, complete: true, sceneWritten: true } };
+    const rail = formatLaterTurnNameRail(later);
+    expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*Pellane/i);
+  });
+
+  it('uses structured options and a short journal title from the writer JSON', async () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    const prose = mockLiveOpeningProse(state);
+    const title = `${inst.cast[0]!.name.split(/\s+/)[0]} at ${inst.placeName}`;
+    const options = shapeOpeningPads(state, prose);
+    expect(validateOpeningOptions(state, prose, options)).toEqual([]);
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => JSON.stringify({ prose, options, journalTitle: title }),
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.retried).toBe(false);
+      expect(result.pads).toEqual(options);
+      expect(result.journal.title).toBe(title);
+    }
   });
 
   it('two seeds produce different mock openings', () => {

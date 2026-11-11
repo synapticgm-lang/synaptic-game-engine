@@ -27,6 +27,7 @@ import {
   setTrainLogSession,
   type TrainLogJob,
 } from '../_shared/gm/trainLog.ts';
+import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from '../_shared/gm/openingWriterNotes.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 const CORS_HEADERS: Record<string, string> = {
@@ -66,6 +67,18 @@ const TOKEN_SCHEMA_MAX_CHARS = 64_000;
 function readTokenSchema(raw: unknown): Record<string, unknown> | undefined {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
   return JSON.stringify(raw).length <= TOKEN_SCHEMA_MAX_CHARS ? (raw as Record<string, unknown>) : undefined;
+}
+
+function isOpeningPageSchema(schema: Record<string, unknown> | undefined): boolean {
+  const req = schema?.required;
+  return Array.isArray(req) && req.includes('journalTitle') && req.includes('options') && req.includes('prose');
+}
+
+function schemaForTurn(state: Record<string, unknown> | undefined, rawSchema: unknown): Record<string, unknown> | undefined {
+  if (state && isUnwrittenLiveOpening(state as { engineMode?: string; openingEstablishment?: { instance?: unknown; sceneWritten?: boolean } | null })) {
+    return OPENING_PAGE_JSON_SCHEMA;
+  }
+  return readTokenSchema(rawSchema);
 }
 
 function jsonResponse(body: Record<string, unknown>, status = 200, extraHeaders?: Record<string, string>) {
@@ -239,7 +252,15 @@ async function callOpenAICompat(
               systemPrompt,
               prompt,
               maxTokens,
-              withSchema ? { tokenProse: true, n: 2, schema: opts.tokenSchema } : undefined
+              withSchema
+                ? {
+                    tokenProse: true,
+                    n: isOpeningPageSchema(opts.tokenSchema) ? 1 : 2,
+                    schema: opts.tokenSchema,
+                    schemaName: isOpeningPageSchema(opts.tokenSchema) ? 'opening_page' : 'token_prose',
+                    attachNewPlaces: !isOpeningPageSchema(opts.tokenSchema),
+                  }
+                : undefined
             )
           : {
               model,
@@ -475,7 +496,7 @@ Deno.serve(async (req) => {
       calledModel = modelName;
       return callOpenAICompat(userPrompt, sys, apiKey, modelName, base, {
         tokenProse: mode === 'turn',
-        tokenSchema: mode === 'turn' ? readTokenSchema(body.tokenSchema) : undefined,
+        tokenSchema: mode === 'turn' ? schemaForTurn(body.state, body.tokenSchema) : undefined,
         maxTokens,
       });
     };

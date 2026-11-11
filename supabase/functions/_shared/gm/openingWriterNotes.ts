@@ -3,6 +3,7 @@
  * Imports types only so the edge graph stays capped (no hook decks).
  */
 import type { GameState } from './types.ts';
+import { isCampaignHubToken } from './outdoorHubs.ts';
 
 export const STORYTELLER_RETRY_MESSAGE = "The storyteller didn't answer — Try again";
 export const STORYTELLER_RETRY_CHIP = 'Try again';
@@ -28,20 +29,27 @@ export function formatOpeningPage1Rail(state: GameState): string {
   const retiredNames = distinctiveRetiredNames(inst.retiredNames);
   const retired = retiredNames.length ? `Do not use retired catalog names: ${retiredNames.slice(0, 24).join(', ')}.` : '';
   const offer = inst.offerSummary ? `THE OFFER must be unmistakable in the prose: ${inst.offerSummary}` : '';
-  const chips = inst.offerChips.length
-    ? `End with exactly ${n} numbered choices. Prefer: ${inst.offerChips.map((c) => c.label).join('; ')}.`
-    : `End with exactly ${n} numbered choices that follow from the prose.`;
+  const optionHint = inst.offerChips.length
+    ? `options: exactly ${n} distinct concrete action labels that follow from the prose. Name the actual offer where there is one. Prefer when they still follow: ${inst.offerChips.map((c) => c.label).join('; ')}.`
+    : `options: exactly ${n} distinct concrete action labels that follow from the prose.`;
+  const near = inst.nearbyLandmark
+    ? `The scene may sit near ${inst.nearbyLandmark}, which is still on the map (for example "on the road toward ${inst.nearbyLandmark}"). The opening takes place at ${inst.placeName}, not at a retired catalog place.`
+    : '';
   return [
     '【 OPENING PAGE 1 】',
-    'Write the first prose the player will read. Novel-quality, concrete, present, no director notes, no menu language.',
+    'Return a JSON object with keys prose, options, and journalTitle. No markdown fences.',
+    'prose: the first page the player will read. Novel-quality, concrete, present, no director notes, no menu language, no numbered choice list.',
+    optionHint,
+    'If an option uses a gendered pronoun (he/she), it must match how the prose refers to that same person. Otherwise phrase the option without a pronoun.',
+    'journalTitle: a short title, at most 8 whole words, naming a person, place, or goal from the scene.',
     `LOCKED PLACE: ${inst.placeName} (${inst.placeKind}) — use this name.`,
+    near,
     people,
     inst.factionName ? `LOCKED FACTION: ${inst.factionName}${inst.factionKind ? ` (${inst.factionKind})` : ''}` : '',
     inst.situation ? `SITUATION (private): ${inst.situation}` : '',
     inst.pressing ? `PRESSURE (private): ${inst.pressing}` : '',
     inst.how ? `HOW YOU ARRIVED (private): ${inst.how}` : '',
     offer,
-    chips,
     retired,
     'Name the locked place and every locked person who is here. No "someone here", "a figure", or unnamed stand-ins when a locked name exists.',
     'Follow the Gamebook / GM writing style already in this system prompt.',
@@ -190,7 +198,9 @@ export function formatLaterTurnNameRail(state: GameState): string {
     inst.factionName,
     ...(inst.cast ?? []).map((c) => c.name),
   ].filter(Boolean) as string[];
-  const retired = distinctiveRetiredNames(inst.retiredNames).slice(0, 20);
+  const retired = distinctiveRetiredNames(inst.retiredNames)
+    .filter((n) => !isCampaignHubToken(n, state.campaignBibleId))
+    .slice(0, 20);
   if (!locked.length && !retired.length) return '';
   return [
     '【 LOCKED NAMES 】',
@@ -199,4 +209,58 @@ export function formatLaterTurnNameRail(state: GameState): string {
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+/** True while a non-PYOA New Game is waiting for its live opening page. */
+export function isUnwrittenLiveOpening(state: {
+  engineMode?: GameState['engineMode'] | string;
+  openingEstablishment?: { instance?: unknown; sceneWritten?: boolean } | null;
+}): boolean {
+  return (
+    state.engineMode !== 'pyoa'
+    && !!state.openingEstablishment?.instance
+    && !state.openingEstablishment.sceneWritten
+  );
+}
+
+/** Strict OpenRouter json_schema for the opening call (prose + options + journal title). */
+export const OPENING_PAGE_JSON_SCHEMA: Record<string, unknown> = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    prose: { type: 'string' },
+    options: { type: 'array', items: { type: 'string' } },
+    journalTitle: { type: 'string' },
+  },
+  required: ['prose', 'options', 'journalTitle'],
+};
+
+export interface OpeningStructuredOutput {
+  prose: string;
+  options: string[];
+  journalTitle: string;
+}
+
+/** Read prose/options/journalTitle from a structured opening reply, or null if it is free prose. */
+export function readOpeningStructuredOutput(raw: string): OpeningStructuredOutput | null {
+  let text = (raw ?? '').trim();
+  if (!text) return null;
+  if (text.startsWith('```')) {
+    text = text.replace(/^```(?:json)?/i, '').replace(/```\s*$/i, '').trim();
+  }
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
+  try {
+    const obj = JSON.parse(text.slice(start, end + 1)) as Record<string, unknown>;
+    const prose = String(obj.prose ?? obj.text ?? '').trim();
+    const options = Array.isArray(obj.options)
+      ? obj.options.map((s) => String(s ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean)
+      : [];
+    const journalTitle = String(obj.journalTitle ?? obj.title ?? '').replace(/\s+/g, ' ').trim();
+    if (!prose) return null;
+    return { prose, options, journalTitle };
+  } catch {
+    return null;
+  }
 }

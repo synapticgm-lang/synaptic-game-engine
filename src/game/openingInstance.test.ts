@@ -47,16 +47,27 @@ describe('openingInstance', () => {
     expect(a.cast.some((c) => /Oren|Kessa|Cinder/i.test(c.name))).toBe(false);
   });
 
-  it('keeps the Cinderwake Trail hub and only retires this opening\'s replaced cast', () => {
+  it('always mints a fresh Cinderwake opening place and retires the catalog trail on page 1', () => {
     const inst = mintOpeningInstance(cinder, 'hub-keep|summoned-pact|opening-instance', { bibleId: 'summoned-pact' });
-    expect(inst.placeName).toBe('Cinderwake Trail');
+    expect(inst.placeName).not.toMatch(/Cinderwake/i);
+    expect(inst.placeName).toMatch(/\S/);
     expect(inst.retiredNames.join(' ')).toMatch(/Oren/i);
     expect(inst.retiredNames.join(' ')).toMatch(/Kessa/i);
-    expect(inst.retiredNames.join(' ')).not.toMatch(/Cinderwake/i);
+    expect(inst.retiredNames.join(' ')).toMatch(/Cinderwake/i);
     expect(inst.retiredNames.some((n) => /^cinder$/i.test(n))).toBe(false);
-    expect(inst.retiredNames.join(' ')).not.toMatch(/Pellane|Greyhollow|Valespire/i);
+    expect(inst.retiredNames.join(' ')).not.toMatch(/Greyhollow/i);
     expect(inst.cast).toHaveLength(2);
     expect(inst.cast.some((c) => /Oren|Kessa/i.test(c.name))).toBe(false);
+    expect(inst.nearbyLandmark).toBeTruthy();
+    expect(inst.nearbyLandmark).not.toMatch(/Cinderwake/i);
+  });
+
+  it('gives seven Cinderwake seeds seven different opening places', () => {
+    const places = Array.from({ length: 7 }, (_, i) =>
+      mintOpeningInstance(cinder, `cinder-seed-${i}|summoned-pact|opening-instance`, { bibleId: 'summoned-pact' }).placeName
+    );
+    expect(places.every((p) => p && !/cinderwake/i.test(p))).toBe(true);
+    expect(new Set(places).size).toBe(7);
   });
 
   it('names the actual offer on chips and always offers keeping your own kit', () => {
@@ -72,7 +83,7 @@ describe('openingInstance', () => {
   it('locks minted place and cast onto the save and drops authored page 1 as a fallback', () => {
     const inst = mintOpeningInstance(cinder, '0|summoned-pact|opening-instance', { bibleId: 'summoned-pact' });
     const state = attachOpeningInstance(seededState('0'), cinder, cinder.page1);
-    expect(inst.placeName).toMatch(/Cinderwake Trail/i);
+    expect(inst.placeName).not.toMatch(/Cinderwake/i);
     expect(state.currentLocation).toBe(inst.placeName);
     expect(state.openingEstablishment?.instance?.placeName).toBe(inst.placeName);
     expect(state.openingEstablishment?.pinnedNpcNames).toEqual(inst.cast.map((c) => c.name));
@@ -135,14 +146,14 @@ describe('openingInstance', () => {
       hook
     );
     const inst = state.openingEstablishment!.instance!;
-    expect(inst.placeName).toMatch(/Salt Road Waystation/i);
+    expect(inst.placeName).not.toMatch(/Salt Road/i);
     expect(inst.alone).toBe(false);
     expect(inst.cast.length).toBeGreaterThanOrEqual(1);
     expect(inst.cast[0]!.role).toMatch(/enforcer/i);
-    expect(inst.retiredNames.join(' ')).not.toMatch(/Salt Road/i);
+    expect(inst.retiredNames.join(' ')).toMatch(/Salt Road/i);
     expect(inst.retiredNames.join(' ')).not.toMatch(/Greyhollow|Valespire/i);
     const chrome = formatOpeningCardChrome(state);
-    expect(chrome).toMatch(/Salt Road Waystation/i);
+    expect(chrome).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     expect(chrome).not.toMatch(/You are alone/i);
     expect(chrome).toMatch(new RegExp(inst.cast[0]!.name.split(/\s+/)[0]!, 'i'));
   });
@@ -182,6 +193,17 @@ describe('openingInstance', () => {
     expect(validateLiveOpeningProse(state, okProse)).toEqual([]);
     const leak = `${okProse} You can still see Hollowmere Track from here.`;
     expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
+  });
+
+  it('bans the hook catalog faction Pellane on page 1', () => {
+    const hook: OpeningHookSnapshot = {
+      ...cinder,
+      faction: 'the Pellane scouts',
+    };
+    const inst = mintOpeningInstance(hook, 'pellane-fac|summoned-pact|opening-instance', { bibleId: 'summoned-pact' });
+    expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
+    expect(inst.factionName).toBeTruthy();
+    expect(inst.factionName).not.toMatch(/Pellane/i);
   });
 
   it('mints a wide variety of place names so two seeds rarely collide', () => {

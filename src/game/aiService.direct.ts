@@ -26,6 +26,7 @@ import {
   stripReasoningBlocks,
 } from './openRouterChat';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
+import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from './openingWriterNotes';
 import { pinnedModel } from './modelIds';
 import { noteWriterRawIssue, noteWriterUsage } from './gmProxy';
 import {
@@ -158,6 +159,11 @@ async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, 
   return text;
 }
 
+function isOpeningPageSchema(schema: Record<string, unknown> | undefined): boolean {
+  const req = schema?.required;
+  return Array.isArray(req) && req.includes('journalTitle') && req.includes('options') && req.includes('prose');
+}
+
 async function callOpenRouter(
   prompt: string,
   systemPrompt: string,
@@ -184,7 +190,15 @@ async function callOpenRouter(
             systemPrompt,
             prompt,
             AI_MAX_OUTPUT_TOKENS,
-            withSchema ? { tokenProse: true, n: 2, schema: tokenSchema } : undefined
+            withSchema
+              ? {
+                  tokenProse: true,
+                  n: isOpeningPageSchema(tokenSchema) ? 1 : 2,
+                  schema: tokenSchema,
+                  schemaName: isOpeningPageSchema(tokenSchema) ? 'opening_page' : 'token_prose',
+                  attachNewPlaces: !isOpeningPageSchema(tokenSchema),
+                }
+              : undefined
           ),
           usage: { include: true },
         }),
@@ -447,7 +461,7 @@ export async function callGmDirect(
 ): Promise<GmResult> {
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
   const prompt = buildContextPrompt(state, playerInput, activeLoreCards, settings.perspective);
-  const tokenSchema = tokenBeatSchemaFor(state);
+  const tokenSchema = isUnwrittenLiveOpening(state) ? OPENING_PAGE_JSON_SCHEMA : tokenBeatSchemaFor(state);
   const facts = engineFactsFromState(state);
   const run = async (): Promise<GmResult> => {
     let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, tokenSchema));

@@ -694,7 +694,7 @@ async function paintLiveOpeningPage(
   prose = ensureSystemReceipt(state, sanitizeOpeningNarration(prose));
   prose = enforcePerspective(prose, settings, state.character.name);
   if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
-  const applied = applySuccessfulLiveOpening(state, prose);
+  const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads, journalTitle: result.journal.title });
   const turn = (state.turn ?? 0) + 1;
   const unlocks = newlyRevealedQuests(state.quests ?? [], applied.quests ?? []);
   const gmBase: LogEntry = {

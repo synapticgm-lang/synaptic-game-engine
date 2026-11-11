@@ -886,6 +886,8 @@ export interface OpeningInstance {
   offerSummary?: string;
   offerChips: OpeningOfferChip[];
   alone: boolean;
+  /** A still-on-the-map hub the minted opening may sit near, not the locked place name. */
+  nearbyLandmark?: string;
   /** Catalog proper names retired for this save (must not appear in opening prose). */
   retiredNames: string[];
   /** Catalog name → locked name, longest first, for scrubbing leftover hook text. */

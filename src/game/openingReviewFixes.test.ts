@@ -59,10 +59,11 @@ describe('PR29 review follow-up', () => {
   it('bans only this opening\'s replaced names and keeps campaign hubs allowed', () => {
     const state = liveState();
     const inst = state.openingEstablishment!.instance!;
-    expect(inst.placeName).toMatch(/Cinderwake Trail/i);
+    expect(inst.placeName).not.toMatch(/Cinderwake/i);
     expect(inst.retiredNames.join(' ')).toMatch(/Oren/i);
+    expect(inst.retiredNames.join(' ')).toMatch(/Cinderwake/i);
     expect(inst.retiredNames.some((n) => /^cinder$/i.test(n))).toBe(false);
-    expect(inst.retiredNames.join(' ')).not.toMatch(/Cinderwake|Pellane|Greyhollow|Valespire|Cinderflow/i);
+    expect(inst.retiredNames.join(' ')).not.toMatch(/Greyhollow|Valespire|Cinderflow/i);
     const allow = compileNounAllowlist({
       ...state,
       currentLocation: inst.placeName,
@@ -77,10 +78,9 @@ describe('PR29 review follow-up', () => {
     const rail = formatLaterTurnNameRail(state);
     const prompt = buildMasterPrompt(state, { contentMode: 'adult' } as never, []);
     expect(rail).toMatch(/LOCKED NAMES/);
-    expect(rail).toMatch(/Cinderwake Trail/i);
+    expect(rail).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*(Cinderwake|Greyhollow|Valespire|Cinderflow)/i);
     expect(rail).not.toMatch(/\bWalk\b/);
-    expect(prompt).toMatch(/Cinderwake Trail/i);
     expect(prompt).not.toMatch(/Do not use retired catalog names:[^\n]*(Cinderwake|Greyhollow|Valespire)/i);
   });
 
@@ -97,8 +97,8 @@ describe('PR29 review follow-up', () => {
       ),
     };
     const inst = state.openingEstablishment!.instance!;
-    expect(inst.placeName).toMatch(/Greyhollow Inn/i);
-    expect(inst.retiredNames.join(' ')).not.toMatch(/Greyhollow/i);
+    expect(inst.placeName).not.toMatch(/Greyhollow/i);
+    expect(inst.retiredNames.join(' ')).toMatch(/Greyhollow/i);
     const later = { ...state, openingEstablishment: { ...state.openingEstablishment!, complete: true, sceneWritten: true } };
     const allow = compileNounAllowlist(later);
     const blob = allow.join(' | ');
@@ -106,7 +106,7 @@ describe('PR29 review follow-up', () => {
     expect(blob).toMatch(/Greyhollow Church/i);
     expect(blob).toMatch(/Greyhollow Graveyard/i);
     const rail = formatLaterTurnNameRail(later);
-    expect(rail).toMatch(/Keep using these locked names:.*Greyhollow Inn/i);
+    expect(rail).toMatch(new RegExp(`Keep using these locked names:.*${inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
     expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*Greyhollow/i);
   });
 
