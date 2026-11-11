@@ -944,6 +944,8 @@ export interface OpeningEstablishment {
   card?: OpeningCardRecord;
   /** The card's opening offer once the player has taken or turned it down; open while unset. */
   offerTaken?: 'accepted' | 'refused';
+  /** Page-1 / offer pads tagged as accept or refuse when they were shaped. */
+  offerPadKinds?: Array<{ label: string; kind: 'accept' | 'refuse' }>;
   /** Authored first-page prose stored at New Game (PYOA book start / stitch source). */
   page1?: string;
 }

@@ -203,7 +203,7 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
       );
     }
   }
-  if (isOfferRefuseLine(check.playerInput)) {
+  if (isOfferRefuseLine(check.playerInput, check.state)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();
     const named = (card || openingCastNames(check.state)[0] || '').trim();
     const low = named.toLowerCase();

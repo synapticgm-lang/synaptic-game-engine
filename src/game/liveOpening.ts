@@ -4,6 +4,8 @@
  */
 import type { GameState, Quest, Settings } from './types';
 import { openingInstanceOf, givenNameOf, escapeRe } from './openingInstance';
+import { isCampaignHubToken } from './outdoorHubs';
+import { tagOpeningOfferPads } from './openingOfferRecognize';
 import {
   formatOpeningWriterNotes,
   isCommonOpeningLexeme,
@@ -456,19 +458,26 @@ function knownOpeningNames(state: GameState): string[] {
   ].filter(Boolean) as string[];
 }
 
+function optionNameMayMissProse(state: GameState, name: string): boolean {
+  if (isCampaignHubToken(name, state.campaignBibleId)) return true;
+  const landmark = openingInstanceOf(state)?.nearbyLandmark?.trim();
+  if (!landmark) return false;
+  return mentionsPlaceName(name, landmark) || mentionsName(name, landmark) || mentionsPlaceName(landmark, name);
+}
+
 function properNamesInOption(label: string, state: GameState): string[] {
   const known = knownOpeningNames(state);
   const found: string[] = [];
   for (const n of known) {
     if (mentionsOpeningName(state, label, n) && !found.some((f) => f.toLowerCase() === n.toLowerCase())) found.push(n);
   }
-  const leadingVerb = /^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak)\s+/i;
+  const leadingVerb = /^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak|Head|Show|Go|Come|Follow|Leave|Enter|Open|Bring|Find|Call|Listen|Hold|Run|Hide|Move|Turn|Point)\s+/i;
   const spans = label.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g) ?? [];
   for (const raw of spans) {
     const span = raw.replace(leadingVerb, '').trim();
     if (!span) continue;
     if (isCommonOpeningLexeme(span) || INSPECT_VERBS.test(span)) continue;
-    if (/^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak)$/i.test(span)) continue;
+    if (/^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak|Head|Show|Go|Come|Follow|Leave|Enter|Open|Bring|Find|Call|Listen|Hold|Run|Hide|Move|Turn|Point)$/i.test(span)) continue;
     if (span.split(/\s+/).every((w) => isCommonOpeningLexeme(w) || INSPECT_VERBS.test(w))) continue;
     if (found.some((f) => f.toLowerCase() === span.toLowerCase() || f.toLowerCase().includes(span.toLowerCase()))) continue;
     found.push(span);
@@ -498,7 +507,9 @@ export function validateOpeningOptions(state: GameState, prose: string, options:
       }
     }
     for (const name of properNamesInOption(label, state)) {
-      if (!mentionsOpeningName(state, prose, name)) errors.push(`option names ${name}, which is not in the prose`);
+      if (!mentionsOpeningName(state, prose, name) && !optionNameMayMissProse(state, name)) {
+        errors.push(`option names ${name}, which is not in the prose`);
+      }
     }
     errors.push(...optionPronounErrors(label, prose, names, state));
     const member = inst?.cast.find((c) => mentionsName(label, c.name));
@@ -582,7 +593,7 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
     if (labels.some((x) => optionsAreNearDuplicates(x, t))) return;
     if ((inst?.retiredNames ?? []).some((r) => retiredNameNeedles(r).some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(t)))) return;
     const names = properNamesInOption(t, state);
-    if (names.some((nm) => !mentionsOpeningName(state, prose, nm))) return;
+    if (names.some((nm) => !mentionsOpeningName(state, prose, nm) && !optionNameMayMissProse(state, nm))) return;
     if (optionPronounErrors(t, prose, knownOpeningNames(state), state).length) return;
     labels.push(t);
   };
@@ -819,6 +830,7 @@ export function applySuccessfulLiveOpening(
       ...(state.openingEstablishment ?? { pending: [], answers: {}, complete: true }),
       sceneWritten: true,
       sceneWriteError: undefined,
+      offerPadKinds: tagOpeningOfferPads(state, pads),
     },
   };
 }

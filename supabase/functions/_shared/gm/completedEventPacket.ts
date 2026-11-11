@@ -95,6 +95,7 @@ import {
   countSameHallTopicRepeats,
   openingCastNote,
 } from './openingEstablishment.ts';
+import { classifyOpeningOfferInput } from './openingOfferRecognize.ts';
 import {
   openingRiteRefuseWriterFact,
   openingRiteWriterOffer,
@@ -2514,7 +2515,7 @@ function topicAdvancePool(
     pool = talk && !/^Nobody here answered/i.test(talk) ? [talk] : look;
   } else if (isOpeningNameGiveLine(act) && !hallTopicAlreadyAnswered(state, 'want')) {
     pool = [openingNameLockSpokenBeat(state)];
-  } else if (isAcceptOfferLine(act)) {
+  } else if (classifyOpeningOfferInput(state, act) === 'accept' || isAcceptOfferLine(act)) {
     pool = accept;
   } else if (isExitsAsk(act) && !hubHit && !graphHit) {
     pool = exitsPool;
