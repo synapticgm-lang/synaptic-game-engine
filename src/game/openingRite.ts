@@ -306,8 +306,10 @@ export function pinOpeningRiteChip(state: GameState, choices: string[]): string[
   if (idx > 0) list.splice(idx, 1);
   if (idx !== 0) list.unshift(chip);
   const refuse = openingRiteRefuseChip(state);
-  if (refuse && !list.some((c) => c.toLowerCase() === refuse.toLowerCase())) {
-    list.splice(Math.min(1, list.length), 0, refuse);
+  if (refuse) {
+    const r = list.findIndex((c, i) => i > 0 && c.toLowerCase() === refuse.toLowerCase());
+    if (r > 0) list.splice(r, 1);
+    if (refuse.toLowerCase() !== want) list.splice(Math.min(1, list.length), 0, refuse);
   }
   return [...list.slice(0, RITE_SCENE_SLOTS), ...free];
 }

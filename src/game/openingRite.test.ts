@@ -258,6 +258,8 @@ describe('XP-D1 OPEN chips + writer fact + System window', () => {
     const scene = pinned.filter((c) => !/^(?:Say something|Do something else)/i.test(c));
     expect(scene).toEqual(['Sign the pact', 'Refuse the pact', 'Look around', 'Wait and listen']);
     expect(pinned.slice(4)).toEqual(['Say something…', 'Do something else…']);
+    const withRefuse = pinOpeningRiteChip(state, ['Look around', 'Wait and listen', 'Ask what they want', 'Refuse the pact', 'Say something…']);
+    expect(withRefuse).toEqual(['Sign the pact', 'Refuse the pact', 'Look around', 'Wait and listen', 'Say something…']);
   });
 
   it('writer packet carries the pending offer', () => {
