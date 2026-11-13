@@ -87,7 +87,9 @@ describe('s80 Root B — the card offer and cast compile from the card slots', (
     const s = seed80();
     expect(s.openingEstablishment?.pickedHook).toMatch(/kit you as crew \(knife, oilskin, a bunk\)/);
     const offer = s.openingEstablishment?.card?.offer;
-    expect(offer?.items).toEqual(['knife', 'oilskin', 'bunk']);
+    expect(offer?.items).toEqual(['knife', 'oilskin']);
+    // PR41: the bunk is lodging, kept on the record as a benefit, not inventory.
+    expect(offer?.benefits).toEqual(['bunk']);
     expect(offer?.accept).toMatch(/^Keep their secret/);
     expect(resolveOfferedChoices(s)).toEqual(expect.arrayContaining(['Accept the offer', 'Refuse the offer']));
   });

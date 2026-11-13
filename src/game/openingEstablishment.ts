@@ -1742,6 +1742,31 @@ function offerItems(sentence: string): string[] {
     .map((p) => p.replace(/^(?:a|an|the|some|your|their)\s+/i, '').trim())
     .filter((p) => p && p.split(/\s+/).length <= 4 && !/\b(?:whatever|anything|nothing|junk)\b(?!-)/i.test(p));
 }
+/**
+ * Not everything an offer hands over is carried. Judged once, structurally, by the item's head noun (the
+ * last word before an "at / of / in / aboard …" tail: "seat at the table" → seat), against two short
+ * principled classes — never by growing a per-item list:
+ *  - a PLACE you are given to sleep or sit (bunk, berth, bed, cot, cabin, room, seat): lodging, not gear;
+ *  - WORDS or STANDING you are given (story, name, word, promise, welcome, rank): known, not held.
+ * Anything else is a carryable object. Non-carryables stay on the offer record as benefits.
+ */
+const OFFER_PLACE_HEAD = /^(?:bunk|berth|bed|cot|cabin|room|seat)s?$/;
+const OFFER_ABSTRACT_HEAD = /^(?:story|stories|name|word|promise|welcome|rank)s?$/;
+function offerHeadNoun(item: string): string {
+  const core = (item ?? '').toLowerCase().split(/\s+(?:at|of|in|on|for|aboard|with)\s+/)[0] ?? '';
+  return (core.trim().split(/\s+/).pop() ?? '').replace(/['’]s$/, '');
+}
+export function isCarryableOfferItem(item: string): boolean {
+  const head = offerHeadNoun(item);
+  return !!head && !OFFER_PLACE_HEAD.test(head) && !OFFER_ABSTRACT_HEAD.test(head);
+}
+/** Split what an offer hands over into carried items and non-carried benefits (a berth, a cover story). */
+export function splitOfferGrants(things: string[]): { items: string[]; benefits: string[] } {
+  const items: string[] = [];
+  const benefits: string[] = [];
+  for (const t of things) (isCarryableOfferItem(t) ? items : benefits).push(t);
+  return { items, benefits };
+}
 /** A line of the offer slot that says nothing is offered. */
 const NO_OFFER_LINE = /^(?:no one|nobody|none|nothing|no)\b/i;
 /**
@@ -1754,13 +1779,14 @@ export function compileOpeningOffer(blob: string | undefined): OpeningOfferRecor
   const sentences = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
   const accept = sentences.find((s) => !NO_OFFER_LINE.test(s) && !/^(?:refuse|decline)\b/i.test(s));
   if (!accept) return undefined;
-  const items = offerItems(accept);
-  if (!items.length) return undefined;
+  const offered = offerItems(accept);
+  if (!offered.length) return undefined;
+  const { items, benefits } = splitOfferGrants(offered);
   const refuse = sentences.find(
     (s) => s !== accept && /\b(?:refuse|decline|turn (?:it|them) down|say no)\b/i.test(s)
   ) ?? sentences[sentences.indexOf(accept) + 1] ?? '';
   const noun = /\b(?:work|job|cots|serve|duty|labou?r|shift)\b/i.test(accept) ? 'work' : 'offer';
-  return { items, accept, refuse, noun };
+  return { items, accept, refuse, noun, ...(benefits.length ? { benefits } : {}) };
 }
 /** This save's opening offer: the compiled record, else compiled from the stored card text. */
 export function openingOfferRecord(state: GameState): OpeningOfferRecord | undefined {

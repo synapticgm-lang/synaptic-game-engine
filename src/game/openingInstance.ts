@@ -1047,6 +1047,12 @@ function patchRoster(memories: NpcMemory[] | undefined, instance: OpeningInstanc
 /**
  * Lock the minted instance onto the save: place, pins, scrubbed hook blob, roster names.
  */
+/** The offer's non-carried benefits (a berth, a cover story), compiled from the hook's own offer line. */
+function compiledBenefits(offer: string | undefined, fallback?: string[]): { benefits?: string[] } {
+  const benefits = compileOpeningOffer(offer ? `Opening offer: ${offer}` : undefined)?.benefits ?? fallback;
+  return benefits?.length ? { benefits } : {};
+}
+
 export function attachOpeningInstance(
   state: GameState,
   hook: OpeningHookSnapshot,
@@ -1127,6 +1133,7 @@ export function attachOpeningInstance(
               ? {
                   ...cardOffer,
                   items: instance.offerItemNotes?.length ? instance.offerItemNotes : cardOffer.items,
+                  ...(compiledBenefits(hook.openingOffer, cardOffer.benefits)),
                   accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? cardOffer.accept,
                   refuse: instance.offerChips.find((c) => c.kind === 'refuse')?.label ?? 'Keep your own kit',
                 }
