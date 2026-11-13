@@ -56,6 +56,14 @@ describe('PR39 opening offer labels', () => {
       expect(pads, `${c.seed}: ${pads.join('|')}`).toHaveLength(2);
       expect(applyOpeningOfferChoice(s, pads[0]!).state.openingEstablishment?.offerTaken, pads[0]).toBe('accepted');
       expect(applyOpeningOfferChoice(s, pads[1]!).state.openingEstablishment?.offerTaken, pads[1]).toBe('refused');
+      // The accept chip and the noun-free pair name the same giver.
+      const named = pads[0]!.match(/^Accept (\S+?)'s offer$/)?.[1];
+      const cast = (s.openingEstablishment?.instance?.cast ?? []).map((m) => m.name.split(' ')[0]!);
+      if (named) {
+        for (const other of cast.filter((n) => n !== named)) {
+          expect(accept!.label, `${c.seed}: ${accept!.label} vs ${pads.join('|')}`).not.toMatch(new RegExp(`\\b${other}\\b`));
+        }
+      }
       rows.push(`| ${n + 1} | ${c.bible} | ${c.seed} | ${accept!.label} | ${refuse!.label} | ${pads.join(' / ')} |`);
     });
     expect(cards.length).toBeGreaterThanOrEqual(37);

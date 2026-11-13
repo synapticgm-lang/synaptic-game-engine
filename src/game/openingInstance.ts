@@ -943,7 +943,7 @@ export function mintOpeningInstance(
   if (offerCompiles) {
     const cleanItems = attached.filter((r) => !isActionClause(r.item));
     const label = offerConditionLabel(offerScrubbed, cast, giver)
-      ?? (cleanItems[0] ? concreteAcceptLabel(cleanItems[0].item, cleanItems[0].person ?? giver) : null)
+      ?? (cleanItems[0] ? concreteAcceptLabel(cleanItems[0].item, giver ?? cleanItems[0].person) : null)
       ?? (giver ? `Accept ${givenNameOf(giver.name)}'s offer` : 'Accept the offer');
     const what = cleanItems.map((r) => shortItem(r.item)).join(', ');
     offerChips.push({
