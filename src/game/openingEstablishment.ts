@@ -1817,8 +1817,9 @@ function openingCommittedProse(state: GameState): string {
 export function openingOfferPads(state: GameState): string[] {
   const chips = state.openingEstablishment?.instance?.offerChips;
   if (chips?.length) {
-    // Taken, refused, or left the place: the chips go (clicking them would no-op).
-    if (state.openingEstablishment?.offerTaken || leftOpeningOfferPlace(state)) return [];
+    // Only a live offer the click can resolve: taken, refused, left the place, or no offer recorded
+    // (an old save's chips on a no-offer card) shows no chips; better no button than a dead one.
+    if (!openOpeningOffer(state)) return [];
     const labels = chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse');
     if (state.openingEstablishment?.sceneWritten) {
       const prose = openingCommittedProse(state);

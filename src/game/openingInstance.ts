@@ -16,6 +16,7 @@ import { isCommonOpeningLexeme } from './openingWriterNotes';
 import { campaignCanonicalHubNames, campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 import { applyPresenceFacts } from './presentAuthority';
 import { isCatalogCastBlockedHere } from './openingCatalogGuard';
+import { compileOpeningOffer } from './openingEstablishment';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot {
@@ -893,7 +894,10 @@ export function mintOpeningInstance(
     if (/^(?:refuse|decline|keep your|neither)\b/i.test(it)) return false;
     return it.length >= 2;
   });
-  const attached = attachItemsToCast(items, cast, offerScrubbed);
+  // Offer chips only for a real offer the click can resolve: a "No one offers kit" / salvage-or-leave
+  // card has none (better no button than a dead one).
+  const offerCompiles = !!compileOpeningOffer(offerScrubbed ? `Opening offer: ${offerScrubbed}` : undefined);
+  const attached = offerCompiles ? attachItemsToCast(items, cast, offerScrubbed) : [];
   const offerChips: OpeningOfferChip[] = [];
   const seenLabel = new Set<string>();
   for (const row of attached) {
@@ -911,8 +915,8 @@ export function mintOpeningInstance(
     label: 'Keep your own kit',
     note: 'Refuse whatever is being offered and keep your own kit.',
   };
-  if (!offerChips.some((c) => c.kind === 'refuse')) offerChips.push(refuse);
-  if (!offerChips.some((c) => c.kind === 'accept') && cast[0]) {
+  if (offerCompiles && !offerChips.some((c) => c.kind === 'refuse')) offerChips.push(refuse);
+  if (offerCompiles && !offerChips.some((c) => c.kind === 'accept') && cast[0]) {
     offerChips.unshift({
       kind: 'accept',
       label: `Hear ${givenNameOf(cast[0].name)} out`,
@@ -1046,6 +1050,10 @@ export function attachOpeningInstance(
   const est = state.openingEstablishment;
   const pinned = instance.cast.map((c) => c.name);
   const memories = patchRoster(state.npcMemories, instance, est?.castNpcIds);
+  // The card records the offer whenever the instance carries offer chips, so every chip shown resolves on click.
+  const cardOffer = instance.offerChips.length
+    ? est?.card?.offer ?? compileOpeningOffer(hook.openingOffer ? `Opening offer: ${hook.openingOffer}` : undefined)
+    : est?.card?.offer;
 
   const next: GameState = {
     ...state,
@@ -1075,14 +1083,14 @@ export function attachOpeningInstance(
               ...(instance.factionName ? [instance.factionName] : []),
               ...(instance.settlementName ? [instance.settlementName] : []),
             ],
-            offer: est.card.offer
+            offer: cardOffer
               ? {
-                  ...est.card.offer,
+                  ...cardOffer,
                   items: instance.offerChips.filter((c) => c.kind === 'accept').map((c) => c.note),
-                  accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? est.card.offer.accept,
+                  accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? cardOffer.accept,
                   refuse: instance.offerChips.find((c) => c.kind === 'refuse')?.label ?? 'Keep your own kit',
                 }
-              : est.card.offer,
+              : cardOffer,
           }
         : est?.card,
     },
