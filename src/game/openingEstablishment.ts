@@ -1744,7 +1744,7 @@ function offerItems(sentence: string): string[] {
 }
 /**
  * Not everything an offer hands over is carried. Judged once, structurally, by the item's head noun (the
- * last word before an "at / of / in / aboard …" tail: "seat at the table" → seat), against two short
+ * last word before an "at / of / in / aboard / to / from …" tail: "seat at the table" → seat), against two short
  * principled classes — never by growing a per-item list:
  *  - a PLACE you are given to sleep or sit (bunk, berth, bed, cot, cabin, room, seat): lodging, not gear;
  *  - WORDS or STANDING you are given (story, name, word, promise, welcome, rank): known, not held.
@@ -1753,7 +1753,7 @@ function offerItems(sentence: string): string[] {
 const OFFER_PLACE_HEAD = /^(?:bunk|berth|bed|cot|cabin|room|seat)s?$/;
 const OFFER_ABSTRACT_HEAD = /^(?:story|stories|name|word|promise|welcome|rank)s?$/;
 function offerHeadNoun(item: string): string {
-  const core = (item ?? '').toLowerCase().split(/\s+(?:at|of|in|on|for|aboard|with)\s+/)[0] ?? '';
+  const core = (item ?? '').toLowerCase().split(/\s+(?:at|of|in|on|for|aboard|with|to|from)\s+/)[0] ?? '';
   return (core.trim().split(/\s+/).pop() ?? '').replace(/['’]s$/, '');
 }
 export function isCarryableOfferItem(item: string): boolean {
@@ -1797,8 +1797,12 @@ export function openingOfferRecord(state: GameState): OpeningOfferRecord | undef
   // Sit the audit"): accepting must still grant what the card offered, so heal from the card's own text.
   const recItems = rec.items ?? [];
   if (!recItems.length || recItems.some((it) => /\boffers\b/i.test(it ?? ''))) {
-    const items = compileOpeningOffer(est?.pickedHook)?.items;
-    if (items?.length) return { ...rec, items };
+    // Items AND benefits: a pre-split save must still keep its story / bunk as a benefit.
+    const healed = compileOpeningOffer(est?.pickedHook);
+    if (healed && (healed.items.length || healed.benefits?.length)) {
+      const benefits = [...new Set([...(rec.benefits ?? []), ...(healed.benefits ?? [])])];
+      return { ...rec, items: healed.items, ...(benefits.length ? { benefits } : {}) };
+    }
   }
   return rec;
 }
