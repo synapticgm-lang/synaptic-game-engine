@@ -6,6 +6,7 @@
  * Stiff / abstract prose is judged by the thumbs model pass, not here (no phrase list).
  */
 
+import { placeVessel } from './vesselPlace';
 import type { GameState } from './types';
 import { checkObligationCoverage, buildIntentContract } from './intentContract';
 import { npcHoldsPcQuote, parsePlayerIntent } from './intentParser';
@@ -545,6 +546,7 @@ function drawnMap(state: GameState): ActiveDungeonState | null {
   if (!place) return null;
   return resolvePlayAreaMap(null, place, [], state.currentCoordinates, state.seed || state.saveId || 'interior', {
     underground: (site) => previewDungeonCard(state, site),
+    vessel: placeVessel(state, place),
   });
 }
 
@@ -666,7 +668,8 @@ function fightRoundChips(state: GameState, chips: string[]): string[] {
 
 /**
  * The chips were offered before this turn's pick, so a repeat is measured against the turn before it. The turn
- * record's own previous pick (ow.previousPick) wins; the log is the fallback.
+ * record's own previous pick (
+ow.previousPick) wins; the log is the fallback.
  */
 function previousPlayerAction(before: GameState): string {
   const last = [...(before.log ?? [])].reverse().find((e) => e.role === 'player' && norm(e.content));

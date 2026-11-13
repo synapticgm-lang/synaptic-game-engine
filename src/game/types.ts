@@ -2450,6 +2450,8 @@ export interface PlaceRecord {
   allowsDungeon?: boolean;
   /** 27g place card — plain player-facing description, built once on first entry. */
   description?: string;
+  /** Aboard a vessel: ship / boat template id, set once the story establishes it (map draws decks). */
+  vessel?: string;
   /** 27g place card — plain exit names (the way back plus known hubs), built once on first entry. */
   exits?: string[];
   /** 27g place card — turn the card was built; set means reuse, never rebuild. */
@@ -2843,4 +2845,4 @@ export interface SalvageRequirement {
   profession: ProfessionType;
   minLevel: number;
   reason: string;
-}
+}
