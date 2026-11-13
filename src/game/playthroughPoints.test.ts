@@ -25,6 +25,14 @@ function yarrow(over: Partial<GameState> = {}): GameState {
     places: [{ id: 'p-yarrow', name: 'Yarrowholt Circle' }],
     openingEstablishment: {
       ...(base.openingEstablishment ?? {}),
+      // A real offer record on the card, so the offer chips resolve on click.
+      card: {
+        place: 'Yarrowholt Circle',
+        cast: 'Brannoc Tew',
+        castNames: ['Brannoc Tew'],
+        names: ['Yarrowholt Circle', 'Brannoc Tew'],
+        offer: { items: ['knife, oilskin, a bunk'], accept: 'Take the crew kit', refuse: 'Keep your own kit', noun: 'offer' },
+      },
       instance: {
         placeName: 'Yarrowholt Circle',
         placeKind: 'summoning circle',

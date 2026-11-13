@@ -1773,24 +1773,66 @@ export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefin
   if (!est || est.offerTaken) return undefined;
   const offer = openingOfferRecord(state);
   if (!offer) return undefined;
-  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  const place = key(est.card?.place);
-  if (place && key(state.currentLocation) !== place) return undefined;
+  if (leftOpeningOfferPlace(state)) return undefined;
   return offer;
 }
-/** Concrete offer chips from the locked opening instance, else a last-resort accept/refuse. */
-function offerAcceptGroundedInProse(label: string, prose: string, state: GameState): boolean {
-  const hay = (prose ?? '').replace(/\s+/g, ' ').trim();
+/** The player has left the card's place. A deck or room of it ("Yarrowholt Circle — Main deck", or an interior opened from it) is still there. */
+function leftOpeningOfferPlace(state: GameState): boolean {
+  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const place = key(state.openingEstablishment?.card?.place);
+  if (!place) return false;
+  const head = (s: string | undefined) => key((s ?? '').split(/\s+[—–]\s+/)[0]);
+  if (head(state.currentLocation) === place) return false;
+  const d = state.activeDungeon;
+  return !(d && [d.dungeonName, d.siteName].some((n) => head(n) === place));
+}
+/**
+ * The chip names nothing the prose has not shown: every word left after the verb, the people and the
+ * deal words ("offer", "work", "own") is in the committed prose. "Take the kit" against a page that only
+ * says "a crate" is not grounded.
+ */
+const OFFER_LABEL_SKIP = new Set(['of', 'for', 'the', 'a', 'an', 'some', 'your', 'own', 'my', 'their', 'his', 'her', 'with', 'to', 'and', 'out', 'up', 'on', 'in', 'offer', 'offered', 'deal', 'work', 'job', 'terms', 'what', 'is', 'earth', 'them', 'him']);
+function offerLabelGroundedInProse(label: string, prose: string, state: GameState): boolean {
+  const hay = (prose ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   if (!hay) return true;
-  const t = (label ?? '').replace(/\s+/g, ' ').trim();
-  const who = t.match(/^(?:Hear|Walk with|Ask|Talk to)\s+(\S+)/i)?.[1] ?? '';
-  if (who && new RegExp(`\\b${who.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(hay)) return true;
-  if (who && openingLockedPersonNames(state).some((n) => n.toLowerCase().includes(who.toLowerCase()) && new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(hay))) {
-    return true;
+  const people = new Set(
+    [...openingLockedPersonNames(state), ...(state.openingEstablishment?.instance?.cast ?? []).map((c) => c.name)]
+      .flatMap((n) => (n ?? '').toLowerCase().split(/\s+/))
+      .filter(Boolean)
+  );
+  const words = (label ?? '').toLowerCase().replace(/['’]s\b/g, '').match(/[a-z][a-z-]*/g) ?? [];
+  return words
+    .slice(1)
+    .filter((w) => !OFFER_LABEL_SKIP.has(w) && !people.has(w))
+    // Stem plus a simple plural, then a boundary: "kits" grounds "kit", "kitchen" does not.
+    .every((w) => new RegExp(`\\b${w.replace(/(?:es|s)$/, '').replace(/-/g, '\\-')}(?:e?s)?\\b`, 'i').test(hay));
+}
+/**
+ * ONE giver for the whole offer, so the pair names the same person: the accept chip's own "X offers …"
+ * note (the card's minted giver). No single reliable giver → '' and both labels go generic.
+ */
+function offerGiver(state: GameState): string {
+  const givers = new Set<string>();
+  for (const c of state.openingEstablishment?.instance?.offerChips ?? []) {
+    if (c.kind !== 'accept') continue;
+    const who = (c.note ?? '').match(/^(.+?)\s+offers\b/i)?.[1]?.trim().split(/\s+/)[0] ?? '';
+    givers.add(who);
   }
-  const nouns = t.toLowerCase().match(/\b(?:kit|crate|tabard|vial|cloak|scarf|waterskin|blade|knife|chit|bread|lamp|gloves|key)\b/g) ?? [];
-  if (nouns.length) return nouns.some((n) => new RegExp(`\\b${n}\\b`, 'i').test(hay));
-  return true;
+  // Two people offering, or an accept chip with no named giver: no single giver to name.
+  return givers.size === 1 ? [...givers][0]! : '';
+}
+/** A label that names the giver and the deal but no item: it never contradicts the prose, and it still classifies. */
+function nounFreeOfferLabel(kind: 'accept' | 'refuse', giver: string): string {
+  if (kind === 'accept') return giver ? `Accept ${giver}'s offer` : 'Accept the offer';
+  return giver ? `Turn down ${giver}'s offer` : 'Refuse the offer';
+}
+/** The label was on a pad the player already saw (an earlier page's chips or the stored pad). */
+function offerChipAlreadyShown(state: GameState, label: string): boolean {
+  const want = (label ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!want) return false;
+  const same = (c?: string) => (c ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === want;
+  if ((state.choices ?? []).some(same) || (state.offeredPad?.choices ?? []).some(same)) return true;
+  return (state.log ?? []).some((e) => e.role === 'gm' && (e.offeredChoices ?? []).some(same));
 }
 function openingCommittedProse(state: GameState): string {
   return (state.log ?? [])
@@ -1801,16 +1843,27 @@ function openingCommittedProse(state: GameState): string {
 export function openingOfferPads(state: GameState): string[] {
   const chips = state.openingEstablishment?.instance?.offerChips;
   if (chips?.length) {
-    const offer = openOpeningOffer(state);
-    if (!offer && state.openingEstablishment?.offerTaken) return [];
+    // Only a live offer the click can resolve: taken, refused, left the place, or no offer recorded
+    // (an old save's chips on a no-offer card) shows no chips; better no button than a dead one.
+    if (!openOpeningOffer(state)) return [];
     const labels = chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse');
-    if (state.openingEstablishment?.sceneWritten) {
-      const prose = openingCommittedProse(state);
-      return labels
-        .filter((c) => c.kind !== 'accept' || offerAcceptGroundedInProse(c.label, prose, state))
-        .map((c) => c.label);
+    if (!labels.some((c) => c.kind === 'accept') || !labels.some((c) => c.kind === 'refuse')) return [];
+    // Accept and refuse are a pair: both always show while the offer is live. A label naming an item the
+    // prose has not shown is relabelled noun-free ("Accept Idra's offer"); whichever label the player has
+    // already seen stays, so the buttons are stable across turns. Both forms resolve on the same record.
+    const prose = state.openingEstablishment?.sceneWritten ? openingCommittedProse(state) : '';
+    const giver = offerGiver(state);
+    const out: string[] = [];
+    for (const c of labels) {
+      const plain = nounFreeOfferLabel(c.kind as 'accept' | 'refuse', giver);
+      const label = offerChipAlreadyShown(state, c.label)
+        ? c.label
+        : offerChipAlreadyShown(state, plain) || !offerLabelGroundedInProse(c.label, prose, state)
+          ? plain
+          : c.label;
+      if (!out.some((l) => l.toLowerCase() === label.toLowerCase())) out.push(label);
     }
-    return labels.map((c) => c.label);
+    return out;
   }
   const offer = openOpeningOffer(state);
   if (!offer) return [];
