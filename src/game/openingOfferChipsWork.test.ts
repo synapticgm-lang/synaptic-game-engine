@@ -49,6 +49,14 @@ function namesAbsentItem(label: string, prose: string): string | null {
   }
   return null;
 }
+/** The pair names one giver: every noun-free "X's offer" names the same X, and that X is the accept side's. */
+function expectOneGiver(pads: string[], accepts: string[], tag: string) {
+  const plain = [...new Set(pads.map((l) => l.match(/^(?:Accept|Turn down) (\S+?)['’]s offer$/)?.[1]).filter(Boolean))];
+  expect(plain.length, `${tag}: ${pads.join('|')}`).toBeLessThanOrEqual(1);
+  if (plain[0]) {
+    expect(accepts.some((a) => new RegExp(`\\b${plain[0]}\\b`).test(a)), `${tag}: ${pads.join('|')}`).toBe(true);
+  }
+}
 const engine = (pads: string[]) => pads.filter((c) => !isFreeInputChip(c));
 
 /** Both chips show, name no unseen item, sit in exactly 4 pads, and each resolves + clears on click. */
@@ -61,6 +69,7 @@ function checkPair(s: GameState, tag: string) {
   expect(refuses.length, `${tag}: ${pads.join('|')}`).toBe(1);
   expect(accepts.length + refuses.length, `${tag}: every chip resolves`).toBe(pads.length);
   for (const l of pads) expect(namesAbsentItem(l, prose), `${tag}: "${l}" vs page 1`).toBeNull();
+  expectOneGiver(pads, accepts, tag);
   for (const l of pads) {
     const after = applyOpeningOfferChoice(s, l);
     expect(after.receipts.length, `${tag}: ${l}`).toBeGreaterThan(0);
@@ -108,6 +117,33 @@ describe('offer chips: none for a no-offer card, a working pair for an offer car
     checkPair(s, 'crate/gear page');
     const given = lead.split(' ')[0]!;
     expect(openingOfferPads(s)).toEqual(expect.arrayContaining([`Turn down ${given}'s offer`]));
+  }, 60_000);
+
+  it('review seeds 0, 12, 15, 22, 27, 158: the pair names the same giver', () => {
+    for (const seed of ['0', '12', '15', '22', '27', '158']) {
+      const picked = resolveOpeningHookPick(getCampaignBibleById('summoned-pact')!, seed);
+      if (!picked?.openingOffer || isNoOffer(picked.openingOffer)) continue;
+      const s = pageOne(newGameState('summoned-pact', { seed, liveOpening: true }), 'Salt and pitch. A crate sits by the chalk line.');
+      const pads = openingOfferPads(s);
+      const refuse = pads.find((l) => applyOpeningOfferChoice(s, l).state.openingEstablishment?.offerTaken === 'refused')!;
+      const accepts = pads.filter((l) => l !== refuse);
+      expect(accepts.length, pads.join('|')).toBeGreaterThan(0);
+      // The refuse names a giver only when every accept is that same giver's.
+      const who = refuse.match(/^Turn down (\S+?)['’]s offer$/)?.[1];
+      if (who) {
+        for (const a of accepts) expect(a, `seed ${seed}: ${pads.join('|')}`).toMatch(new RegExp(`\\b${who}\\b`));
+      }
+      expectOneGiver(pads, accepts, `seed ${seed}`);
+    }
+  }, 60_000);
+
+  it('"kitchen" does not ground "kit"; "kits" does', () => {
+    const card = seedsByCard('summoned-pact').find((c) => /kit you as crew/.test(c.offer))!;
+    const base = newGameState('summoned-pact', { seed: card.seed, liveOpening: true });
+    const kitchen = openingOfferPads(pageOne(base, 'Steam from the galley kitchen. A bunk, an oilskin, a knife on the table.'));
+    expect(kitchen.some((l) => /\bkit\b/i.test(l)), kitchen.join('|')).toBe(false);
+    const kits = openingOfferPads(pageOne(base, 'Crew kits hang by the bunk: an oilskin and a knife each.'));
+    expect(kits.some((l) => /\bkit\b/i.test(l)), kits.join('|')).toBe(true);
   }, 60_000);
 
   it('labels stay stable once shown, even when later prose names the item', () => {

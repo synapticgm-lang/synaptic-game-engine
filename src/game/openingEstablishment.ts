@@ -1804,13 +1804,22 @@ function offerLabelGroundedInProse(label: string, prose: string, state: GameStat
   return words
     .slice(1)
     .filter((w) => !OFFER_LABEL_SKIP.has(w) && !people.has(w))
-    .every((w) => new RegExp(`\\b${w.replace(/(?:es|s)$/, '').replace(/-/g, '\\-')}`, 'i').test(hay));
+    // Stem plus a simple plural, then a boundary: "kits" grounds "kit", "kitchen" does not.
+    .every((w) => new RegExp(`\\b${w.replace(/(?:es|s)$/, '').replace(/-/g, '\\-')}(?:e?s)?\\b`, 'i').test(hay));
 }
-/** The giver's given name for a noun-free label: the chip's own "X offers …" note, else the lead cast. */
-function offerGiver(state: GameState, note?: string): string {
-  const fromNote = (note ?? '').match(/^(.+?)\s+offers\b/i)?.[1] ?? '';
-  const name = fromNote || state.openingEstablishment?.instance?.cast?.[0]?.name || '';
-  return name.trim().split(/\s+/)[0] ?? '';
+/**
+ * ONE giver for the whole offer, so the pair names the same person: the accept chip's own "X offers …"
+ * note (the card's minted giver). No single reliable giver → '' and both labels go generic.
+ */
+function offerGiver(state: GameState): string {
+  const givers = new Set<string>();
+  for (const c of state.openingEstablishment?.instance?.offerChips ?? []) {
+    if (c.kind !== 'accept') continue;
+    const who = (c.note ?? '').match(/^(.+?)\s+offers\b/i)?.[1]?.trim().split(/\s+/)[0] ?? '';
+    givers.add(who);
+  }
+  // Two people offering, or an accept chip with no named giver: no single giver to name.
+  return givers.size === 1 ? [...givers][0]! : '';
 }
 /** A label that names the giver and the deal but no item: it never contradicts the prose, and it still classifies. */
 function nounFreeOfferLabel(kind: 'accept' | 'refuse', giver: string): string {
@@ -1843,9 +1852,10 @@ export function openingOfferPads(state: GameState): string[] {
     // prose has not shown is relabelled noun-free ("Accept Idra's offer"); whichever label the player has
     // already seen stays, so the buttons are stable across turns. Both forms resolve on the same record.
     const prose = state.openingEstablishment?.sceneWritten ? openingCommittedProse(state) : '';
+    const giver = offerGiver(state);
     const out: string[] = [];
     for (const c of labels) {
-      const plain = nounFreeOfferLabel(c.kind as 'accept' | 'refuse', offerGiver(state, c.note));
+      const plain = nounFreeOfferLabel(c.kind as 'accept' | 'refuse', giver);
       const label = offerChipAlreadyShown(state, c.label)
         ? c.label
         : offerChipAlreadyShown(state, plain) || !offerLabelGroundedInProse(c.label, prose, state)
