@@ -1765,7 +1765,16 @@ export function compileOpeningOffer(blob: string | undefined): OpeningOfferRecor
 /** This save's opening offer: the compiled record, else compiled from the stored card text. */
 export function openingOfferRecord(state: GameState): OpeningOfferRecord | undefined {
   const est = state.openingEstablishment;
-  return est?.card?.offer ?? compileOpeningOffer(est?.pickedHook);
+  const rec = est?.card?.offer;
+  if (!rec) return compileOpeningOffer(est?.pickedHook);
+  // A save minted before the items fix carries chip notes as items ("Nell offers a deal", "Dunn offers
+  // Sit the audit"): accepting must still grant what the card offered, so heal from the card's own text.
+  const recItems = rec.items ?? [];
+  if (!recItems.length || recItems.some((it) => /\boffers\b/i.test(it ?? ''))) {
+    const items = compileOpeningOffer(est?.pickedHook)?.items;
+    if (items?.length) return { ...rec, items };
+  }
+  return rec;
 }
 /** The offer is open while nobody has taken or refused it and the player is still at the card's place. */
 export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefined {

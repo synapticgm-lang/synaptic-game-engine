@@ -882,7 +882,7 @@ export interface OpeningInstance {
   whoYouAre?: string;
   offerSummary?: string;
   offerChips: OpeningOfferChip[];
-  /** What accepting hands over, one note per offered item (the card's offer record items). */
+  /** What accepting hands over: the offer's compiled item names (the card's offer record items). */
   offerItemNotes?: string[];
   alone: boolean;
   /** A still-on-the-map hub the minted opening may sit near, not the locked place name. */
