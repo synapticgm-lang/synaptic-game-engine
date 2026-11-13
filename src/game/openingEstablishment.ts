@@ -1792,6 +1792,14 @@ function offerAcceptGroundedInProse(label: string, prose: string, state: GameSta
   if (nouns.length) return nouns.some((n) => new RegExp(`\\b${n}\\b`, 'i').test(hay));
   return true;
 }
+/** The label was on a pad the player already saw (an earlier page's chips or the stored pad). */
+function offerChipAlreadyShown(state: GameState, label: string): boolean {
+  const want = (label ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!want) return false;
+  const same = (c?: string) => (c ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === want;
+  if ((state.choices ?? []).some(same) || (state.offeredPad?.choices ?? []).some(same)) return true;
+  return (state.log ?? []).some((e) => e.role === 'gm' && (e.offeredChoices ?? []).some(same));
+}
 function openingCommittedProse(state: GameState): string {
   return (state.log ?? [])
     .filter((e) => e.role === 'gm')
@@ -1806,8 +1814,10 @@ export function openingOfferPads(state: GameState): string[] {
     const labels = chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse');
     if (state.openingEstablishment?.sceneWritten) {
       const prose = openingCommittedProse(state);
+      // Once the player has been shown the accept chip it stays until they decide: later turns' prose
+      // need not repeat the offer's noun ("kit") for the choice to still be on the table.
       return labels
-        .filter((c) => c.kind !== 'accept' || offerAcceptGroundedInProse(c.label, prose, state))
+        .filter((c) => c.kind !== 'accept' || offerChipAlreadyShown(state, c.label) || offerAcceptGroundedInProse(c.label, prose, state))
         .map((c) => c.label);
     }
     return labels.map((c) => c.label);
