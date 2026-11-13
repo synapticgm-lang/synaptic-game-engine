@@ -12,8 +12,8 @@ import {
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
 import { createHashRng } from './seededRng';
 import { dungeonTitle } from './places';
-import { insideTemplateFor } from './placeTemplates';
-import { attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan';
+import { insideTemplateFor, vesselTemplateFor } from './placeTemplates';
+import { alignFloorStack, attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
@@ -788,6 +788,14 @@ export function interiorFloorLabel(z: number): string {
   return `${z + 1}F`;
 }
 
+/** Floor tab name: a ship's deck name when the plan has one, else B1 / 1F / 2F. */
+export function interiorFloorName(dungeon: { nodes: MapNode[] } | null | undefined, z: number): string {
+  const tag = dungeon?.nodes
+    .find((n) => (n.zLevel ?? 0) === z && (n.tags ?? []).some((t) => t.startsWith('deck:')))
+    ?.tags?.find((t) => t.startsWith('deck:'));
+  return tag ? tag.slice(5) : interiorFloorLabel(z);
+}
+
 export function listInteriorZLevels(dungeon: ActiveDungeonState): number[] {
   const zs = new Set(dungeon.nodes.map((n) => n.zLevel ?? 0));
   return Array.from(zs).sort((a, b) => a - b);
@@ -1220,8 +1228,10 @@ export function connectOrphanRooms(
 
 function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
+  // Aboard a boat / ship: its hull and decks, never a land building.
+  const vessel = vesselTemplateFor(place)?.layout;
   const scale = interiorBuildingScale(place);
-  const inside = scale === 'inside' ? insideTemplateFor(place)?.layout : undefined;
+  const inside = vessel ?? (scale === 'inside' ? insideTemplateFor(place)?.layout : undefined);
   const layouts = inside
     ? [inside]
     : scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
@@ -1243,7 +1253,38 @@ function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): 
     place
   );
   const links = specs.flatMap((r) => r.links.map((l) => [r.id, l] as [string, string]));
-  return packFloorRooms(specs, links);
+  return alignedInteriorLayout(packFloorRooms(specs, links));
+}
+
+/**
+ * One building, one footprint: every floor takes the entry floor's room boxes and each landing
+ * sits in the box of the stair it climbs from (floorPlan alignFloorStack).
+ */
+function alignedInteriorLayout(specs: InteriorRoomSpec[]): InteriorRoomSpec[] {
+  const pairs = new Map<string, [string, string]>();
+  for (const r of specs) {
+    for (const l of r.links) {
+      const key = r.id < l ? `${r.id}|${l}` : `${l}|${r.id}`;
+      if (!pairs.has(key)) pairs.set(key, r.id < l ? [r.id, l] : [l, r.id]);
+    }
+  }
+  const { rooms, links } = alignFloorStack(specs, [...pairs.values()], (id, z, box) => ({
+    id,
+    label: 'Storeroom',
+    ...box,
+    z,
+    links: [],
+  }));
+  const adj = new Map(rooms.map((r) => [r.id, new Set<string>()]));
+  for (const [a, b] of links) {
+    adj.get(a)?.add(b);
+    adj.get(b)?.add(a);
+  }
+  return rooms.map((r) => {
+    const l = [...(adj.get(r.id) ?? [])];
+    const ek = r.edgeKinds ? Object.fromEntries(Object.entries(r.edgeKinds).filter(([k]) => l.includes(k))) : undefined;
+    return { ...r, links: l, edgeKinds: ek && Object.keys(ek).length ? (ek as InteriorRoomSpec['edgeKinds']) : undefined };
+  });
 }
 
 /** Resolve door vs damaged/secret/stairs for a graph edge. */
@@ -1635,8 +1676,10 @@ export function buildInteriorFloorPlan(
   const layout = pickInteriorLayout(seed, rawHere || building, rooms);
   const entry = layout.find((r) => r.entry) ?? layout[0]!;
 
+  const decks = vesselTemplateFor(rawHere)?.decks;
   let nodes: MapNode[] = layout.map((spec) => {
     const tags = ['interior', 'authored', 'varied-footprint'];
+    if (decks?.[spec.z]) tags.push(`deck:${decks[spec.z]}`);
     if (spec.entry) tags.push('here', 'entry');
     if (spec.isSecret) tags.push('secret');
     const edgeKinds = buildEdgeKindsForSpec(spec, layout);

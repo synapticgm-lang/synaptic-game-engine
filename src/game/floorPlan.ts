@@ -352,3 +352,184 @@ export function floorPlanIssues(
   }
   return issues;
 }
+
+export type StackRoom = PlanBox & { id: string; z: number; entry?: boolean };
+
+function unionIfRect(a: PlanBox, b: PlanBox): PlanBox | null {
+  const near = (p: number, q: number) => Math.abs(p - q) <= EPS;
+  if (near(a.x, b.x) && near(a.w, b.w) && (near(a.y + a.h, b.y) || near(b.y + b.h, a.y))) {
+    const y = Math.min(a.y, b.y);
+    return { x: a.x, y, w: a.w, h: Math.max(a.y + a.h, b.y + b.h) - y };
+  }
+  if (near(a.y, b.y) && near(a.h, b.h) && (near(a.x + a.w, b.x) || near(b.x + b.w, a.x))) {
+    const x = Math.min(a.x, b.x);
+    return { x, y: a.y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: a.h };
+  }
+  return null;
+}
+
+function halves(b: PlanBox): [PlanBox, PlanBox] {
+  if (b.w >= b.h) {
+    const w = b.w / 2;
+    return [{ ...b, w }, { ...b, x: b.x + w, w }];
+  }
+  const h = b.h / 2;
+  return [{ ...b, h }, { ...b, y: b.y + h, h }];
+}
+
+/**
+ * One building, one footprint: every floor reuses the reference floor's (the entry floor's) room
+ * boxes, so all floors share the same outline. A landing sits in exactly the box of the stair /
+ * ladder / hatch room it climbs from, so stairs line up floor to floor. A floor with more rooms
+ * than boxes splits its largest free box; spare boxes merge into a neighbour or become `makeFill`
+ * rooms. Doors on a moved floor keep the template's links that still meet on a wall, then
+ * join any cut-off room to a wall neighbour. Deterministic: no randomness.
+ */
+export function alignFloorStack<T extends StackRoom>(
+  rooms: T[],
+  links: Array<[string, string]>,
+  makeFill: (id: string, z: number, box: PlanBox) => T,
+): { rooms: T[]; links: Array<[string, string]> } {
+  const zs = [...new Set(rooms.map((r) => r.z))];
+  if (zs.length < 2) return { rooms, links };
+  const refZ = rooms.find((r) => r.entry)?.z ?? (zs.includes(0) ? 0 : zs[0]!);
+  const zOf = new Map(rooms.map((r) => [r.id, r.z]));
+  const cross = links.filter(([a, b]) => zOf.has(a) && zOf.has(b) && zOf.get(a) !== zOf.get(b));
+  const box = (r: PlanBox): PlanBox => ({ x: r.x, y: r.y, w: r.w, h: r.h });
+  const placed = new Map<string, PlanBox>(rooms.filter((r) => r.z === refZ).map((r) => [r.id, box(r)]));
+  const floorBoxes = new Map<number, PlanBox[]>([[refZ, rooms.filter((r) => r.z === refZ).map(box)]]);
+  const outLinks: Array<[string, string]> = [
+    ...links.filter(([a, b]) => zOf.get(a) === refZ && zOf.get(b) === refZ),
+    ...cross,
+  ];
+  const fills: T[] = [];
+  const order = zs.filter((z) => z !== refZ).sort((a, b) => Math.abs(a - refZ) - Math.abs(b - refZ) || a - b);
+  for (const z of order) {
+    const near = z > refZ ? z - 1 : z + 1;
+    const shell = (floorBoxes.get(near) ?? floorBoxes.get(refZ)!).map((b) => ({ ...b }));
+    const level = rooms.filter((r) => r.z === z);
+    const slot = new Map<string, number>();
+    const taken = new Set<number>();
+    const sameBox = (a: PlanBox, b: PlanBox) =>
+      Math.abs(a.x - b.x) <= EPS && Math.abs(a.y - b.y) <= EPS && Math.abs(a.w - b.w) <= EPS && Math.abs(a.h - b.h) <= EPS;
+    // Landings first: the box of the room they climb from.
+    for (const r of level) {
+      const up = cross.find(([a, b]) => (a === r.id && zOf.get(b) === near) || (b === r.id && zOf.get(a) === near));
+      if (!up) continue;
+      const from = placed.get(up[0] === r.id ? up[1] : up[0]);
+      const idx = from ? shell.findIndex((b, i) => !taken.has(i) && sameBox(b, from)) : -1;
+      if (idx >= 0) {
+        slot.set(r.id, idx);
+        taken.add(idx);
+      }
+    }
+    const pinned = new Set(taken);
+    // The rest in template-link order from the landings.
+    const intra = links.filter(([a, b]) => zOf.get(a) === z && zOf.get(b) === z);
+    const queue = level.filter((r) => slot.has(r.id)).map((r) => r.id);
+    if (!queue.length && level[0]) queue.push(level[0].id);
+    const seen = new Set(queue);
+    const seq: string[] = [];
+    while (queue.length) {
+      const id = queue.shift()!;
+      seq.push(id);
+      for (const [a, b] of intra) {
+        const n = a === id ? b : b === id ? a : null;
+        if (n && !seen.has(n)) {
+          seen.add(n);
+          queue.push(n);
+        }
+      }
+    }
+    for (const r of level) if (!seen.has(r.id)) seq.push(r.id);
+    for (const id of seq) {
+      if (slot.has(id)) continue;
+      let free = shell.map((_, i) => i).filter((i) => !taken.has(i));
+      if (!free.length) {
+        // More rooms than boxes: split the largest box that is not a landing.
+        const cand = shell.map((b, i) => ({ b, i })).filter(({ i }) => !pinned.has(i)).sort((p, q) => q.b.w * q.b.h - p.b.w * p.b.h)[0];
+        if (!cand) break;
+        const [keep, extra] = halves(cand.b);
+        shell[cand.i] = keep;
+        shell.push(extra);
+        free = [shell.length - 1];
+      }
+      const mates = intra.filter(([a, b]) => a === id || b === id).map(([a, b]) => (a === id ? b : a));
+      const mateBoxes = mates.map((m) => slot.get(m)).filter((i): i is number => i !== undefined).map((i) => shell[i]!);
+      const anyBoxes = [...slot.values()].map((i) => shell[i]!);
+      const pickIdx =
+        free.find((i) => mateBoxes.some((b) => sharedWall(shell[i]!, b)))
+        ?? free.find((i) => anyBoxes.some((b) => sharedWall(shell[i]!, b)))
+        ?? free[0]!;
+      slot.set(id, pickIdx);
+      taken.add(pickIdx);
+    }
+    // Spare boxes: merge into a wall neighbour (not a landing) when the union is a box, else a fill room.
+    const owner = new Map([...slot.entries()].map(([id, i]) => [i, id]));
+    let n = 0;
+    for (let i = 0; i < shell.length; i++) {
+      if (owner.has(i) || !shell[i]) continue;
+      let merged = false;
+      for (const [j] of owner) {
+        if (pinned.has(j)) continue;
+        const u = unionIfRect(shell[i]!, shell[j]!);
+        if (u) {
+          shell[j] = u;
+          shell[i] = undefined as unknown as PlanBox;
+          merged = true;
+          break;
+        }
+      }
+      if (!merged) {
+        const id = `fill-${z < 0 ? `b${-z}` : z}-${n++}`;
+        owner.set(i, id);
+        slot.set(id, i);
+        zOf.set(id, z);
+      }
+    }
+    // Fill rooms take their box after merges (a later spare box may have grown it).
+    for (const [id, i] of slot) if (id.startsWith('fill-') && !fills.some((f) => f.id === id)) fills.push(makeFill(id, z, { ...shell[i]! }));
+    const kept = shell.map((b, i) => ({ b, i })).filter(({ b }) => !!b);
+    floorBoxes.set(z, kept.map(({ b }) => b));
+    for (const [id, i] of slot) placed.set(id, shell[i]!);
+    // Doors: template links that still meet on a wall, then join cut-off rooms to a wall neighbour.
+    const onFloor = [...slot.keys()];
+    const doors: Array<[string, string]> = intra.filter(([a, b]) => sharedWall(placed.get(a)!, placed.get(b)!));
+    const start = onFloor.find((id) => pinned.has(slot.get(id)!)) ?? onFloor[0];
+    const reach = () => distancesOn(start, doors);
+    let r = reach();
+    for (let guard = 0; guard < onFloor.length && r.size < onFloor.length; guard++) {
+      let added = false;
+      for (const id of onFloor) {
+        if (r.has(id)) continue;
+        const hit = onFloor.find((o) => r.has(o) && sharedWall(placed.get(id)!, placed.get(o)!));
+        if (hit) {
+          doors.push([hit, id]);
+          added = true;
+          break;
+        }
+      }
+      if (!added) break;
+      r = reach();
+    }
+    outLinks.push(...doors);
+  }
+  const outRooms = [...rooms.map((r) => ({ ...r, ...(placed.get(r.id) ?? box(r)) })), ...fills.map((f) => ({ ...f, ...placed.get(f.id)! }))];
+  return { rooms: outRooms, links: outLinks };
+}
+
+function distancesOn(start: string | undefined, links: Array<[string, string]>): Set<string> {
+  const seen = new Set<string>(start ? [start] : []);
+  const q = start ? [start] : [];
+  while (q.length) {
+    const id = q.shift()!;
+    for (const [a, b] of links) {
+      const n = a === id ? b : b === id ? a : null;
+      if (n && !seen.has(n)) {
+        seen.add(n);
+        q.push(n);
+      }
+    }
+  }
+  return seen;
+}
