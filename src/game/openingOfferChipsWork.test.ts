@@ -140,9 +140,9 @@ describe('offer chips: none for a no-offer card, a working pair for an offer car
   it('"kitchen" does not ground "kit"; "kits" does', () => {
     const card = seedsByCard('summoned-pact').find((c) => /kit you as crew/.test(c.offer))!;
     const base = newGameState('summoned-pact', { seed: card.seed, liveOpening: true });
-    const kitchen = openingOfferPads(pageOne(base, 'Steam from the galley kitchen. A bunk, an oilskin, a knife on the table.'));
+    const kitchen = openingOfferPads(pageOne(base, 'Keep the secret, they say. Steam from the galley kitchen. A bunk, an oilskin, a knife on the table.'));
     expect(kitchen.some((l) => /\bkit\b/i.test(l)), kitchen.join('|')).toBe(false);
-    const kits = openingOfferPads(pageOne(base, 'Crew kits hang by the bunk: an oilskin and a knife each.'));
+    const kits = openingOfferPads(pageOne(base, 'Keep the secret, they say. Crew kits hang by the bunk: an oilskin and a knife each.'));
     expect(kits.some((l) => /\bkit\b/i.test(l)), kits.join('|')).toBe(true);
   }, 60_000);
 

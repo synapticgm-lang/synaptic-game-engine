@@ -8,7 +8,7 @@
 import type { GameState } from './types';
 import { boundEngineChip, isBrokenChoiceLabel } from './choicePipeline';
 import { coerceLogContent } from './beatFingerprint';
-import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
+import { isNameOriginKitCoverChoice, isLiveOpeningOfferLabel, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
 import { isJourneyPad, isJourneyUnderway } from './travelJourney';
@@ -121,6 +121,11 @@ export function filterInventedContextChoices(
       continue;
     }
     if (/\bthe official of the official\b|\bscan the official\b|\bapproach the official\b/i.test(choice)) {
+      continue;
+    }
+    // A live opening offer chip is bound to the card's offer record (it resolves on click).
+    if (isLiveOpeningOfferLabel(state, choice)) {
+      out.push(choice);
       continue;
     }
     // RC-K1: default deny — only a bound engine chip reaches the offered list.
