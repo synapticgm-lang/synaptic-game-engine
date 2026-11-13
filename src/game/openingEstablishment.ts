@@ -1773,10 +1773,18 @@ export function openOpeningOffer(state: GameState): OpeningOfferRecord | undefin
   if (!est || est.offerTaken) return undefined;
   const offer = openingOfferRecord(state);
   if (!offer) return undefined;
-  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  const place = key(est.card?.place);
-  if (place && key(state.currentLocation) !== place) return undefined;
+  if (leftOpeningOfferPlace(state)) return undefined;
   return offer;
+}
+/** The player has left the card's place. A deck or room of it ("Yarrowholt Circle — Main deck", or an interior opened from it) is still there. */
+function leftOpeningOfferPlace(state: GameState): boolean {
+  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const place = key(state.openingEstablishment?.card?.place);
+  if (!place) return false;
+  const head = (s: string | undefined) => key((s ?? '').split(/\s+[—–]\s+/)[0]);
+  if (head(state.currentLocation) === place) return false;
+  const d = state.activeDungeon;
+  return !(d && [d.dungeonName, d.siteName].some((n) => head(n) === place));
 }
 /** Concrete offer chips from the locked opening instance, else a last-resort accept/refuse. */
 function offerAcceptGroundedInProse(label: string, prose: string, state: GameState): boolean {
@@ -1809,8 +1817,8 @@ function openingCommittedProse(state: GameState): string {
 export function openingOfferPads(state: GameState): string[] {
   const chips = state.openingEstablishment?.instance?.offerChips;
   if (chips?.length) {
-    const offer = openOpeningOffer(state);
-    if (!offer && state.openingEstablishment?.offerTaken) return [];
+    // Taken, refused, or left the place: the chips go (clicking them would no-op).
+    if (state.openingEstablishment?.offerTaken || leftOpeningOfferPlace(state)) return [];
     const labels = chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse');
     if (state.openingEstablishment?.sceneWritten) {
       const prose = openingCommittedProse(state);

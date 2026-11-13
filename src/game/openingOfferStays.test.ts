@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { commitOfferedPad } from './playTranscript';
 import { assembleFourSlotPads } from './fourSlotPads';
+import { openingOfferPads } from './openingEstablishment';
+import { applyOpeningOfferChoice } from './openingOffer';
 import { isFreeInputChip } from './sceneAffordances';
 import type { GameState, LogEntry } from './types';
 
@@ -28,6 +30,14 @@ function opened(): GameState {
       ...(s.openingEstablishment ?? {}),
       complete: true,
       sceneWritten: true,
+      card: {
+        ...(s.openingEstablishment?.card ?? {}),
+        place: s.currentLocation ?? 'Here',
+        cast: 'Hale Brack',
+        castNames: ['Hale Brack'],
+        names: [s.currentLocation ?? 'Here', 'Hale Brack'],
+        offer: { items: ['knife, oilskin, a bunk'], accept: ACCEPT, refuse: REFUSE, noun: 'offer' },
+      },
       instance: {
         placeName: s.currentLocation ?? 'Here',
         placeKind: 'summoning circle',
@@ -85,5 +95,43 @@ describe('opening offer chips stay until the player decides', () => {
     const pads = engine(assembleFourSlotPads(fight, ['Attack', 'Defend', 'Use something', 'Disengage']));
     expect(pads).not.toContain(ACCEPT);
     expect(pads).not.toContain(REFUSE);
+  });
+
+  const asked = () => turn(opened(), 'Ask Hale Brack what they want', 'Hale Brack rubs his jaw. "A quiet tongue and a strong back."');
+  const noOfferChips = (s: GameState) => {
+    expect(openingOfferPads(s)).toEqual([]);
+    const pads = engine(commitOfferedPad({ ...s, offeredPad: null }).offeredPad?.choices ?? []);
+    expect(pads).not.toContain(ACCEPT);
+    expect(pads).not.toContain(REFUSE);
+  };
+
+  it('accepting clears both chips', () => {
+    const { state } = applyOpeningOfferChoice(asked(), ACCEPT);
+    expect(state.openingEstablishment?.offerTaken).toBeTruthy();
+    noOfferChips(state);
+  });
+
+  it('refusing clears both chips', () => {
+    const { state } = applyOpeningOfferChoice(asked(), REFUSE);
+    expect(state.openingEstablishment?.offerTaken).toBe('refused');
+    noOfferChips(state);
+  });
+
+  it('travelling away closes the offer: no stuck chips', () => {
+    const s = asked();
+    noOfferChips({ ...s, currentLocation: 'Lowmarket', activeDungeon: null });
+  });
+
+  it('a deck or room of the same place keeps the offer open aboard', () => {
+    const s = asked();
+    const here = s.currentLocation ?? 'Here';
+    const onDeck = { ...s, currentLocation: `${here} — Main deck` } as GameState;
+    expect(openingOfferPads(onDeck)).toEqual([ACCEPT, REFUSE]);
+    const inHold = {
+      ...s,
+      currentLocation: 'Cargo hold',
+      activeDungeon: { dungeonName: here, blueprintId: 'veh-boat-cargo', tier: 4, currentZLevel: -1 },
+    } as unknown as GameState;
+    expect(openingOfferPads(inHold)).toEqual([ACCEPT, REFUSE]);
   });
 });
