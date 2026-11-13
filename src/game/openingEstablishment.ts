@@ -1840,30 +1840,42 @@ function openingCommittedProse(state: GameState): string {
     .map((e) => String(e.content ?? ''))
     .join(' ');
 }
+/**
+ * A label of the live opening offer in any of its forms (the minted chip or its noun-free pair). The
+ * choice filter keeps these: they are bound to the card's offer record and resolve on click, even on a
+ * pass whose prose / shown state picks the other form, or while an exclusive pad owns the engine list.
+ */
+export function isLiveOpeningOfferLabel(state: GameState, label: string): boolean {
+  const chips = state.openingEstablishment?.instance?.offerChips ?? [];
+  if (!chips.length || !openOpeningOffer(state)) return false;
+  const want = (label ?? '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/[’]/g, "'");
+  if (!want) return false;
+  const giver = offerGiver(state);
+  return [...chips.map((c) => c.label), nounFreeOfferLabel('accept', giver), nounFreeOfferLabel('refuse', giver)]
+    .some((l) => l.replace(/\s+/g, ' ').trim().toLowerCase().replace(/[’]/g, "'") === want);
+}
 export function openingOfferPads(state: GameState): string[] {
   const chips = state.openingEstablishment?.instance?.offerChips;
   if (chips?.length) {
     // Only a live offer the click can resolve: taken, refused, left the place, or no offer recorded
     // (an old save's chips on a no-offer card) shows no chips; better no button than a dead one.
     if (!openOpeningOffer(state)) return [];
-    const labels = chips.filter((c) => c.kind === 'accept' || c.kind === 'refuse');
-    if (!labels.some((c) => c.kind === 'accept') || !labels.some((c) => c.kind === 'refuse')) return [];
-    // Accept and refuse are a pair: both always show while the offer is live. A label naming an item the
-    // prose has not shown is relabelled noun-free ("Accept Idra's offer"); whichever label the player has
-    // already seen stays, so the buttons are stable across turns. Both forms resolve on the same record.
+    const accepts = chips.filter((c) => c.kind === 'accept');
+    const refuse = chips.find((c) => c.kind === 'refuse');
+    if (!accepts.length || !refuse) return [];
+    // ONE accept and ONE refuse. An old save's extra accepts collapse to the one already shown, else the first.
+    const accept = accepts.find((c) => offerChipAlreadyShown(state, c.label)) ?? accepts[0]!;
+    // The pair relabels together: if either names an item the prose has not shown, BOTH go noun-free with
+    // the same giver ("Accept Brannoc's offer" / "Turn down Brannoc's offer"). Whichever pair the player has
+    // seen stays (a shown noun-free label wins, healing an older mixed pair). Both forms resolve on the record.
     const prose = state.openingEstablishment?.sceneWritten ? openingCommittedProse(state) : '';
     const giver = offerGiver(state);
-    const out: string[] = [];
-    for (const c of labels) {
-      const plain = nounFreeOfferLabel(c.kind as 'accept' | 'refuse', giver);
-      const label = offerChipAlreadyShown(state, c.label)
-        ? c.label
-        : offerChipAlreadyShown(state, plain) || !offerLabelGroundedInProse(c.label, prose, state)
-          ? plain
-          : c.label;
-      if (!out.some((l) => l.toLowerCase() === label.toLowerCase())) out.push(label);
-    }
-    return out;
+    const plain = [nounFreeOfferLabel('accept', giver), nounFreeOfferLabel('refuse', giver)];
+    const concrete = [accept.label, refuse.label];
+    const seen = (pair: string[]) => pair.some((l) => offerChipAlreadyShown(state, l));
+    if (seen(plain)) return plain;
+    if (seen(concrete)) return concrete;
+    return concrete.every((l) => offerLabelGroundedInProse(l, prose, state)) ? concrete : plain;
   }
   const offer = openOpeningOffer(state);
   if (!offer) return [];

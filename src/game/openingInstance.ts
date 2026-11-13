@@ -526,6 +526,37 @@ function attachItemsToCast(items: string[], cast: OpeningCastMember[], offer: st
   return out;
 }
 
+/** An offer "item" that is really what the player is asked to do ("Sign the blank", "Sit the audit"). */
+const ACTION_VERB = /^(?:sign|sit|kneel|read|swear|take|join|walk|work|serve|agree|enlist|copy|stay|pick|play|wear|grab|keep|cooperate|help|come|follow|hold|guard|carry|fight|stand|name|give|bow|pray|confess|vouch|testify|answer|accept)\b/i;
+function isActionClause(item: string): boolean {
+  const t = shortItem(item);
+  return ACTION_VERB.test(t) || /^[A-Z][a-z]+\s+(?:the|a|an|your|their|his|her)\b/.test(t);
+}
+/**
+ * The offer's own condition as the accept action: "Sit the audit and they will issue …" → "Sit the audit
+ * for Dunn"; "Keep their secret and …" → "Keep Brannoc's secret"; "Enlist and …" → "Enlist with Hale".
+ * Null when the offer does not open with a short imperative.
+ */
+function offerConditionLabel(offer: string, cast: OpeningCastMember[], giver?: OpeningCastMember): string | null {
+  const first = (offer ?? '').replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/)[0] ?? '';
+  const m = first.match(/^(.+?)\s+and\s+(?:they|he|she|we|that side|the \w+)\s+(?:will|may|offer|issue|share)\b/i);
+  let cond = (m?.[1] ?? '').split(/\s*[—–(,]\s*/)[0]!.trim();
+  if (!cond || !ACTION_VERB.test(cond) && !/^[A-Z][a-z]+\b/.test(cond)) return null;
+  if (/^(?:the|a|an|if|when|you|they|he|she|we|i|it|no|nobody|one|first)\b/i.test(cond)) return null;
+  const words = cond.split(/\s+/);
+  if (words.length > 6) return null;
+  const named = cast.some((c) => new RegExp(`\\b${escapeRe(givenNameOf(c.name))}\\b`, 'i').test(cond));
+  const who = giver ? givenNameOf(giver.name) : '';
+  if (who && !named && /\b(?:their|his|her)\b/i.test(cond)) {
+    cond = cond.replace(/\b(?:their|his|her)\b/i, `${who}'s`);
+  } else if (who && !named && words.length === 1) {
+    cond = `${cond} with ${who}`;
+  } else if (who && !named && words.length <= 4 && !/\b(?:they|them|us)\b/i.test(cond)) {
+    cond = `${cond} for ${who}`;
+  }
+  return cond.charAt(0).toUpperCase() + cond.slice(1);
+}
+
 function concreteAcceptLabel(item: string, person?: OpeningCastMember): string {
   const noun = shortItem(item).replace(/^(?:offer of\s+)?/i, '');
   if (/^walk with\b/i.test(noun) || /^take\b/i.test(noun) || /^hear \b/i.test(noun)) return noun;
@@ -898,29 +929,34 @@ export function mintOpeningInstance(
   // card has none (better no button than a dead one).
   const offerCompiles = !!compileOpeningOffer(offerScrubbed ? `Opening offer: ${offerScrubbed}` : undefined);
   const attached = offerCompiles ? attachItemsToCast(items, cast, offerScrubbed) : [];
+  // ONE accept chip and ONE refuse chip per offer. The accept names what the player does (the offer's
+  // own condition, "Sit the audit for Dunn"), else a clean item, else the giver's offer — never an
+  // action clause dressed as an item ("Take Dunn's offer of Sit the audit").
   const offerChips: OpeningOfferChip[] = [];
-  const seenLabel = new Set<string>();
-  for (const row of attached) {
-    const label = concreteAcceptLabel(row.item, row.person);
-    if (seenLabel.has(label.toLowerCase())) continue;
-    seenLabel.add(label.toLowerCase());
+  // The giver is who the offer itself names ("Accept Yara's rank stamp and she will …"), else who the items attach to.
+  const offerFirst = offerScrubbed.split(/(?<=[.!?])\s+/)[0] ?? '';
+  const giver =
+    cast.find((c) => new RegExp(`\\b${escapeRe(givenNameOf(c.name))}\\b`, 'i').test(offerFirst))
+    ?? attached.find((r) => r.person)?.person
+    ?? (offerCompiles ? cast[0] : undefined);
+  const itemNotes = [...new Set(attached.map((row) => (row.person ? `${row.person.name} offers ${shortItem(row.item)}` : shortItem(row.item))))];
+  if (offerCompiles) {
+    const cleanItems = attached.filter((r) => !isActionClause(r.item));
+    const label = offerConditionLabel(offerScrubbed, cast, giver)
+      ?? (cleanItems[0] ? concreteAcceptLabel(cleanItems[0].item, giver ?? cleanItems[0].person) : null)
+      ?? (giver ? `Accept ${givenNameOf(giver.name)}'s offer` : 'Accept the offer');
+    const what = cleanItems.map((r) => shortItem(r.item)).join(', ');
     offerChips.push({
       kind: 'accept',
       label,
-      note: row.person ? `${row.person.name} offers ${shortItem(row.item)}` : shortItem(row.item),
+      note: giver
+        ? `${giver.name} offers ${what || 'a deal'}`
+        : what || 'An offer is on the table.',
     });
-  }
-  const refuse: OpeningOfferChip = {
-    kind: 'refuse',
-    label: 'Keep your own kit',
-    note: 'Refuse whatever is being offered and keep your own kit.',
-  };
-  if (offerCompiles && !offerChips.some((c) => c.kind === 'refuse')) offerChips.push(refuse);
-  if (offerCompiles && !offerChips.some((c) => c.kind === 'accept') && cast[0]) {
-    offerChips.unshift({
-      kind: 'accept',
-      label: `Hear ${givenNameOf(cast[0].name)} out`,
-      note: `${cast[0].name} is here with a reason — hear it before you decide.`,
+    offerChips.push({
+      kind: 'refuse',
+      label: 'Keep your own kit',
+      note: 'Refuse whatever is being offered and keep your own kit.',
     });
   }
 
@@ -961,6 +997,7 @@ export function mintOpeningInstance(
     whoYouAre: hook.whoYouAre ? alignHookPronouns(applyReplacements(hook.whoYouAre, nameMap), cast) : undefined,
     offerSummary: offerSummary ? alignHookPronouns(offerSummary, cast) : offerSummary,
     offerChips,
+    ...(itemNotes.length ? { offerItemNotes: itemNotes } : {}),
     alone: aloneHint || (!cast.length && !whoHereImpliesPresent(hook.whoHere)),
     nearbyLandmark,
     groupLabel: groupLabelFromWhoHere(hook.whoHere),
@@ -1086,7 +1123,7 @@ export function attachOpeningInstance(
             offer: cardOffer
               ? {
                   ...cardOffer,
-                  items: instance.offerChips.filter((c) => c.kind === 'accept').map((c) => c.note),
+                  items: instance.offerItemNotes ?? instance.offerChips.filter((c) => c.kind === 'accept').map((c) => c.note),
                   accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? cardOffer.accept,
                   refuse: instance.offerChips.find((c) => c.kind === 'refuse')?.label ?? 'Keep your own kit',
                 }
