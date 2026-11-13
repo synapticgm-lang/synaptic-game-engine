@@ -927,7 +927,8 @@ export function mintOpeningInstance(
   });
   // Offer chips only for a real offer the click can resolve: a "No one offers kit" / salvage-or-leave
   // card has none (better no button than a dead one).
-  const offerCompiles = !!compileOpeningOffer(offerScrubbed ? `Opening offer: ${offerScrubbed}` : undefined);
+  const compiledOffer = compileOpeningOffer(offerScrubbed ? `Opening offer: ${offerScrubbed}` : undefined);
+  const offerCompiles = !!compiledOffer;
   const attached = offerCompiles ? attachItemsToCast(items, cast, offerScrubbed) : [];
   // ONE accept chip and ONE refuse chip per offer. The accept names what the player does (the offer's
   // own condition, "Sit the audit for Dunn"), else a clean item, else the giver's offer — never an
@@ -939,7 +940,9 @@ export function mintOpeningInstance(
     cast.find((c) => new RegExp(`\\b${escapeRe(givenNameOf(c.name))}\\b`, 'i').test(offerFirst))
     ?? attached.find((r) => r.person)?.person
     ?? (offerCompiles ? cast[0] : undefined);
-  const itemNotes = [...new Set(attached.map((row) => (row.person ? `${row.person.name} offers ${shortItem(row.item)}` : shortItem(row.item))))];
+  // What accepting hands over: the offer's own compiled items ("militia armband", "short blade"), named with
+  // the minted cast. Never a chip note ("Nell offers a deal") or an action clause ("Sign the blank").
+  const itemNotes = [...new Set(compiledOffer?.items ?? [])];
   if (offerCompiles) {
     const cleanItems = attached.filter((r) => !isActionClause(r.item));
     const label = offerConditionLabel(offerScrubbed, cast, giver)
@@ -1123,7 +1126,7 @@ export function attachOpeningInstance(
             offer: cardOffer
               ? {
                   ...cardOffer,
-                  items: instance.offerItemNotes ?? instance.offerChips.filter((c) => c.kind === 'accept').map((c) => c.note),
+                  items: instance.offerItemNotes?.length ? instance.offerItemNotes : cardOffer.items,
                   accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? cardOffer.accept,
                   refuse: instance.offerChips.find((c) => c.kind === 'refuse')?.label ?? 'Keep your own kit',
                 }
