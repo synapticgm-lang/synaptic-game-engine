@@ -4,7 +4,7 @@
  */
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
-import { openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson } from './openingEstablishment';
+import { openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson, splitOfferGrants } from './openingEstablishment';
 import { classifyOpeningOfferInput } from './openingOfferRecognize';
 import { isBannedOpeningAttribution, openingOfferAttribution } from './openingCatalogGuard';
 import { seat } from './presentAuthority';
@@ -46,7 +46,11 @@ export function applyOpeningOfferChoice(
     };
   }
   if (classifyOpeningOfferInput(seated, playerInput) === 'accept') {
-    const events: GameEvent[] = offer.items.map((name) => ({
+    // Only carryable objects become inventory; a place or words given (a bunk, a cover story) is honoured
+    // as a benefit on the record and in the receipt (heals records compiled before the split too).
+    const split = splitOfferGrants(offer.items ?? []);
+    const benefits = [...new Set([...(offer.benefits ?? []), ...split.benefits])];
+    const events: GameEvent[] = split.items.map((name) => ({
       type: 'item-gain',
       name,
       qty: 1,
@@ -62,8 +66,19 @@ export function applyOpeningOfferChoice(
       || (group && !isBannedOpeningAttribution(granted.state, group) ? group : '');
     const from = who ? ` from ${who}` : '';
     return {
-      state: { ...granted.state, openingEstablishment: { ...est, offerTaken: 'accepted' } },
-      receipts: [`Offer accepted: the ${offer.noun}${from}`, ...granted.notes.filter((n) => /^Loot granted:/.test(n))],
+      state: {
+        ...granted.state,
+        openingEstablishment: {
+          ...est,
+          offerTaken: 'accepted',
+          ...(benefits.length && est.card?.offer ? { card: { ...est.card, offer: { ...est.card.offer, benefits } } } : {}),
+        },
+      },
+      receipts: [
+        `Offer accepted: the ${offer.noun}${from}`,
+        ...granted.notes.filter((n) => /^Loot granted:/.test(n)),
+        ...(benefits.length ? [`Offer also grants (not carried): ${benefits.join(', ')}`] : []),
+      ],
     };
   }
   return { state: seated, receipts: [] };

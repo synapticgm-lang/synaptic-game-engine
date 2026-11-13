@@ -958,7 +958,10 @@ export interface OpeningEstablishment {
 }
 /** The card's opening offer compiled once: what is handed over, and the accept and refuse lines. */
 export interface OpeningOfferRecord {
+  /** Carryable objects accepting puts in the inventory. */
   items: string[];
+  /** What accepting grants that is not carried: a place (a bunk aboard) or words / standing (a cover story). */
+  benefits?: string[];
   accept: string;
   refuse: string;
   /** What the chips call it: "the work" when the offer is a job, else "the offer". */
