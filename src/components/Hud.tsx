@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
-import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack, Globe2, UserRound } from 'lucide-react';
+import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack, Globe2, UserRound, BookOpen } from 'lucide-react';
 import { loadCapacityLedger } from '../game/capacityLedger';
 import { getTierDefinition, type SubscriptionTierId } from '../game/subscriptionTiers';
 import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
@@ -285,8 +285,8 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
       {mobileMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-slate-950 border-b border-slate-800 flex md:hidden items-center justify-around py-3 z-50 shadow-xl animate-fadeIn">
           <button onClick={() => { setMobileMenuOpen(false); onToggleLeft(); }} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <Globe2 size={16} className="sgm-info-accent" />
-            <span className="text-[10px]">World</span>
+            <BookOpen size={16} className="sgm-info-accent" />
+            <span className="text-[10px]">Journal</span>
           </button>
           <button onClick={() => { setMobileMenuOpen(false); onToggleRight(); }} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <UserRound size={16} className="sgm-info-accent" />
@@ -299,7 +299,7 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
           {onOpenWorldMap && (
           <button onClick={() => { setMobileMenuOpen(false); onOpenWorldMap(); }} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Globe2 size={16} className="sgm-info-accent" />
-            <span className="text-[10px]">World</span>
+            <span className="text-[10px]">World map</span>
           </button>
           )}
           <button onClick={onOpenQuestLog} className="flex flex-col items-center gap-1 text-slate-300 p-2">

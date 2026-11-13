@@ -1798,6 +1798,8 @@ export function useGame() {
       : mergeHubLandmarks(harvested, previous, place);
     let areaMap = previous.activeDungeon ?? null;
     const vessel = placeVessel(previous, place, blob);
+    // Sticky per place: a vessel the log establishes stays a ship on every later visit.
+    const stampedPlaces = stampPlaceVessel(previous, place, vessel).places;
     if (!isExplorableDungeon(areaMap)) {
       areaMap = resolvePlayAreaMap(
         areaMap,
@@ -1819,13 +1821,15 @@ export function useGame() {
     const questsChanged = JSON.stringify(quests) !== JSON.stringify(previous.quests ?? []);
     const mapChanged = areaMap !== previous.activeDungeon;
     const locationChanged = nextLocation !== previous.currentLocation;
-    if (!questsChanged && !mapChanged && !locationChanged) return;
+    const vesselStamped = stampedPlaces !== previous.places;
+    if (!questsChanged && !mapChanged && !locationChanged && !vesselStamped) return;
     const sheet = previous.locationSheet
       ? normalizeSheetAuthority(previous.locationSheet, areaMap)
       : previous.locationSheet;
     const updated: GameState = {
       ...previous,
       quests,
+      places: stampedPlaces,
       activeDungeon: areaMap,
       currentLocation: nextLocation,
       locationSheet: sheet ?? previous.locationSheet,

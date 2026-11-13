@@ -158,7 +158,11 @@ function isRole(v: string | undefined): v is NpcRole {
 }
 
 /** Pure pick: same name + place + campaign always gives the same sheet. */
-export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignId?: string | null; roleHint?: string }): NpcSheet {
+export function pickNpcSheet(
+  name: string,
+  place: SheetPlace,
+  opts?: { campaignId?: string | null; roleHint?: string; bindTarget?: string },
+): NpcSheet {
   const rng = createHashRng('npc-sheet', opts?.campaignId ?? '', name.trim().toLowerCase(), place);
   const jobs = PLACE_JOBS[place];
   const job: NpcRole = isRole(opts?.roleHint) ? opts!.roleHint as NpcRole : jobs[Math.floor(rng() * jobs.length)];
@@ -184,8 +188,18 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
   };
   // OPT-3: agenda from the role template. Never bindTarget the SheetPlace key ("inn"/"town"/…) —
   // that became a one-word Follow-up chip topic (T10Q). Template targets stay player-facing threads.
-  const agenda = agendaFromRole({ role: job, disposition: 'unknown' });
+  const agenda = agendaFromRole({ role: job, disposition: 'unknown', bindTarget: opts?.bindTarget });
   return { ...base, ...agenda };
+}
+
+/** The opening instance's own facts for one of its minted people (role, offer), or null. */
+export function openingCastFacts(state: GameState, name: string): { role: string; offer: string } | null {
+  const inst = state.openingEstablishment?.instance;
+  const key = (name ?? '').trim().toLowerCase();
+  const who = inst?.cast.find((c) => c.name.trim().toLowerCase() === key || c.name.trim().toLowerCase().split(/\s+/)[0] === key);
+  if (!inst || !who) return null;
+  const offer = (inst.offerSummary || inst.offerChips.find((c) => c.kind === 'accept')?.note || '').replace(/\s+/g, ' ').trim();
+  return { role: (who.role ?? '').replace(/\s+/g, ' ').trim(), offer };
 }
 
 /**
@@ -207,10 +221,16 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
   }
   if (isAuthored(name, memory)) return state;
   if (memory?.sheet) return state;
-  const sheet = pickNpcSheet(name, sheetPlaceFor(location ?? state.currentLocation), {
+  // Opening people: their job is the offer they brought (story role + offer), not a random town job.
+  const cast = openingCastFacts(state, name);
+  const picked = pickNpcSheet(name, sheetPlaceFor(location ?? state.currentLocation), {
     campaignId: state.campaignBibleId,
-    roleHint: memory?.roleHint,
+    roleHint: cast ? 'quest-patron' : memory?.roleHint,
+    bindTarget: cast?.offer,
   });
+  const sheet = cast
+    ? { ...picked, job: cast.role || picked.job, need: cast.offer ? 'someone to take the offer' : picked.need, offer: cast.offer || picked.offer }
+    : picked;
   const where = location ?? state.currentLocation;
   if (memory) {
     const saved = knowLegends(state, maybeGrantHeirloom(state, ensureNpcAgenda({

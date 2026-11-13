@@ -1,4 +1,5 @@
 import { Sparkles, Dices } from 'lucide-react';
+import { visibleActionChips } from '../../game/fourSlotPads';
 import type { EngineMode, GameState } from '@/game/types';
 import { isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 import { resolveOfferedChoices } from '@/game/playTranscript';
@@ -45,7 +46,8 @@ interface ActionBarProps {
 }
 
 export function ActionBar({ state, busy, onAction, engineMode, hidden = false }: ActionBarProps) {
-  const actions = resolveOfferedChoices(state);
+  // Free typing has its own box: no "Say something… / Do something else…" buttons.
+  const actions = visibleActionChips(resolveOfferedChoices(state));
   const systemPrompt = systemPromptPad(state, classOfferPad(state));
   const party = partyHeading(state);
   const recruits = recruitPad(state) ?? [];

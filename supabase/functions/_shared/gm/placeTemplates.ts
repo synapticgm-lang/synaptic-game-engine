@@ -463,6 +463,15 @@ export function vesselTemplateFor(text: string): PlaceTemplate | null {
   return t && /^veh-(?:boat|ship)-/.test(t.id) ? t : null;
 }
 
+/** A place NAME that is a land building or street even with a ship word in it ("The Ship Inn"). */
+const LAND_PLACE_NAME = /\b(?:inn|tavern|alehouse|pub|taproom|house|hall|shop|store|yard|works|street|lane|road|market|square|quay|wharf|docks?|office|chandlery|guild)\b/i;
+
+/** Vessel from a place's own NAME: a ship word that reads as the vessel, not a building named after one. */
+export function vesselTemplateForName(name: string): PlaceTemplate | null {
+  if (LAND_PLACE_NAME.test(name ?? '')) return null;
+  return vesselTemplateFor(name);
+}
+
 /**
  * Settlement shape from kind + biome. Harbours split on sea vs river; a shore with no
  * river word is a sea harbour. Null when nothing fits (the plain town layout stays).

@@ -3,7 +3,7 @@ import type { GameState, LocationSheet, MapScale, MapTier } from './types';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { resolvePlace } from './places';
 import { isTripHere } from './travelJourney';
-import { vesselTemplateFor } from './placeTemplates';
+import { vesselTemplateForName } from './placeTemplates';
 
 export const STREET_MAP_BLUEPRINT = 'local-area';
 export const INTERIOR_MAP_BLUEPRINT = 'interior-plan';
@@ -91,7 +91,7 @@ export function isInteriorPlace(name: string | undefined): boolean {
   if (!n) return false;
   if (isUndergroundPlace(n)) return true;
   // Aboard a boat / ship (vehicle templates' boat words): decks are an interior.
-  if (vesselTemplateFor(n)) return true;
+  if (vesselTemplateForName(n)) return true;
   // Building / ruin / chamber beats outdoor "roads" in the same string (alone Summoned Pact dumps).
   if (OUTDOOR_STILL_INSIDE.test(n) && INTERIOR_PLACE_CUES.test(n)) return true;
   if (OUTDOOR_OVERRIDE.test(n) && !OUTDOOR_STILL_INSIDE.test(n)) return false;

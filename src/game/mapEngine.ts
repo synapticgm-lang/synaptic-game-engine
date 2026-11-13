@@ -12,7 +12,7 @@ import {
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
 import { createHashRng } from './seededRng';
 import { dungeonTitle } from './places';
-import { insideTemplateFor, placeTemplateById, vesselTemplateFor } from './placeTemplates';
+import { insideTemplateFor, placeTemplateById, vesselTemplateForName } from './placeTemplates';
 import { alignFloorStack, attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
@@ -1231,7 +1231,7 @@ export function connectOrphanRooms(
 /** Vessel template for a place: the established vessel id (place record / scene), else a ship word in the name. */
 function vesselFor(place: string, vesselId?: string) {
   const byId = vesselId ? placeTemplateById(vesselId) : undefined;
-  return byId?.layout ? byId : vesselTemplateFor(place);
+  return byId?.layout ? byId : vesselTemplateForName(place);
 }
 
 function pickInteriorLayout(seed: string, place: string, rooms: string[] = [], vesselId?: string): InteriorRoomSpec[] {

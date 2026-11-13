@@ -308,7 +308,7 @@ export function systemStatusChip(housing: SystemHousingId | null | undefined): s
   switch (housing) {
     case 'worn_device': return 'Read the device';
     case 'private_window': return 'Look inward';
-    case 'world_status': return 'Ask the world';
+    case 'world_status': return 'Check your level';
     case 'leftover_pocket': return 'Reach into the pocket';
     default: return 'Inspect the panel';
   }
@@ -325,9 +325,11 @@ export function systemHousingThing(housing: SystemHousingId | null | undefined):
   }
 }
 
-const STATUS_CHIPS = new Set(
-  ([...HOUSING_IDS, null] as const).map((h) => systemStatusChip(h).toLowerCase())
-);
+const STATUS_CHIPS = new Set([
+  ...([...HOUSING_IDS, null] as const).map((h) => systemStatusChip(h).toLowerCase()),
+  // Older saves / replays still carry the previous world-status label.
+  'ask the world',
+]);
 
 /** A System status chip reads the player's own status: it addresses nobody and is not talk. */
 export function isSystemStatusChip(label: string | null | undefined): boolean {

@@ -714,10 +714,27 @@ export function stripUnauthorizedNpcSpeech(
   playerInput: string,
   pcName?: string | null,
   engineFact?: string,
+  /** People actually in the scene: their answers are never cut for a slot mismatch. */
+  present: string[] = [],
 ): string {
   const text = (prose ?? '').replace(/\s+/g, ' ').trim();
   if (!text) return prose ?? '';
   const action = foldSpeech(playerInput);
+  const presentFold = present.map((p) => foldSpeech(p)).filter((p) => p.length >= 3);
+  const isPresent = (speaker: string) => {
+    const sp = foldSpeech(speaker);
+    return sp.length >= 3 && presentFold.some((p) => p === sp || p.startsWith(`${sp} `) || p.includes(` ${sp}`) || sp.includes(p));
+  };
+  const words = (s: string) => s.split(/[^a-z']+/).filter((w) => w.length >= 2);
+  // Near-exact echo: the quote is (almost) the player's whole line, not one that just starts alike.
+  const nearEcho = (q: string, a: string) => {
+    const qw = words(q);
+    const aw = words(a);
+    if (!qw.length || !aw.length) return false;
+    const as = new Set(aw);
+    const shared = qw.filter((w) => as.has(w)).length;
+    return shared / qw.length >= 0.85 && shared / aw.length >= 0.85;
+  };
   const pcSaid = foldSpeech(extractPlayerQuotedSay(playerInput) ?? '');
   const pcFirst = pcFirstOf(pcName);
   const fact = engineFact ?? '';
@@ -740,8 +757,11 @@ export function stripUnauthorizedNpcSpeech(
     if (q.length < 4) return false;
     // Chip / menu label spoken back as dialogue.
     if (action.length >= 4 && (bare(action) === q || q === bare(action))) return true;
-    // Fragment of the player's own text (not their deliberate quoted say — that goes to givePcTheirQuote).
-    if (!pcSaid && q.length >= 6 && bare(action).includes(q)) return true;
+    // Near-exact echo of the player's own line (not their deliberate quoted say — that goes to
+    // givePcTheirQuote). An answer that merely opens with similar words ("What I want…") stays.
+    if (!pcSaid && q.length >= 6 && nearEcho(q, bare(action))) return true;
+    // A person who is really here answering is never cut for slot bookkeeping.
+    if (isPresent(speaker)) return false;
     if (emptySceneAbsence) return true;
     if (noSlot && !slotIsCrowd) {
       // Named addressee absent: drop only that person's invented line, keep other present speakers.
