@@ -57,7 +57,7 @@ describe('29r place templates', () => {
       'bld-inside-bathhouse', 'bld-inside-guardhouse', 'bld-inside-watchtower',
       'bld-shape-cliff-village', 'bld-shape-cave-dwelling', 'bld-shape-sea-harbour', 'bld-shape-river-harbour',
       'veh-cart-hand', 'veh-wagon-covered', 'veh-wagon-merchant', 'veh-cart-farm',
-      'veh-boat-fishing', 'veh-boat-barge', 'veh-boat-cargo', 'veh-boat-rowboat',
+      'veh-boat-fishing', 'veh-boat-barge', 'veh-boat-cargo', 'veh-ship-sloop', 'veh-ship-warship', 'veh-ship-galleon', 'veh-boat-rowboat',
     ];
     for (const id of ids) {
       const t = placeTemplateById(id)!;

@@ -24,7 +24,7 @@ import {
 } from './mapEngine';
 import { createHashRng } from './seededRng';
 import { INSIDE_TEMPLATES, VEHICLE_TEMPLATES } from './placeTemplates';
-import { attachBeside, nearWall, packFloorRooms } from './floorPlan';
+import { alignFloorStack, attachBeside, nearWall, packFloorRooms } from './floorPlan';
 
 export type InteriorKind = 'dungeon' | 'building' | 'vehicle';
 export type RoomRole = 'entry' | 'room' | 'cache' | 'boss' | 'stair' | 'secret';
@@ -190,8 +190,11 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
   while (floorIndex < floorsWanted) {
     const pool = poolFor();
     const tagged = pool.filter((t) => t.tags.some((g) => want.includes(g)));
+    // One building / vehicle = one template for every floor (same footprint, stairs line up).
+    // Dungeons still stack different templates per level.
+    const same = opts.kind !== 'dungeon' && templateIds.length ? pool.find((t) => t.id === templateIds[0]) : undefined;
     const fresh = (tagged.length ? tagged : pool).filter((t) => !templateIds.includes(t.id));
-    const tpl = pick(fresh.length ? fresh : tagged.length ? tagged : pool, rng);
+    const tpl = same ?? pick(fresh.length ? fresh : tagged.length ? tagged : pool, rng);
     templateIds.push(tpl.id);
     // Engine decides size: a dungeon keeps only a building template's ground + lower floors.
     let tRooms = opts.kind === 'dungeon' ? tpl.rooms.filter((r) => r.z <= 0) : tpl.rooms;
@@ -289,7 +292,8 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
     const host = near.find((i) => mainReach.has(i)) ?? near[0];
     if (host) secrets.push({ id: r.id, fromId: host });
   }
-  if (!secrets.length && rng() < (opts.secretChance ?? 0.5)) {
+  // Buildings / vehicles keep one outline on every floor: no engine room bolted onto the side.
+  if (!secrets.length && rng() < (opts.secretChance ?? 0.5) && opts.kind === 'dungeon') {
     const hosts = rooms.filter((r) => r.role === 'room' && !r.landing && mainReach.has(r.id));
     if (hosts.length) {
       const host = pick(hosts, rng);
@@ -322,7 +326,20 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
     (secretIds.has(a) && openReach.has(b) && !secretIds.has(b)) || (secretIds.has(b) && openReach.has(a) && !secretIds.has(a));
 
   // Buildings and vehicles read as one packed footprint; dungeon/cave rooms keep their tunnels.
-  const laidOut = opts.kind === 'dungeon' ? spec : packFloorRooms(spec, links);
+  let laidOut = opts.kind === 'dungeon' ? spec : packFloorRooms(spec, links);
+  if (opts.kind !== 'dungeon') {
+    const aligned = alignFloorStack(
+      laidOut.map((n) => ({ ...n, entry: n.id === entryId })),
+      links,
+      (id, z, box) => {
+        rooms.push({ id, role: 'room', label: 'Storeroom', floor: rooms.find((r) => spec.find((s) => s.id === r.id)?.z === z)?.floor ?? 0 });
+        return { id, ...box, z, entry: false };
+      },
+    );
+    laidOut = aligned.rooms;
+    links.length = 0;
+    links.push(...aligned.links);
+  }
   const nodes: MapNode[] = laidOut.map((n) => {
     const room = rooms.find((r) => r.id === n.id)!;
     const connections = Array.from(

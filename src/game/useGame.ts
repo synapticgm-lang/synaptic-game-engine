@@ -1,4 +1,5 @@
 import { registerWriterIntroductions } from './writerIntroductions';
+import { placeVessel, stampPlaceVessel } from './vesselPlace';
 import { useCallbackRef } from './useCallbackRef';
 import { useEffect, useRef, useState, useCallback, startTransition } from 'react';
 import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit, Quest, SessionZero } from './types';
@@ -1796,6 +1797,7 @@ export function useGame() {
       ? harvested
       : mergeHubLandmarks(harvested, previous, place);
     let areaMap = previous.activeDungeon ?? null;
+    const vessel = placeVessel(previous, place, blob);
     if (!isExplorableDungeon(areaMap)) {
       areaMap = resolvePlayAreaMap(
         areaMap,
@@ -1807,6 +1809,7 @@ export function useGame() {
           visitedLandmarkNames: visitedHubLandmarkNames(previous),
           allowInterior: cameraAllowsInteriorMap(previous),
           underground: (site) => previewDungeonCard(previous, site),
+          vessel,
         }
       );
     }
@@ -4473,6 +4476,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
       }
       let areaMap = workingState.activeDungeon ?? liveCurrent.activeDungeon ?? null;
+      // Aboard a vessel (established by the opening, the place record, or this scene): sticky per place.
+      const vessel = placeVessel(workingState, mapName, cleanText);
+      workingState = stampPlaceVessel(workingState, mapName, vessel);
       if (!isExplorableDungeon(areaMap)) {
         areaMap = resolvePlayAreaMap(
           areaMap,
@@ -4487,6 +4493,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             }),
             allowInterior: cameraAllowsInteriorMap(workingState, sanitizedInput),
             underground: (site) => previewDungeonCard(workingState, site),
+            vessel,
           }
         );
       }

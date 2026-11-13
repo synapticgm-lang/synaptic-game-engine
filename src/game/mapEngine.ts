@@ -12,8 +12,8 @@ import {
 import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
 import { createHashRng } from './seededRng';
 import { dungeonTitle } from './places';
-import { insideTemplateFor } from './placeTemplates';
-import { attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan';
+import { insideTemplateFor, placeTemplateById, vesselTemplateFor } from './placeTemplates';
+import { alignFloorStack, attachBeside, floorPlanIssues, packFloorRooms, planRoomOf } from './floorPlan';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
@@ -788,6 +788,14 @@ export function interiorFloorLabel(z: number): string {
   return `${z + 1}F`;
 }
 
+/** Floor tab name: a ship's deck name when the plan has one, else B1 / 1F / 2F. */
+export function interiorFloorName(dungeon: { nodes: MapNode[] } | null | undefined, z: number): string {
+  const tag = dungeon?.nodes
+    .find((n) => (n.zLevel ?? 0) === z && (n.tags ?? []).some((t) => t.startsWith('deck:')))
+    ?.tags?.find((t) => t.startsWith('deck:'));
+  return tag ? tag.slice(5) : interiorFloorLabel(z);
+}
+
 export function listInteriorZLevels(dungeon: ActiveDungeonState): number[] {
   const zs = new Set(dungeon.nodes.map((n) => n.zLevel ?? 0));
   return Array.from(zs).sort((a, b) => a - b);
@@ -807,6 +815,8 @@ export function roomHasVerticalLink(dungeon: ActiveDungeonState, node: MapNode):
 
 function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: string): boolean {
   if (!isInteriorMap(dungeon)) return true;
+  // A ship's deck plan stays a ship on every visit (the place name may carry no ship word).
+  if (dungeon.nodes.some((n) => (n.tags ?? []).some((t) => t.startsWith('deck:')))) return false;
   if (!isAuthoredInterior(dungeon)) return true;
   const place = placeHint || dungeon.dungeonName || '';
   const scale = interiorBuildingScale(place);
@@ -1218,10 +1228,18 @@ export function connectOrphanRooms(
   return next;
 }
 
-function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): InteriorRoomSpec[] {
+/** Vessel template for a place: the established vessel id (place record / scene), else a ship word in the name. */
+function vesselFor(place: string, vesselId?: string) {
+  const byId = vesselId ? placeTemplateById(vesselId) : undefined;
+  return byId?.layout ? byId : vesselTemplateFor(place);
+}
+
+function pickInteriorLayout(seed: string, place: string, rooms: string[] = [], vesselId?: string): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
+  // Aboard a boat / ship: its hull and decks, never a land building.
+  const vessel = vesselFor(place, vesselId)?.layout;
   const scale = interiorBuildingScale(place);
-  const inside = scale === 'inside' ? insideTemplateFor(place)?.layout : undefined;
+  const inside = vessel ?? (scale === 'inside' ? insideTemplateFor(place)?.layout : undefined);
   const layouts = inside
     ? [inside]
     : scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
@@ -1243,7 +1261,38 @@ function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): 
     place
   );
   const links = specs.flatMap((r) => r.links.map((l) => [r.id, l] as [string, string]));
-  return packFloorRooms(specs, links);
+  return alignedInteriorLayout(packFloorRooms(specs, links));
+}
+
+/**
+ * One building, one footprint: every floor takes the entry floor's room boxes and each landing
+ * sits in the box of the stair it climbs from (floorPlan alignFloorStack).
+ */
+function alignedInteriorLayout(specs: InteriorRoomSpec[]): InteriorRoomSpec[] {
+  const pairs = new Map<string, [string, string]>();
+  for (const r of specs) {
+    for (const l of r.links) {
+      const key = r.id < l ? `${r.id}|${l}` : `${l}|${r.id}`;
+      if (!pairs.has(key)) pairs.set(key, r.id < l ? [r.id, l] : [l, r.id]);
+    }
+  }
+  const { rooms, links } = alignFloorStack(specs, [...pairs.values()], (id, z, box) => ({
+    id,
+    label: 'Storeroom',
+    ...box,
+    z,
+    links: [],
+  }));
+  const adj = new Map(rooms.map((r) => [r.id, new Set<string>()]));
+  for (const [a, b] of links) {
+    adj.get(a)?.add(b);
+    adj.get(b)?.add(a);
+  }
+  return rooms.map((r) => {
+    const l = [...(adj.get(r.id) ?? [])];
+    const ek = r.edgeKinds ? Object.fromEntries(Object.entries(r.edgeKinds).filter(([k]) => l.includes(k))) : undefined;
+    return { ...r, links: l, edgeKinds: ek && Object.keys(ek).length ? (ek as InteriorRoomSpec['edgeKinds']) : undefined };
+  });
 }
 
 /** Resolve door vs damaged/secret/stairs for a graph edge. */
@@ -1628,15 +1677,19 @@ export function buildInteriorFloorPlan(
   place: string,
   rooms: string[] = [],
   parentCoords?: Location3D,
-  seed = 'interior'
+  seed = 'interior',
+  /** Established vessel template id (the scene put the player aboard), sticky per place. */
+  vesselId?: string
 ): ActiveDungeonState {
   const rawHere = place.replace(/\s+/g, ' ').trim();
   const building = shortBuildingTitle(usableInteriorHere(rawHere) ? rawHere : 'Interior');
-  const layout = pickInteriorLayout(seed, rawHere || building, rooms);
+  const layout = pickInteriorLayout(seed, rawHere || building, rooms, vesselId);
   const entry = layout.find((r) => r.entry) ?? layout[0]!;
 
+  const decks = vesselFor(rawHere, vesselId)?.decks;
   let nodes: MapNode[] = layout.map((spec) => {
     const tags = ['interior', 'authored', 'varied-footprint'];
+    if (decks?.[spec.z]) tags.push(`deck:${decks[spec.z]}`);
     if (spec.entry) tags.push('here', 'entry');
     if (spec.isSecret) tags.push('secret');
     const edgeKinds = buildEdgeKindsForSpec(spec, layout);
@@ -1851,6 +1904,8 @@ export function resolvePlayAreaMap(
     allowInterior?: boolean;
     /** Caves / mines / crypts: the site's dungeon card drawn as a plan (built by the caller). */
     underground?: (place: string) => ActiveDungeonState;
+    /** Established vessel template id for this place (vesselPlace.placeVessel). */
+    vessel?: string;
   }
 ): ActiveDungeonState | null {
   if (isExplorableDungeon(existing ?? null)) return existing ?? null;
@@ -1876,13 +1931,16 @@ export function resolvePlayAreaMap(
     if (existing && sameAreaMap(next, existing)) return existing;
     return next;
   }
-  if (isInteriorPlace(here)) {
+  if (isInteriorPlace(here) || opts?.vessel) {
     const rooms = landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase());
-    if (existing && isInteriorMap(existing) && !needsAuthoredInteriorRebuild(existing, here)) {
+    const shipMap = (d: ActiveDungeonState) => d.nodes.some((n) => (n.tags ?? []).some((t) => t.startsWith('deck:')));
+    // Newly established as aboard a vessel: redraw an old land plan once as the ship.
+    const staleLand = !!opts?.vessel && !!existing && isInteriorMap(existing) && !shipMap(existing);
+    if (existing && isInteriorMap(existing) && !staleLand && !needsAuthoredInteriorRebuild(existing, here)) {
       next = presentInteriorMap(existing, here, seed);
       for (const room of rooms) next = addRoomToInteriorMap(next, room);
     } else {
-      next = buildInteriorFloorPlan(here, rooms, parentCoords ?? existing?.parentCoordinates, seed);
+      next = buildInteriorFloorPlan(here, rooms, parentCoords ?? existing?.parentCoordinates, seed, opts?.vessel);
       if (existing && isInteriorMap(existing)) {
         const keepVisited = existing.visitedNodeIds.filter((id) => next!.nodes.some((n) => n.id === id));
         const keepCurrent = next.nodes.some((n) => n.id === existing.currentNodeId)

@@ -14,6 +14,7 @@ import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
 import {
   interiorDoorAnchor,
   interiorFloorLabel,
+  interiorFloorName,
   interiorRoomFillKind,
   isInteriorSecretUnlocked,
   listInteriorZLevels,
@@ -314,7 +315,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
                   <span className="text-slate-400"> · Main pin: <span className="text-amber-200">{mapFocusPlace.trim()}</span></span>
                 ) : null}
                 {isHallPlan && floorLevels.length > 1 && (
-                  <span className="text-slate-500"> · {interiorFloorLabel(playerZ)}</span>
+                  <span className="text-slate-500"> · {interiorFloorName(displayDungeon, playerZ)}</span>
                 )}
               </span>
             </p>
@@ -356,7 +357,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
                       : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-slate-500'
                   }`}
                 >
-                  {interiorFloorLabel(z)}
+                  {interiorFloorName(displayDungeon, z)}
                   {onPlayer ? ' · you' : ''}
                 </button>
               );
@@ -460,7 +461,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
                       displayDungeon.visitedNodeIds.includes(n.id)
                     ).length;
                     const floorTag = isHallPlan && floorLevels.length > 1
-                      ? ` · ${interiorFloorLabel(viewZ)}`
+                      ? ` · ${interiorFloorName(displayDungeon, viewZ)}`
                       : '';
                     return isHallPlan
                       ? `Explored: ${visitedOnFloor} / ${floorNodes.length} rooms${floorTag}`
@@ -674,7 +675,7 @@ function InteriorFloorPlan({
   if (nodes.length === 0) {
     return (
       <p className="text-sm text-slate-400 py-8 text-center">
-        No rooms mapped on {interiorFloorLabel(viewZ)}.
+        No rooms mapped on {interiorFloorName(dungeon, viewZ)}.
       </p>
     );
   }

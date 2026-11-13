@@ -24,6 +24,8 @@ export interface PlaceTemplate {
   layout?: InteriorRoomSpec[];
   /** Rooms name what the building was for (bath, cells, lookout), so a ruin of it keeps them. */
   keepsRoomsWhenRuined?: boolean;
+  /** Ships: deck name per z level (0 = main deck, below is negative). */
+  decks?: Record<number, string>;
 }
 
 type Box = [x: number, y: number, w: number, h: number];
@@ -301,6 +303,59 @@ export const SHAPE_TEMPLATES: PlaceTemplate[] = [
   ),
 ];
 
+
+/** Ship hull boxes, bow to stern: every deck uses these same five, so decks line up. */
+const HULL: Box[] = [
+  [0, 0.3, 0.9, 1.0], // bow (narrower)
+  [0.9, 0, 1.3, 1.6],
+  [2.2, 0, 0.6, 1.6], // hatch / ladder column
+  [2.8, 0, 1.2, 1.6],
+  [4.0, 0.15, 0.8, 1.3], // stern (narrower)
+];
+
+/**
+ * Multi-deck ship: one hull, one deck per entry (main deck first, then down).
+ * Each deck's rooms are the five hull boxes bow → stern; the middle box is the hatch ladder
+ * on every deck, so ladders line up. Entry is the main deck's waist (box 1).
+ */
+function ship(decks: Array<[name: string, labels: [string, string, string, string, string]]>): {
+  layout: InteriorRoomSpec[];
+  decks: Record<number, string>;
+} {
+  const layout: InteriorRoomSpec[] = [];
+  const names: Record<number, string> = {};
+  decks.forEach(([name, labels], d) => {
+    const z = d === 0 ? 0 : -d;
+    names[z] = name;
+    const id = (i: number) => (d === 0 && i === 1 ? 'entry' : `d${d}r${i}`);
+    labels.forEach((label, i) => {
+      const [x, y, w, h] = HULL[i]!;
+      const links: string[] = [];
+      if (i > 0) links.push(id(i - 1));
+      if (i < 4) links.push(id(i + 1));
+      if (i === 2 && d > 0) links.push(`d${d - 1}r2`);
+      if (i === 2 && d < decks.length - 1) links.push(`d${d + 1}r2`);
+      layout.push({ id: id(i), label, x, y, z, w, h, links, ...(d === 0 && i === 1 ? { entry: true } : {}) });
+    });
+  });
+  return { layout, decks: names };
+}
+
+function shipTemplate(
+  id: string,
+  label: string,
+  reuse: string[],
+  decks: Array<[string, [string, string, string, string, string]]>,
+): PlaceTemplate {
+  const s = ship(decks);
+  return {
+    ...template(id, 'vehicle', label, decks.map(([n]) => n).concat(decks[0]![1][4]).slice(0, 4), reuse, s.layout),
+    decks: s.decks,
+  };
+}
+
+const MAIN_DECK: [string, string, string, string, string] = ['Forecastle', 'Main deck', 'Main hatch', 'Quarterdeck', "Captain's cabin"];
+
 export const VEHICLE_TEMPLATES: PlaceTemplate[] = [
   template('veh-cart-hand', 'vehicle', 'A hand cart', ['Cart bed'], ['hand cart', 'handcart', 'barrow'], [[0, 0, 1.2, 0.8]]),
   template(
@@ -343,15 +398,26 @@ export const VEHICLE_TEMPLATES: PlaceTemplate[] = [
     ['barge', 'keelboat', 'flatboat'],
     [[0, 0, 2.2, 1.0], [2.3, 0.1, 0.9, 0.8], [1.6, 1.1, 1.6, 0.8]]
   ),
-  template(
-    'veh-boat-cargo',
-    'vehicle',
-    'A cargo ship',
-    ['Main deck', 'Captain cabin', 'Crew quarters', 'Cargo hold'],
-    ['cargo ship', 'merchant ship', 'cog', 'freighter', 'ship'],
-    [[0, 0.4, 2.2, 1.0], [2.35, 0.45, 0.9, 0.9], [2.0, 1.45, 1.25, 0.8], [0.1, 1.5, 1.8, 0.9]],
-    [[0, 3]]
-  ),
+  shipTemplate('veh-boat-cargo', 'A cargo ship', ['cargo ship', 'merchant ship', 'cog', 'freighter', 'ship', 'vessel'], [
+    ['Main deck', MAIN_DECK],
+    ['Lower deck', ['Sail locker', 'Crew quarters', 'Lower ladder', 'Galley', "Officers' berths"]],
+    ['Hold', ['Cable tier', 'Cargo hold', 'Hold ladder', 'Water casks', 'Bread room']],
+  ]),
+  shipTemplate('veh-ship-sloop', 'A sloop', ['sloop', 'cutter', 'brig', 'brigantine', 'schooner'], [
+    ['Main deck', ['Forecastle', 'Main deck', 'Main hatch', 'Tiller deck', "Captain's cabin"]],
+    ['Hold', ["Bosun's store", 'Cargo hold', 'Hold ladder', 'Bilge', 'Stern locker']],
+  ]),
+  shipTemplate('veh-ship-warship', 'A warship', ['warship', 'frigate', 'corvette', 'man-of-war', "man-o'-war"], [
+    ['Main deck', MAIN_DECK],
+    ['Gun deck', ['Fore battery', 'Gun deck', 'Gun deck ladder', 'Aft battery', 'Wardroom']],
+    ['Hold', ['Cable tier', 'Powder room', 'Hold ladder', 'Shot locker', 'Bread room']],
+  ]),
+  shipTemplate('veh-ship-galleon', 'A galleon', ['galleon', 'carrack', 'ship of the line', 'treasure ship'], [
+    ['Main deck', MAIN_DECK],
+    ['Upper gun deck', ['Fore battery', 'Upper gun deck', 'Upper ladder', 'Aft battery', 'Great cabin']],
+    ['Lower gun deck', ['Sail locker', 'Lower gun deck', 'Lower ladder', 'Crew mess', 'Wardroom']],
+    ['Hold', ['Cable tier', 'Cargo hold', 'Hold ladder', 'Powder room', 'Bread room']],
+  ]),
   template('veh-boat-rowboat', 'vehicle', 'A rowboat', ['Benches'], ['rowboat', 'dinghy', 'skiff', 'boat'], [[0, 0, 1.4, 0.7]]),
 ];
 
@@ -389,6 +455,12 @@ export function insideTemplateFor(place: string): PlaceTemplate | null {
 
 export function vehicleTemplateFor(text: string): PlaceTemplate | null {
   return reuseMatch(VEHICLE_TEMPLATES, text);
+}
+
+/** A boat or ship you can be aboard (the vehicle templates' own boat/ship reuse words). */
+export function vesselTemplateFor(text: string): PlaceTemplate | null {
+  const t = vehicleTemplateFor(text);
+  return t && /^veh-(?:boat|ship)-/.test(t.id) ? t : null;
 }
 
 /**
