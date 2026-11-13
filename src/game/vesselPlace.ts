@@ -7,7 +7,7 @@
  * Once found, stampPlaceVessel writes it on the place record so the map never flips between visits.
  */
 import { resolvePlace } from './places';
-import { vesselTemplateFor } from './placeTemplates';
+import { vesselTemplateFor, vesselTemplateForName } from './placeTemplates';
 import type { GameState } from './types';
 
 const ABOARD = /\b(?:aboard|on board|on deck|below decks?|the decks?|the hull|hull timbers|gangway|the hold|the rigging|the mast)\b/i;
@@ -28,7 +28,7 @@ export function placeVessel(state: GameState, place: string, sceneText?: string)
   if (!here) return undefined;
   const record = resolvePlace(state.places ?? [], here);
   if (record?.vessel) return record.vessel;
-  const byName = vesselTemplateFor(here)?.id;
+  const byName = vesselTemplateForName(here)?.id;
   if (byName) return byName;
   const inst = state.openingEstablishment?.instance;
   if (inst && sameName(inst.placeName, here)) {

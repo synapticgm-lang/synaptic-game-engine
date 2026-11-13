@@ -11,6 +11,7 @@ import {
   systemHousingWriterClause,
   systemHousingWriterSentence,
   systemStatusChip,
+  isSystemStatusChip,
   type SystemHousingConfig,
   type SystemPartId,
 } from './systemHousing';
@@ -87,7 +88,8 @@ describe('system housing', () => {
   it('chips name the frozen housing instead of always the panel', () => {
     expect(systemStatusChip('worn_device')).toBe('Read the device');
     expect(systemStatusChip('private_window')).toBe('Look inward');
-    expect(systemStatusChip('world_status')).toBe('Ask the world');
+    expect(systemStatusChip('world_status')).toBe('Check your level');
+    expect(isSystemStatusChip('Ask the world')).toBe(true);
     expect(systemStatusChip('leftover_pocket')).toBe('Reach into the pocket');
     expect(systemStatusChip(undefined)).toBe('Inspect the panel');
   });

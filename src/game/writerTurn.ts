@@ -1,4 +1,5 @@
 /** Writer turn: first draft is the beat; blocking problems get one rewrite in runWriterTurnWithFightRetry. */
+import { openingCastFacts } from './npcSheet';
 import type { GameState } from './types';
 import { givePcTheirQuote, stripUnauthorizedNpcSpeech, type PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
@@ -712,7 +713,13 @@ export function backedAnswerFacts(state: GameState, name: string): string[] {
   const facts = authoredTopicsFor(name).map((t) => t.line);
   // OP-1: a road meeting's speaker is backed by its opener idea's gist.
   facts.push(...roadMeetingOpenerLines(state, name));
-  if (openingCastNames(state).some((n) => sameName(n, name))) facts.push(shortCardWant(state));
+  if (openingCastNames(state).some((n) => sameName(n, name))) {
+    facts.push(shortCardWant(state));
+  }
+  // Their story role and the offer they brought: the live writer answers from these.
+  const cast = openingCastFacts(state, name);
+  if (cast?.role) facts.push(`${name} is here: ${cast.role}.`);
+  if (cast?.offer) facts.push(`What they offer: ${cast.offer}`);
   const memory = (state.npcMemories ?? []).find(
     (m) => sameName(m.npcName, name) || (m.aliases ?? []).some((a) => sameName(a, name))
   );
@@ -1014,13 +1021,28 @@ async function runWriterTurnFightOnly(opts: {
  * NPC lines are dropped; same-turn event is not restated.
  * Shared by finishCommittedProse and post-clause-check (repair can reintroduce a restatement).
  */
+/**
+ * A cut inside a quote must not leave its stub: `Brannoc said, ". I ask for nothing."` →
+ * `Brannoc said, "I ask for nothing."`; an empty `Brannoc said, "".` shell drops.
+ */
+export function healDanglingQuoteOpen(prose: string): string {
+  return (prose ?? '')
+    .replace(/(^|[\s,:])(["“])\s*[.,;:!?…]+\s+(?=[A-Za-z])/g, '$1$2')
+    .replace(/\b[A-Z][\w'’-]*(?:\s+[A-Z][\w'’-]*){0,2}\s+(?:said|asked|replied|answered),?\s*["“]\s*["”][.!?]?\s*/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 export function normalizeCommittedProse(prose: string, check: DraftCheck, packet?: CompletedEventPacket): string {
   let next = prose ?? '';
   if (!next.trim()) return next;
   const refs = refEnumOf(check.state, packet);
   const pc = check.state.character?.name;
   next = givePcTheirQuote(next, check.playerInput, pc);
-  next = stripUnauthorizedNpcSpeech(next, check.playerInput, pc, check.engineFact);
+  next = stripUnauthorizedNpcSpeech(next, check.playerInput, pc, check.engineFact, [
+    ...peopleHere(check.state),
+    ...openingCastNames(check.state),
+  ]);
   if (!playerAsksRepeat(check.playerInput) && !/<[^>]+>/.test(next)) {
     const isEvent = thisTurnsEventCheck(check, refs);
     const isMove = moveSentenceCheck(
@@ -1050,6 +1072,7 @@ export function normalizeCommittedProse(prose: string, check: DraftCheck, packet
   }
   // T10O — stray period after a quote that already closed on ?/!/… (`?"."`).
   next = next.replace(/([?!…])(["”])\.(?=\s|$)/g, '$1$2').replace(/([.!?]){2,}/g, '$1');
+  next = healDanglingQuoteOpen(next);
   // T10Y — doubled speech attribution (`Jax said, Jax said, "…"`) and group-of-itself (`the crew of the crew`).
   next = next.replace(
     /\b([A-Z][\w'’-]+(?:\s+[A-Z][\w'’-]+)?)\s+said,\s+\1\s+said,/g,
@@ -1104,4 +1127,4 @@ export function moveSentenceCheck(
     const s = sentence.toLowerCase();
     return (!!goingTo && s.includes(goingTo)) || places.filter((p) => s.includes(p)).length >= 2;
   };
-}
+}

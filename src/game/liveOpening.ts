@@ -727,7 +727,6 @@ export function deriveOpeningJournal(state: GameState, prose?: string, preferred
   const description = [
     lead ? `${lead.name} is here — ${lead.role}.` : `You are on your own at ${place}.`,
     offer ? `The offer on the table: ${offer}` : '',
-    fromScene ? fromScene.slice(0, 240) : inst?.situation,
   ]
     .filter(Boolean)
     .join(' ')

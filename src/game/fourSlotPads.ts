@@ -11,9 +11,9 @@
  */
 import type { GameState } from './types';
 import {
+  computeOptionSceneKey,
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
-  computeOptionSceneKey,
   isFreeInputChip,
   optionSceneKeyString,
   recordedTravelDestinations,
@@ -39,6 +39,7 @@ import { isOnCooldown } from './optionDiversityContract';
 import { namedTalkTopicSpent } from './npcTopicFsm';
 import { isCrowdOnlyTalkPad, speakablePresentPeople } from './chromeAuthority';
 import { peopleHere } from './scenePresence';
+import { openingOfferPads } from './openingEstablishment';
 import { hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
 import { originPad } from './rules/rpgOrigin';
 import { isDying } from './tabletop/roundFight';
@@ -1175,17 +1176,52 @@ export function assembleFourSlotPads(
     }
   }
 
-  // Free-input always offered off exclusive pads (never counts as a slot).
-  // Hurt road still offers free text (FOURSLOT2 sweep); non-hurt road skips assemble entirely.
-  const out = [...four.slice(0, 4)];
-  if (!out.some((c) => isFreeInputChip(c))) {
-    out.push(FREE_INPUT_SAY, FREE_INPUT_DO);
-  } else {
-    for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
-      if (!out.some((c) => low(c) === low(free))) out.push(free);
-    }
+  // Free-input stays on the engine record (accepted free text, cooldown bookkeeping) but is not a
+  // button: the action bar hides it (visibleActionChips) because the text box is always there.
+  const out = keepOpeningOfferInSlots(state, four.slice(0, 4));
+  for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+    if (!out.some((c) => low(c) === low(free))) out.push(free);
   }
   return out;
+}
+
+const GENERIC_FILLER_PAD = /^(?:look around|wait and listen|wait|search the area|travel toward\b|leave the scene)/i;
+
+/**
+ * While the opening offer is still open, its accept / refuse choices hold slots: they replace
+ * generic fillers (Look around / Wait / travel) first, then the last pads. The pad count stays the same.
+ */
+export function keepOpeningOfferInSlots(state: GameState, pads: string[]): string[] {
+  const offer = openingOfferPads(state);
+  if (!offer.length || !pads.length || liveFight(state)) return pads;
+  const out = [...pads];
+  const has = (l: string) => out.some((c) => low(c) === low(l));
+  for (const label of offer) {
+    if (has(label)) continue;
+    let at = -1;
+    for (let i = out.length - 1; i >= 0; i--) {
+      if (GENERIC_FILLER_PAD.test(out[i]!) && !offer.some((o) => low(o) === low(out[i]!))) {
+        at = i;
+        break;
+      }
+    }
+    if (at < 0) {
+      for (let i = out.length - 1; i >= 0; i--) {
+        if (!offer.some((o) => low(o) === low(out[i]!))) {
+          at = i;
+          break;
+        }
+      }
+    }
+    if (at < 0) break;
+    out[at] = label;
+  }
+  return out;
+}
+
+/** What the action bar shows: no free-input pads (free typing has its own box). */
+export function visibleActionChips(actions: string[]): string[] {
+  return actions.filter((c) => !isFreeInputChip(c));
 }
 
 /** The four engine slots only (no free-input). */

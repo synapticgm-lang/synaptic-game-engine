@@ -1119,7 +1119,7 @@ export function hallTalkAsksPanel(raw: string): boolean {
     || /\bsystem\s+(?:panel|screen|window|interface|display)\b/i.test(t)
     || /\b(?:inspect|examine|read|check|look at|study)\b.{0,48}\b(?:panel|screen|interface|system)\b/i.test(t)
     || /\bwhat(?:'s| is) (?:the |this )?(?:blue )?(?:screen|panel)\b/i.test(t)
-    || /^(?:read the device|look inward|ask the world|reach into the pocket)$/i.test(t.trim())
+    || /^(?:read the device|look inward|ask the world|check your level|reach into the pocket)$/i.test(t.trim())
   );
 }
 /** Kit / pockets inspect — ledger noun, not a name harvest or identity reprint. */
@@ -2611,7 +2611,7 @@ function coverLookPads(state: GameState): string[] {
 function liveCoverPads(state: GameState, pads: string[]): string[] {
   const fresh = (c: string) => !shouldStarveHallTopicPad(state, c) && !repeatsLastPlayerAction(state, c);
   const kept = pads.filter(fresh);
-  const onlyPanel = kept.length === 1 && /\binspect the panel\b|\bsystem window\b|\bread the device\b|\blook inward\b|\bask the world\b|\breach into the pocket\b/i.test(kept[0] ?? '');
+  const onlyPanel = kept.length === 1 && /\binspect the panel\b|\bsystem window\b|\bread the device\b|\blook inward\b|\bask the world\b|\bcheck your level\b|\breach into the pocket\b/i.test(kept[0] ?? '');
   if (kept.length && !onlyPanel) return kept.slice(0, 3);
   const refill = ['Look around', 'Search the area', 'Wait'].filter(fresh);
   if (

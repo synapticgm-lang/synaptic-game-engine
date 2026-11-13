@@ -481,8 +481,10 @@ function spokenExchangeLine(
   const want = isCast ? shortCardWant(state).replace(/\s+/g, ' ').trim() : '';
   if (want && !speakerAlreadyTold(state, speaker, want)) return quotedReply(speaker, want);
 
+  // Opening people answer from their story role and the offer (writer facts), never a stock
+  // archetype motive line or a random town job ("safe harbor and dry boots", "shelter and food").
   // Deflection naming what they want — only when no ledger agenda (T10AF: never append on top of silence).
-  const own = motiveAnswer(state, [speaker.label, ...speaker.names]);
+  const own = isCast ? null : motiveAnswer(state, [speaker.label, ...speaker.names]);
   if (own?.spoken?.words && !speakerAlreadyTold(state, speaker, own.spoken.words)) {
     return { line: own.line, words: own.spoken.words };
   }
@@ -497,7 +499,7 @@ function spokenExchangeLine(
     campaignId: state.campaignBibleId,
     roleHint: memory?.roleHint,
   });
-  const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
+  const words = isCast ? '' : (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
   if (words && !speakerAlreadyTold(state, speaker, words)) return quotedReply(speaker, words);
 
   // T10RC1 — open job/thread: never quote the thread label. Indirect beat from structured agenda
