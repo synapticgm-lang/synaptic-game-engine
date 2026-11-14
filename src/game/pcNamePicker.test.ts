@@ -182,6 +182,25 @@ describe('per-race PC name bank', () => {
     }
   });
 
+  it('a bare action typed at the name cover is play, not a name; framed gives and real names still lock', async () => {
+    for (const line of ['Run', 'Open', 'Search', 'Hide', 'Duck']) {
+      const r = await applyOpeningAnswer(cover('system-integration', 'si-5'), line);
+      expect(r.state.character.name, line).toBe('Unknown Survivor');
+      expect(r.deferToPlay, line).toBe(true);
+      expect(r.state.openingEstablishment?.pending?.[0]?.kind, line).toBe('name');
+    }
+    for (const [line, want] of [['Call me Run', 'Run'], ['my name is Run', 'Run'], ['Mara', 'Mara'], ['Kai', 'Kai'], ['Max Doyle', 'Max Doyle']]) {
+      const r = await applyOpeningAnswer(cover('system-integration', 'si-5'), line);
+      expect(r.state.character.name, line).toBe(want);
+    }
+    for (const bank of Object.values(RACE_NAME_BANKS)) {
+      for (const n of bank.given) {
+        const r = await applyOpeningAnswer(cover('system-integration', 'si-5'), n);
+        expect(r.state.character.name, n).toBe(n);
+      }
+    }
+  });
+
   it('Dr is a title, not a clash word', () => {
     expect(personalNameTokens('Dr. Yusuf Okafor')).toEqual(['yusuf', 'okafor']);
     expect(personalNameTokens('Dr Yusuf Okafor')).toEqual(['yusuf', 'okafor']);

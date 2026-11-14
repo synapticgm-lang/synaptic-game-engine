@@ -31,6 +31,7 @@ import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
 import { parsePlayerIntent } from './intentParser';
 import { opensWithChoiceVerb } from './parser';
+import { classifyRoundAction } from './tabletop/roundActionClass';
 import { pickPcDesignation, pickPcGivenName } from './pcNamePicker';
 import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
@@ -2527,10 +2528,25 @@ export function fullNameAsWritten(text: string): string | null {
     (w === 'of' && i < rest.length - 1) || (w === 'the' && rest[i - 1] === 'of');
   if (!rest.every((w, i) => nameWord(w) || joinerOk(w, i))) return null;
   if (!/^[A-Z]/.test(rest[rest.length - 1]!)) return null;
-  // The engine's own action readers: a typed move, look, talk or use is play, not a name.
-  if (parsePlayerIntent(t).kind !== 'other' || opensWithChoiceVerb(t)) return null;
-  if (isSystemStatusChip(t) || isLookAroundAction(t) || isOpeningSetupChipLabel(t)) return null;
+  if (readsAsPlay(t) || isOpeningSetupChipLabel(t)) return null;
   return t;
+}
+/** The engine's own action readers: a typed move, look, talk, use, hide or status check is play, not a name. */
+function readsAsPlay(text: string): boolean {
+  const t = text.replace(/\s+/g, ' ').trim();
+  return (
+    parsePlayerIntent(t).kind !== 'other'
+    || opensWithChoiceVerb(t)
+    || classifyRoundAction(t) !== 'other'
+    || isSystemStatusChip(t)
+    || isLookAroundAction(t)
+  );
+}
+/** "Call me Run" / "my name is Run": the name came from a framed give, not the whole line. */
+function isFramedNameGive(text: string): boolean {
+  const t = text.replace(/\s+/g, ' ').trim();
+  const given = extractGivenName(t);
+  return !!given && given.toLowerCase() !== t.toLowerCase();
 }
 /** Pull a real given name out of chat, not the whole sentence. */
 export function extractGivenName(raw: string): string | null {
@@ -3008,6 +3024,7 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
 function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: GameState): string | null {
   if (isMetaOnly(raw) || isSetupRefusal(raw)) return null;
   if (kind === 'name' && isLocationishOpeningUtterance(raw) && !extractGivenName(raw)) return null;
+  if (kind === 'name' && !isOpeningSetupChipLabel(raw) && !isFramedNameGive(raw) && readsAsPlay(raw)) return null;
   const harvested = fieldForKind(kind, harvestUtterance(raw));
   if (harvested) {
     if (kind === 'name' && isLocationishOpeningUtterance(harvested) && !extractGivenName(harvested)) return null;
@@ -3323,6 +3340,14 @@ export async function applyOpeningAnswer(
   const currentKind = est.pending[0]?.kind;
   // On the name cover a typed whole name ("Max Doyle") is the answer as written.
   if (currentKind === 'name' && !harvest.name) harvest.name = fullNameAsWritten(answer);
+  // A bare action typed at the name cover ("Run", "Hide") is play; only a framed give keeps it as a name.
+  const bareActionOnName =
+    currentKind === 'name'
+    && !isOpeningSetupChipLabel(answer)
+    && !/^random\s+(name|designation)\b/i.test(answer)
+    && !isFramedNameGive(answer)
+    && readsAsPlay(answer);
+  if (bareActionOnName) harvest.name = null;
   // The question's own answer chip is the place as written ("A frontier hold or road inn").
   const chosenPlaceChip =
     currentKind === 'location' && !isRandomPlaceRequest(answer) && !isOpeningSetupChipLabel(answer)
@@ -3469,7 +3494,7 @@ export async function applyOpeningAnswer(
     est.sceneWritten
     && currentKind === 'name'
     && !harvest.name
-    && !playerGivesOrRefusesName(answer)
+    && (bareActionOnName || !playerGivesOrRefusesName(answer))
     && !isOpeningSetupChipLabel(answer)
     && !/^random\s+(name|designation)\b/i.test(answer)
   ) {
