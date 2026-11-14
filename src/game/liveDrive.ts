@@ -77,9 +77,9 @@ export function reopenCoversForLiveDrive(state: GameState, bible: CampaignBible)
     aloneArrival,
     state.seed ?? state.saveId ?? '0'
   );
-  const pending = pendingRequiredCovers(openingPrompts, character, openingMode);
   const answers = { ...(state.openingEstablishment?.answers ?? {}) };
   delete answers.name;
+  const pending = pendingRequiredCovers(openingPrompts, character, openingMode, answers);
   return {
     ...state,
     character,

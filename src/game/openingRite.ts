@@ -121,17 +121,37 @@ export function ensureOpeningRite(state: GameState): GameState {
   };
 }
 
-/** "Give your name …" once the name is already set is a button for a question nobody is asking. */
-function acceptAsksForGivenName(state: GameState, chip: string): boolean {
-  if (!/^(?:give|tell|say|speak|enter)\b.*\bname\b/i.test(chip.trim())) return false;
+/** A clause that only asks for the player's name ("Give your name"). */
+function isNameAskClause(clause: string): boolean {
+  return /^(?:give|tell|say|speak|enter|confirm)\b.*\bname\b/i.test(clause.trim());
+}
+
+function lockedRiteName(state: GameState): string | null {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
-  return isLockablePcName(name) && !/unknown survivor/i.test(name);
+  return isLockablePcName(name) && !/unknown survivor/i.test(name) ? name : null;
+}
+
+/**
+ * The rite's accept as the player should see it. Once the name is set, a name-ask clause is dropped:
+ * "Give your name and register" → "Register as Jax". A chip that is only a name ask shows nothing.
+ */
+export function riteAcceptLabelForState(state: GameState, chip: string): string | null {
+  const name = lockedRiteName(state);
+  if (!name) return chip;
+  const clauses = chip.split(/\s+(?:and|then)\s+/i).map((c) => c.trim()).filter(Boolean);
+  const kept = clauses.filter((c) => !isNameAskClause(c));
+  if (kept.length === clauses.length) return chip;
+  if (!kept.length) return null;
+  const rest = kept.join(' and ');
+  const label = rest.charAt(0).toUpperCase() + rest.slice(1);
+  // A bare verb left over ("register") names who it is for.
+  return /\s/.test(label) ? label : `${label} as ${name}`;
 }
 
 export function openingRiteAcceptChip(state: GameState): string | null {
   if (!openingRiteIsOpen(state)) return null;
   const chip = riteEntryForState(state)?.acceptChip ?? null;
-  return chip && acceptAsksForGivenName(state, chip) ? null : chip;
+  return chip ? riteAcceptLabelForState(state, chip) : null;
 }
 
 export function openingRiteRefuseChip(state: GameState): string | null {
@@ -285,7 +305,11 @@ export function applyOpeningRiteTurn(
     },
   };
 
-  const kind = classifyOpeningRiteInput(playerInput, entry);
+  const shownAccept = openingRiteAcceptChip(next);
+  const kind =
+    shownAccept && shownAccept.toLowerCase() === (playerInput ?? '').replace(/\s+/g, ' ').trim().toLowerCase()
+      ? 'accept'
+      : classifyOpeningRiteInput(playerInput, entry);
   const offerTaken = next.openingEstablishment?.offerTaken;
   if (kind === 'accept' || (kind === 'none' && offerTaken === 'accepted')) {
     return completeRite(next, entry, { forced: false, turnCount });
@@ -307,18 +331,21 @@ const isFreeInputPad = (c: string) => /^(?:say something|do something else)\b/i.
 export function pinOpeningRiteChip(state: GameState, choices: string[]): string[] {
   if (!openingRiteIsOpen(state)) return choices;
   const chip = openingRiteAcceptChip(state);
-  if (!chip) return choices;
+  const refuse = openingRiteRefuseChip(state);
+  if (!chip && !refuse) return choices;
   const free = choices.filter(isFreeInputPad);
   const list = choices.filter((c) => !isFreeInputPad(c));
-  const want = chip.toLowerCase();
-  const idx = list.findIndex((c) => c.toLowerCase() === want);
-  if (idx > 0) list.splice(idx, 1);
-  if (idx !== 0) list.unshift(chip);
-  const refuse = openingRiteRefuseChip(state);
-  if (refuse) {
-    const r = list.findIndex((c, i) => i > 0 && c.toLowerCase() === refuse.toLowerCase());
-    if (r > 0) list.splice(r, 1);
-    if (refuse.toLowerCase() !== want) list.splice(Math.min(1, list.length), 0, refuse);
+  const want = chip?.toLowerCase() ?? '';
+  if (chip) {
+    const idx = list.findIndex((c) => c.toLowerCase() === want);
+    if (idx > 0) list.splice(idx, 1);
+    if (idx !== 0) list.unshift(chip);
+  }
+  if (refuse && refuse.toLowerCase() !== want) {
+    const at = chip ? 1 : 0;
+    const r = list.findIndex((c) => c.toLowerCase() === refuse.toLowerCase());
+    if (r >= 0) list.splice(r, 1);
+    list.splice(Math.min(at, list.length), 0, refuse);
   }
   return [...list.slice(0, RITE_SCENE_SLOTS), ...free];
 }

@@ -113,7 +113,7 @@ describe('playtest10b — cover answers the line', () => {
   it('cover chips are name-only; name-ack is one chip, not Lowmarket', () => {
     const pending = warCamp();
     expect(isOpeningCoverTurn(pending)).toBe(true);
-    expect(resolveOfferedChoices(pending)).toEqual(['Give your name', 'Refuse to give a name']);
+    expect(resolveOfferedChoices(pending)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']);
     expect(resolveOfferedChoices(pending).join(' ')).not.toMatch(/Lowmarket|West Wall|Check Status/i);
 
     const named = warCamp({

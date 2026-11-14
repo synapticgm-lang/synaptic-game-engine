@@ -22,12 +22,13 @@ import {
 import { assembleFourSlotPads, fourSlotEngineLabels, shouldSkipFourSlot } from './fourSlotPads';
 import {
   coverContinuePads,
-  establishmentChoices,
+  healAnsweredCovers,
   isCombatFamilyPad,
   isNameCoverChip,
   isOpeningCoverTurn,
   isOpeningEstablishmentPending,
   isOpeningHallTalkTurn,
+  openingQuestionChips,
   playerEngagesOpeningCover,
   shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
@@ -153,7 +154,9 @@ export function resolveOfferedChoices(state: GameState): string[] {
   return out;
 }
 
-function compileOfferedChoices(state: GameState): string[] {
+function compileOfferedChoices(rawState: GameState): string[] {
+  // An old save may still queue a question it already answered; never offer its chips.
+  const state = healAnsweredCovers(rawState);
   const roundChips = roundCombatChips(state);
   // TRAINLOOP3: empty [] is truthy; spent-economy used to short-circuit to an empty fight pad.
   if (roundChips?.length) return roundChips;
@@ -174,8 +177,9 @@ function compileOfferedChoices(state: GameState): string[] {
     const coverProse = lastGmStoryProse(state);
     const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
     // A pending question's answer chips answer the question; they are not scene actions to legality-check.
-    if (isOpeningEstablishmentPending(state)) {
-      const answers = new Set(establishmentChoices(state.openingEstablishment?.pending ?? [], state));
+    const questionChips = openingQuestionChips(state);
+    if (questionChips) {
+      const answers = new Set(questionChips);
       if (pads.length && pads.every((c) => answers.has(c))) return pads;
     }
     const live = new Set(liveChips(state, pads, coverProse));

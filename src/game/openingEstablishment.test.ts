@@ -50,12 +50,11 @@ function summonedNameCover(): GameState {
 describe('establishmentChoices — current cover only', () => {
   const fast = { fastSetupChips: true } as import('./types').Settings;
 
-  it('default name cover is Give / Refuse, never play pads', () => {
-    expect(establishmentChoices(NAME_THEN_EARTH)).toEqual(['Give your name', 'Refuse to give a name']);
-    expect(establishmentChoices(NAME_THEN_EARTH, undefined, { fastSetupChips: false } as import('./types').Settings)).toEqual([
-      'Give your name',
-      'Refuse to give a name',
-    ]);
+  it('default name cover is Give / Refuse plus name answers (a full pad), never play pads', () => {
+    expect(establishmentChoices(NAME_THEN_EARTH)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']);
+    expect(establishmentChoices(NAME_THEN_EARTH, undefined, { fastSetupChips: false } as import('./types').Settings)).toEqual(
+      ['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']
+    );
   });
 
   it('does not dump location/Earth-city chips onto a name ask', () => {

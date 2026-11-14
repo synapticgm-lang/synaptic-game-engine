@@ -283,7 +283,8 @@ export function establishmentChoices(
   }
   const chips: string[] = [];
   if (current.kind === 'name') {
-    chips.push('Random designation');
+    // Give / Refuse stay the name cover's own answers; a random designation and names fill the pad.
+    chips.push('Give your name', 'Refuse to give a name', 'Random designation');
     for (const s of current.suggestions ?? []) {
       if (/random\s+(?:designation|name)/i.test(s) || PLACE_SUGGESTION.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
@@ -303,13 +304,16 @@ export function establishmentChoices(
       if (!chips.includes(s)) chips.push(s);
     }
   }
-  // Reuse the existing question-answer banks for a short suggestion list, never scene-action fillers.
+  // A short suggestion list fills from the campaign's own question bank, never scene-action fillers.
   if (chips.length < cap) {
-    const defaults = [...FANTASY_PROMPTS, ...SI_PROMPTS, ...SPECIES_PROMPTS]
-      .filter((p) => p.kind === current.kind)
-      .flatMap((p) => p.suggestions ?? []);
-    const quick = state && supportsQuickResponseButtons(current.kind) ? pickQuickResponseButtons(state, current.kind) : [];
-    for (const answer of [...defaults, ...quick]) {
+    // Only this campaign's own question bank — never another campaign's clothes or places.
+    const bank = state
+      ? resolveOpeningPrompts(resolveActiveCampaignBible(state), state.engineMode, state.campaignArchetype)
+          .filter((p) => p.kind === current.kind)
+          .flatMap((p) => p.suggestions ?? [])
+          .filter((answer) => !isRandomPlaceRequest(answer) || current.kind !== 'location')
+      : [];
+    for (const answer of bank) {
       if (chips.length >= cap) break;
       if (!chips.includes(answer)) chips.push(answer);
     }
@@ -894,6 +898,14 @@ function knownCoverAnswer(p: OpeningPrompt, answers?: Record<string, string>): s
   if (!value || isJunkSetupValue(value)) return '';
   if (p.kind === 'name' && characterNameIsGeneric(value)) return '';
   return value;
+}
+/** Drop queued setup questions the save already answered (old saves, repairs, pad compile). */
+export function healAnsweredCovers(state: GameState): GameState {
+  const est = state.openingEstablishment;
+  if (!est || est.complete || !est.pending?.length) return state;
+  const pending = filterOpeningPrompts(est.pending, state.character, est.answers);
+  if (pending.length === est.pending.length) return state;
+  return { ...state, openingEstablishment: { ...est, pending, complete: pending.length === 0 } };
 }
 export function filterOpeningPrompts(
   prompts: OpeningPrompt[],
@@ -2337,6 +2349,15 @@ export function playerAskedWhyPulled(raw: string): boolean {
 export function isNameCoverChip(label: string): boolean {
   return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
 }
+/**
+ * Answer chips for the setup question on screen, or null when no question is up.
+ * No queued question but the name is still unlocked: the name cover's own answers.
+ */
+export function openingQuestionChips(state: GameState): string[] | null {
+  if (!isOpeningEstablishmentPending(state) && !isOpeningCoverTurn(state)) return null;
+  const pending = state.openingEstablishment?.pending ?? [];
+  return establishmentChoices(pending.length ? pending : [NAME_PROMPT], state);
+}
 /** Cover-beat chips — never hub travel. A pending question gets its own answers (mode pad size). */
 export function coverContinuePads(state: GameState): string[] {
   // XP-D1 OPEN2 — pin Registration (etc.) when the card has no Accept/Refuse offer.
@@ -2351,10 +2372,7 @@ export function coverContinuePads(state: GameState): string[] {
   }
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) {
     // The question on screen owns the pad: its answers only, no rite or scene chips beside them.
-    const chips = establishmentChoices(state.openingEstablishment?.pending ?? [], state);
-    if (chips.length) return chips;
-    // No answer suggestions must not turn a setup question into a rite/scene action.
-    return [];
+    return openingQuestionChips(state) ?? [];
   }
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
@@ -3225,13 +3243,7 @@ export async function applyOpeningAnswer(
     };
   }
   // Old saves can still have answered questions queued. Clear them before interpreting a new reply.
-  if (state.openingEstablishment && !state.openingEstablishment.complete) {
-    const est = state.openingEstablishment;
-    const pending = filterOpeningPrompts(est.pending, state.character, est.answers);
-    if (pending.length !== est.pending.length) {
-      state = { ...state, openingEstablishment: { ...est, pending, complete: pending.length === 0 } };
-    }
-  }
+  state = healAnsweredCovers(state);
   const est = state.openingEstablishment;
   if (!est) return { state, generateOpening: false };
   if (est.complete || !est.pending.length) {

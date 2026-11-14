@@ -93,12 +93,10 @@ describe('playtest10a — live-drive source locks', () => {
 
   it('pending name cover never compiles play pads', () => {
     const state = summoned();
-    expect(establishmentChoices(state.openingEstablishment!.pending, state)).toEqual([
-      'Give your name',
-      'Refuse to give a name',
-    ]);
+    // A full LitRPG pad of name answers: Give / Refuse, a random designation, a name.
+    expect(establishmentChoices(state.openingEstablishment!.pending, state)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']);
     const pads = resolveOfferedChoices(state);
-    expect(pads).toEqual(['Give your name', 'Refuse to give a name']);
+    expect(pads).toEqual(['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']);
     expect(pads.join(' ')).not.toMatch(/Check Status|Wait and watch|Inspect the panel/i);
   });
 

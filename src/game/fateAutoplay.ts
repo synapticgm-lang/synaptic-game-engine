@@ -803,7 +803,7 @@ export function buildNewGameState(opts: {
     namedSeeded.seed ?? namedSeeded.saveId ?? '0'
   );
   // Auto-complete covers so Fate is never blocked on name/look chips.
-  const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
+  const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode, coverAnswers);
   for (const p of pendingCovers) {
     if (p.kind === 'name') coverAnswers.name = mergedCharacter.name;
     if (p.kind === 'location') {
