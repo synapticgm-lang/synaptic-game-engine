@@ -137,7 +137,7 @@ describe('per-race PC name bank', () => {
       ...si,
       currentLocation: 'The Yard',
       openingEstablishment: { ...si.openingEstablishment!, sceneWritten: true, sceneProse: 'Page one.', instance: inst },
-    } as GameState);
+    } as unknown as GameState);
     expect(text).toMatch(/ESTABLISHED SCENE/);
     expect(text).not.toMatch(/Registration/);
   });
