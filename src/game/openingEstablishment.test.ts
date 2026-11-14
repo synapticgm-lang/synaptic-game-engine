@@ -6,6 +6,7 @@ import {
   applyOpeningAnswer,
   extractGivenName,
   establishmentChoices,
+  RANDOM_NAMES,
   harvestEarthOriginFromProse,
   isLocationishOpeningUtterance,
   isNameOriginKitCoverChoice,
@@ -51,10 +52,21 @@ describe('establishmentChoices — current cover only', () => {
   const fast = { fastSetupChips: true } as import('./types').Settings;
 
   it('default name cover is Give / Refuse plus name answers (a full pad), never play pads', () => {
-    expect(establishmentChoices(NAME_THEN_EARTH)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']);
-    expect(establishmentChoices(NAME_THEN_EARTH, undefined, { fastSetupChips: false } as import('./types').Settings)).toEqual(
-      ['Give your name', 'Refuse to give a name', 'Random designation', 'Jax']
-    );
+    const chips = establishmentChoices(NAME_THEN_EARTH);
+    expect(chips.slice(0, 3)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation']);
+    expect(chips).toHaveLength(4);
+    expect(RANDOM_NAMES).toContain(chips[3]);
+    expect(establishmentChoices(NAME_THEN_EARTH, undefined, { fastSetupChips: false } as import('./types').Settings)).toEqual(chips);
+  });
+
+  it('the name button comes from the name list by the game seed: same game same name, names change across games', () => {
+    const forSeed = (seed: string) =>
+      establishmentChoices(NAME_THEN_EARTH, { ...createInitialState('Open', 'litrpg'), seed } as GameState)[3];
+    const seeds = Array.from({ length: 20 }, (_, i) => `game-${i}`);
+    const names = seeds.map(forSeed);
+    for (const n of names) expect(RANDOM_NAMES).toContain(n);
+    expect(new Set(names).size).toBeGreaterThan(1);
+    for (const seed of seeds) expect(forSeed(seed)).toBe(forSeed(seed));
   });
 
   it('does not dump location/Earth-city chips onto a name ask', () => {

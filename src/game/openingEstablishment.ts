@@ -103,7 +103,7 @@ const NAME_PROMPT: OpeningPrompt = {
   question: 'Confirm designation.',
   suggestions: ['Random designation'],
 };
-const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
+export const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
 const RANDOM_PLACES = [
   'Peterborough UK',
   'Manchester',
@@ -289,8 +289,13 @@ export function establishmentChoices(
       if (/random\s+(?:designation|name)/i.test(s) || PLACE_SUGGESTION.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
     }
-    for (const n of RANDOM_NAMES) {
+    // Names change between games: the list is entered at a point set by this game's own seed.
+    const start = Math.floor(
+      hashUnit(['opening', state?.seed ?? state?.saveId ?? '0', 'name-chip'].join('|')) * RANDOM_NAMES.length
+    ) % RANDOM_NAMES.length;
+    for (let i = 0; i < RANDOM_NAMES.length; i++) {
       if (chips.length >= cap) break;
+      const n = RANDOM_NAMES[(start + i) % RANDOM_NAMES.length]!;
       if (!chips.includes(n)) chips.push(n);
     }
   } else if (current.kind === 'location') {
