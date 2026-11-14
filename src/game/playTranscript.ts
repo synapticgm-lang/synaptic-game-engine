@@ -22,6 +22,7 @@ import {
 import { assembleFourSlotPads, fourSlotEngineLabels, shouldSkipFourSlot } from './fourSlotPads';
 import {
   coverContinuePads,
+  establishmentChoices,
   isCombatFamilyPad,
   isNameCoverChip,
   isOpeningCoverTurn,
@@ -172,6 +173,11 @@ function compileOfferedChoices(state: GameState): string[] {
   if ((coverBeat || autoNamedOpeningPad) && !skipCoverChips && !isJourneyUnderway(state)) {
     const coverProse = lastGmStoryProse(state);
     const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
+    // A pending question's answer chips answer the question; they are not scene actions to legality-check.
+    if (isOpeningEstablishmentPending(state)) {
+      const answers = new Set(establishmentChoices(state.openingEstablishment?.pending ?? [], state));
+      if (pads.length && pads.every((c) => answers.has(c))) return pads;
+    }
     const live = new Set(liveChips(state, pads, coverProse));
     return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 6);
   }

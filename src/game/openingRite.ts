@@ -5,6 +5,7 @@
  */
 import { applyCharacterXpGain } from './characterXp';
 import { levelBar } from './rules/xpPace';
+import { isLockablePcName } from './pcNameAuthority';
 import {
   openingRiteIsOpen,
   openingRiteRefuseWriterFact,
@@ -120,9 +121,17 @@ export function ensureOpeningRite(state: GameState): GameState {
   };
 }
 
+/** "Give your name …" once the name is already set is a button for a question nobody is asking. */
+function acceptAsksForGivenName(state: GameState, chip: string): boolean {
+  if (!/^(?:give|tell|say|speak|enter)\b.*\bname\b/i.test(chip.trim())) return false;
+  const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
+  return isLockablePcName(name) && !/unknown survivor/i.test(name);
+}
+
 export function openingRiteAcceptChip(state: GameState): string | null {
   if (!openingRiteIsOpen(state)) return null;
-  return riteEntryForState(state)?.acceptChip ?? null;
+  const chip = riteEntryForState(state)?.acceptChip ?? null;
+  return chip && acceptAsksForGivenName(state, chip) ? null : chip;
 }
 
 export function openingRiteRefuseChip(state: GameState): string | null {

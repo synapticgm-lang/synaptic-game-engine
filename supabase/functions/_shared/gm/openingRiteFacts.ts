@@ -35,9 +35,10 @@ export function riteEntryForState(
   return {
     ...base,
     giver: lead ?? inst.factionName ?? 'the registrar',
-    offerSentence: offerBit ? `Will you take this: ${offerBit}?` : accept ? `Will you: ${accept.label}?` : 'Will you take what is being offered, or keep your own kit?',
+    // No offer on this card: the rite's own wording, never a kit offer the page does not make.
+    offerSentence: offerBit ? `Will you take this: ${offerBit}?` : accept ? `Will you: ${accept.label}?` : base.offerSentence,
     acceptChip: accept?.label ?? base.acceptChip,
-    refuseChip: refuse?.label ?? 'Keep your own kit',
+    refuseChip: refuse?.label ?? base.refuseChip,
   };
 }
 

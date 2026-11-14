@@ -5539,7 +5539,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const umbraBookNew = isAuthoredPyoaBook(authoredBibleId);
     const pendingCovers = umbraBookNew
       ? []
-      : pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
+      : pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode, coverAnswers);
     const authoredBoot = umbraBookNew
       ? initAuthoredPyoaGameState(
           {
