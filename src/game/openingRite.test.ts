@@ -321,7 +321,7 @@ describe('XP-D1 OPEN quest profile pick', () => {
 });
 
 describe('XP-D1 OPEN cover pin', () => {
-  it('coverContinuePads pins Registration when the card has no Accept offer', async () => {
+  it('coverContinuePads pins Registration (accept + refuse) for a named SI start with no card offer', async () => {
     const { coverContinuePads } = await import('./openingEstablishment');
     const state = litrpgState('system-integration', {
       openingEstablishment: {
@@ -333,7 +333,12 @@ describe('XP-D1 OPEN cover pin', () => {
       } as GameState['openingEstablishment'],
     });
     const pads = coverContinuePads(state);
-    expect(pads[0]?.toLowerCase()).toBe('give your name and register');
+    // The name is already Jax: the name ask drops out of the accept, the rite itself stays.
+    expect(pads[0]).toBe('Register as Jax');
+    expect(pads[1]).toBe('Refuse to register');
+    expect(pads.some((p) => /give your name/i.test(p))).toBe(false);
+    expect(applyOpeningRiteTurn(state, 'Register as Jax').state.openingRite?.done).toBe(true);
+    expect(applyOpeningRiteTurn(state, 'Refuse to register').state.openingRite?.done).toBe(true);
   });
 
   it('coverContinuePads keeps card Accept/Refuse when the offer is open (SP)', async () => {

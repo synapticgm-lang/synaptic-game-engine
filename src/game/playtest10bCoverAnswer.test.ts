@@ -10,7 +10,7 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
-import { coverContinuePads, isOpeningCoverTurn } from './openingEstablishment';
+import { coverContinuePads, isOpeningCoverTurn, RANDOM_NAMES } from './openingEstablishment';
 import { resolveOfferedChoices } from './playTranscript';
 import { stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
 import { emptySceneFacts } from './sceneFacts';
@@ -113,7 +113,10 @@ describe('playtest10b — cover answers the line', () => {
   it('cover chips are name-only; name-ack is one chip, not Lowmarket', () => {
     const pending = warCamp();
     expect(isOpeningCoverTurn(pending)).toBe(true);
-    expect(resolveOfferedChoices(pending)).toEqual(['Give your name', 'Refuse to give a name']);
+    const namePad = resolveOfferedChoices(pending);
+    expect(namePad.slice(0, 3)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation']);
+    expect(namePad).toHaveLength(4);
+    expect(RANDOM_NAMES).toContain(namePad[3]);
     expect(resolveOfferedChoices(pending).join(' ')).not.toMatch(/Lowmarket|West Wall|Check Status/i);
 
     const named = warCamp({

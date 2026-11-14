@@ -22,11 +22,14 @@ import {
 import { assembleFourSlotPads, fourSlotEngineLabels, shouldSkipFourSlot } from './fourSlotPads';
 import {
   coverContinuePads,
+  healAnsweredCovers,
   isCombatFamilyPad,
   isNameCoverChip,
   isOpeningCoverTurn,
   isOpeningEstablishmentPending,
   isOpeningHallTalkTurn,
+  openingQuestionChips,
+  pinOpenRiteChips,
   playerEngagesOpeningCover,
   shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
@@ -152,7 +155,9 @@ export function resolveOfferedChoices(state: GameState): string[] {
   return out;
 }
 
-function compileOfferedChoices(state: GameState): string[] {
+function compileOfferedChoices(rawState: GameState): string[] {
+  // An old save may still queue a question it already answered; never offer its chips.
+  const state = healAnsweredCovers(rawState);
   const roundChips = roundCombatChips(state);
   // TRAINLOOP3: empty [] is truthy; spent-economy used to short-circuit to an empty fight pad.
   if (roundChips?.length) return roundChips;
@@ -171,9 +176,16 @@ function compileOfferedChoices(state: GameState): string[] {
   if (skipCoverChips && (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state))) return [];
   if ((coverBeat || autoNamedOpeningPad) && !skipCoverChips && !isJourneyUnderway(state)) {
     const coverProse = lastGmStoryProse(state);
-    const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
+    const pads = coverContinuePads(state, { pinRite: false }).filter((c) => !isCombatFamilyPad(c));
+    // A pending question's answer chips answer the question; they are not scene actions to legality-check.
+    const questionChips = openingQuestionChips(state);
+    if (questionChips) {
+      const answers = new Set(questionChips);
+      if (pads.length && pads.every((c) => answers.has(c))) return pads;
+    }
     const live = new Set(liveChips(state, pads, coverProse));
-    return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 6);
+    // Pin the open rite's chips after the legality filter, so a dropped scene pad never shrinks the pad.
+    return pinOpenRiteChips(state, pads.filter((c) => isNameCoverChip(c) || live.has(c))).slice(0, 6);
   }
   const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);
@@ -285,7 +297,8 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
   let cooledFinal = cooled;
   if (!shouldSkipFourSlot(state)) {
     const cooledLabels = cooled.map((row) => row.label);
-    const four = assembleFourSlotPads(state, cooledLabels);
+    // The open rite's accept / refuse stay on the committed pad (the four-slot owner does not know them).
+    const four = pinOpenRiteChips(state, assembleFourSlotPads(state, cooledLabels));
     const byLow = new Map(cooled.map((row) => [row.label.trim().toLowerCase(), row]));
     const reshaped: typeof cooled = [];
     const seen = new Set<string>();

@@ -29,7 +29,7 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
-import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
+import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
 import { openingLockedPersonNames } from './openingCatalogGuard';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -103,7 +103,7 @@ const NAME_PROMPT: OpeningPrompt = {
   question: 'Confirm designation.',
   suggestions: ['Random designation'],
 };
-const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
+export const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
 const RANDOM_PLACES = [
   'Peterborough UK',
   'Manchester',
@@ -272,35 +272,36 @@ export function establishmentChoices(
 ): string[] {
   const current = pending[0];
   if (!current) return [];
-  // Name cover is the current slot — Give / Refuse. Not play pads, not kit banks.
-  if (current.kind === 'name' && !openingFastSetupChipsEnabled(settings)) {
-    return ['Give your name', 'Refuse to give a name'];
-  }
-  // Product law: natural free-text opening by default — no phone/purse/backpack chip rows.
-  if (!openingFastSetupChipsEnabled(settings)) return [];
+  // A question on screen gets answers to that question (typed text answers it too), as many as the mode's pad.
+  const cap = state?.engineMode === 'dnd' ? 3 : 4;
   // Pack 12: Use seed-varied quick-response buttons for kit/appearance/location
-  if (state && supportsQuickResponseButtons(current.kind)) {
+  if (openingFastSetupChipsEnabled(settings) && state && supportsQuickResponseButtons(current.kind)) {
     const quickButtons = pickQuickResponseButtons(state, current.kind);
     if (quickButtons.length > 0) {
-      return [...quickButtons, '✎ Other'];
+      return quickButtons.slice(0, cap);
     }
   }
-  // Fallback to original chip logic (only when fastSetupChips is on)
   const chips: string[] = [];
   if (current.kind === 'name') {
-    chips.push('Random designation');
+    // Give / Refuse stay the name cover's own answers; a random designation and names fill the pad.
+    chips.push('Give your name', 'Refuse to give a name', 'Random designation');
     for (const s of current.suggestions ?? []) {
       if (/random\s+(?:designation|name)/i.test(s) || PLACE_SUGGESTION.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
     }
-    for (const n of RANDOM_NAMES) {
-      if (chips.length >= 4) break;
+    // Names change between games: the list is entered at a point set by this game's own seed.
+    const start = Math.floor(
+      hashUnit(['opening', state?.seed ?? state?.saveId ?? '0', 'name-chip'].join('|')) * RANDOM_NAMES.length
+    ) % RANDOM_NAMES.length;
+    for (let i = 0; i < RANDOM_NAMES.length; i++) {
+      if (chips.length >= cap) break;
+      const n = RANDOM_NAMES[(start + i) % RANDOM_NAMES.length]!;
       if (!chips.includes(n)) chips.push(n);
     }
   } else if (current.kind === 'location') {
     chips.push(isEarthOriginPrompt(current) ? 'Random Earth city' : 'Random place');
     for (const s of current.suggestions ?? []) {
-      if (/^random\s+(?:place|earth\s+city)$/i.test(s) || /random\s+(?:designation|name)/i.test(s)) continue;
+      if (isRandomPlaceRequest(s) || /random\s+(?:designation|name)/i.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
     }
   } else {
@@ -308,7 +309,21 @@ export function establishmentChoices(
       if (!chips.includes(s)) chips.push(s);
     }
   }
-  return chips.slice(0, 4);
+  // A short suggestion list fills from the campaign's own question bank, never scene-action fillers.
+  if (chips.length < cap) {
+    // Only this campaign's own question bank — never another campaign's clothes or places.
+    const bank = state
+      ? resolveOpeningPrompts(resolveActiveCampaignBible(state), state.engineMode, state.campaignArchetype)
+          .filter((p) => p.kind === current.kind)
+          .flatMap((p) => p.suggestions ?? [])
+          .filter((answer) => !isRandomPlaceRequest(answer) || current.kind !== 'location')
+      : [];
+    for (const answer of bank) {
+      if (chips.length >= cap) break;
+      if (!chips.includes(answer)) chips.push(answer);
+    }
+  }
+  return chips.slice(0, cap);
 }
 const SI_PROMPTS: OpeningPrompt[] = [
   NAME_PROMPT,
@@ -870,18 +885,43 @@ export function resolveLockedOpeningPlace(
 export function pendingRequiredCovers(
   prompts: OpeningPrompt[],
   character: GameState['character'],
-  mode: OpeningMode
+  mode: OpeningMode,
+  answers?: Record<string, string>
 ): OpeningPrompt[] {
   if (mode === 'scene') return [];
-  return filterOpeningPrompts(prompts.filter((p) => p.required !== false), character);
+  return filterOpeningPrompts(prompts.filter((p) => p.required !== false), character, answers);
+}
+/** The answer already on record for this question (seeded card place, given name, set look), if any. */
+function knownCoverAnswer(p: OpeningPrompt, answers?: Record<string, string>): string {
+  if (!answers) return '';
+  const byKind =
+    p.kind === 'location' ? answers.where
+    : p.kind === 'appearance' ? answers.wear || answers.look
+    : p.kind === 'name' ? answers.name
+    : undefined;
+  const value = (answers[p.id] || byKind || '').trim();
+  if (!value || isJunkSetupValue(value)) return '';
+  if (p.kind === 'name' && characterNameIsGeneric(value)) return '';
+  return value;
+}
+/** Drop queued setup questions the save already answered (old saves, repairs, pad compile). */
+export function healAnsweredCovers(state: GameState): GameState {
+  const est = state.openingEstablishment;
+  if (!est || est.complete || !est.pending?.length) return state;
+  const pending = filterOpeningPrompts(est.pending, state.character, est.answers);
+  if (pending.length === est.pending.length) return state;
+  return { ...state, openingEstablishment: { ...est, pending, complete: pending.length === 0 } };
 }
 export function filterOpeningPrompts(
   prompts: OpeningPrompt[],
-  character: GameState['character']
+  character: GameState['character'],
+  answers?: Record<string, string>
 ): OpeningPrompt[] {
   return prompts.filter((p) => {
     // Kit is sealed — bag exists undeclared; no questionnaire blocking play.
     if (p.kind === 'kit') return false;
+    // Never re-ask a question the start already answered.
+    if (knownCoverAnswer(p, answers)) return false;
     if (p.kind === 'name' && character.name?.trim() && !characterNameIsGeneric(character.name)) return false;
     if (p.kind === 'appearance' && character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
       return false;
@@ -967,7 +1007,7 @@ export function mergePreferredProfileIntoOpening(
     name: preferredName,
   };
   if (profile.preferredGender.trim()) answers.gender = profile.preferredGender.trim();
-  const pending = filterOpeningPrompts(est.pending, character);
+  const pending = filterOpeningPrompts(est.pending, character, answers);
   return {
     applied: true,
     state: {
@@ -2314,26 +2354,35 @@ export function playerAskedWhyPulled(raw: string): boolean {
 export function isNameCoverChip(label: string): boolean {
   return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
 }
-/** Up to three chips for the cover beat — never hub travel, never pad-to-four. */
-export function coverContinuePads(state: GameState): string[] {
+/**
+ * Keep the open rite's accept / refuse on a pad. A card with its own open Accept/Refuse offer
+ * already carries the rite's answer, so its pad is left as the offer pair made it.
+ */
+export function pinOpenRiteChips(state: GameState, pads: string[]): string[] {
+  if (!openingRiteOwnChips(state).length) return pads;
+  return pinOpeningRiteChip(state, pads);
+}
+/**
+ * Answer chips for the setup question on screen, or null when no question is up.
+ * No queued question but the name is still unlocked: the name cover's own answers.
+ */
+export function openingQuestionChips(state: GameState): string[] | null {
+  if (!isOpeningEstablishmentPending(state) && !isOpeningCoverTurn(state)) return null;
+  const pending = state.openingEstablishment?.pending ?? [];
+  return establishmentChoices(pending.length ? pending : [NAME_PROMPT], state);
+}
+/** Cover-beat chips — never hub travel. A pending question gets its own answers (mode pad size). */
+export function coverContinuePads(state: GameState, opts: { pinRite?: boolean } = {}): string[] {
   // XP-D1 OPEN2 — pin Registration (etc.) when the card has no Accept/Refuse offer.
   // When Accept the {noun} is already on the pad, classifier treats it as rite accept.
-  const finish = (pads: string[]) => {
-    if (!openingRiteIsOpen(state)) return pads;
-    if (openingOfferPads(state).length) return pads;
-    return pinOpeningRiteChip(state, pads);
-  };
+  // pinRite:false lets a caller legality-filter the scene pads first and pin after, so a dropped pad never costs a slot.
+  const finish = (pads: string[]) => (opts.pinRite === false ? pads : pinOpenRiteChips(state, pads));
   if (isAuthoredPyoaBook(state.campaignBibleId)) {
     return finish(spineChoiceLabels(ensurePyoaSpine(state)));
   }
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) {
-    const chips = establishmentChoices(state.openingEstablishment?.pending ?? [], state);
-    if (chips.length) return finish(chips.slice(0, 2));
-    const locked = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
-    if (locked && isLockablePcName(locked) && !/unknown survivor/i.test(locked)) {
-      return finish(withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)])));
-    }
-    return finish(['Give your name', 'Refuse to give a name']);
+    // The question on screen owns the pad: its answers only, no rite or scene chips beside them.
+    return openingQuestionChips(state) ?? [];
   }
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
@@ -3203,6 +3252,8 @@ export async function applyOpeningAnswer(
         'CONTINUE the already-written scene. Kit is a sealed bag — undeclared until the player searches or dumps it. Do not ask a kit form.',
     };
   }
+  // Old saves can still have answered questions queued. Clear them before interpreting a new reply.
+  state = healAnsweredCovers(state);
   const est = state.openingEstablishment;
   if (!est) return { state, generateOpening: false };
   if (est.complete || !est.pending.length) {
@@ -3244,6 +3295,12 @@ export async function applyOpeningAnswer(
     harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES, state, 'name');
   }
   const currentKind = est.pending[0]?.kind;
+  // The question's own answer chip is the place as written ("A frontier hold or road inn").
+  const chosenPlaceChip =
+    currentKind === 'location' && !isRandomPlaceRequest(answer) && !isOpeningSetupChipLabel(answer)
+      ? est.pending[0]?.suggestions?.find((s) => s.trim().toLowerCase() === answer.trim().toLowerCase())
+      : undefined;
+  if (chosenPlaceChip && !harvest.location) harvest.location = chosenPlaceChip;
   const locationTalkOnName =
     currentKind === 'name'
     && isLocationishOpeningUtterance(answer)
@@ -3362,6 +3419,19 @@ export async function applyOpeningAnswer(
         ? pickPlaceForCampaign(state)
         : null;
     }
+  }
+  // Typed text answers the place question on screen: "Manchester, outside the station" is the place.
+  if (
+    currentKind === 'location'
+    && !harvest.location
+    && !isMetaOnly(answer)
+    && !isSetupRefusal(answer)
+    && !isPlayerQuestion(answer)
+    && !isPlayDemand(answer)
+    && !isLookAroundAction(answer)
+  ) {
+    const typed = stripPlayerVoice(stripConfusion(answer));
+    if (typed.split(/\s+/).length <= 12 && !isUnusablePlace(typed, state)) harvest.location = typed;
   }
   if (currentKind === 'name' && harvest.name && (isLocationishOpeningUtterance(harvest.name) || isOpeningSetupChipLabel(harvest.name))) {
     harvest.name = extractGivenName(harvest.name);

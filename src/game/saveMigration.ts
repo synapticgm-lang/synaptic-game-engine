@@ -9,7 +9,7 @@ import { emptyWorldLedger } from './worldSim';
 import { isMetNpc, resolveNpcRecord, splitCompoundCastEntry } from './npcRecords';
 import { seedBibleNpcRoster } from './npcMemory';
 import { resolveActiveCampaignBible } from './campaignSeed';
-import { resolveOpeningHookPick } from './openingEstablishment';
+import { healAnsweredCovers, resolveOpeningHookPick } from './openingEstablishment';
 import { fitKitToHousing } from './defaults';
 import { withMotiveLines } from './npcSheet';
 import { normalizeLedgerEntry } from './npcMemoryLedger';
@@ -203,6 +203,15 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
       state: opening.state,
       dirty: true,
       notes: [...result.notes, 'opening play gate normalized'],
+    };
+  }
+  const healedCovers = healAnsweredCovers(result.state);
+  if (healedCovers !== result.state) {
+    result = {
+      ...result,
+      state: healedCovers,
+      dirty: true,
+      notes: [...result.notes, 'answered opening questions cleared from the queue'],
     };
   }
   const pocketKit = fitKitToHousing(result.state);
