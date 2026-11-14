@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { OpeningPrompt } from '@/data/campaigns/types';
 import { RACE_NAME_BANKS, type RaceNameKey } from '@/data/raceNameBanks';
 import { createInitialState } from './defaults';
-import { applyOpeningAnswer, establishmentChoices, extractGivenName } from './openingEstablishment';
+import { applyLedgerDeficit, applyOpeningAnswer, establishmentChoices, extractGivenName } from './openingEstablishment';
 import { isDeniedPcName, isLockablePcName } from './pcNameAuthority';
 import { pcNameRaceKey, pickPcDesignation, pickPcGivenName } from './pcNamePicker';
 import { formatEstablishedOpeningScene, formatPcNameClashRail, formatPlayerPronounRail, personalNameTokens } from './openingWriterNotes';
@@ -198,6 +198,33 @@ describe('per-race PC name bank', () => {
         const r = await applyOpeningAnswer(cover('system-integration', 'si-5'), n);
         expect(r.state.character.name, n).toBe(n);
       }
+    }
+  });
+
+  it('the ledger name heal never takes a bare action as the name', async () => {
+    const complete = (seed: string): GameState => {
+      const c = cover('system-integration', seed);
+      return { ...c, openingEstablishment: { ...c.openingEstablishment!, pending: [], complete: true } };
+    };
+    // (a) Opening complete, name still unlocked.
+    for (const line of ['Run', 'Hide']) {
+      const r = await applyOpeningAnswer(complete('led-1'), line);
+      expect(r.state.character.name, line).toBe('Unknown Survivor');
+      expect(applyLedgerDeficit(complete('led-1'), line).character.name, line).toBe('Unknown Survivor');
+    }
+    for (const [line, want] of [['Mara', 'Mara'], ['Call me Run', 'Run'], ['My name is Jax.', 'Jax']]) {
+      expect(applyLedgerDeficit(complete('led-2'), line).character.name, line).toBe(want);
+    }
+    // (b) Name cover pending before page 1 is written.
+    const unwritten = (): GameState => {
+      const c = cover('system-integration', 'led-3');
+      return { ...c, openingEstablishment: { ...c.openingEstablishment!, sceneWritten: false } };
+    };
+    for (const line of ['Run', 'Hide']) {
+      const r = await applyOpeningAnswer(unwritten(), line);
+      expect(r.state.character.name, line).toBe('Unknown Survivor');
+      expect(r.state.openingEstablishment?.answers?.name, line).toBeFalsy();
+      expect(r.state.openingEstablishment?.pending?.some((p) => p.kind === 'name'), line).toBe(true);
     }
   });
 

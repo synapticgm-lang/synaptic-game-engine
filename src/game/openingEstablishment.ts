@@ -2870,7 +2870,8 @@ export function applyLedgerDeficit(state: GameState, rawInput: string): GameStat
   const answers = { ...est.answers };
   let character = state.character;
   let changed = false;
-  if (openingNameIsUnlocked(state)) {
+  // A bare action ("Run", "Hide") is play, never a healed name; a framed give ("Call me Run") still is.
+  if (openingNameIsUnlocked(state) && (isFramedNameGive(answer) || !readsAsPlay(answer))) {
     const harvested = extractGivenName(answer);
     if (harvested) {
       answers.name = harvested;
