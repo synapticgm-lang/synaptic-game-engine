@@ -138,7 +138,10 @@ function lockedRiteName(state: GameState): string | null {
 export function riteAcceptLabelForState(state: GameState, chip: string): string | null {
   const name = lockedRiteName(state);
   if (!name) return chip;
-  const clauses = chip.split(/\s+(?:and|then)\s+/i).map((c) => c.trim()).filter(Boolean);
+  const clauses = chip
+    .split(/\s+(?:and\s+then|and|then)\s+/i)
+    .map((c) => c.trim().replace(/^(?:and|then)\s+/i, ''))
+    .filter(Boolean);
   const kept = clauses.filter((c) => !isNameAskClause(c));
   if (kept.length === clauses.length) return chip;
   if (!kept.length) return null;
@@ -157,6 +160,18 @@ export function openingRiteAcceptChip(state: GameState): string | null {
 export function openingRiteRefuseChip(state: GameState): string | null {
   if (!openingRiteIsOpen(state)) return null;
   return riteEntryForState(state)?.refuseChip ?? null;
+}
+
+/**
+ * The open rite's own accept / refuse chips, which the pad must keep while the rite is open.
+ * A card with an offer owns its accept / refuse through the offer pads (shown until decided, then gone),
+ * so its rite has no chips of its own to keep.
+ */
+export function openingRiteOwnChips(state: GameState): string[] {
+  if (!openingRiteIsOpen(state)) return [];
+  const oe = state.openingEstablishment;
+  if (oe?.instance?.offerChips?.length || oe?.card?.offer) return [];
+  return [openingRiteAcceptChip(state), openingRiteRefuseChip(state)].filter((c): c is string => !!c);
 }
 
 /**

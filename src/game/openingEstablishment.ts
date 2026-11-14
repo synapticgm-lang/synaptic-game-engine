@@ -29,7 +29,7 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
-import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
+import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
 import { openingLockedPersonNames } from './openingCatalogGuard';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -2355,6 +2355,14 @@ export function isNameCoverChip(label: string): boolean {
   return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
 }
 /**
+ * Keep the open rite's accept / refuse on a pad. A card with its own open Accept/Refuse offer
+ * already carries the rite's answer, so its pad is left as the offer pair made it.
+ */
+export function pinOpenRiteChips(state: GameState, pads: string[]): string[] {
+  if (!openingRiteOwnChips(state).length) return pads;
+  return pinOpeningRiteChip(state, pads);
+}
+/**
  * Answer chips for the setup question on screen, or null when no question is up.
  * No queued question but the name is still unlocked: the name cover's own answers.
  */
@@ -2364,14 +2372,11 @@ export function openingQuestionChips(state: GameState): string[] | null {
   return establishmentChoices(pending.length ? pending : [NAME_PROMPT], state);
 }
 /** Cover-beat chips — never hub travel. A pending question gets its own answers (mode pad size). */
-export function coverContinuePads(state: GameState): string[] {
+export function coverContinuePads(state: GameState, opts: { pinRite?: boolean } = {}): string[] {
   // XP-D1 OPEN2 — pin Registration (etc.) when the card has no Accept/Refuse offer.
   // When Accept the {noun} is already on the pad, classifier treats it as rite accept.
-  const finish = (pads: string[]) => {
-    if (!openingRiteIsOpen(state)) return pads;
-    if (openingOfferPads(state).length) return pads;
-    return pinOpeningRiteChip(state, pads);
-  };
+  // pinRite:false lets a caller legality-filter the scene pads first and pin after, so a dropped pad never costs a slot.
+  const finish = (pads: string[]) => (opts.pinRite === false ? pads : pinOpenRiteChips(state, pads));
   if (isAuthoredPyoaBook(state.campaignBibleId)) {
     return finish(spineChoiceLabels(ensurePyoaSpine(state)));
   }

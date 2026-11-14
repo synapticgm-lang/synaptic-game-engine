@@ -29,6 +29,7 @@ import {
   isOpeningEstablishmentPending,
   isOpeningHallTalkTurn,
   openingQuestionChips,
+  pinOpenRiteChips,
   playerEngagesOpeningCover,
   shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
@@ -175,7 +176,7 @@ function compileOfferedChoices(rawState: GameState): string[] {
   if (skipCoverChips && (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state))) return [];
   if ((coverBeat || autoNamedOpeningPad) && !skipCoverChips && !isJourneyUnderway(state)) {
     const coverProse = lastGmStoryProse(state);
-    const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
+    const pads = coverContinuePads(state, { pinRite: false }).filter((c) => !isCombatFamilyPad(c));
     // A pending question's answer chips answer the question; they are not scene actions to legality-check.
     const questionChips = openingQuestionChips(state);
     if (questionChips) {
@@ -183,7 +184,8 @@ function compileOfferedChoices(rawState: GameState): string[] {
       if (pads.length && pads.every((c) => answers.has(c))) return pads;
     }
     const live = new Set(liveChips(state, pads, coverProse));
-    return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 6);
+    // Pin the open rite's chips after the legality filter, so a dropped scene pad never shrinks the pad.
+    return pinOpenRiteChips(state, pads.filter((c) => isNameCoverChip(c) || live.has(c))).slice(0, 6);
   }
   const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);
@@ -295,7 +297,8 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
   let cooledFinal = cooled;
   if (!shouldSkipFourSlot(state)) {
     const cooledLabels = cooled.map((row) => row.label);
-    const four = assembleFourSlotPads(state, cooledLabels);
+    // The open rite's accept / refuse stay on the committed pad (the four-slot owner does not know them).
+    const four = pinOpenRiteChips(state, assembleFourSlotPads(state, cooledLabels));
     const byLow = new Map(cooled.map((row) => [row.label.trim().toLowerCase(), row]));
     const reshaped: typeof cooled = [];
     const seen = new Set<string>();

@@ -12,6 +12,7 @@ import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { travelPadBlocked } from './padUniverse';
 import { classifyEdgeType } from './graphChoices';
 import { openOpeningOffer } from './openingEstablishment';
+import { openingRiteOwnChips } from './openingRite';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
@@ -182,6 +183,8 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     if (dying?.kind === 'dying') return null;
     return { kind: 'impossible-chip', detail: `"${label}" cannot be done while unconscious at 0 HP` };
   }
+  // The open rite's own accept / refuse answer the rite itself, not a card offer or a listener here.
+  if (openingRiteOwnChips(state).some((c) => norm(c).toLowerCase() === label.toLowerCase())) return null;
   // T10AP — corpse social/insight pads are illegal even when an affordance entityId still resolves
   // (Read/Analyze on lastKill must not early-return as legal).
   const lastKill = state.sceneFacts?.lastKill;
