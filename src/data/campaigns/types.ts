@@ -110,6 +110,8 @@ export interface OpeningPrompt {
 }
 
 export interface StarterItem {
+  /** Writer sees this as pending until the opening rite completes, not carried gear. */
+  grantedByOpeningRite?: boolean;
   id: string;
   name: string;
   rarity: Rarity;

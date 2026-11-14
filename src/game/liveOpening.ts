@@ -829,6 +829,7 @@ export function applySuccessfulLiveOpening(
       ...(state.openingEstablishment ?? { pending: [], answers: {}, complete: true }),
       sceneWritten: true,
       sceneWriteError: undefined,
+      sceneProse: clean,
       offerPadKinds: tagOpeningOfferPads(state, pads),
     },
   };

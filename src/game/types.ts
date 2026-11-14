@@ -40,6 +40,8 @@ export interface PlaceProp {
   folded?: string[];
 }
 export interface Item {
+  /** Starter allotment: not writer-visible as owned until the opening rite completes. */
+  grantedByOpeningRite?: boolean;
   id: string;
   name: string;
   rarity: Rarity;
@@ -928,6 +930,8 @@ export interface OpeningEstablishment {
   instance?: OpeningInstance;
   /** Writer failed validation or the call died; UI shows a retry, never authored prose. */
   sceneWriteError?: string;
+  /** Committed live page 1, kept for continuity while still in the opening scene. */
+  sceneProse?: string;
   /** Matched campaign spine id — private writer rail only, never a journal title. */
   privateSpineId?: string;
   /** Authored page 1 retired from the player view; used only to reject reprints. */

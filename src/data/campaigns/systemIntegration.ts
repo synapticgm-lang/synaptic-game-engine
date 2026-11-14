@@ -285,6 +285,7 @@ export const systemIntegration: CampaignBible = {
     },
     {
       id: 'si-item-1',
+      grantedByOpeningRite: true,
       name: 'System-Issue Survival Knife',
       rarity: 'Common',
       itemType: 'weapon',
@@ -296,6 +297,7 @@ export const systemIntegration: CampaignBible = {
     },
     {
       id: 'si-item-2',
+      grantedByOpeningRite: true,
       name: 'Minor Health Vial',
       rarity: 'Common',
       itemType: 'consumable',

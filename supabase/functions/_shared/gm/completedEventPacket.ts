@@ -3,7 +3,7 @@
  * Code resolves facts first; the writer only narrates a completed event in past tense.
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types.ts';
-import { filterRetiredFromAllowlist } from './openingWriterNotes.ts';
+import { filterRetiredFromAllowlist, formatPlayerPronounRail, formatEstablishedOpeningScene } from './openingWriterNotes.ts';
 import { isCatalogCastBlockedHere, scrubOpeningTurnProse } from './openingCatalogGuard.ts';
 function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName.ts';
@@ -97,6 +97,7 @@ import {
 } from './openingEstablishment.ts';
 import { classifyOpeningOfferInput } from './openingOfferRecognize.ts';
 import {
+  stateForRiteWriter,
   openingRiteRefuseWriterFact,
   openingRiteWriterOffer,
 } from './openingRiteFacts.ts';
@@ -193,6 +194,8 @@ export interface CompletedEventPacket {
   cardOffer?: string;
   /** XP-D1 OPEN — LitRPG Opening Rite pending offer; prose must end on it. */
   openingRiteOffer?: string;
+  playerPronounRail?: string;
+  establishedOpeningScene?: string;
   /** XP-D1 OPEN — refuse path writer fact (System persists, no punishment). */
   openingRiteRefusePersist?: string;
   /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
@@ -1044,6 +1047,8 @@ export function buildCompletedEventPacket(
   playerInput?: string,
   extras?: PacketBuildExtras
 ): CompletedEventPacket {
+  const riteOffer = openingRiteWriterOffer(state);
+  state = stateForRiteWriter(state);
   const action = lastPlayerAction(state, playerInput);
   const verb = classifyVerb(action);
   const target = extractTarget(action, state);
@@ -1167,7 +1172,9 @@ export function buildCompletedEventPacket(
     answerOffer: shortCardOffer(state) || undefined,
     cardWant: askedWantAtCard ? shortCardWant(state) || undefined : undefined,
     cardOffer: askedWantAtCard && openOpeningOffer(state) ? shortCardOffer(state) || undefined : undefined,
-    openingRiteOffer: openingRiteWriterOffer(state) || state.sceneFacts?.openingRiteOffer || undefined,
+    openingRiteOffer: riteOffer || state.sceneFacts?.openingRiteOffer || undefined,
+    playerPronounRail: formatPlayerPronounRail(state) || undefined,
+    establishedOpeningScene: formatEstablishedOpeningScene(state) || undefined,
     openingRiteRefusePersist:
       openingRiteRefuseWriterFact(state) || state.sceneFacts?.openingRiteRefusePersist || undefined,
     engineMode: state.engineMode,
@@ -1582,6 +1589,8 @@ export function formatWriterFacingEvent(
   if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
   if (packet.cardWant) lines.push(`What they want (their own reason; the answer says it in their words): ${packet.cardWant}`);
   if (packet.cardOffer) lines.push(`What they offer (still open; the player has not taken it): ${packet.cardOffer}`);
+  if (packet.playerPronounRail) lines.push(packet.playerPronounRail);
+  if (packet.establishedOpeningScene) lines.push(packet.establishedOpeningScene);
   if (packet.openingRiteOffer) lines.push(packet.openingRiteOffer);
   if (packet.openingRiteRefusePersist) {
     lines.push(`OPENING RITE REFUSAL: ${packet.openingRiteRefusePersist}`);
