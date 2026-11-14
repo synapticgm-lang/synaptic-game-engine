@@ -29,6 +29,7 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
+import { pickPcDesignation, pickPcGivenName } from './pcNamePicker';
 import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
 import { openingLockedPersonNames } from './openingCatalogGuard';
@@ -103,7 +104,6 @@ const NAME_PROMPT: OpeningPrompt = {
   question: 'Confirm designation.',
   suggestions: ['Random designation'],
 };
-export const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
 const RANDOM_PLACES = [
   'Peterborough UK',
   'Manchester',
@@ -289,14 +289,13 @@ export function establishmentChoices(
       if (/random\s+(?:designation|name)/i.test(s) || PLACE_SUGGESTION.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
     }
-    // Names change between games: the list is entered at a point set by this game's own seed.
-    const start = Math.floor(
-      hashUnit(['opening', state?.seed ?? state?.saveId ?? '0', 'name-chip'].join('|')) * RANDOM_NAMES.length
-    ) % RANDOM_NAMES.length;
-    for (let i = 0; i < RANDOM_NAMES.length; i++) {
-      if (chips.length >= cap) break;
-      const n = RANDOM_NAMES[(start + i) % RANDOM_NAMES.length]!;
-      if (!chips.includes(n)) chips.push(n);
+    // Names change between games: seeded from this game's race bank, never a campaign NPC's name.
+    const used = new Set(chips.map((c) => c.toLowerCase()));
+    for (let i = 0; chips.length < cap && i < cap; i++) {
+      const n = pickPcGivenName(state, 'button', used);
+      if (used.has(n.toLowerCase())) break;
+      used.add(n.toLowerCase());
+      chips.push(n);
     }
   } else if (current.kind === 'location') {
     chips.push(isEarthOriginPrompt(current) ? 'Random Earth city' : 'Random place');
@@ -3291,8 +3290,11 @@ export async function applyOpeningAnswer(
       declined.push('appearance');
     }
   }
+  // A picked designation is a whole bank name (given + surname): it is locked as picked, not re-parsed as typed text.
+  let randomDesignation: string | null = null;
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
-    harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES, state, 'name');
+    randomDesignation = harvest.name ? null : pickPcDesignation(state);
+    harvest.name = harvest.name ?? randomDesignation;
   }
   const currentKind = est.pending[0]?.kind;
   // The question's own answer chip is the place as written ("A frontier hold or road inn").
@@ -3490,7 +3492,9 @@ export async function applyOpeningAnswer(
       stillPending.push(prompt);
       continue;
     }
-    const clean = sanitizeOpeningAnswer(prompt.kind, value);
+    const clean = prompt.kind === 'name' && randomDesignation && value === randomDesignation
+      ? { text: randomDesignation, cheated: false }
+      : sanitizeOpeningAnswer(prompt.kind, value);
     cheated = cheated || clean.cheated;
     if (prompt.kind === 'name' && !clean.text) {
       stillPending.push(prompt);

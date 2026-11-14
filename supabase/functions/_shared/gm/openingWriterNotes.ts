@@ -26,6 +26,24 @@ export function formatPlayerPronounRail(state: GameState): string {
   return `${name}'s gender is not given: call ${name} by name or they/them/their. Never he/him or she/her for ${name}. Do not infer gender from a name.`;
 }
 
+/** The player chose a name a story NPC already has: tell the writer they are two people. */
+export function formatPcNameClashRail(state: GameState): string {
+  if (state.engineMode === 'pyoa') return '';
+  const pc = (state.character?.name ?? '').replace(/\s+/g, ' ').trim();
+  if (!pc) return '';
+  const first = (n: string) => n.split(' ')[0]!.toLowerCase();
+  const pcKey = pc.toLowerCase();
+  const clash = (state.npcMemories ?? []).find((m) => {
+    const n = (m.npcName ?? '').replace(/\s+/g, ' ').trim();
+    if (!n) return false;
+    const k = n.toLowerCase();
+    return k === pcKey || first(n) === first(pc) || k === first(pc);
+  });
+  if (!clash) return '';
+  const who = clash.npcName.trim();
+  return `${pc} is the player character. ${who} in this story is a different person who shares the name: never merge them, and never give ${pc} that person's history, role or lines.`;
+}
+
 /** Keep page 1's actual camera, not just the minted place label, until the player leaves. */
 export function formatEstablishedOpeningScene(state: GameState): string {
   const est = state.openingEstablishment;
@@ -39,7 +57,7 @@ export function formatEstablishedOpeningScene(state: GameState): string {
       ? `Place description: ${inst.situation}`
       : '',
     `Page 1 showed: ${est.sceneProse}`,
-    'Continue this established scene. Registration changes the rite and allotment, not the surroundings. Do not relocate the player or replace the scene without a resolved event.',
+    'Continue this established scene. What the player decides changes their standing and kit, not the surroundings. Do not relocate the player or replace the scene without a resolved event.',
   ].filter(Boolean).join('\n');
 }
 
@@ -67,6 +85,7 @@ export function formatOpeningPage1Rail(state: GameState): string {
   return [
     '【 OPENING PAGE 1 】',
     formatPlayerPronounRail(state),
+    formatPcNameClashRail(state),
     openingRiteWriterOffer(state) ?? '',
     'Return a JSON object with keys prose, options, and journalTitle. No markdown fences.',
     'prose: the first page the player will read. Novel-quality, concrete, present, no director notes, no menu language, no numbered choice list, no XML or angle-bracket tags.',

@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import type { OpeningPrompt } from '@/data/campaigns/types';
 import { createInitialState } from './defaults';
+import { RACE_NAME_BANKS } from '@/data/raceNameBanks';
+import { pickPcGivenName } from './pcNamePicker';
 import {
   applyHarvestedOpeningCovers,
   applyOpeningAnswer,
   extractGivenName,
   establishmentChoices,
-  RANDOM_NAMES,
   harvestEarthOriginFromProse,
   isLocationishOpeningUtterance,
   isNameOriginKitCoverChoice,
@@ -55,7 +56,7 @@ describe('establishmentChoices — current cover only', () => {
     const chips = establishmentChoices(NAME_THEN_EARTH);
     expect(chips.slice(0, 3)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation']);
     expect(chips).toHaveLength(4);
-    expect(RANDOM_NAMES).toContain(chips[3]);
+    expect(RACE_NAME_BANKS.modern.given).toContain(chips[3]);
     expect(establishmentChoices(NAME_THEN_EARTH, undefined, { fastSetupChips: false } as import('./types').Settings)).toEqual(chips);
   });
 
@@ -64,7 +65,9 @@ describe('establishmentChoices — current cover only', () => {
       establishmentChoices(NAME_THEN_EARTH, { ...createInitialState('Open', 'litrpg'), seed } as GameState)[3];
     const seeds = Array.from({ length: 20 }, (_, i) => `game-${i}`);
     const names = seeds.map(forSeed);
-    for (const n of names) expect(RANDOM_NAMES).toContain(n);
+    for (const [i, n] of names.entries()) {
+      expect(n).toBe(pickPcGivenName({ ...createInitialState('Open', 'litrpg'), seed: seeds[i] } as GameState));
+    }
     expect(new Set(names).size).toBeGreaterThan(1);
     for (const seed of seeds) expect(forSeed(seed)).toBe(forSeed(seed));
   });
