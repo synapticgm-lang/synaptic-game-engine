@@ -3,6 +3,7 @@ import { RACE_NAME_BANKS, type RaceNameKey } from '@/data/raceNameBanks';
 import { hashUnit } from './seededRng';
 import { isLockablePcName } from './pcNameAuthority';
 import { resolveActiveCampaignBible } from './campaignSeed';
+import { storyNpcNames } from './openingWriterNotes';
 import type { GameState } from './types';
 
 /** Players from Earth keep modern names whatever world they land in. */
@@ -38,22 +39,19 @@ export function pcNameRaceKey(state?: GameState): RaceNameKey {
   return 'human';
 }
 
-/** Every word of a name the campaign already gives to someone else. */
+/** Every word of a name the campaign already gives to someone else (the same sources the clash note reads). */
 function campaignNameWords(state?: GameState): Set<string> {
   const out = new Set<string>();
   if (!state) return out;
-  const add = (n?: string) => {
-    for (const w of (n ?? '').toLowerCase().split(/[^a-z'-]+/)) if (w.length > 1) out.add(w);
-  };
   let bible;
   try {
     bible = resolveActiveCampaignBible(state);
   } catch {
     bible = undefined;
   }
-  for (const npc of bible?.keyNPCs ?? []) add(npc.name);
-  for (const m of state.npcMemories ?? []) add(m.npcName);
-  for (const c of state.openingEstablishment?.instance?.cast ?? []) add(c.name);
+  for (const n of storyNpcNames(state, bible?.keyNPCs.map((k) => k.name))) {
+    for (const w of n.toLowerCase().split(/[^a-z'-]+/)) if (w.length > 1) out.add(w);
+  }
   return out;
 }
 

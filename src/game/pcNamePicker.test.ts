@@ -5,7 +5,10 @@ import { createInitialState } from './defaults';
 import { applyOpeningAnswer, establishmentChoices, extractGivenName } from './openingEstablishment';
 import { isDeniedPcName, isLockablePcName } from './pcNameAuthority';
 import { pcNameRaceKey, pickPcDesignation, pickPcGivenName } from './pcNamePicker';
-import { formatEstablishedOpeningScene, formatPcNameClashRail } from './openingWriterNotes';
+import { formatEstablishedOpeningScene, formatPcNameClashRail, formatPlayerPronounRail } from './openingWriterNotes';
+import { pcPov } from './narrativePov';
+import { isNameTitleWord } from './personNames';
+import { sanitizeOpeningAnswer } from './openingEstablishment';
 import { newGameState } from './newGameTestState';
 import type { GameState } from './types';
 
@@ -115,6 +118,9 @@ describe('per-race PC name bank', () => {
     const { state: after } = await applyOpeningAnswer(state, 'Random designation');
     expect(after.openingEstablishment?.answers?.name).toBe(want);
     expect(after.openingEstablishment?.pending?.some((p) => p.kind === 'name')).toBe(false);
+    expect(after.character.name).toBe(want);
+    expect(pcPov(after.character).name).toBe(want);
+    expect(formatPlayerPronounRail(after)).toContain(`${want}'s gender is not given`);
     const { state: typed } = await applyOpeningAnswer(cover('system-integration', 'si-9'), 'Mara');
     expect(typed.openingEstablishment?.answers?.name).toBe('Mara');
   });
@@ -122,12 +128,41 @@ describe('per-race PC name bank', () => {
   it('a player name shared with a story NPC tells the writer they are different people', () => {
     const si = newGameState('system-integration', { seed: 's-2' });
     const npc = si.npcMemories![0]!.npcName;
-    const given = npc.split(' ')[0]!;
+    // The NPC's own name word, not a leading title ("Warden Elise Cho" -> "Elise").
+    const given = npc.split(' ').find((w) => !isNameTitleWord(w))!;
     const rail = formatPcNameClashRail({ ...si, character: { ...si.character, name: given } });
     expect(rail).toContain(`${given} is the player character`);
     expect(rail).toContain(npc);
     expect(rail).toMatch(/different person/);
     expect(formatPcNameClashRail({ ...si, character: { ...si.character, name: 'Zzyzx' } })).toBe('');
+  });
+
+  it('the clash note compares name words, not titles or articles, across roster, opening cast and bible NPCs', () => {
+    const base = cover('hero-awakening');
+    const mem = (npcName: string) => ({ npcId: npcName, npcName, disposition: 'neutral' as const, facts: [], lastSeenTurn: 0 });
+    const withPc = (name: string, over: Partial<GameState> = {}) =>
+      ({ ...base, ...over, character: { ...base.character, name } }) as GameState;
+    const roster = { npcMemories: [mem('Warden Elise Cho'), mem('The Registrar')] };
+    expect(formatPcNameClashRail(withPc('Elise', roster))).toContain('Warden Elise Cho in this story is a different person');
+    expect(formatPcNameClashRail(withPc('The Smith', roster))).toBe('');
+    expect(formatPcNameClashRail(withPc('Warden', roster))).toBe('');
+    const cast = {
+      openingEstablishment: {
+        ...base.openingEstablishment!,
+        instance: { placeName: 'Yard', placeKind: 'yard', cast: [{ name: 'Bram Hale', gender: 'male', role: 'guard' }], situation: '', offerChips: [], alone: false },
+      },
+    } as unknown as Partial<GameState>;
+    expect(formatPcNameClashRail(withPc('Bram', cast))).toContain('Bram Hale');
+    expect(formatPcNameClashRail(withPc('Ysolde'), ['Captain Ysolde Marr'])).toContain('Captain Ysolde Marr');
+    expect(formatPcNameClashRail(withPc('Ysolde'))).toBe('');
+  });
+
+  it('a typed full name is kept whole; a typed sentence is not a name', () => {
+    expect(sanitizeOpeningAnswer('name', 'Max Doyle').text).toBe('Max Doyle');
+    expect(sanitizeOpeningAnswer('name', 'Brindle of the Long Grass').text).toBe('Brindle of the Long Grass');
+    expect(sanitizeOpeningAnswer('name', 'my name is Mara').text).toBe('Mara');
+    expect(sanitizeOpeningAnswer('name', 'what is this place').text).toBe('');
+    expect(sanitizeOpeningAnswer('name', 'I refuse').text).toBe('');
   });
 
   it('the established scene line is campaign-neutral (no Registration on every campaign)', () => {

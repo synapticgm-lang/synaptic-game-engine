@@ -2505,6 +2505,18 @@ function acceptHarvestedNameToken(token: string | undefined): string | null {
   if (!isLockablePcName(titleName(t))) return null;
   return titleName(t);
 }
+/** A whole name as written ("Max Doyle", "Brindle of the Long Grass"): kept when it is already lockable and name-shaped. */
+function fullNameAsWritten(text: string): string | null {
+  const t = text.replace(/\s+/g, ' ').trim();
+  if (!isLockablePcName(t)) return null;
+  const words = t.split(' ');
+  if (words.length < 2 || words.length > 6) return null;
+  const [first, ...rest] = words;
+  if (!/^[A-Z]/.test(first!) || !acceptHarvestedNameToken(first)) return null;
+  const nameWord = (w: string) => /^[A-Z][A-Za-z'-]*$/.test(w) && !NAME_STOP.has(w.toLowerCase());
+  if (!rest.every((w) => nameWord(w) || /^(?:of|the)$/.test(w))) return null;
+  return /^[A-Z]/.test(rest[rest.length - 1]!) ? t : null;
+}
 /** Pull a real given name out of chat, not the whole sentence. */
 export function extractGivenName(raw: string): string | null {
   const text = raw.replace(/\s+/g, ' ').trim();
@@ -3034,7 +3046,7 @@ export function sanitizeOpeningAnswer(
       .trim();
   }
   if (kind === 'name') {
-    const name = sanitizePcName(extractGivenName(raw) ?? extractGivenName(text));
+    const name = sanitizePcName(extractGivenName(raw) ?? extractGivenName(text) ?? fullNameAsWritten(text));
     return { text: (name ?? '').slice(0, 40), cheated, mundaneNames: [] };
   }
   if (kind === 'location') {
@@ -3290,11 +3302,8 @@ export async function applyOpeningAnswer(
       declined.push('appearance');
     }
   }
-  // A picked designation is a whole bank name (given + surname): it is locked as picked, not re-parsed as typed text.
-  let randomDesignation: string | null = null;
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
-    randomDesignation = harvest.name ? null : pickPcDesignation(state);
-    harvest.name = harvest.name ?? randomDesignation;
+    harvest.name = harvest.name ?? pickPcDesignation(state);
   }
   const currentKind = est.pending[0]?.kind;
   // The question's own answer chip is the place as written ("A frontier hold or road inn").
@@ -3492,9 +3501,7 @@ export async function applyOpeningAnswer(
       stillPending.push(prompt);
       continue;
     }
-    const clean = prompt.kind === 'name' && randomDesignation && value === randomDesignation
-      ? { text: randomDesignation, cheated: false }
-      : sanitizeOpeningAnswer(prompt.kind, value);
+    const clean = sanitizeOpeningAnswer(prompt.kind, value);
     cheated = cheated || clean.cheated;
     if (prompt.kind === 'name' && !clean.text) {
       stillPending.push(prompt);

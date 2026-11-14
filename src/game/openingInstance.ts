@@ -11,7 +11,7 @@ import type {
   OpeningOfferChip,
 } from './types';
 import { hashSeed, keyedRng, type Rng } from './seededRng';
-import { genderForPersonName, nameWords, pickPersonName, type PersonGender } from './personNames';
+import { genderForPersonName, NAME_HONORIFIC, nameWords, pickPersonName, type PersonGender } from './personNames';
 import { isCommonOpeningLexeme } from './openingWriterNotes';
 import { campaignCanonicalHubNames, campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 import { applyPresenceFacts } from './presentAuthority';
@@ -38,8 +38,7 @@ export interface OpeningHookSnapshot {
   castNpcIds?: string[];
 }
 
-const HONORIFIC =
-  /^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High|Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Doctorate|Dame|Baron|Baroness|Chancellor|Warden|Keeper|Auditor|Advocate|Chancellor|Inquisitor|Marshal|Commander|Lieutenant|Corporal|Ensign|Admiral|General|Private|Acolyte|Adept|Seer|Oracle|Abbot|Abbess|Prior|Prioress|Deacon|Reverend|Saint|Squire|Knight|Ranger|Hunter|Miller|Smith|Cooper|Carter|Innkeep|Innkeeper|Barman|Barmaid|Host|Hostess|Clerk|Scribe|Archivist|Warden)\s+/i;
+const HONORIFIC = NAME_HONORIFIC;
 
 const PLACE_SUFFIX = new Set([
   'trail', 'road', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'quay', 'mill', 'well', 'bridge',

@@ -54,7 +54,7 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
   dwarf: {
     match: ['dwarf', 'dwarven', 'dwarvish'],
     given: [
-      'Arnbjorn', 'Asgerd', 'Bjarni', 'Bergljot', 'Eyvind', 'Dagny', 'Grimkel', 'Gudrun',
+      'Thorgeir', 'Asgerd', 'Bjarni', 'Bergljot', 'Eyvind', 'Dagny', 'Grimkel', 'Gudrun',
       'Hallvard', 'Hildigunn', 'Ingolf', 'Jorunn', 'Ketil', 'Ragnhild', 'Orm', 'Sigrid',
       'Steinar', 'Thora', 'Ulf', 'Vigdis', 'Halldor', 'Asa', 'Thorvald', 'Gunnhild',
       'Kolbein', 'Helga', 'Skeggi', 'Herdis', 'Sverri', 'Yngvild', 'Brand', 'Ingunn',
@@ -70,7 +70,7 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
   elf: {
     match: ['elf', 'elven', 'elvish', 'half-elf', 'halfelf'],
     given: [
-      'Aneira', 'Bedwyr', 'Branwen', 'Cerys', 'Dafydd', 'Eluned', 'Emrys', 'Ffion', 'Gwion',
+      'Aneira', 'Bedwyr', 'Branwen', 'Gwenith', 'Dafydd', 'Eluned', 'Emrys', 'Ffion', 'Gwion',
       'Heledd', 'Idris', 'Lowenna', 'Meraud', 'Morwenna', 'Kerensa', 'Peran', 'Jowan', 'Aoife',
       'Cian', 'Niamh', 'Oisin', 'Orla', 'Ronan', 'Siobhan', 'Tadhg', 'Ciara', 'Eimear',
       'Fiachra', 'Gwenllian', 'Rhodri', 'Tegwen', 'Iolo', 'Nesta', 'Caradog',
@@ -103,7 +103,7 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
     given: [
       'Anselm', 'Adelheid', 'Balthasar', 'Gottfried', 'Gertrud', 'Kaspar', 'Liesl', 'Leopold',
       'Margarethe', 'Ulrich', 'Ottilie', 'Wendelin', 'Hedwig', 'Florian', 'Walburga', 'Joost',
-      'Femke', 'Pieter', 'Anneke', 'Maarten', 'Griet', 'Cornelis', 'Saskia', 'Ruedi', 'Vreni',
+      'Femke', 'Pieter', 'Anneke', 'Maarten', 'Griet', 'Cornelis', 'Geertje', 'Ruedi', 'Vreni',
       'Urs', 'Seraina', 'Wim', 'Ignaz', 'Kunigunde', 'Theobald', 'Ilse', 'Benedikt', 'Hilde',
     ],
     surnames: [
@@ -118,7 +118,7 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
     given: [
       'Gorvak', 'Druzha', 'Brakka', 'Varuk', 'Oshka', 'Rugar', 'Tazgha', 'Borzo', 'Ulvra',
       'Dakmar', 'Kezrak', 'Morva', 'Zurak', 'Haskra', 'Torvug', 'Yazga', 'Brug', 'Shazka',
-      'Ozrek', 'Krulda', 'Vashk', 'Ghorza', 'Rakhul', 'Gurza', 'Mokta', 'Drevak', 'Uzra',
+      'Ozrek', 'Krulda', 'Vashk', 'Ruzvek', 'Rakhul', 'Gurza', 'Mokta', 'Drevak', 'Uzra',
       'Skarn', 'Vorka', 'Harrak', 'Zhurga', 'Kovrek', 'Tulka', 'Graznek',
     ],
     surnames: [
@@ -131,9 +131,9 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
   tiefling: {
     match: ['tiefling'],
     given: [
-      'Aurelia', 'Cassian', 'Lucilla', 'Severus', 'Livia', 'Octavian', 'Flavia', 'Decimus',
+      'Aurelia', 'Cassian', 'Lucilla', 'Aemilius', 'Livia', 'Octavian', 'Flavia', 'Decimus',
       'Valeria', 'Marcellus', 'Junia', 'Tiberius', 'Cornelia', 'Quintus', 'Faustina', 'Lucan',
-      'Drusilla', 'Silvanus', 'Galla', 'Aetius', 'Honoria', 'Maximus', 'Placidia', 'Ambrosius',
+      'Drusilla', 'Valens', 'Galla', 'Aetius', 'Honoria', 'Maximus', 'Placidia', 'Ambrosius',
       'Domitia', 'Varro', 'Septima', 'Corvus', 'Antonia', 'Gaius', 'Serena', 'Felix',
       'Calpurnia', 'Vitus',
     ],
@@ -178,7 +178,7 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
   goblin: {
     match: ['goblin', 'hobgoblin'],
     given: [
-      'Skitter', 'Nib', 'Grizzle', 'Snik', 'Pockle', 'Wizzet', 'Krabble', 'Ratchet', 'Fizzik',
+      'Skitter', 'Nib', 'Grizzle', 'Snik', 'Pockle', 'Nubbin', 'Krabble', 'Ratchet', 'Fizzik',
       'Mott', 'Quibb', 'Snaggle', 'Grub', 'Zib', 'Nettle', 'Scrag', 'Bodge', 'Wick', 'Rizz',
       'Tink', 'Gobbet', 'Snitch', 'Crumb', 'Natter', 'Scuttle', 'Jitter', 'Fidget', 'Smudge',
       'Sprocket', 'Kink', 'Drip', 'Muckle', 'Cogwhistle', 'Splint',
@@ -195,7 +195,7 @@ export const RACE_NAME_BANKS: Record<RaceNameKey, RaceNameBank> = {
     given: [
       'Brindle', 'Thistle', 'Burr', 'Sorrel', 'Fennel', 'Tansy', 'Bracken', 'Russet', 'Dapple',
       'Briar', 'Heath', 'Moss', 'Sedge', 'Tawny', 'Rook', 'Kestrel', 'Clover', 'Teasel', 'Rush',
-      'Flax', 'Marten', 'Dusk', 'Ember', 'Ochre', 'Hollin', 'Gorse', 'Furze', 'Linden',
+      'Flax', 'Marten', 'Dusk', 'Ember', 'Ochre', 'Sloe', 'Gorse', 'Furze', 'Linden',
       'Pebble', 'Vetch', 'Bramble', 'Tarn', 'Larch', 'Quill',
     ],
     surnames: [
