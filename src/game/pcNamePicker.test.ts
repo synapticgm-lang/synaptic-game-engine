@@ -5,10 +5,10 @@ import { createInitialState } from './defaults';
 import { applyOpeningAnswer, establishmentChoices, extractGivenName } from './openingEstablishment';
 import { isDeniedPcName, isLockablePcName } from './pcNameAuthority';
 import { pcNameRaceKey, pickPcDesignation, pickPcGivenName } from './pcNamePicker';
-import { formatEstablishedOpeningScene, formatPcNameClashRail, formatPlayerPronounRail } from './openingWriterNotes';
+import { formatEstablishedOpeningScene, formatPcNameClashRail, formatPlayerPronounRail, personalNameTokens } from './openingWriterNotes';
 import { pcPov } from './narrativePov';
 import { isNameTitleWord } from './personNames';
-import { sanitizeOpeningAnswer } from './openingEstablishment';
+import { fullNameAsWritten, sanitizeOpeningAnswer } from './openingEstablishment';
 import { newGameState } from './newGameTestState';
 import type { GameState } from './types';
 
@@ -155,6 +155,36 @@ describe('per-race PC name bank', () => {
     expect(formatPcNameClashRail(withPc('Bram', cast))).toContain('Bram Hale');
     expect(formatPcNameClashRail(withPc('Ysolde'), ['Captain Ysolde Marr'])).toContain('Captain Ysolde Marr');
     expect(formatPcNameClashRail(withPc('Ysolde'))).toBe('');
+  });
+
+  const ACTION_LINES = [
+    'Read the Panel', 'Search the Area', 'Climb the Wall', 'Use the Knife', 'Walk North', 'Open Door', 'Go West',
+    'Follow Him', 'Check Status', 'Say Something', 'Talk To Rosel', 'Travel Toward Cracked Street', 'Check Your Level',
+    'Pat Yourself Down', 'Do Something Else', 'Look Around', 'Run To The Door',
+  ];
+
+  it('action lines are never a full name; every bank designation is', () => {
+    for (const line of ACTION_LINES) expect(fullNameAsWritten(line), line).toBeNull();
+    for (const ok of ['Max Doyle', 'Brindle of the Long Grass', 'Teasel of the Ash Hollow']) expect(fullNameAsWritten(ok)).toBe(ok);
+    for (const bank of Object.values(RACE_NAME_BANKS)) {
+      for (const g of bank.given) for (const sur of bank.surnames) expect(fullNameAsWritten(`${g} ${sur}`)).toBe(`${g} ${sur}`);
+    }
+  });
+
+  it('typing a full name on the name cover locks it; typed actions do not', async () => {
+    const { state: typed } = await applyOpeningAnswer(cover('system-integration', 'si-4'), 'Max Doyle');
+    expect(typed.character.name).toBe('Max Doyle');
+    expect(typed.openingEstablishment?.answers?.name).toBe('Max Doyle');
+    for (const line of ['Walk North', 'Read the Panel', 'Talk To Rosel']) {
+      const { state: after } = await applyOpeningAnswer(cover('system-integration', 'si-4'), line);
+      expect(after.character.name, line).toBe('Unknown Survivor');
+      expect(after.openingEstablishment?.answers?.name, line).toBeFalsy();
+    }
+  });
+
+  it('Dr is a title, not a clash word', () => {
+    expect(personalNameTokens('Dr. Yusuf Okafor')).toEqual(['yusuf', 'okafor']);
+    expect(personalNameTokens('Dr Yusuf Okafor')).toEqual(['yusuf', 'okafor']);
   });
 
   it('a typed full name is kept whole; a typed sentence is not a name', () => {

@@ -26,9 +26,11 @@ import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 import { openingPlaceRecord } from './placeNames';
-import { pocketOnlyKit, systemStatusChip } from './systemHousing';
+import { isSystemStatusChip, pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
+import { parsePlayerIntent } from './intentParser';
+import { opensWithChoiceVerb } from './parser';
 import { pickPcDesignation, pickPcGivenName } from './pcNamePicker';
 import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
@@ -2505,17 +2507,30 @@ function acceptHarvestedNameToken(token: string | undefined): string | null {
   if (!isLockablePcName(titleName(t))) return null;
   return titleName(t);
 }
-/** A whole name as written ("Max Doyle", "Brindle of the Long Grass"): kept when it is already lockable and name-shaped. */
-function fullNameAsWritten(text: string): string | null {
+/** Pronouns and joiners that belong to an action line, never to a name ("Follow Him", "Pat Yourself Down"). */
+const ACTION_FUNCTION_WORD = /^(?:to|toward|towards|and|your|yourself|else|something|him|her|them|me|it)$/i;
+/**
+ * A whole name as written ("Max Doyle", "Brindle of the Long Grass"): kept when it is already lockable and
+ * name-shaped, and the engine does not read the line as an action ("Walk North", "Read the Panel").
+ */
+export function fullNameAsWritten(text: string): string | null {
   const t = text.replace(/\s+/g, ' ').trim();
   if (!isLockablePcName(t)) return null;
   const words = t.split(' ');
   if (words.length < 2 || words.length > 6) return null;
   const [first, ...rest] = words;
   if (!/^[A-Z]/.test(first!) || !acceptHarvestedNameToken(first)) return null;
-  const nameWord = (w: string) => /^[A-Z][A-Za-z'-]*$/.test(w) && !NAME_STOP.has(w.toLowerCase());
-  if (!rest.every((w) => nameWord(w) || /^(?:of|the)$/.test(w))) return null;
-  return /^[A-Z]/.test(rest[rest.length - 1]!) ? t : null;
+  const nameWord = (w: string) =>
+    /^[A-Z][A-Za-z'-]*$/.test(w) && !NAME_STOP.has(w.toLowerCase()) && !ACTION_FUNCTION_WORD.test(w);
+  // "the" only inside "of the"; "of" never last.
+  const joinerOk = (w: string, i: number) =>
+    (w === 'of' && i < rest.length - 1) || (w === 'the' && rest[i - 1] === 'of');
+  if (!rest.every((w, i) => nameWord(w) || joinerOk(w, i))) return null;
+  if (!/^[A-Z]/.test(rest[rest.length - 1]!)) return null;
+  // The engine's own action readers: a typed move, look, talk or use is play, not a name.
+  if (parsePlayerIntent(t).kind !== 'other' || opensWithChoiceVerb(t)) return null;
+  if (isSystemStatusChip(t) || isLookAroundAction(t) || isOpeningSetupChipLabel(t)) return null;
+  return t;
 }
 /** Pull a real given name out of chat, not the whole sentence. */
 export function extractGivenName(raw: string): string | null {
@@ -3001,7 +3016,7 @@ function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: Ga
   }
   const cleaned = stripPlayerVoice(stripConfusion(raw));
   if (!cleaned || cleaned.length < 2) return null;
-  if (kind === 'name') return extractGivenName(cleaned);
+  if (kind === 'name') return extractGivenName(cleaned) ?? fullNameAsWritten(cleaned);
   if (kind === 'location') {
     if (isRandomPlaceRequest(raw) || isRandomPlaceRequest(cleaned)) {
       return state ? pickPlaceForCampaign(state) : pickEarthPlace();
@@ -3306,6 +3321,8 @@ export async function applyOpeningAnswer(
     harvest.name = harvest.name ?? pickPcDesignation(state);
   }
   const currentKind = est.pending[0]?.kind;
+  // On the name cover a typed whole name ("Max Doyle") is the answer as written.
+  if (currentKind === 'name' && !harvest.name) harvest.name = fullNameAsWritten(answer);
   // The question's own answer chip is the place as written ("A frontier hold or road inn").
   const chosenPlaceChip =
     currentKind === 'location' && !isRandomPlaceRequest(answer) && !isOpeningSetupChipLabel(answer)
