@@ -46,12 +46,19 @@ export function openingRiteIsOpen(state: Pick<GameState, 'engineMode' | 'opening
   return state.engineMode === 'litrpg' && !!state.openingRite && !state.openingRite.done;
 }
 
+/** A writer-only view: pending allotments must not leak through gear, refs, or scene items. */
+export function stateForRiteWriter(state: GameState): GameState {
+  if (state.engineMode !== 'litrpg' || state.openingRite?.done) return state;
+  return { ...state, inventory: (state.inventory ?? []).filter((i) => !i.grantedByOpeningRite) };
+}
+
 /** Writer fact: pending offer the opening prose must end on. */
 export function openingRiteWriterOffer(state: GameState): string | null {
   if (!openingRiteIsOpen(state)) return null;
   const entry = riteEntryForState(state);
   if (!entry) return null;
-  return `OPENING RITE (end this beat on the pending offer, spoken or System): ${entry.offerSentence}`;
+  const pending = (state.inventory ?? []).filter((i) => i.grantedByOpeningRite).map((i) => i.name);
+  return `OPENING RITE (end this beat on the pending offer, spoken or System): ${entry.offerSentence} The rite is pending; the player is not registered yet. Do not narrate acceptance or completion before the player decides.${pending.length ? ` Pending allotment, issued only when the rite completes (not held, worn, or usable yet): ${pending.join('; ')}.` : ''}`;
 }
 
 /** Writer fact after a refuse while the System still completes the rite. */

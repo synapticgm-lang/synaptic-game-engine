@@ -198,6 +198,7 @@ function starterToItem(si: StarterItem, bible: CampaignBible, containerId?: stri
     itemLevel: si.itemLevel,
     description: si.description,
     provenance: si.provenance ?? `Campaign: ${bible.title}`,
+    ...(si.grantedByOpeningRite ? { grantedByOpeningRite: true } : {}),
     equipped: si.equipped ?? (isWeapon || isArmor),
     slot: si.slot ?? (isWeapon ? 'Main Hand' : isArmor ? 'Body' : undefined),
     containerId,

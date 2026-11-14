@@ -5,6 +5,8 @@
 import type { GameState } from './types.ts';
 import { isCampaignHubToken } from './outdoorHubs.ts';
 import { genderNoun } from './personNames.ts';
+import { pcPov } from './narrativePov.ts';
+import { openingRiteWriterOffer } from './openingRiteFacts.ts';
 
 export const STORYTELLER_RETRY_MESSAGE = "The storyteller didn't answer — Try again";
 export const STORYTELLER_RETRY_CHIP = 'Try again';
@@ -15,6 +17,30 @@ export function openingChoiceCountOf(engineMode: GameState['engineMode'] | undef
 
 export function openingChoiceCount(state: GameState): number {
   return openingChoiceCountOf(state.engineMode);
+}
+
+/** State, not the spelling of a name, owns the player's pronouns. */
+export function formatPlayerPronounRail(state: GameState): string {
+  if (state.engineMode === 'pyoa' || state.character?.gender?.trim()) return '';
+  const { name } = pcPov(state.character);
+  return `${name}'s gender is not given: call ${name} by name or they/them/their. Never he/him or she/her for ${name}. Do not infer gender from a name.`;
+}
+
+/** Keep page 1's actual camera, not just the minted place label, until the player leaves. */
+export function formatEstablishedOpeningScene(state: GameState): string {
+  const est = state.openingEstablishment;
+  const inst = est?.instance;
+  if (state.engineMode === 'pyoa' || !est?.sceneWritten || !est.sceneProse || !inst) return '';
+  if (state.activeDungeon || state.journey || state.circling?.prevPlace) return '';
+  if (state.currentLocation?.trim().toLowerCase() !== inst.placeName.trim().toLowerCase()) return '';
+  return [
+    `ESTABLISHED SCENE: ${inst.placeName} (${inst.placeKind}).`,
+    inst.situation && inst.situation.trim().toLowerCase() !== inst.placeKind.trim().toLowerCase()
+      ? `Place description: ${inst.situation}`
+      : '',
+    `Page 1 showed: ${est.sceneProse}`,
+    'Continue this established scene. Registration changes the rite and allotment, not the surroundings. Do not relocate the player or replace the scene without a resolved event.',
+  ].filter(Boolean).join('\n');
 }
 
 /** Short private rail + locked names. Safe to embed in the system prompt. */
@@ -40,6 +66,8 @@ export function formatOpeningPage1Rail(state: GameState): string {
     : '';
   return [
     '【 OPENING PAGE 1 】',
+    formatPlayerPronounRail(state),
+    openingRiteWriterOffer(state) ?? '',
     'Return a JSON object with keys prose, options, and journalTitle. No markdown fences.',
     'prose: the first page the player will read. Novel-quality, concrete, present, no director notes, no menu language, no numbered choice list, no XML or angle-bracket tags.',
     optionHint,
