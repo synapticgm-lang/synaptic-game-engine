@@ -10,7 +10,8 @@ import { canHarvestAsNamedPerson } from './entityRegistry';
 import { npcRecordNames } from './npcRecords';
 import { newGameState } from './newGameTestState';
 import { rewriteChromeSpeakerTags } from './chromeAuthority';
-import { establishmentChoices, RANDOM_NAMES } from './openingEstablishment';
+import { establishmentChoices } from './openingEstablishment';
+import { pickPcGivenName } from './pcNamePicker';
 import { resolveOfferedChoices } from './playTranscript';
 import { stitchOpeningContinue } from './openingStitch';
 import { compileGraphChoiceLabels } from './graphChoices';
@@ -97,7 +98,7 @@ describe('playtest10a — live-drive source locks', () => {
     const chips = establishmentChoices(state.openingEstablishment!.pending, state);
     expect(chips.slice(0, 3)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation']);
     expect(chips).toHaveLength(4);
-    expect(RANDOM_NAMES).toContain(chips[3]);
+    expect(chips[3]).toBe(pickPcGivenName(state));
     const pads = resolveOfferedChoices(state);
     expect(pads).toEqual(chips);
     expect(pads.join(' ')).not.toMatch(/Check Status|Wait and watch|Inspect the panel/i);

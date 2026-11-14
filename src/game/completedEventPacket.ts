@@ -3,7 +3,7 @@
  * Code resolves facts first; the writer only narrates a completed event in past tense.
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
-import { filterRetiredFromAllowlist, formatPlayerPronounRail, formatEstablishedOpeningScene } from './openingWriterNotes';
+import { filterRetiredFromAllowlist, formatPlayerPronounRail, formatEstablishedOpeningScene, formatPcNameClashRail } from './openingWriterNotes';
 import { isCatalogCastBlockedHere, scrubOpeningTurnProse } from './openingCatalogGuard';
 import { foeCanSpeak } from './rules/srdMonsters';
 import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName';
@@ -195,6 +195,8 @@ export interface CompletedEventPacket {
   /** XP-D1 OPEN — LitRPG Opening Rite pending offer; prose must end on it. */
   openingRiteOffer?: string;
   playerPronounRail?: string;
+  /** The player's name is also a story NPC's name: two different people. */
+  pcNameClash?: string;
   establishedOpeningScene?: string;
   /** XP-D1 OPEN — refuse path writer fact (System persists, no punishment). */
   openingRiteRefusePersist?: string;
@@ -1174,6 +1176,7 @@ export function buildCompletedEventPacket(
     cardOffer: askedWantAtCard && openOpeningOffer(state) ? shortCardOffer(state) || undefined : undefined,
     openingRiteOffer: riteOffer || state.sceneFacts?.openingRiteOffer || undefined,
     playerPronounRail: formatPlayerPronounRail(state) || undefined,
+    pcNameClash: formatPcNameClashRail(state) || undefined,
     establishedOpeningScene: formatEstablishedOpeningScene(state) || undefined,
     openingRiteRefusePersist:
       openingRiteRefuseWriterFact(state) || state.sceneFacts?.openingRiteRefusePersist || undefined,
@@ -1590,6 +1593,7 @@ export function formatWriterFacingEvent(
   if (packet.cardWant) lines.push(`What they want (their own reason; the answer says it in their words): ${packet.cardWant}`);
   if (packet.cardOffer) lines.push(`What they offer (still open; the player has not taken it): ${packet.cardOffer}`);
   if (packet.playerPronounRail) lines.push(packet.playerPronounRail);
+  if (packet.pcNameClash) lines.push(packet.pcNameClash);
   if (packet.establishedOpeningScene) lines.push(packet.establishedOpeningScene);
   if (packet.openingRiteOffer) lines.push(packet.openingRiteOffer);
   if (packet.openingRiteRefusePersist) {

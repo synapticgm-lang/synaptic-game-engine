@@ -4,7 +4,7 @@
  */
 import type { GameState } from './types.ts';
 import { isCampaignHubToken } from './outdoorHubs.ts';
-import { genderNoun } from './personNames.ts';
+import { genderNoun, isNameTitleWord } from './personNames.ts';
 import { pcPov } from './narrativePov.ts';
 import { openingRiteWriterOffer } from './openingRiteFacts.ts';
 
@@ -26,6 +26,41 @@ export function formatPlayerPronounRail(state: GameState): string {
   return `${name}'s gender is not given: call ${name} by name or they/them/their. Never he/him or she/her for ${name}. Do not infer gender from a name.`;
 }
 
+const NAME_ARTICLES = new Set(['the', 'a', 'an', 'of']);
+
+/** The words that make a name someone's own: no articles, no titles or role words. */
+export function personalNameTokens(name: string): string[] {
+  return name
+    .toLowerCase()
+    .split(/[^a-z'-]+/)
+    .map((w) => w.replace(/^['-]+|['-]+$/g, ''))
+    .filter((w) => w.length > 1 && !NAME_ARTICLES.has(w) && !isNameTitleWord(w));
+}
+
+/**
+ * Every story NPC name this save knows: the campaign's key NPCs (passed in, else the save's bible snapshot;
+ * catalog bibles also reach the edge through the npcMemories roster seeded at New Game), the roster, and the opening cast.
+ */
+export function storyNpcNames(state: GameState, bibleNpcNames?: string[]): string[] {
+  const bible = bibleNpcNames ?? (state.campaignBibleSnapshot?.keyNPCs ?? []).map((n) => n.name);
+  return [
+    ...bible,
+    ...(state.npcMemories ?? []).map((m) => m.npcName),
+    ...(state.openingEstablishment?.instance?.cast ?? []).map((c) => c.name),
+  ].map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+}
+
+/** The player chose a name a story NPC already has: tell the writer they are two people. */
+export function formatPcNameClashRail(state: GameState, bibleNpcNames?: string[]): string {
+  if (state.engineMode === 'pyoa') return '';
+  const pc = (state.character?.name ?? '').replace(/\s+/g, ' ').trim();
+  const pcTokens = new Set(personalNameTokens(pc));
+  if (!pcTokens.size) return '';
+  const who = storyNpcNames(state, bibleNpcNames).find((n) => personalNameTokens(n).some((t) => pcTokens.has(t)));
+  if (!who) return '';
+  return `${pc} is the player character. ${who} in this story is a different person who shares the name: never merge them, and never give ${pc} that person's history, role or lines.`;
+}
+
 /** Keep page 1's actual camera, not just the minted place label, until the player leaves. */
 export function formatEstablishedOpeningScene(state: GameState): string {
   const est = state.openingEstablishment;
@@ -39,7 +74,7 @@ export function formatEstablishedOpeningScene(state: GameState): string {
       ? `Place description: ${inst.situation}`
       : '',
     `Page 1 showed: ${est.sceneProse}`,
-    'Continue this established scene. Registration changes the rite and allotment, not the surroundings. Do not relocate the player or replace the scene without a resolved event.',
+    'Continue this established scene. What the player decides changes their standing and kit, not the surroundings. Do not relocate the player or replace the scene without a resolved event.',
   ].filter(Boolean).join('\n');
 }
 
@@ -67,6 +102,7 @@ export function formatOpeningPage1Rail(state: GameState): string {
   return [
     '【 OPENING PAGE 1 】',
     formatPlayerPronounRail(state),
+    formatPcNameClashRail(state),
     openingRiteWriterOffer(state) ?? '',
     'Return a JSON object with keys prose, options, and journalTitle. No markdown fences.',
     'prose: the first page the player will read. Novel-quality, concrete, present, no director notes, no menu language, no numbered choice list, no XML or angle-bracket tags.',

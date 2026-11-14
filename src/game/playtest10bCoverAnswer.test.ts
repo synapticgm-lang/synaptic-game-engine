@@ -10,7 +10,8 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
-import { coverContinuePads, isOpeningCoverTurn, RANDOM_NAMES } from './openingEstablishment';
+import { coverContinuePads, isOpeningCoverTurn } from './openingEstablishment';
+import { pickPcGivenName } from './pcNamePicker';
 import { resolveOfferedChoices } from './playTranscript';
 import { stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
 import { emptySceneFacts } from './sceneFacts';
@@ -116,7 +117,7 @@ describe('playtest10b — cover answers the line', () => {
     const namePad = resolveOfferedChoices(pending);
     expect(namePad.slice(0, 3)).toEqual(['Give your name', 'Refuse to give a name', 'Random designation']);
     expect(namePad).toHaveLength(4);
-    expect(RANDOM_NAMES).toContain(namePad[3]);
+    expect(namePad[3]).toBe(pickPcGivenName(pending));
     expect(resolveOfferedChoices(pending).join(' ')).not.toMatch(/Lowmarket|West Wall|Check Status/i);
 
     const named = warCamp({

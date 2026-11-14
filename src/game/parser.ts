@@ -110,6 +110,11 @@ function cleanChoiceText(raw: string): string {
     .trim();
 }
 
+/** A line that opens with one of the engine's choice/action verbs ("Open Door", "Follow him"). */
+export function opensWithChoiceVerb(raw: string): boolean {
+  return CHOICE_OFFER_VERBS.test(cleanChoiceText(raw));
+}
+
 /** True when a line is a fake in-prose menu option (should become a chip). */
 export function looksLikeChoiceOffer(raw: string): boolean {
   const t = cleanChoiceText(raw.replace(/^[\s✨🎲⭐️•\-–—*]+/u, ''));

@@ -4,6 +4,15 @@
  */
 import type { Rng } from './seededRng.ts';
 
+/** A leading title or role word on a person's name ("Warden Elise Cho", "Brother Aldo"). */
+export const NAME_HONORIFIC =
+  /^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High|Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Doctorate|Dr\.?|Dame|Baron|Baroness|Chancellor|Warden|Keeper|Auditor|Advocate|Chancellor|Inquisitor|Marshal|Commander|Lieutenant|Corporal|Ensign|Admiral|General|Private|Acolyte|Adept|Seer|Oracle|Abbot|Abbess|Prior|Prioress|Deacon|Reverend|Saint|Squire|Knight|Ranger|Hunter|Miller|Smith|Cooper|Carter|Innkeep|Innkeeper|Barman|Barmaid|Host|Hostess|Clerk|Scribe|Archivist|Warden)\s+/i;
+
+/** One word that is a title or role, not part of who the person is. */
+export function isNameTitleWord(word: string): boolean {
+  return NAME_HONORIFIC.test(`${word.trim()} `);
+}
+
 const GIVEN = [
   'Wat', 'Hobb', 'Edda', 'Maud', 'Piers', 'Tilde', 'Osric', 'Nell', 'Bertil', 'Agna', 'Col', 'Ysolde',
   'Garth', 'Rosel', 'Dunn', 'Idra', 'Hale', 'Merrit', 'Sefa', 'Brannoc', 'Oda', 'Lisle', 'Wenna', 'Cutha',

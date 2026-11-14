@@ -26,9 +26,13 @@ import { hasMetBefore, rememberPlayerName } from './npcMemory';
 import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { ensurePyoaSpine, isAuthoredPyoaBook, spineChoiceLabels } from './pyoaSpine';
 import { openingPlaceRecord } from './placeNames';
-import { pocketOnlyKit, systemStatusChip } from './systemHousing';
+import { isSystemStatusChip, pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
+import { parsePlayerIntent } from './intentParser';
+import { opensWithChoiceVerb } from './parser';
+import { classifyRoundAction } from './tabletop/roundActionClass';
+import { pickPcDesignation, pickPcGivenName } from './pcNamePicker';
 import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
 import { openingLockedPersonNames } from './openingCatalogGuard';
@@ -103,7 +107,6 @@ const NAME_PROMPT: OpeningPrompt = {
   question: 'Confirm designation.',
   suggestions: ['Random designation'],
 };
-export const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
 const RANDOM_PLACES = [
   'Peterborough UK',
   'Manchester',
@@ -289,14 +292,13 @@ export function establishmentChoices(
       if (/random\s+(?:designation|name)/i.test(s) || PLACE_SUGGESTION.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
     }
-    // Names change between games: the list is entered at a point set by this game's own seed.
-    const start = Math.floor(
-      hashUnit(['opening', state?.seed ?? state?.saveId ?? '0', 'name-chip'].join('|')) * RANDOM_NAMES.length
-    ) % RANDOM_NAMES.length;
-    for (let i = 0; i < RANDOM_NAMES.length; i++) {
-      if (chips.length >= cap) break;
-      const n = RANDOM_NAMES[(start + i) % RANDOM_NAMES.length]!;
-      if (!chips.includes(n)) chips.push(n);
+    // Names change between games: seeded from this game's race bank, never a campaign NPC's name.
+    const used = new Set(chips.map((c) => c.toLowerCase()));
+    for (let i = 0; chips.length < cap && i < cap; i++) {
+      const n = pickPcGivenName(state, 'button', used);
+      if (used.has(n.toLowerCase())) break;
+      used.add(n.toLowerCase());
+      chips.push(n);
     }
   } else if (current.kind === 'location') {
     chips.push(isEarthOriginPrompt(current) ? 'Random Earth city' : 'Random place');
@@ -2506,6 +2508,46 @@ function acceptHarvestedNameToken(token: string | undefined): string | null {
   if (!isLockablePcName(titleName(t))) return null;
   return titleName(t);
 }
+/** Pronouns and joiners that belong to an action line, never to a name ("Follow Him", "Pat Yourself Down"). */
+const ACTION_FUNCTION_WORD = /^(?:to|toward|towards|and|your|yourself|else|something|him|her|them|me|it)$/i;
+/**
+ * A whole name as written ("Max Doyle", "Brindle of the Long Grass"): kept when it is already lockable and
+ * name-shaped, and the engine does not read the line as an action ("Walk North", "Read the Panel").
+ */
+export function fullNameAsWritten(text: string): string | null {
+  const t = text.replace(/\s+/g, ' ').trim();
+  if (!isLockablePcName(t)) return null;
+  const words = t.split(' ');
+  if (words.length < 2 || words.length > 6) return null;
+  const [first, ...rest] = words;
+  if (!/^[A-Z]/.test(first!) || !acceptHarvestedNameToken(first)) return null;
+  const nameWord = (w: string) =>
+    /^[A-Z][A-Za-z'-]*$/.test(w) && !NAME_STOP.has(w.toLowerCase()) && !ACTION_FUNCTION_WORD.test(w);
+  // "the" only inside "of the"; "of" never last.
+  const joinerOk = (w: string, i: number) =>
+    (w === 'of' && i < rest.length - 1) || (w === 'the' && rest[i - 1] === 'of');
+  if (!rest.every((w, i) => nameWord(w) || joinerOk(w, i))) return null;
+  if (!/^[A-Z]/.test(rest[rest.length - 1]!)) return null;
+  if (readsAsPlay(t) || isOpeningSetupChipLabel(t)) return null;
+  return t;
+}
+/** The engine's own action readers: a typed move, look, talk, use, hide or status check is play, not a name. */
+function readsAsPlay(text: string): boolean {
+  const t = text.replace(/\s+/g, ' ').trim();
+  return (
+    parsePlayerIntent(t).kind !== 'other'
+    || opensWithChoiceVerb(t)
+    || classifyRoundAction(t) !== 'other'
+    || isSystemStatusChip(t)
+    || isLookAroundAction(t)
+  );
+}
+/** "Call me Run" / "my name is Run": the name came from a framed give, not the whole line. */
+function isFramedNameGive(text: string): boolean {
+  const t = text.replace(/\s+/g, ' ').trim();
+  const given = extractGivenName(t);
+  return !!given && given.toLowerCase() !== t.toLowerCase();
+}
 /** Pull a real given name out of chat, not the whole sentence. */
 export function extractGivenName(raw: string): string | null {
   const text = raw.replace(/\s+/g, ' ').trim();
@@ -2828,7 +2870,8 @@ export function applyLedgerDeficit(state: GameState, rawInput: string): GameStat
   const answers = { ...est.answers };
   let character = state.character;
   let changed = false;
-  if (openingNameIsUnlocked(state)) {
+  // A bare action ("Run", "Hide") is play, never a healed name; a framed give ("Call me Run") still is.
+  if (openingNameIsUnlocked(state) && (isFramedNameGive(answer) || !readsAsPlay(answer))) {
     const harvested = extractGivenName(answer);
     if (harvested) {
       answers.name = harvested;
@@ -2982,6 +3025,7 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
 function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: GameState): string | null {
   if (isMetaOnly(raw) || isSetupRefusal(raw)) return null;
   if (kind === 'name' && isLocationishOpeningUtterance(raw) && !extractGivenName(raw)) return null;
+  if (kind === 'name' && !isOpeningSetupChipLabel(raw) && !isFramedNameGive(raw) && readsAsPlay(raw)) return null;
   const harvested = fieldForKind(kind, harvestUtterance(raw));
   if (harvested) {
     if (kind === 'name' && isLocationishOpeningUtterance(harvested) && !extractGivenName(harvested)) return null;
@@ -2990,7 +3034,7 @@ function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: Ga
   }
   const cleaned = stripPlayerVoice(stripConfusion(raw));
   if (!cleaned || cleaned.length < 2) return null;
-  if (kind === 'name') return extractGivenName(cleaned);
+  if (kind === 'name') return extractGivenName(cleaned) ?? fullNameAsWritten(cleaned);
   if (kind === 'location') {
     if (isRandomPlaceRequest(raw) || isRandomPlaceRequest(cleaned)) {
       return state ? pickPlaceForCampaign(state) : pickEarthPlace();
@@ -3035,7 +3079,7 @@ export function sanitizeOpeningAnswer(
       .trim();
   }
   if (kind === 'name') {
-    const name = sanitizePcName(extractGivenName(raw) ?? extractGivenName(text));
+    const name = sanitizePcName(extractGivenName(raw) ?? extractGivenName(text) ?? fullNameAsWritten(text));
     return { text: (name ?? '').slice(0, 40), cheated, mundaneNames: [] };
   }
   if (kind === 'location') {
@@ -3292,9 +3336,19 @@ export async function applyOpeningAnswer(
     }
   }
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
-    harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES, state, 'name');
+    harvest.name = harvest.name ?? pickPcDesignation(state);
   }
   const currentKind = est.pending[0]?.kind;
+  // On the name cover a typed whole name ("Max Doyle") is the answer as written.
+  if (currentKind === 'name' && !harvest.name) harvest.name = fullNameAsWritten(answer);
+  // A bare action typed at the name cover ("Run", "Hide") is play; only a framed give keeps it as a name.
+  const bareActionOnName =
+    currentKind === 'name'
+    && !isOpeningSetupChipLabel(answer)
+    && !/^random\s+(name|designation)\b/i.test(answer)
+    && !isFramedNameGive(answer)
+    && readsAsPlay(answer);
+  if (bareActionOnName) harvest.name = null;
   // The question's own answer chip is the place as written ("A frontier hold or road inn").
   const chosenPlaceChip =
     currentKind === 'location' && !isRandomPlaceRequest(answer) && !isOpeningSetupChipLabel(answer)
@@ -3441,7 +3495,7 @@ export async function applyOpeningAnswer(
     est.sceneWritten
     && currentKind === 'name'
     && !harvest.name
-    && !playerGivesOrRefusesName(answer)
+    && (bareActionOnName || !playerGivesOrRefusesName(answer))
     && !isOpeningSetupChipLabel(answer)
     && !/^random\s+(name|designation)\b/i.test(answer)
   ) {
