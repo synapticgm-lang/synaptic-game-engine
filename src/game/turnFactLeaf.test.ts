@@ -20,6 +20,7 @@ import { formatTalkWriterFacing } from './talkEnvelope';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { captureTurnEngineFacts, engineFactsForTrainRow, engineFactsFromState } from './trainLog';
 import { sentenceRepairRequest } from './writerTurn';
+import { buildCaptureRow, readClientCapture } from './trainingCaptureRow';
 import type { GameState, NpcMemory } from './types';
 
 const SECRET = 'VAULT-SECRET-9f3c';
@@ -136,12 +137,29 @@ describe('repair train facts stay on the packet snapshot', () => {
     expect(arrayHp.engine_facts).toBeNull();
     expect(liveSrc).toContain("engine_facts_provenance: 'packet'");
     expect(fateSrc).toContain("engine_facts_provenance: 'packet'");
+    // Phase 0 retired the client-sent train log: the proxy no longer forwards train facts and gm-turn never
+    // reads them or rebuilds facts from live state. The server-side capture stores the packet the request
+    // carried (state.completedEvent), so a mutation after the packet still cannot reach the stored facts.
     const proxy = readFileSync(resolve(__dirname, './gmProxy.ts'), 'utf8');
     const edgeTurn = readFileSync(resolve(__dirname, '../../supabase/functions/gm-turn/index.ts'), 'utf8');
-    expect(edgeTurn).toContain('engine_facts_provenance');
-    expect(proxy).toContain('trainEngineFacts: trainMeta.engine_facts');
-    expect(edgeTurn).toContain('engineFactsForTrainRow(body.trainEngineFacts, body.state)');
+    expect(proxy).not.toMatch(/trainEngineFacts|trainLog:/);
+    expect(edgeTurn).not.toMatch(/body\.(trainEngineFacts|trainLog)\b/);
     expect(edgeTurn).not.toContain('engineFactsFromState(body.state)');
+    const captured = buildCaptureRow({
+      basis: 'test',
+      userId: '00000000-0000-4000-8000-000000000001',
+      client: readClientCapture({}, 'turn'),
+      state: { ...turn.state, completedEvent: turn.packet } as unknown as Record<string, unknown>,
+      attempts: [{ messages: [], settings: {}, text: 'Mira keeps the lamp lit.', issue: null }],
+      finalText: 'Mira keeps the lamp lit.',
+      completionStatus: 'ok',
+      requestedModel: null,
+      keySource: 'server',
+      usage: null,
+    });
+    expect(captured?.engine_facts).toEqual(turn.packet);
+    expect(hashFactSheet((captured?.engine_facts as typeof turn.packet).factSheet!)).toBe(sheetHash);
+    expect(JSON.stringify(captured?.engine_facts)).not.toContain('MUTANT_AFTER_PACKET');
   });
 });
 

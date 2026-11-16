@@ -13,7 +13,9 @@
  * Only the researched writer model family is rated; any other served model is `unknown`.
  */
 
-export type TrainingRights = 'allowed' | 'conditional' | 'excluded' | 'unknown';
+import type { TrainingRights } from './trainingCaptureVocab';
+
+export type { TrainingRights };
 
 /** Served-host key (lower-case letters/digits only, e.g. "InferenceNet" → "inferencenet") → rights. */
 export const HOST_TRAINING_RIGHTS: Readonly<Record<string, TrainingRights>> = {

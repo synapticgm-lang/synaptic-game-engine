@@ -28,7 +28,8 @@ import {
 } from '../_shared/gm/openRouterChat.ts';
 import { pinnedModel } from '../_shared/gm/modelIds.ts';
 import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from '../_shared/gm/openingWriterNotes.ts';
-import { buildCaptureRow, readClientCapture, scheduleCapture, type CaptureAttempt } from '../_shared/trainingCapture.ts';
+import { scheduleCapture } from '../_shared/trainingCapture.ts';
+import { buildCaptureRow, readClientCapture, type CaptureAttempt } from '../_shared/gm/trainingCaptureRow.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 /**

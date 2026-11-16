@@ -4,6 +4,7 @@
  * Never trust an unverified JWT payload — gm-turn / generate-image have verify_jwt=false.
  */
 
+import type { CaptureBasis } from './gm/trainingCaptureVocab.ts';
 import { FREE_WRITER_OPENROUTER_MODEL } from './gm/openRouterChat.ts';
 import { bearerToken, isKeyBearer, verifiedAuthUser } from './authUser.ts';
 
@@ -38,7 +39,8 @@ async function isStaffEmail(req: Request): Promise<boolean> {
   }
 }
 
-export type PrivilegeBasis = 'founder' | 'staff';
+/** Subset of the capture vocabulary (trainingCaptureVocab.ts) — one name everywhere. */
+export type PrivilegeBasis = Extract<CaptureBasis, 'founder' | 'staff'>;
 
 const basisByRequest = new WeakMap<Request, Promise<PrivilegeBasis | null>>();
 

@@ -1,6 +1,7 @@
 -- Training capture for gm-turn (16 Nov 2026). Server-side only: gm-turn inserts with the service role.
 -- Rows are CANDIDATES; quality approval and training admission happen later, elsewhere.
 -- Rights come from the host that actually served the call (src/game/trainingRights.ts), never the request.
+-- Every CHECK list below mirrors src/game/trainingCaptureVocab.ts (one source; trainingCaptureVocab.test.ts enforces it).
 
 create extension if not exists "pgcrypto";
 
@@ -45,7 +46,7 @@ create table if not exists public.gm_turn_captures (
 
   -- completion
   finish_reason text,
-  completion_status text not null,
+  completion_status text not null check (completion_status in ('ok', 'empty', 'error', 'rate_limited')),
   usage jsonb,
 
   -- outputs: first attempt, re-ask (if any), and what gm-turn returned
