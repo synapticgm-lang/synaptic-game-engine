@@ -90,17 +90,33 @@ export function renderCheckRequest(input: { sheet: unknown; lines: FactCheckLine
 }
 
 // ── Edge-side validation: shape and size only (no wording rules). ──
+// Caps follow what the game really sends: the answer prompt only ever uses the last 4 "said" lines
+// (100 chars each) and the first 600 chars of prose, so the client sends just that; the rest are
+// a few times the largest real values (sentences, notes, people here, backed lines, fact sheets).
 
-const MAX_TEXT = 8_000;
-const MAX_ITEMS = 24;
-const MAX_SHEET_CHARS = 120_000;
+export const REPAIR_CAPS = {
+  engineFact: 8_000,
+  flaggedItems: 16,
+  sentence: 1_500,
+  flag: 800,
+  note: 800,
+  pc: 120,
+  hereItems: 12,
+  name: 120,
+  knownItems: 120,
+  knownLine: 600,
+  saidItems: 4,
+  saidLine: 100,
+  prose: 600,
+} as const;
+export const CHECK_CAPS = { sheetChars: 64_000, lines: 40, lineText: 1_500 } as const;
 
-const str = (v: unknown, max = MAX_TEXT): string | null => (typeof v === 'string' && v.length <= max ? v : null);
-function strList(v: unknown, maxItems = MAX_ITEMS): string[] | null {
+const str = (v: unknown, max: number): string | null => (typeof v === 'string' && v.length <= max ? v : null);
+function strList(v: unknown, maxItems: number, maxLen: number): string[] | null {
   if (!Array.isArray(v) || v.length > maxItems) return null;
   const out: string[] = [];
   for (const x of v) {
-    const s = str(x);
+    const s = str(x, maxLen);
     if (s == null) return null;
     out.push(s);
   }
@@ -111,28 +127,28 @@ function strList(v: unknown, maxItems = MAX_ITEMS): string[] | null {
 export function readRepairPayload(raw: unknown): GmRepairPayload | null {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const r = raw as Record<string, unknown>;
-  const engineFact = str(r.engineFact, 40_000);
+  const engineFact = str(r.engineFact, REPAIR_CAPS.engineFact);
   if (engineFact == null) return null;
   if (r.kind === 'sentences') {
-    if (!Array.isArray(r.flagged) || !r.flagged.length || r.flagged.length > MAX_ITEMS) return null;
+    if (!Array.isArray(r.flagged) || !r.flagged.length || r.flagged.length > REPAIR_CAPS.flaggedItems) return null;
     const flagged: SentenceRepairItem[] = [];
     for (const f of r.flagged) {
       if (!f || typeof f !== 'object') return null;
       const o = f as Record<string, unknown>;
-      const sentence = str(o.sentence);
-      const flag = str(o.flag);
-      const note = o.note == null ? undefined : str(o.note);
+      const sentence = str(o.sentence, REPAIR_CAPS.sentence);
+      const flag = str(o.flag, REPAIR_CAPS.flag);
+      const note = o.note == null ? undefined : str(o.note, REPAIR_CAPS.note);
       if (sentence == null || flag == null || note === null) return null;
       flagged.push(note ? { sentence, flag, note } : { sentence, flag });
     }
     return { kind: 'sentences', flagged, engineFact };
   }
   if (r.kind === 'answer') {
-    const pc = str(r.pc, 200);
-    const here = strList(r.here);
-    const known = strList(r.known, 200);
-    const said = strList(r.said, 200);
-    const prose = str(r.prose, 20_000);
+    const pc = str(r.pc, REPAIR_CAPS.pc);
+    const here = strList(r.here, REPAIR_CAPS.hereItems, REPAIR_CAPS.name);
+    const known = strList(r.known, REPAIR_CAPS.knownItems, REPAIR_CAPS.knownLine);
+    const said = strList(r.said, REPAIR_CAPS.saidItems, REPAIR_CAPS.saidLine);
+    const prose = str(r.prose, REPAIR_CAPS.prose);
     if (pc == null || !here || !known || !said || prose == null) return null;
     return { kind: 'answer', pc, here, known, said, prose, engineFact };
   }
@@ -145,13 +161,13 @@ export function readCheckPayload(raw: unknown): GmCheckPayload | null {
   const r = raw as Record<string, unknown>;
   if (r.kind !== 'fact-check') return null;
   if (!r.sheet || typeof r.sheet !== 'object' || Array.isArray(r.sheet)) return null;
-  if (JSON.stringify(r.sheet).length > MAX_SHEET_CHARS) return null;
-  if (!Array.isArray(r.lines) || !r.lines.length || r.lines.length > 64) return null;
+  if (JSON.stringify(r.sheet).length > CHECK_CAPS.sheetChars) return null;
+  if (!Array.isArray(r.lines) || !r.lines.length || r.lines.length > CHECK_CAPS.lines) return null;
   const lines: FactCheckLine[] = [];
   for (const l of r.lines) {
     if (!l || typeof l !== 'object') return null;
     const o = l as Record<string, unknown>;
-    const text = str(o.text);
+    const text = str(o.text, CHECK_CAPS.lineText);
     if (!Number.isInteger(o.n) || text == null) return null;
     lines.push({ n: o.n as number, text, ...(o.speech === true ? { speech: true } : {}), ...(o.writing === true ? { writing: true } : {}) });
   }

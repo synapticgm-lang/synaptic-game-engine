@@ -2,7 +2,14 @@ import { buildFactLeafSystemPrompt, buildContextPrompt } from '../_shared/gm/mas
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 import { resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
 import { readCheckPayload, readRepairPayload, renderCheckRequest, renderRepairRequest } from '../_shared/gm/gmSideRequests.ts';
-import { checkGmTurnCaller, corsHeadersFor, rateLimitRetryAfter } from '../_shared/gmTurnAccess.ts';
+import {
+  checkGmTurnCaller,
+  checkOrigin,
+  corsHeadersFor,
+  preAuthRateKey,
+  rateLimitRetryAfter,
+  readBodyCapped,
+} from '../_shared/gmTurnAccess.ts';
 import { CLAUSE_CHECK_SYS } from '../_shared/gm/clauseCheckPrompt.ts';
 import {
   FREE_WRITER_OPENROUTER_MODEL,
@@ -236,33 +243,43 @@ Deno.serve(async (req) => {
   const respond = (body: Record<string, unknown>, status = 200, extra?: Record<string, string>) =>
     jsonResponse(req, body, status, extra);
   if (req.method === 'OPTIONS') {
-    const origin = req.headers.get('Origin')?.trim() ?? '';
+    // Preflight: allowed Origin → 204 with CORS; no or foreign Origin → bare 403.
     const cors = corsHeadersFor(req);
-    return new Response(cors['Access-Control-Allow-Origin'] || !origin ? 'ok' : 'forbidden', {
-      status: cors['Access-Control-Allow-Origin'] ? 200 : 403,
-      headers: cors,
-    });
+    return cors['Access-Control-Allow-Origin']
+      ? new Response(null, { status: 204, headers: cors })
+      : new Response(null, { status: 403, headers: { Vary: 'Origin' } });
   }
   if (req.method !== 'POST') {
     return respond({ error: 'Method not allowed' }, 405);
   }
 
-  // Phase 0 — who may call: the live game (allowed Origin + this project's key), or a founder /
-  // staff JWT from a script (no Origin). Checked before the body is read or any model is called.
-  const caller = await checkGmTurnCaller(req);
+  // Phase 0 — who may call, cheapest checks first so junk callers cost no outgoing calls:
+  // Origin (no network) → per-IP limit (no network) → project key → verified user → per-user limit.
+  const origin = checkOrigin(req);
+  if (!origin.ok) return respond({ error: origin.error }, origin.status);
+  const tooSoon = (keys: string[]) => {
+    const wait = rateLimitRetryAfter(keys);
+    return wait > 0 ? respond({ error: 'Rate limit exceeded (429).' }, 429, { 'Retry-After': String(wait) }) : null;
+  };
+  const ipLimited = tooSoon([await preAuthRateKey(req)]);
+  if (ipLimited) return ipLimited;
+  const caller = await checkGmTurnCaller(req, origin.hasOrigin);
   if (!caller.ok) return respond({ error: caller.error }, caller.status);
+  // A call with no Origin is not the game in a browser: founder / staff JWT only (same user lookup, cached).
   const privileged = await isPrivilegedPlayRequest(req);
   if (!caller.hasOrigin && !privileged) {
     return respond({ error: 'Origin required.' }, 403);
   }
-  const retryAfter = rateLimitRetryAfter([`ip:${caller.ip}`, ...(caller.userId ? [`user:${caller.userId}`] : [])]);
-  if (retryAfter > 0) {
-    return respond({ error: 'Rate limit exceeded (429).' }, 429, { 'Retry-After': String(retryAfter) });
+  if (caller.userId) {
+    const userLimited = tooSoon([`user:${caller.userId}`]);
+    if (userLimited) return userLimited;
   }
 
   let body: GmRequestBody;
+  const rawBody = await readBodyCapped(req);
+  if (rawBody == null) return respond({ error: 'Request body too large.' }, 413);
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
     return respond({ error: 'Invalid JSON body' }, 400);
   }

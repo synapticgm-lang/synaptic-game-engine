@@ -770,7 +770,16 @@ export function answerRepairPayload(
 ): GmRepairPayload {
   const pc = (check.state.character?.name ?? '').trim();
   const known = here.flatMap((p) => (backed.get(p) ?? []).map((f) => `${p}: ${f}`));
-  return { kind: 'answer', pc, here, known, said, prose, engineFact: check.engineFact };
+  // Only what the prompt uses: the last 4 lines said (100 chars each) and the first 600 chars of prose.
+  return {
+    kind: 'answer',
+    pc,
+    here,
+    known,
+    said: said.slice(-4).map((line) => line.slice(0, 100)),
+    prose: prose.slice(0, 600),
+    engineFact: check.engineFact,
+  };
 }
 /** The prompt text of {@link answerRepairPayload} (what gm-turn sends the model). */
 export function answerRepairRequest(
