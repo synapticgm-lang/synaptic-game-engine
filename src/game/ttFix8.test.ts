@@ -6,6 +6,7 @@
  * 4. "Help them" resolves the plea meeting;
  * 5. with no save loaded, a mode-bound setting is named with the modes it applies to.
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import type { GameState } from './types';
@@ -63,7 +64,7 @@ describe('2 — a person with no backed lines still answers', () => {
       packet,
       check: { state, playerInput, intent: parsePlayerIntent(playerInput, state), engineFact: '', previousGm: '' },
       repair: async (req) => {
-        asked.push(req);
+        asked.push(renderRepairRequest(req));
         return '';
       },
     });

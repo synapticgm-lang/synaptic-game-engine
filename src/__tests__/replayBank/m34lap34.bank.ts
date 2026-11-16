@@ -3,6 +3,7 @@
  * someone's own bag is set down); a place may wait ahead, like it may hold or stand; a repair for a sentence set
  * in a place already left is told where the scene is and which place is behind.
  */
+import { renderRepairRequest } from '../../game/gmSideRequests';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import type { GameState } from '../../game/types';
 import { harvestGivenAwayFromProse } from '../../game/closedFactLedger';
@@ -78,7 +79,7 @@ describe('replay bank multi lap 34', () => {
     const packet = state.completedEvent ?? ({} as never);
     let asked = '';
     const fixed = 'The first thugs dropped fast and the second followed, and then both of them lay still in the dust of the back streets.';
-    const ok = await repairRejectedSentences(turn, { packet, check, repair: async (req) => ((asked = req), fixed) });
+    const ok = await repairRejectedSentences(turn, { packet, check, repair: async (req) => ((asked = renderRepairRequest(req)), fixed) });
     expect(asked).toContain(stale);
     // tt-fix-1 (6d775f7d) made "where the scene is" its own sentence in the note.
     expect(asked).toContain('This happens on the back streets from Lowmarket toward The Weighing Cup. Lowmarket is a place the player already left, away from here: nothing in this sentence is in or at Lowmarket, and nothing from Lowmarket is within sight or reach.');

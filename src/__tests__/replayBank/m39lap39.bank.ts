@@ -4,6 +4,7 @@
  * repair takes one member of a group held here ("a thug" for the thugs) as the speaker and does not ask a foe
  * the engine just put down to answer.
  */
+import { renderRepairRequest } from '../../game/gmSideRequests';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -52,7 +53,7 @@ async function answerRepair(state: GameState, playerInput: string, reply: string
     packet: state.completedEvent!,
     check: { state, playerInput, intent: parsePlayerIntent(playerInput, state), engineFact: '', previousGm: '' },
     repair: async (request) => {
-      asked.push(request);
+      asked.push(renderRepairRequest(request));
       return reply;
     },
   });

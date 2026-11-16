@@ -2,6 +2,7 @@
  * Order RC-AR1 — present means backed: sheeted townsfolk answer from sheet motive lines.
  * Acceptance: docs/orders/acceptance-tests-new-orders.md § RC-AR1.
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import type { GameState, NpcMemory } from './types';
@@ -65,7 +66,7 @@ async function talkTo(
       previousGm: '',
     },
     repair: async (req) => {
-      asked.push(req);
+      asked.push(renderRepairRequest(req));
       return reply;
     },
   });

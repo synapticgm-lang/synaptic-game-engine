@@ -28,6 +28,7 @@ import {
   type WriterRawIssue,
 } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
+import type { GmCheckPayload, GmRepairPayload } from './gmSideRequests';
 import { parseGmTurnResponse } from './schemas';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
 import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from './openingWriterNotes';
@@ -137,6 +138,9 @@ export async function invokeGmProxy(params: {
   mode: GmProxyMode;
   state: GameState;
   playerInput: string;
+  /** Phase 0 — repair / check send typed data; gm-turn builds the prompt (never caller text). */
+  repair?: GmRepairPayload;
+  check?: GmCheckPayload;
   settings: Settings;
   activeLoreCards?: LoreCard[];
   onRetry?: (attempt: number, delayMs: number) => void;
@@ -196,6 +200,8 @@ export async function invokeGmProxy(params: {
     const body = {
       mode: params.mode,
       playerInput: params.playerInput,
+      ...(params.mode === 'repair' && params.repair ? { repair: params.repair } : {}),
+      ...(params.mode === 'check' && params.check ? { check: params.check } : {}),
       state: params.state,
       loreCards: params.activeLoreCards ?? [],
       settings: {
@@ -204,7 +210,7 @@ export async function invokeGmProxy(params: {
         aiProvider: 'openrouter',
         customModelId: modelId,
         subscriptionTier: tier,
-        baseUrl: params.settings.baseUrl,
+        // Phase 0 — no baseUrl: gm-turn always calls OpenRouter itself.
         diceAnimation: params.settings.diceAnimation,
         panelFrequency: params.settings.panelFrequency,
         statVerbosity: params.settings.statVerbosity,

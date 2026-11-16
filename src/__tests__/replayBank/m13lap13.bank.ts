@@ -4,6 +4,7 @@
  * engine fact, a passing rewrite takes its place, a failed one leaves the page and is logged as a bug.
  * Per-sentence gating made the gate's misreads cost real prose, so those owners were fixed too.
  */
+import { renderRepairRequest } from '../../game/gmSideRequests';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { sentenceGateProblem } from '../../game/beatCommitGate';
 import { repairRejectedSentences, type SentenceRepair } from '../../game/writerTurn';
@@ -82,7 +83,7 @@ describe('replay bank multi lap 13', () => {
     const packet = state.completedEvent ?? ({} as never);
     let asked = '';
     const fixed = `The ${kill!.name} lay still where it had fallen.`;
-    const ok = await repairRejectedSentences(turn, { packet, check, repair: async (req) => ((asked = req), fixed) });
+    const ok = await repairRejectedSentences(turn, { packet, check, repair: async (req) => ((asked = renderRepairRequest(req)), fixed) });
     expect(asked).toContain(dead);
     expect(asked).toContain(`Engine fact: ${kill!.name} is dead.`);
     expect(asked).not.toContain(before);
