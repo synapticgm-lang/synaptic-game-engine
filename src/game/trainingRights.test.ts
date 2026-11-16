@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { HOST_TRAINING_RIGHTS, isFallbackHost, trainingRightsFor } from './trainingRights';
 import { PREFERRED_TRAINING_PROVIDER_ORDER, openRouterProviderRouting } from './openRouterChat';
+import { buildCaptureRow, readClientCapture, type CaptureAttempt } from './trainingCaptureRow';
 
 const M = 'deepseek/deepseek-v4.1-flash';
 
@@ -37,5 +38,28 @@ describe('training rights by served host', () => {
     expect(r.data_collection).toBe('deny');
     expect(r).not.toHaveProperty('only');
     expect(r).not.toHaveProperty('enforce_distillable_text');
+  });
+
+  it('route_fallback marks only answers served outside the preferred hosts; all-failed calls are not fallback', () => {
+    const row = (attempts: CaptureAttempt[]) =>
+      buildCaptureRow({
+        basis: 'test',
+        userId: '00000000-0000-4000-8000-000000000001',
+        client: readClientCapture({}, 'turn'),
+        state: {},
+        attempts,
+        finalText: '',
+        completionStatus: 'ok',
+        requestedModel: M,
+        keySource: 'server',
+        usage: null,
+      })!;
+    const served = (servedProvider?: string): CaptureAttempt =>
+      ({ messages: [], settings: {}, text: 'x', issue: null, servedProvider, servedModel: M });
+    const failed: CaptureAttempt = { messages: [], settings: {}, text: '', issue: null, failed: true };
+    expect(row([served('Wafer')])).toMatchObject({ route_fallback: false, rights: 'conditional' });
+    expect(row([served('DeepInfra')])).toMatchObject({ route_fallback: true, rights: 'unknown' });
+    expect(row([failed, served('InferenceNet')])).toMatchObject({ route_fallback: true, rights: 'excluded' });
+    expect(row([failed, failed])).toMatchObject({ route_fallback: false, rights: 'unknown' });
   });
 });

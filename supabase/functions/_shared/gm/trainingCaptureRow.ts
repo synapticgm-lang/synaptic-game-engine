@@ -129,8 +129,7 @@ export function buildCaptureRow(args: {
     served_provider: servedProvider,
     served_model: servedModel,
     generation_ids: attempts.map((a) => a.generationId).filter((g): g is string => !!g),
-    route_fallback: attempts.some((a) => !a.failed && isFallbackHost(a.servedProvider, PREFERRED_TRAINING_PROVIDER_ORDER))
-      || !attempts.some((a) => !a.failed),
+    route_fallback: attempts.some((a) => !a.failed && isFallbackHost(a.servedProvider, PREFERRED_TRAINING_PROVIDER_ORDER)),
     rights,
     finish_reason: answered?.finishReason ?? null,
     completion_status: args.completionStatus,
