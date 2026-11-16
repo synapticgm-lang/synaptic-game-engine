@@ -7,10 +7,11 @@
  * the world's genre/setting (colour free; unsupported serious facts get one sentence repair).
  */
 
+import type { GmRepairPayload } from './gmSideRequests';
 import type { FactSheet } from './factSheet';
 import { formatFactSheetForWriter } from './factSheet';
 import { splitProseSentences } from './proseSentences';
-import { replaceDraftSentence, sentenceRepairRequest } from './writerTurn';
+import { replaceDraftSentence, sentenceRepairPayload } from './writerTurn';
 import {
   CLAUSE_CHECK_SYS,
   parseClauseClaims,
@@ -237,7 +238,7 @@ export async function checkAndRepairProse(args: {
   player: ClauseCheckPlayer;
   chat: ClauseCheckChat;
   /** Existing sentence repair (callGmRepair). Optional — without it, serious facts are logged only. */
-  repair?: (request: string) => Promise<string>;
+  repair?: (request: GmRepairPayload) => Promise<string>;
   engineFact?: string;
 }): Promise<ClauseCheckAndRepairResult> {
   const first = await runClauseCheck({
@@ -266,7 +267,7 @@ export async function checkAndRepairProse(args: {
     const target = first.serious[0]!;
     const sentence = sentenceForClaim(prose, target.c);
     if (sentence) {
-      const request = sentenceRepairRequest(
+      const request = sentenceRepairPayload(
         [
           {
             sentence,

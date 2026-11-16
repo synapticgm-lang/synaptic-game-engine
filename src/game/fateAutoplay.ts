@@ -35,6 +35,7 @@ import {
   type CampaignBible,
 } from '@/data/campaigns';
 import { callGm, callGmCheck, callGmRepair } from './aiService';
+import { renderRepairRequest } from './gmSideRequests';
 import {
   captureTurnEngineFacts,
   repairParentExtra,
@@ -2085,9 +2086,10 @@ Do NOT print dice notation or CODE ENFORCED.
       repair: async (request) => {
         const started = Date.now();
         writerCallMeter.calls += 1;
-        const draftMatch = request.match(/Sentence:\s*"([\s\S]*?)"\n/);
-        const flagMatch = request.match(/Problem:\s*(.+)/);
-        const factMatch = request.match(/Engine fact:\s*([\s\S]*)$/);
+        const requestText = renderRepairRequest(request);
+        const draftMatch = requestText.match(/Sentence:\s*"([\s\S]*?)"\n/);
+        const flagMatch = requestText.match(/Problem:\s*(.+)/);
+        const factMatch = requestText.match(/Engine fact:\s*([\s\S]*)$/);
         try {
           return await withTrainLogJob(
             'repair',

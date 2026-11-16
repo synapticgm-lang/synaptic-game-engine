@@ -4,6 +4,7 @@
  * (ds208 T21); the fact checker no longer reads the holder's "and waited" as the papers waiting (ds208 T21);
  * a way-out repair is handed this place's ways out as its fact, with how to fix the count (ds151 T15).
  */
+import { renderRepairRequest } from '../../game/gmSideRequests';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -87,7 +88,7 @@ describe('replay bank m59 (lap 59)', () => {
     const out = await repairRejectedSentences(turn, {
       packet: s.completedEvent as CompletedEventPacket,
       check,
-      repair: async (request) => { asked = request; return HOOK; },
+      repair: async (request) => { asked = renderRepairRequest(request); return HOOK; },
     });
     // tt-fix-4 (430fb4c8): the writer is handed the travel receipt's plain form; the record keeps the receipt.
     expect(asked).toContain(`Engine fact: ${EXITS} Arrived at Cathedral Close. It is now afternoon.`);
@@ -117,7 +118,7 @@ describe('replay bank m59 (lap 59)', () => {
     const out = await repairRejectedSentences({ prose: `${A.prose(15)} ${HOOK}` } as unknown as WriterTurnResult, {
       packet: s.completedEvent as CompletedEventPacket,
       check,
-      repair: async (request) => { asked = request; return HOOK; },
+      repair: async (request) => { asked = renderRepairRequest(request); return HOOK; },
     });
     expect(out.repairs?.[0]?.fact).toBe(EXITS);
     expect(asked.split('Exits:').length - 1).toBe(1);

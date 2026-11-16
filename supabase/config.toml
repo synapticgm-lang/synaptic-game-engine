@@ -2,6 +2,9 @@
 project_id = "synapticgm"
 
 [functions.gm-turn]
+# Phase 0: the gateway JWT check stays off on purpose. gm-turn checks callers itself
+# (_shared/gmTurnAccess.ts): allowed Origin + this project's anon/publishable key, user JWTs
+# verified with the auth server, a per-IP/per-user rate limit, and CORS preflights still answered.
 verify_jwt = false
 
 [functions.generate-image]

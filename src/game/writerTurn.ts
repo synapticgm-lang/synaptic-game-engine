@@ -1,4 +1,5 @@
 /** Writer turn: first draft is the beat; blocking problems get one rewrite in runWriterTurnWithFightRetry. */
+import { renderRepairRequest, type GmRepairPayload } from './gmSideRequests';
 import { openingCastFacts } from './npcSheet';
 import type { GameState } from './types';
 import { givePcTheirQuote, stripUnauthorizedNpcSpeech, type PlayerIntent } from './intentParser';
@@ -458,7 +459,7 @@ export async function runWriterTurnWithFightRetry(opts: {
   packet: CompletedEventPacket;
   check: DraftCheck;
   rewrite: (problem: string) => Promise<string>;
-  repair?: (request: string) => Promise<string>;
+  repair?: (request: GmRepairPayload) => Promise<string>;
 }): Promise<WriterTurnRetryResult> {
   const turn = await runWriterTurnFightOnly(opts);
   if (turn.outcome !== 'accepted' || turn.path === 'last-resort') return turn;
@@ -759,7 +760,28 @@ export function speaksOfSelf(quoted: string, speaker: string): boolean {
   const parts = speaker.split(/\s+/).filter((w) => w.length > 2 && /^[A-Z]/.test(w) && !SELF_TITLE.test(w));
   return parts.some((w) => new RegExp(`\\b${escRe(w)}\\b`).test(quoted));
 }
-/** The one request for a missing answer. The player's character is never the speaker: the player speaks for them. */
+/** The one request for a missing answer, as data (gm-turn builds the prompt). The player's character is never the speaker. */
+export function answerRepairPayload(
+  check: DraftCheck,
+  here: string[],
+  said: string[],
+  prose: string,
+  backed: Map<string, string[]> = new Map()
+): GmRepairPayload {
+  const pc = (check.state.character?.name ?? '').trim();
+  const known = here.flatMap((p) => (backed.get(p) ?? []).map((f) => `${p}: ${f}`));
+  // Only what the prompt uses: the last 4 lines said (100 chars each) and the first 600 chars of prose.
+  return {
+    kind: 'answer',
+    pc,
+    here,
+    known,
+    said: said.slice(-4).map((line) => line.slice(0, 100)),
+    prose: prose.slice(0, 600),
+    engineFact: check.engineFact,
+  };
+}
+/** The prompt text of {@link answerRepairPayload} (what gm-turn sends the model). */
 export function answerRepairRequest(
   check: DraftCheck,
   here: string[],
@@ -767,28 +789,12 @@ export function answerRepairRequest(
   prose: string,
   backed: Map<string, string[]> = new Map()
 ): string {
-  const pc = (check.state.character?.name ?? '').trim();
-  const known = here.flatMap((p) => (backed.get(p) ?? []).map((f) => `${p}: ${f}`));
-  return [
-    'Your story left out the answer. Write ONE sentence in which a person here answers the player.',
-    'Format: the spoken words inside quote marks, plus who said it outside the quotes, e.g. "Words they say," Name said. Use a name from People here as the speaker.',
-    'The spoken words say only what that person is known to say below, in their own voice: first person (I, me, my), never their own name, and never a copy of a note. Add no new fact, person, place, object or task.',
-    ...(pc ? [`${pc} is the player's character: never write words, a reply or a decision for ${pc}.`] : []),
-    'Reply with only that sentence as plain prose. No JSON, no other text.',
-    // T10ECHO — do not paste the typed line into repair input (UI already shows it).
-    `Player spoke (already shown in UI; answer with world/NPC consequence — do not restate their words).`,
-    `People here: ${here.join('; ')}`,
-    `Known to say: ${known.join(' | ')}`,
-    ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
-    `Your story so far: ${prose.slice(0, 600)}`,
-    // T10S — repair must not see Must-narrate PC acts converted to story (that pasted player clauses onto NPCs).
-    `Engine fact: ${engineFactForRepair(check.engineFact).trim() || 'Keep only what the scene already established.'}`,
-  ].join('\n');
+  return renderRepairRequest(answerRepairPayload(check, here, said, prose, backed));
 }
 /** Missing quoted reply on a talk turn: one repair sentence, else log the miss. */
 export async function repairMissingAnswer(
   turn: WriterTurnRetryResult,
-  opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
+  opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: GmRepairPayload) => Promise<string> }
 ): Promise<WriterTurnRetryResult> {
   const { check, packet } = opts;
   if (!isTalkTurn(check.playerInput, check.intent) || playerAsksRepeat(check.playerInput)) return turn;
@@ -810,7 +816,7 @@ export async function repairMissingAnswer(
   const said = [...alreadySaidLines(check.state, packet).values()].flat();
   if (!backed.size) return { ...turn, answerRepair: { ...missing, bug: `no backed line for ${here.join(', ')}` } };
   const speakers = [...backed.keys()];
-  const request = answerRepairRequest(check, speakers, said, turn.prose, backed);
+  const request = answerRepairPayload(check, speakers, said, turn.prose, backed);
   const sent = !!opts.repair && !turn.repairs?.some((r) => !r.bug?.startsWith('unlocated'));
   const raw = sent ? await opts.repair!(request).catch(() => '') : '';
   const line = raw.trim() ? repairReplyLines(raw, check, packet, 1)?.[0] : undefined;
@@ -866,23 +872,19 @@ export function replaceDraftSentence(prose: string, sentence: string, replacemen
   const next = prose.replace(new RegExp(sentence.trim().split(/\s+/).map(escRe).join('\\s+')), () => replacement.trim());
   return next.replace(/[ \t]{2,}/g, ' ').replace(/ +([.,!?])/g, '$1').replace(/^\s+|\s+$/g, '');
 }
-/** One request: only the flagged sentence(s), why each failed, and the engine fact. */
+/** One request: only the flagged sentence(s), why each failed, and the engine fact — as data (gm-turn builds the prompt). */
+export function sentenceRepairPayload(
+  flagged: { sentence: string; flag: string; note?: string }[],
+  engineFact: string
+): GmRepairPayload {
+  return { kind: 'sentences', flagged: flagged.map((f) => ({ sentence: f.sentence, flag: f.flag, ...(f.note ? { note: f.note } : {}) })), engineFact };
+}
+/** The prompt text of {@link sentenceRepairPayload} (what gm-turn sends the model). */
 export function sentenceRepairRequest(
   flagged: { sentence: string; flag: string; note?: string }[],
   engineFact: string
 ): string {
-  const many = flagged.length > 1;
-  return [
-    many
-      ? `Rewrite these ${flagged.length} sentences of your story. Reply with one rewritten sentence per line, in order, as plain prose. No JSON, no numbers, no other text.`
-      : 'Rewrite this one sentence of your story. Reply with only the rewritten sentence as plain prose. No JSON, no other text.',
-    ...flagged.map(
-      (f, i) =>
-        `${many ? `${i + 1}. ` : ''}Sentence: "${f.sentence}"\n${many ? '   ' : ''}Problem: ${f.flag}${f.note ? ` ${f.note}` : ''}`
-    ),
-    // T10S — strip Must narrate / PC says cues so a rewrite cannot mirror the player's act onto an NPC.
-    `Engine fact: ${engineFactForRepair(engineFact).trim() || 'Keep only what the scene already established.'}`,
-  ].join('\n');
+  return renderRepairRequest(sentenceRepairPayload(flagged, engineFact));
 }
 function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEventPacket, count: number): string[] | null {
   const rendered = renderWriterDraft(raw, check.state, packet).prose
@@ -898,7 +900,7 @@ function repairReplyLines(raw: string, check: DraftCheck, packet: CompletedEvent
 /** One repair request for every gate-rejected / dropped line; failures leave the page and are logged. */
 export async function repairRejectedSentences(
   turn: WriterTurnRetryResult,
-  opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: string) => Promise<string> }
+  opts: { packet: CompletedEventPacket; check: DraftCheck; repair?: (request: GmRepairPayload) => Promise<string> }
 ): Promise<WriterTurnRetryResult> {
   const { check, packet } = opts;
   // The draft as a whole is what the gate rejects; a sentence that only reads wrong out of context is not.
@@ -934,7 +936,7 @@ export async function repairRejectedSentences(
       ...f,
       note: [staleLocationRepairNote(check.state, f.sentence), countNote].filter(Boolean).join(' '),
     }));
-    raw = await opts.repair(sentenceRepairRequest(asked, fact)).catch(() => '');
+    raw = await opts.repair(sentenceRepairPayload(asked, fact)).catch(() => '');
     lines = raw.trim() ? repairReplyLines(raw, check, packet, flagged.length) : null;
     bug = raw.trim() ? 'repair reply was not a rewrite of the flagged sentence' : 'repair reply empty';
   }

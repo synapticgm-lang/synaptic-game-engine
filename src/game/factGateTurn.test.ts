@@ -2,6 +2,7 @@
  * The turn asks a model only for spans the code marked UNSURE, and only when
  * SGM_UNSURE_FACT_CHECK=on. A clean page makes no call. No live model.
  */
+import { renderCheckRequest } from './gmSideRequests';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -57,7 +58,7 @@ describe('turn fact model', () => {
   it('makes no call for an empty unsure list, and sends only those spans when asked', async () => {
     const seen: string[] = [];
     const check = makeUnsureFactChecker(sheet(), async (payload) => {
-      seen.push(payload);
+      seen.push(renderCheckRequest(payload));
       return '[{"n":1,"verdict":"keep"}]';
     });
     expect(await check([])).toEqual([]);
@@ -103,7 +104,7 @@ describe('turn fact model', () => {
       factCheckEnabled: false,
       unsureCheckEnabled: true,
       unsureCheck: makeUnsureFactChecker(sheet(), async (body) => {
-        payload = body;
+        payload = renderCheckRequest(body);
         return '[{"n":1,"verdict":"keep"}]';
       }),
     });

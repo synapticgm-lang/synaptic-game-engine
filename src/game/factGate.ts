@@ -2,6 +2,7 @@
  * Code fact gate. Every span gets a code verdict.
  * A model runs only for spans that come back UNSURE, and only when SGM_UNSURE_FACT_CHECK=on.
  */
+import { renderCheckRequest, type GmCheckPayload } from './gmSideRequests';
 import type { FactSheet } from './factSheet';
 import type { FactObjectNote, FactObjectTag } from './roomProps';
 import { isPlacedIndefinite, readObjectTag, tagsFromPlacedSpan } from './roomProps';
@@ -761,25 +762,7 @@ export function formatFactCheckRequest(input: {
   sheet: FactSheet;
   lines: Array<{ n: number; text: string; speech?: boolean; writing?: boolean }>;
 }): string {
-  return [
-    'Fact check. One verdict for every numbered line: keep, remove, or repair-once.',
-    'A line marked [narration] is the narrator. A line marked [speech] is an NPC talking. A line marked [writing] is a notice, sign, letter, or page: keep it as text someone read, and do not treat it as what is now true.',
-    'Keep speech that recounts past events, backstory, rumour, legend, opinion, or the speaker\'s own view. Commands, offers, refusals, and lies about what already happened stay.',
-    'Remove speech only when it claims that the player, the party, or a present NPC now holds something, or is now somewhere else, and that claim contradicts the sheet.',
-    'Words outside the quotation marks are narration.',
-    'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
-    'A scare-quoted or so-called object that is only turned over, looked at, or described is not a gain. Keep that sentence unless it states that someone now newly holds a real item, listed or unlisted.',
-    'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
-    'On a kept [narration] line, add "objects" only for a real portable or fixed physical thing in the place: [{"label":"old rusty sword","kind":"furniture|armour|weapon|tool|coin|other","mount":"fixed|hung|loose","owner":"place"}]. The label must use words from that line. Do not put objects on a [speech] or [writing] line. A line may be here only because it places something. Leaving "objects" off does not remove that line: the sentence stays and nothing is filed.',
-    'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text". A kept narration row may include "objects".',
-    'SHEET:',
-    JSON.stringify(input.sheet),
-    'LINES:',
-    ...input.lines.map((line) => {
-      const tag = line.writing ? '[writing]' : line.speech ? '[speech]' : '[narration]';
-      return `${line.n}. ${tag} ${line.text}`;
-    }),
-  ].join('\n');
+  return renderCheckRequest(input);
 }
 
 export function parseFactCheckReply(text: string): CandidateCheck[] {
@@ -824,14 +807,15 @@ export function parseFactCheckReply(text: string): CandidateCheck[] {
   return rows;
 }
 
-export function makeHostedFactChecker(call: (payload: string) => Promise<string>): FactChecker {
-  return async (input) => parseFactCheckReply(await call(formatFactCheckRequest(input)));
+export function makeHostedFactChecker(call: (payload: GmCheckPayload) => Promise<string>): FactChecker {
+  // Data only: gm-turn builds the check prompt from this payload (renderCheckRequest).
+  return async (input) => parseFactCheckReply(await call({ kind: 'fact-check', sheet: input.sheet, lines: input.lines }));
 }
 
 /** One hosted check of the spans code already marked UNSURE. An empty list makes no call. */
 export function makeUnsureFactChecker(
   sheet: FactSheet,
-  call: (payload: string) => Promise<string>,
+  call: (payload: GmCheckPayload) => Promise<string>,
 ): (spans: FactSpan[]) => Promise<UnsureVerdict[]> {
   const hosted = makeHostedFactChecker(call);
   return async (spans) => {

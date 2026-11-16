@@ -8,6 +8,7 @@
  * 5. no fight spawns on a line spoken to someone here; spawn wording follows the place.
  * 6. a stable death save moves the clock; no quest nudge while dying.
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import type { GameState, Quest } from './types';
@@ -140,7 +141,7 @@ describe('root 3 — repairs that drop or miss the right line', () => {
       packet,
       check: { state, playerInput, intent: parsePlayerIntent(playerInput, state), engineFact: '', previousGm: '' },
       repair: async (req) => {
-        asked.push(req);
+        asked.push(renderRepairRequest(req));
         return '';
       },
     });

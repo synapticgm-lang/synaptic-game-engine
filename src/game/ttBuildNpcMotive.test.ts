@@ -6,6 +6,7 @@
  *    the one not said yet, else the least recent (motiveUsed, kept by the harvest);
  * 4. sheetAnswerLine is gone (no parallel path).
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { describe, expect, it } from 'vitest';
 import archetypes from '../../docs/research/manus-next-stage/npc-personalities.json';
 import motiveData from '../data/npcMotiveLines.json';
@@ -122,7 +123,7 @@ describe('3 — the writer answers first; the engine line only when that fails',
       packet,
       check: { state, playerInput, intent: parsePlayerIntent(playerInput, state), engineFact: '', previousGm: '' },
       repair: async (req) => {
-        asked.push(req);
+        asked.push(renderRepairRequest(req));
         return reply;
       },
     });

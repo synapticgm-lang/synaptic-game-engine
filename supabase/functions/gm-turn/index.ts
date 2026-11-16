@@ -1,6 +1,15 @@
 import { buildFactLeafSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
-import { formatPerspectiveRule, pcPov, resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
+import { resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
+import { readCheckPayload, readRepairPayload, renderCheckRequest, renderRepairRequest } from '../_shared/gm/gmSideRequests.ts';
+import {
+  checkGmTurnCaller,
+  checkOrigin,
+  corsHeadersFor,
+  preAuthRateKey,
+  rateLimitRetryAfter,
+  readBodyCapped,
+} from '../_shared/gmTurnAccess.ts';
 import { CLAUSE_CHECK_SYS } from '../_shared/gm/clauseCheckPrompt.ts';
 import {
   FREE_WRITER_OPENROUTER_MODEL,
@@ -11,7 +20,6 @@ import {
   openRouterChatHeaders,
   readChatCompletion,
   readChatUsage,
-  recordCompletedChatCall,
   rejectFireworksServed,
   stripReasoningBlocks,
   sumWriterUsage,
@@ -19,24 +27,17 @@ import {
   type ChatCompletionRead,
 } from '../_shared/gm/openRouterChat.ts';
 import { pinnedModel } from '../_shared/gm/modelIds.ts';
-import {
-  engineFactsForTrainRow,
-  peekTrainLogRows,
-  pushTrainLogJob,
-  popTrainLogJob,
-  setTrainLogSession,
-  type TrainLogJob,
-} from '../_shared/gm/trainLog.ts';
 import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from '../_shared/gm/openingWriterNotes.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+/**
+ * Phase 0 — the server decides the upstream. Every model call goes to this URL; nothing in the
+ * request can change it, so the server's OpenRouter key is only ever sent to OpenRouter.
+ */
+const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
 
-type GmMode = 'turn' | 'auto-fight' | 'repair' | 'check';
+/** auto-fight (a free caller prompt) has no client caller and is refused. */
+type GmMode = 'turn' | 'repair' | 'check';
 
 interface GmRequestBody {
   mode?: GmMode;
@@ -47,19 +48,10 @@ interface GmRequestBody {
   clientApiKey?: string;
   /** The turn's strict Token Prose schema, built by the client from the REF ENUM. */
   tokenSchema?: Record<string, unknown>;
-  /** q71-TRAINLOG — autoplay/test-lab only; never set by real-player clients. */
-  trainLog?: boolean;
-  trainJob?: TrainLogJob;
-  /** Client session context so repair parent_id is scoped to this turn (edge isolates do not share maps). */
-  trainRunId?: string | null;
-  trainTurnNo?: number | null;
-  trainSaveId?: string | null;
-  trainMode?: string | null;
-  trainGenre?: string | null;
-  trainBuildStamp?: string | null;
-  trainParentId?: string | null;
-  /** Facts captured with the packet. Repair rows must not re-read a later state. */
-  trainEngineFacts?: unknown;
+  /** Phase 0 — mode 'repair' / 'check': typed data only; the prompt is built here. */
+  repair?: unknown;
+  check?: unknown;
+  // Phase 0 — trainLog / baseUrl / aiProvider fields from older clients are ignored.
 }
 
 /** A client schema is forwarded only when it is a plain object of sane size; otherwise the static schema stands. */
@@ -81,12 +73,12 @@ function schemaForTurn(state: Record<string, unknown> | undefined, rawSchema: un
   return readTokenSchema(rawSchema);
 }
 
-function jsonResponse(body: Record<string, unknown>, status = 200, extraHeaders?: Record<string, string>) {
+function jsonResponse(req: Request, body: Record<string, unknown>, status = 200, extraHeaders?: Record<string, string>) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'Content-Type': 'application/json',
-      ...CORS_HEADERS,
+      ...corsHeadersFor(req),
       ...extraHeaders,
     },
   });
@@ -118,16 +110,17 @@ function assembleSystemPrompt(
   return systemPrompt;
 }
 
+/**
+ * Phase 0 — the server picks the provider and the URL. The caller's aiProvider / baseUrl are ignored.
+ * OpenRouter always (a player's own key, else the server key); the server Gemini key is only a
+ * fallback when the server has no OpenRouter key and the player sent none.
+ */
 function resolveCredentials(body: GmRequestBody): {
-  provider: string;
+  provider: 'openrouter' | 'gemini';
   apiKey: string;
   model?: string;
-  baseUrl?: string;
 } {
   const settings = body.settings ?? {};
-  let provider = String(settings.aiProvider ?? 'openrouter');
-  // Retired Fireworks provider — never call it; Free / unknown hosted path is OpenRouter.
-  if (provider === 'fireworks') provider = 'openrouter';
   const clientKey = typeof body.clientApiKey === 'string' ? body.clientApiKey.trim() : '';
   const serverOpenRouter = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
   const serverGemini = Deno.env.get('GEMINI_API_KEY')?.trim() || '';
@@ -141,43 +134,14 @@ function resolveCredentials(body: GmRequestBody): {
       ? settings.customModelId.trim()
       : undefined;
   // Old recorded Fireworks slugs must never place a call — remap to the Free OpenRouter DeepSeek.
-  if (model && /^accounts\/fireworks\/|^fireworks\//i.test(model)) {
-    model = FREE_WRITER_OPENROUTER_MODEL;
-    provider = 'openrouter';
-  }
-
+  if (model && /^accounts\/fireworks\/|^fireworks\//i.test(model)) model = FREE_WRITER_OPENROUTER_MODEL;
   if (!model && (tier === 'free' || !tier)) model = FREE_WRITER_OPENROUTER_MODEL;
 
-  let apiKey = clientKey;
-  if (!apiKey && !byokNoHosted) {
-    if (provider === 'gemini' && serverGemini) apiKey = serverGemini;
-    else if (serverOpenRouter) {
-      provider = 'openrouter';
-      apiKey = serverOpenRouter;
-      if (!model && (tier === 'free' || !tier)) model = FREE_WRITER_OPENROUTER_MODEL;
-    } else if (serverGemini) {
-      provider = 'gemini';
-      apiKey = serverGemini;
-    }
-  } else if (!byokNoHosted && (provider === 'gemini' || !apiKey) && !clientKey && serverOpenRouter) {
-    provider = 'openrouter';
-    apiKey = serverOpenRouter;
-    if (!model && (tier === 'free' || !tier)) model = FREE_WRITER_OPENROUTER_MODEL;
-  }
-
-  // Prefer OpenRouter when client sent an OR key but provider still says gemini
-  if (provider === 'gemini' && clientKey.startsWith('sk-or-')) {
-    provider = 'openrouter';
-  }
-
-  if (provider === 'openrouter') model = pinnedModel('openrouter', model);
-
-  return {
-    provider,
-    apiKey,
-    model,
-    baseUrl: typeof settings.baseUrl === 'string' ? settings.baseUrl : undefined,
-  };
+  if (clientKey) return { provider: 'openrouter', apiKey: clientKey, model: pinnedModel('openrouter', model) };
+  if (byokNoHosted) return { provider: 'openrouter', apiKey: '', model };
+  if (serverOpenRouter) return { provider: 'openrouter', apiKey: serverOpenRouter, model: pinnedModel('openrouter', model) };
+  if (serverGemini) return { provider: 'gemini', apiKey: serverGemini, model: undefined };
+  return { provider: 'openrouter', apiKey: '', model };
 }
 
 /** Plain-text reply (Google / Anthropic) → story text with thinking stripped, plus the raw issue. */
@@ -196,10 +160,11 @@ async function callGoogle(
   maxTokens: number
 ): Promise<ChatCompletionRead> {
   const modelName = model || 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  // Key in a header, never in the URL (URLs end up in logs).
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}:generateContent`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -212,8 +177,8 @@ async function callGoogle(
     throw err;
   }
   if (!res.ok) {
-    const errBody = await res.json().catch(() => ({}));
-    throw new Error(errBody?.error?.message ?? `AI service error ${res.status}`);
+    await res.body?.cancel();
+    throw new Error(`AI service error ${res.status}`);
   }
   const data = await res.json();
   const cand = data.candidates?.[0];
@@ -225,52 +190,36 @@ async function callGoogle(
   return { ...read, usage };
 }
 
-async function callOpenAICompat(
+/** OpenRouter chat call. The URL is the server constant above — never from the request. */
+async function callOpenRouter(
   prompt: string,
   systemPrompt: string,
   apiKey: string,
   model: string,
-  baseUrl: string,
   opts: { tokenProse?: boolean; tokenSchema?: Record<string, unknown>; maxTokens: number }
 ): Promise<ChatCompletionRead> {
   const maxTokens = opts.maxTokens;
-  const openRouter = /openrouter\.ai/i.test(baseUrl);
-  const tokenProse = !!opts?.tokenProse && openRouter;
+  const tokenProse = !!opts?.tokenProse;
   const post = (withSchema: boolean) =>
-    fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
+    fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
       method: 'POST',
-      headers: openRouter
-        ? openRouterChatHeaders(apiKey)
-        : {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
+      headers: openRouterChatHeaders(apiKey),
       body: JSON.stringify(
-        openRouter
-          ? openRouterChatBody(
-              model,
-              systemPrompt,
-              prompt,
-              maxTokens,
-              withSchema
-                ? {
-                    tokenProse: true,
-                    n: isOpeningPageSchema(opts.tokenSchema) ? 1 : 2,
-                    schema: opts.tokenSchema,
-                    schemaName: isOpeningPageSchema(opts.tokenSchema) ? 'opening_page' : 'token_prose',
-                    attachNewPlaces: !isOpeningPageSchema(opts.tokenSchema),
-                  }
-                : undefined
-            )
-          : {
-              model,
-              messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: prompt },
-              ],
-              temperature: 0.9,
-              max_tokens: maxTokens,
-            }
+        openRouterChatBody(
+          model,
+          systemPrompt,
+          prompt,
+          maxTokens,
+          withSchema
+            ? {
+                tokenProse: true,
+                n: isOpeningPageSchema(opts.tokenSchema) ? 1 : 2,
+                schema: opts.tokenSchema,
+                schemaName: isOpeningPageSchema(opts.tokenSchema) ? 'opening_page' : 'token_prose',
+                attachNewPlaces: !isOpeningPageSchema(opts.tokenSchema),
+              }
+            : undefined
+        )
       ),
     });
   let res = await post(tokenProse);
@@ -283,95 +232,87 @@ async function callOpenAICompat(
     throw err;
   }
   if (!res.ok) {
-    const errBody = await res.json().catch(() => ({}));
-    throw new Error(errBody?.error?.message ?? `OpenAI-compat error ${res.status}`);
+    await res.body?.cancel();
+    throw new Error(`OpenRouter error ${res.status}`);
   }
   // Hard reject if OpenRouter somehow served via Fireworks (provider.ignore should prevent this).
   return rejectFireworksServed(readChatCompletion(await res.json()));
 }
 
-async function callAnthropic(
-  prompt: string,
-  systemPrompt: string,
-  apiKey: string,
-  model: string | undefined,
-  maxTokens: number
-): Promise<ChatCompletionRead> {
-  const modelName = model || 'claude-3-5-sonnet-latest';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: modelName,
-      system: systemPrompt,
-      max_tokens: maxTokens,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-  if (res.status === 429) {
-    const err = new Error('Rate limit exceeded (429).');
-    (err as Error & { status: number }).status = 429;
-    throw err;
-  }
-  if (!res.ok) {
-    const errBody = await res.json().catch(() => ({}));
-    throw new Error(errBody?.error?.message ?? `Anthropic error ${res.status}`);
-  }
-  const data = await res.json();
-  const blocks = (data.content ?? []) as Array<{ type?: string; text?: string }>;
-  const story = blocks.filter((b) => b.type === 'text' || (!b.type && b.text)).map((b) => b.text ?? '').join('');
-  const usage = readChatUsage(data);
-  const read = readPlainReply(story, data.stop_reason);
-  if (!read.text && blocks.some((b) => b.type === 'thinking')) return { text: '', issue: 'reasoning-only', usage };
-  return { ...read, usage };
-}
-
 Deno.serve(async (req) => {
+  const respond = (body: Record<string, unknown>, status = 200, extra?: Record<string, string>) =>
+    jsonResponse(req, body, status, extra);
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: CORS_HEADERS });
+    // Preflight: allowed Origin → 204 with CORS; no or foreign Origin → bare 403.
+    const cors = corsHeadersFor(req);
+    return cors['Access-Control-Allow-Origin']
+      ? new Response(null, { status: 204, headers: cors })
+      : new Response(null, { status: 403, headers: { Vary: 'Origin' } });
   }
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return respond({ error: 'Method not allowed' }, 405);
+  }
+
+  // Phase 0 — who may call, cheapest checks first so junk callers cost no outgoing calls:
+  // Origin (no network) → per-IP limit (no network) → project key → verified user → per-user limit.
+  const origin = checkOrigin(req);
+  if (!origin.ok) return respond({ error: origin.error }, origin.status);
+  const tooSoon = (keys: string[]) => {
+    const wait = rateLimitRetryAfter(keys);
+    return wait > 0 ? respond({ error: 'Rate limit exceeded (429).' }, 429, { 'Retry-After': String(wait) }) : null;
+  };
+  const ipLimited = tooSoon([await preAuthRateKey(req)]);
+  if (ipLimited) return ipLimited;
+  const caller = await checkGmTurnCaller(req, origin.hasOrigin);
+  if (!caller.ok) return respond({ error: caller.error }, caller.status);
+  // A call with no Origin is not the game in a browser: founder / staff JWT only (same user lookup, cached).
+  const privileged = await isPrivilegedPlayRequest(req);
+  if (!caller.hasOrigin && !privileged) {
+    return respond({ error: 'Origin required.' }, 403);
+  }
+  if (caller.userId) {
+    const userLimited = tooSoon([`user:${caller.userId}`]);
+    if (userLimited) return userLimited;
   }
 
   let body: GmRequestBody;
+  const rawBody = await readBodyCapped(req);
+  if (rawBody == null) return respond({ error: 'Request body too large.' }, 413);
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
-    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+    return respond({ error: 'Invalid JSON body' }, 400);
   }
+  if (!body || typeof body !== 'object') return respond({ error: 'Invalid JSON body' }, 400);
 
-  const mode: GmMode =
-    body.mode === 'auto-fight' || body.mode === 'repair' || body.mode === 'check' ? body.mode : 'turn';
+  if (body.mode !== undefined && body.mode !== 'turn' && body.mode !== 'repair' && body.mode !== 'check') {
+    return respond({ error: 'Unsupported mode.' }, 400);
+  }
+  const mode: GmMode = body.mode ?? 'turn';
   // Opening page / cover-continue may send '' or '(opening)'. Blank used to 400
   // ("playerInput is required") and force the stitch fallback.
   const playerInput = (typeof body.playerInput === 'string' ? body.playerInput : '').trim()
     || '(opening)';
   if (!body.state || typeof body.state !== 'object') {
-    return jsonResponse({ error: 'state is required' }, 400);
+    return respond({ error: 'state is required' }, 400);
   }
 
   const settings = body.settings ?? {};
   const loreCards = Array.isArray(body.loreCards) ? body.loreCards : [];
-  const privileged = await isPrivilegedPlayRequest(req);
   if (!privileged) {
     settings.subscriptionTier = 'free';
     settings.customModelId = freeWriterModelId();
     body.settings = settings;
   }
-  const { provider, apiKey, model, baseUrl } = resolveCredentials(body);
+  const { provider, apiKey, model } = resolveCredentials(body);
   if (!apiKey) {
-    return jsonResponse(
+    return respond(
       {
         error:
           String(settings.subscriptionTier ?? '').toLowerCase() === 'admin'
             && String(settings.contentMode ?? '') !== 'kid'
             ? 'Admin BYOK needs an OpenRouter text key. Hosted AI is not included on this tier.'
-            : 'No API key available. Pass clientApiKey or set OPENROUTER_API_KEY on the edge function.',
+            : 'No API key available.',
       },
       400
     );
@@ -379,25 +320,24 @@ Deno.serve(async (req) => {
 
   let systemPrompt: string;
   let userPrompt: string;
-  if (mode === 'auto-fight') {
-    // deno-lint-ignore no-explicit-any
-    const pov = pcPov((body.state as any).character, settings.perspective);
-    systemPrompt =
-      `You are a LitRPG Game Master. Write visceral, fast-paced combat narration. Output only the narrative paragraph — no tags, no headers, no meta commentary.\n\n${formatPerspectiveRule(pov)}`;
-    userPrompt = playerInput;
-  } else if (mode === 'repair') {
+  if (mode === 'repair') {
+    // Phase 0 — typed repair data only; the request text is built here, never taken from the caller.
+    const payload = readRepairPayload(body.repair);
+    if (!payload) return respond({ error: 'repair payload is required' }, 400);
     // deno-lint-ignore no-explicit-any
     systemPrompt = sentenceRepairSystemPrompt((body.state as any).character, settings.perspective);
-    userPrompt = playerInput;
+    userPrompt = renderRepairRequest(payload);
   } else if (mode === 'check') {
-    // M4 — clause check vs FactSheet (JSON claims). Deploy gm-turn after merge for hosted check.
+    // Phase 0 — typed fact-check data only; the request text is built here.
+    const payload = readCheckPayload(body.check);
+    if (!payload) return respond({ error: 'check payload is required' }, 400);
     systemPrompt = CLAUSE_CHECK_SYS;
-    userPrompt = playerInput;
+    userPrompt = renderCheckRequest(payload);
   } else {
     // deno-lint-ignore no-explicit-any
     if (!(body.state as any).completedEvent) {
       console.warn(
-        `[gm-turn] state.completedEvent missing on a turn call — packet rebuilt on the edge (input: ${playerInput.slice(0, 60)})`
+        '[gm-turn] state.completedEvent missing on a turn call — packet rebuilt on the edge'
       );
     }
     systemPrompt = assembleSystemPrompt(body.state, settings, loreCards);
@@ -434,67 +374,15 @@ Deno.serve(async (req) => {
         }
       : undefined;
 
-  // q71-TRAINLOG — only when the autoplay harness set trainLog (never real players).
-  const wantCallLog = body.trainLog === true;
-  const trainJob: TrainLogJob =
-    body.trainJob === 'writer' ||
-    body.trainJob === 'repair' ||
-    body.trainJob === 'rewrite' ||
-    body.trainJob === 'interpret' ||
-    body.trainJob === 'chip_gapfill' ||
-    body.trainJob === 'judge' ||
-    body.trainJob === 'check'
-      ? body.trainJob
-      : mode === 'repair'
-        ? 'repair'
-        : mode === 'check'
-          ? 'check'
-          : 'writer';
-  const rowsBefore = wantCallLog ? peekTrainLogRows().length : 0;
-  const loggedFacts = engineFactsForTrainRow(body.trainEngineFacts, body.state);
-  if (wantCallLog) {
-    setTrainLogSession({
-      run_id: body.trainRunId ?? null,
-      turn_no: typeof body.trainTurnNo === 'number' ? body.trainTurnNo : null,
-      save_id: body.trainSaveId ?? null,
-      mode: body.trainMode ?? null,
-      genre: body.trainGenre ?? null,
-      build_stamp: body.trainBuildStamp ?? null,
-    });
-    pushTrainLogJob(trainJob, {
-      engine_facts: loggedFacts.engine_facts,
-      engine_facts_provenance: loggedFacts.engine_facts_provenance,
-      ...(body.trainParentId ? { parent_id: body.trainParentId } : {}),
-    });
-  }
-
   try {
     const runOnce = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       if (provider === 'gemini') {
         calledModel = model || 'gemini-2.0-flash';
         return callGoogle(userPrompt, sys, apiKey, model, maxTokens);
       }
-      if (provider === 'anthropic') {
-        calledModel = model || 'claude-3-5-sonnet-latest';
-        return callAnthropic(userPrompt, sys, apiKey, model, maxTokens);
-      }
-      const base =
-        provider === 'openrouter'
-          ? baseUrl?.trim() || 'https://openrouter.ai/api/v1'
-          : provider === 'groq'
-            ? 'https://api.groq.com/openai/v1'
-            : provider === 'ollama'
-              ? 'http://localhost:11434/v1'
-              : baseUrl?.trim() || 'https://api.openai.com/v1';
-      const modelName =
-        model ||
-        (provider === 'openrouter'
-          ? pinnedModel('openrouter')
-          : provider === 'groq'
-            ? 'llama-3.3-70b-versatile'
-            : 'gpt-4o-mini');
+      const modelName = model || pinnedModel('openrouter');
       calledModel = modelName;
-      return callOpenAICompat(userPrompt, sys, apiKey, modelName, base, {
+      return callOpenRouter(userPrompt, sys, apiKey, modelName, {
         tokenProse: mode === 'turn',
         tokenSchema: mode === 'turn' ? schemaForTurn(body.state, body.tokenSchema) : undefined,
         maxTokens,
@@ -504,7 +392,6 @@ Deno.serve(async (req) => {
     // Any model: a thrown provider error (not 429) is the same case as an empty reply.
     let providerError = '';
     const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
-      const started = Date.now();
       try {
         const read = await runOnce(sys, maxTokens);
         if (read.servedModel) {
@@ -520,28 +407,10 @@ Deno.serve(async (req) => {
           servedProvider: read.servedProvider ?? null,
           servedModel: read.servedModel ?? null,
         });
-        if (wantCallLog) {
-          recordCompletedChatCall({
-            system: sys,
-            user: userPrompt,
-            assistant: read.text ?? '',
-            teacher_model: read.servedModel ?? calledModel,
-            provider: read.servedProvider ?? provider,
-            tokens_in: read.usage?.tokensIn ?? null,
-            tokens_out: read.usage?.tokensOut ?? null,
-            tokens_cached: read.usage?.tokensCached ?? null,
-            latency_ms: Date.now() - started,
-            finish_reason: read.issue === 'cut-off' ? 'length' : null,
-            truncated: read.issue === 'cut-off',
-            job: trainJob,
-            engine_facts: loggedFacts.engine_facts,
-            engine_facts_provenance: loggedFacts.engine_facts_provenance,
-          });
-        }
         return read;
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;
-        providerError = err instanceof Error ? err.message : String(err);
+        providerError = 'The AI provider request failed.';
         return { text: '', issue: 'empty' };
       }
     };
@@ -558,20 +427,18 @@ Deno.serve(async (req) => {
     const rawIssue = first.issue ?? undefined;
 
     const usage = turnUsage();
-    const callLog = wantCallLog ? peekTrainLogRows().slice(rowsBefore) : undefined;
     if (!best.text) {
-      return jsonResponse(
+      return respond(
         {
           error: providerError || 'The AI provider returned no content.',
           rawIssue: rawIssue ?? 'empty',
           ...(usage ? { usage } : {}),
-          ...(callLog?.length ? { callLog } : {}),
         },
         502
       );
     }
 
-    // Scrubbed response — never return prompts, keys, or pipeline diagnostics.
+    // Scrubbed response — never return prompts, keys, call logs, or pipeline diagnostics.
     // q50-MAP2 — pass structured newPlaces through when the writer JSON includes them.
     let newPlaces: unknown;
     try {
@@ -580,22 +447,19 @@ Deno.serve(async (req) => {
     } catch {
       /* freeform prose — no structured places */
     }
-    return jsonResponse({
+    return respond({
       text: best.text,
       ...(rawIssue ? { rawIssue } : {}),
       ...(usage ? { usage } : {}),
       ...(newPlaces ? { newPlaces } : {}),
-      ...(callLog?.length ? { callLog } : {}),
     });
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
-    const message = err instanceof Error ? err.message : 'GM proxy failure';
-    return jsonResponse(
+    const message = status === 429 ? 'Rate limit exceeded (429).' : 'GM proxy failure';
+    return respond(
       { error: message },
       status,
       status === 429 ? { 'Retry-After': '60' } : undefined
     );
-  } finally {
-    if (wantCallLog) popTrainLogJob();
   }
 });

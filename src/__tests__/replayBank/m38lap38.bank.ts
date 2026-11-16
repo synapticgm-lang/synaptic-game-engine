@@ -4,6 +4,7 @@
  * reply, including a held short name ("Nell" for Nell Rudd); the checker does not count gates passed along a
  * stair as the place's ways out.
  */
+import { renderRepairRequest } from '../../game/gmSideRequests';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -56,7 +57,7 @@ async function answerRepair(X: Replay, n: number, reply: string) {
     packet: state.completedEvent!,
     check: { state, playerInput, intent: parsePlayerIntent(playerInput, state), engineFact: '', previousGm: '' },
     repair: async (request) => {
-      asked.push(request);
+      asked.push(renderRepairRequest(request));
       return reply;
     },
   });

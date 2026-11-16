@@ -3,6 +3,7 @@
  * whose beat has no quoted answer gets one repair request for it, kept only when a person here says something
  * new; the checker does not read a passive ("faced being left alone at the quay") as Jax moving.
  */
+import { renderRepairRequest } from '../../game/gmSideRequests';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -58,7 +59,7 @@ async function answerRepair(X: Replay, n: number, reply: string) {
     packet: state.completedEvent!,
     check: { state, playerInput, intent: parsePlayerIntent(playerInput, state), engineFact: '', previousGm: '' },
     repair: async (request) => {
-      asked.push(request);
+      asked.push(renderRepairRequest(request));
       return reply;
     },
   });

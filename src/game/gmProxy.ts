@@ -4,15 +4,7 @@ import { RateLimitError, withRetry } from './aiServiceShared';
 import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
 import { resolveHostedImageModel } from './hostedImageModel';
-import { effectiveWriterTier, isAutoplayTestLabSession, isTestLabEnabled } from './testLab';
-import { appendConsentingCallLog, getPlayerTrainingPreference, shouldRequestTrainLog } from './playerTurnAdmission';
-import {
-  appendTrainLogRows,
-  currentTrainLogJob,
-  currentTrainLogMeta,
-  getTrainLogSession,
-  lastWriterRowId,
-} from './trainLog';
+import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import {
   BYOK_TEXT_KEY_REQUIRED,
   canConfigurePlayerAiKeys,
@@ -28,11 +20,13 @@ import {
   type WriterRawIssue,
 } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
+import type { GmCheckPayload, GmRepairPayload } from './gmSideRequests';
 import { parseGmTurnResponse } from './schemas';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
 import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from './openingWriterNotes';
 
-export type GmProxyMode = 'turn' | 'auto-fight' | 'repair' | 'check';
+/** Phase 0 — gm-turn accepts only these; it never returns call logs (no trainLog request). */
+export type GmProxyMode = 'turn' | 'repair' | 'check';
 
 /** Production should set VITE_REQUIRE_GM_PROXY=true so prompts never assemble in the browser. */
 export function isGmProxyRequired(): boolean {
@@ -137,6 +131,9 @@ export async function invokeGmProxy(params: {
   mode: GmProxyMode;
   state: GameState;
   playerInput: string;
+  /** Phase 0 — repair / check send typed data; gm-turn builds the prompt (never caller text). */
+  repair?: GmRepairPayload;
+  check?: GmCheckPayload;
   settings: Settings;
   activeLoreCards?: LoreCard[];
   onRetry?: (attempt: number, delayMs: number) => void;
@@ -173,29 +170,11 @@ export async function invokeGmProxy(params: {
           tier,
         });
 
-    // q71-TRAINLOG — narrow body flag only the autoplay/test-lab harness sets; never for real players.
-    const trainLog = shouldRequestTrainLog({
-      labSession: isAutoplayTestLabSession(),
-      preference: getPlayerTrainingPreference(),
-    });
-    const stackJob = currentTrainLogJob();
-    const trainJob =
-      stackJob !== 'untagged'
-        ? stackJob
-        : params.mode === 'repair'
-          ? 'repair'
-          : params.mode === 'check'
-            ? 'check'
-            : 'writer';
-    const tlSession = getTrainLogSession();
-    const trainMeta = currentTrainLogMeta();
-    const trainParentId =
-      trainJob === 'repair' || trainJob === 'rewrite'
-        ? trainMeta?.parent_id ?? lastWriterRowId() ?? null
-        : null;
     const body = {
       mode: params.mode,
       playerInput: params.playerInput,
+      ...(params.mode === 'repair' && params.repair ? { repair: params.repair } : {}),
+      ...(params.mode === 'check' && params.check ? { check: params.check } : {}),
       state: params.state,
       loreCards: params.activeLoreCards ?? [],
       settings: {
@@ -204,7 +183,7 @@ export async function invokeGmProxy(params: {
         aiProvider: 'openrouter',
         customModelId: modelId,
         subscriptionTier: tier,
-        baseUrl: params.settings.baseUrl,
+        // Phase 0 — no baseUrl: gm-turn always calls OpenRouter itself.
         diceAnimation: params.settings.diceAnimation,
         panelFrequency: params.settings.panelFrequency,
         statVerbosity: params.settings.statVerbosity,
@@ -218,20 +197,6 @@ export async function invokeGmProxy(params: {
       tokenSchema: params.mode === 'turn'
         ? (isUnwrittenLiveOpening(params.state) ? OPENING_PAGE_JSON_SCHEMA : tokenBeatSchemaFor(params.state))
         : undefined,
-      ...(trainLog
-        ? {
-            trainLog: true,
-            trainJob,
-            trainRunId: tlSession.run_id ?? null,
-            trainTurnNo: tlSession.turn_no ?? null,
-            trainSaveId: tlSession.save_id ?? null,
-            trainMode: tlSession.mode ?? null,
-            trainGenre: tlSession.genre ?? null,
-            trainBuildStamp: tlSession.build_stamp ?? null,
-            ...(trainParentId ? { trainParentId } : {}),
-            ...(trainMeta?.engine_facts ? { trainEngineFacts: trainMeta.engine_facts } : {}),
-          }
-        : {}),
     };
 
     if (isByokTierWithoutHostedKeys(params.settings) && !body.clientApiKey) {
@@ -296,12 +261,6 @@ export async function invokeGmProxy(params: {
     const payload = parseGmTurnResponse(await res.json().catch(() => ({})));
     noteWriterRawIssue(payload?.rawIssue);
     if (res.ok || payload?.rawIssue) noteWriterUsage(payload?.usage);
-    // Hosted-Free call rows only when we asked for trainLog (autoplay marker).
-    if (trainLog && Array.isArray((payload as { callLog?: unknown }).callLog)) {
-      const incoming = (payload as { callLog: unknown }).callLog;
-      if (isAutoplayTestLabSession()) appendTrainLogRows(incoming);
-      else appendConsentingCallLog(incoming, session?.user?.id ? [session.user.id] : []);
-    }
     if (!res.ok) {
       // gm-turn already re-asked the same model once; the caller's plain-prose last resort takes over.
       if (payload?.rawIssue) {

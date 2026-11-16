@@ -2,6 +2,7 @@
  * Claim schema and sentence matching used by the check and the repair recheck.
  * Stubs only. No paid inference.
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { describe, expect, it } from 'vitest';
 import {
   checkAndRepairProse,
@@ -159,7 +160,7 @@ describe('sentence matching', () => {
         ],
       }),
       repair: async (next) => {
-        request = next;
+        request = renderRepairRequest(next);
         return 'Steam curls off the cold stones.';
       },
     });

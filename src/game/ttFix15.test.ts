@@ -6,6 +6,7 @@
  * 4. the camp's span comes from the clock;
  * 5. the gate reads a word's role ("their breath evening out" is a verb; "higher than a man could reach" is no one).
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { commitTravel, roadHoursToday, timeOfDayForHour, worldClock } from './travelJourney';
@@ -73,7 +74,7 @@ describe('2 — one repair request holds every dropped line; a failed one leaves
     const out = await repairRejectedSentences(turn, {
       packet: { pc: state.character } as never,
       check,
-      repair: async (r) => (asked.push(r), reply),
+      repair: async (r) => (asked.push(renderRepairRequest(r)), reply),
     });
     return { out, asked };
   };

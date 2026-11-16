@@ -18,6 +18,7 @@ import { listCraftKeepers } from './craftKeepers';
 import { buildOpeningGmPlayerInput, compactTrafficGist } from './openingPointerCard';
 import { hasHanScript } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
+import { renderCheckRequest, renderRepairRequest, type GmCheckPayload, type GmRepairPayload } from './gmSideRequests';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -118,14 +119,14 @@ export async function callGm(
  */
 export async function callGmRepair(
   state: GameState,
-  request: string,
+  request: GmRepairPayload,
   settings: Settings,
   signal?: AbortSignal,
   timeoutMs?: number
 ): Promise<string> {
   assertNoLiveAiTurnForUmbra(state, 'callGmRepair');
   const autoplayWriter = getAutoplayWriterOverride();
-  const direct = async (s: Settings) => (await import('./aiService.direct')).callRepairDirect(state, request, s);
+  const direct = async (s: Settings) => (await import('./aiService.direct')).callRepairDirect(state, renderRepairRequest(request), s);
   if (autoplayWriter) {
     return direct({
       ...settings,
@@ -137,7 +138,7 @@ export async function callGmRepair(
   }
   if (isGmProxyAvailable()) {
     try {
-      return await invokeGmProxy({ mode: 'repair', state, playerInput: request, settings, signal, timeoutMs });
+      return await invokeGmProxy({ mode: 'repair', state, playerInput: '', repair: request, settings, signal, timeoutMs });
     } catch (err) {
       if (isGmProxyRequired() || !isClientGmAllowed()) throw err;
     }
@@ -152,14 +153,14 @@ export async function callGmRepair(
  */
 export async function callGmCheck(
   state: GameState,
-  request: string,
+  request: GmCheckPayload,
   settings: Settings,
   signal?: AbortSignal,
   timeoutMs?: number
 ): Promise<string> {
   assertNoLiveAiTurnForUmbra(state, 'callGmCheck');
   const autoplayWriter = getAutoplayWriterOverride();
-  const direct = async (s: Settings) => (await import('./aiService.direct')).callCheckDirect(state, request, s);
+  const direct = async (s: Settings) => (await import('./aiService.direct')).callCheckDirect(state, renderCheckRequest(request), s);
   if (autoplayWriter) {
     return direct({
       ...settings,
@@ -171,7 +172,7 @@ export async function callGmCheck(
   }
   if (isGmProxyAvailable()) {
     try {
-      return await invokeGmProxy({ mode: 'check', state, playerInput: request, settings, signal, timeoutMs });
+      return await invokeGmProxy({ mode: 'check', state, playerInput: '', check: request, settings, signal, timeoutMs });
     } catch (err) {
       if (isGmProxyRequired() || !isClientGmAllowed()) throw err;
     }

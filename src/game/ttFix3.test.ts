@@ -2,6 +2,7 @@
  * tt-fix-3 — the sentence checks that missed lap 4's writer errors, the repeats lap 4 still showed, and the new
  * engine errors (escape wording, tabletop level skills, guessed CR XP, hidden trap roll).
  */
+import { renderRepairRequest } from './gmSideRequests';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -108,7 +109,7 @@ describe('tt-fix-3 checker gap: shared sentence patterns', () => {
     const out = await repairRejectedSentences({ prose } as unknown as WriterTurnResult, {
       packet: s.completedEvent as unknown as CompletedEventPacket,
       check,
-      repair: async (req) => { asked = req; return ''; },
+      repair: async (req) => { asked = renderRepairRequest(req); return ''; },
     });
     expect(asked).toContain('first leg');
     expect(asked).toContain('decide whether');

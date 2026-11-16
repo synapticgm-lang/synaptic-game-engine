@@ -5,6 +5,7 @@
  */
 
 import { FREE_WRITER_OPENROUTER_MODEL } from './gm/openRouterChat.ts';
+import { bearerToken, isKeyBearer, verifiedAuthUser } from './authUser.ts';
 
 function founderEmailAllowlist(): string[] {
   const raw = Deno.env.get('FOUNDER_EMAILS') ?? '';
@@ -14,42 +15,11 @@ function founderEmailAllowlist(): string[] {
     .filter(Boolean);
 }
 
-function bearerToken(req: Request): string | null {
-  const auth = req.headers.get('Authorization') ?? '';
-  const token = auth.replace(/^Bearer\s+/i, '').trim();
-  return token || null;
-}
-
-function isAnonJwt(token: string): boolean {
-  const anon = (Deno.env.get('SUPABASE_ANON_KEY') ?? '').trim();
-  return !!anon && token === anon;
-}
-
-/** Auth-server verified user (rejects forged payloads). */
-async function verifiedUserEmail(token: string): Promise<string | null> {
-  const url = Deno.env.get('SUPABASE_URL')?.trim();
-  const anon = Deno.env.get('SUPABASE_ANON_KEY')?.trim();
-  if (!url || !anon || !token || isAnonJwt(token)) return null;
-  try {
-    const res = await fetch(`${url.replace(/\/$/, '')}/auth/v1/user`, {
-      headers: {
-        apikey: anon,
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!res.ok) return null;
-    const data = await res.json().catch(() => null) as { email?: unknown } | null;
-    return typeof data?.email === 'string' ? data.email.trim().toLowerCase() : null;
-  } catch {
-    return null;
-  }
-}
-
 async function isStaffEmail(req: Request): Promise<boolean> {
   const url = Deno.env.get('SUPABASE_URL')?.trim();
   const anon = Deno.env.get('SUPABASE_ANON_KEY')?.trim();
   const token = bearerToken(req);
-  if (!url || !anon || !token || isAnonJwt(token)) return false;
+  if (!url || !anon || isKeyBearer(req, token)) return false;
   try {
     const res = await fetch(`${url.replace(/\/$/, '')}/rest/v1/rpc/is_staff_email`, {
       method: 'POST',
@@ -70,9 +40,11 @@ async function isStaffEmail(req: Request): Promise<boolean> {
 
 /** Founder / staff may use Mid/High writers and hosted images. */
 export async function isPrivilegedPlayRequest(req: Request): Promise<boolean> {
-  const token = bearerToken(req);
-  if (!token || isAnonJwt(token)) return false;
-  const email = await verifiedUserEmail(token);
+  if (isKeyBearer(req)) return false;
+  // Shared with gm-turn's caller check: one /auth/v1/user lookup per request.
+  const user = await verifiedAuthUser(req);
+  if (!user) return false;
+  const email = user.email;
   if (email && founderEmailAllowlist().includes(email)) return true;
   return isStaffEmail(req);
 }
