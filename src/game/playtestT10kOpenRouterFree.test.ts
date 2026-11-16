@@ -87,8 +87,15 @@ describe('T10K — Free OpenRouter DeepSeek + no Fireworks call path', () => {
     expect(playPrivileges).not.toContain('FREE_WRITER_FIREWORKS_MODEL');
     expect(edgeOpenRouter).toContain('FREE_WRITER_OPENROUTER_MODEL');
     expect(gmTurn).toContain('FREE_WRITER_OPENROUTER_MODEL');
-    expect(gmTurn).toContain("provider = 'openrouter'");
     expect(gmTurn).toMatch(/OPENROUTER_API_KEY/);
+    // Phase 0: the server picks the upstream. Every OpenRouter call goes to one fixed URL, and every key
+    // path (player key, server key) resolves to OpenRouter; the caller's aiProvider / baseUrl are ignored.
+    expect(gmTurn).toContain("const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';");
+    expect(gmTurn).toContain("fetch(`${OPENROUTER_BASE_URL}/chat/completions`");
+    expect(gmTurn).toContain("if (clientKey) return { provider: 'openrouter', apiKey: clientKey");
+    expect(gmTurn).toContain("if (serverOpenRouter) return { provider: 'openrouter', apiKey: serverOpenRouter");
+    expect(gmTurn).not.toMatch(/(?:body|settings)\.(?:aiProvider|baseUrl)\b/);
+    expect(gmTurn).not.toMatch(/FREE_WRITER_FIREWORKS_MODEL|fireworks\.ai/i);
   });
 
   it('(b) every OpenRouter writer body carries provider.ignore containing Fireworks', () => {

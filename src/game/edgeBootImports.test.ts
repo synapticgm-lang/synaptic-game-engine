@@ -16,6 +16,7 @@ const SHARED = path.join(ROOT, 'supabase', 'functions', '_shared');
 const ENTRY_POINTS = [
   'supabase/functions/gm-turn/index.ts',
   'supabase/functions/_shared/playPrivileges.ts',
+  'supabase/functions/_shared/trainingCapture.ts',
   'supabase/functions/generate-image/index.ts',
 ];
 

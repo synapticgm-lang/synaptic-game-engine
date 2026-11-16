@@ -87,9 +87,9 @@ describe('28l model-agnostic writer replies', () => {
       .toEqual({ text: '', issue: 'reasoning-only' });
     expect(readChatCompletion({ choices: [{ message: { content: '' } }] })).toEqual({ text: '', issue: 'empty' });
     expect(readChatCompletion({ choices: [{ finish_reason: 'length', message: { content: 'You walked' } }] }))
-      .toEqual({ text: 'You walked', issue: 'cut-off' });
+      .toEqual({ text: 'You walked', issue: 'cut-off', finishReason: 'length' });
     expect(readChatCompletion({ choices: [{ finish_reason: 'stop', message: { content: '<think>a</think>Done.' } }] }))
-      .toEqual({ text: 'Done.', issue: null });
+      .toEqual({ text: 'Done.', issue: null, finishReason: 'stop' });
   });
 
   it('plain prose and broken JSON both become story', () => {
