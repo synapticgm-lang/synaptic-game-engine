@@ -170,8 +170,8 @@ async function callGoogle(
     throw err;
   }
   if (!res.ok) {
-    const errBody = await res.json().catch(() => ({}));
-    throw new Error(errBody?.error?.message ?? `AI service error ${res.status}`);
+    await res.body?.cancel();
+    throw new Error(`AI service error ${res.status}`);
   }
   const data = await res.json();
   const cand = data.candidates?.[0];
@@ -225,8 +225,8 @@ async function callOpenRouter(
     throw err;
   }
   if (!res.ok) {
-    const errBody = await res.json().catch(() => ({}));
-    throw new Error(errBody?.error?.message ?? `OpenRouter error ${res.status}`);
+    await res.body?.cancel();
+    throw new Error(`OpenRouter error ${res.status}`);
   }
   // Hard reject if OpenRouter somehow served via Fireworks (provider.ignore should prevent this).
   return rejectFireworksServed(readChatCompletion(await res.json()));
@@ -393,7 +393,7 @@ Deno.serve(async (req) => {
         return read;
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;
-        providerError = err instanceof Error ? err.message : String(err);
+        providerError = 'The AI provider request failed.';
         return { text: '', issue: 'empty' };
       }
     };
@@ -438,7 +438,7 @@ Deno.serve(async (req) => {
     });
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
-    const message = err instanceof Error ? err.message : 'GM proxy failure';
+    const message = status === 429 ? 'Rate limit exceeded (429).' : 'GM proxy failure';
     return respond(
       { error: message },
       status,
