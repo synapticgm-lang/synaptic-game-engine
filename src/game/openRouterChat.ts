@@ -20,17 +20,23 @@ type ChatPart = { text?: unknown } | string;
 export const FREE_WRITER_OPENROUTER_MODEL = OPENROUTER_DEEPSEEK_V41_FLASH;
 
 /**
- * Shared OpenRouter `provider` routing for every writer chat body.
- * Always excludes Fireworks so OpenRouter cannot route Free (or any) turns there.
+ * Shared OpenRouter `provider` routing for every writer chat body — the ONE place the server decides hosts.
+ *
+ * Training-host preference (16 Nov 2026): try the hosts whose terms allow training John's own writer first —
+ * DeepSeek's own provider, then Wafer — and fall back to OpenRouter's normal routing rather than fail the turn.
+ * Slugs verified against GET /api/v1/providers and /api/v1/models/deepseek/deepseek-v4.1-flash/endpoints.
+ * A fallback-served turn still plays; its capture row is tagged from the SERVED host (trainingRights.ts).
+ * data_collection 'deny' keeps hosts that store/train on prompts out. Fireworks stays ignored.
  */
+export const PREFERRED_TRAINING_PROVIDER_ORDER = ['deepseek', 'wafer'] as const;
+
 export function openRouterProviderRouting(extra?: {
   require_parameters?: boolean;
-  allow_fallbacks?: boolean;
-  sort?: string;
 }): Record<string, unknown> {
   const routing: Record<string, unknown> = {
-    allow_fallbacks: extra?.allow_fallbacks ?? true,
-    sort: extra?.sort ?? 'latency',
+    order: [...PREFERRED_TRAINING_PROVIDER_ORDER],
+    allow_fallbacks: true,
+    data_collection: 'deny',
     ignore: ['Fireworks'],
   };
   if (extra?.require_parameters) routing.require_parameters = true;
@@ -105,6 +111,10 @@ export type ChatCompletionRead = {
   servedModel?: string;
   /** OpenRouter `provider` field on the completion (who actually served); absent when not sent. */
   servedProvider?: string;
+  /** OpenRouter generation id (`id` on the completion); absent when not sent. */
+  generationId?: string;
+  /** `finish_reason` of the first choice as the provider sent it; absent when not sent. */
+  finishReason?: string;
 };
 
 /**
@@ -216,9 +226,10 @@ export function readChatCompletion(data: unknown): ChatCompletionRead {
   if (!text) issue = hadReasoning ? 'reasoning-only' : 'empty';
   else if (isCutOffFinish(first.finish_reason)) issue = 'cut-off';
   const usage = readChatUsage(data);
-  const rec = data && typeof data === 'object' ? (data as { model?: unknown; provider?: unknown }) : null;
+  const rec = data && typeof data === 'object' ? (data as { model?: unknown; provider?: unknown; id?: unknown }) : null;
   const served = rec?.model;
   const servedProvider = rec?.provider;
+  const generationId = rec?.id;
   return {
     text,
     issue,
@@ -227,6 +238,8 @@ export function readChatCompletion(data: unknown): ChatCompletionRead {
     ...(typeof servedProvider === 'string' && servedProvider.trim()
       ? { servedProvider: servedProvider.trim() }
       : {}),
+    ...(typeof generationId === 'string' && generationId.trim() ? { generationId: generationId.trim() } : {}),
+    ...(typeof first.finish_reason === 'string' && first.finish_reason ? { finishReason: first.finish_reason } : {}),
   };
 }
 

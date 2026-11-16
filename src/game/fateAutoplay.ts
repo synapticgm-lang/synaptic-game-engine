@@ -36,6 +36,7 @@ import {
 } from '@/data/campaigns';
 import { callGm, callGmCheck, callGmRepair } from './aiService';
 import { renderRepairRequest } from './gmSideRequests';
+import { beginGmCaptureTurn, describeCapturedInput } from './gmCaptureContext';
 import {
   captureTurnEngineFacts,
   repairParentExtra,
@@ -1467,6 +1468,9 @@ export async function headlessFateTurn(
     playerInput = mediated.text;
   }
   const displayLine = playerInput;
+  // Training capture: automated run — the picked line and the pad it came from (data only).
+  // turnNo null: the engine may advance state.turn before the writer call; one headless turn runs at a time.
+  beginGmCaptureTurn({ turnNo: null, input: describeCapturedInput(fatePick, state, true), resolvedAction: playerInput });
   const lastGm = [...state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
   const hard = validateActionHard(playerInput, state, lastGm);
   // T10O — free text is never rejected: keep the typed line even when the hard gate notes a miss.

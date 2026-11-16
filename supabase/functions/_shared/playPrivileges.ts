@@ -38,15 +38,32 @@ async function isStaffEmail(req: Request): Promise<boolean> {
   }
 }
 
-/** Founder / staff may use Mid/High writers and hosted images. */
-export async function isPrivilegedPlayRequest(req: Request): Promise<boolean> {
-  if (isKeyBearer(req)) return false;
+export type PrivilegeBasis = 'founder' | 'staff';
+
+const basisByRequest = new WeakMap<Request, Promise<PrivilegeBasis | null>>();
+
+async function lookupBasis(req: Request): Promise<PrivilegeBasis | null> {
+  if (isKeyBearer(req)) return null;
   // Shared with gm-turn's caller check: one /auth/v1/user lookup per request.
   const user = await verifiedAuthUser(req);
-  if (!user) return false;
-  const email = user.email;
-  if (email && founderEmailAllowlist().includes(email)) return true;
-  return isStaffEmail(req);
+  if (!user) return null;
+  if (user.email && founderEmailAllowlist().includes(user.email)) return 'founder';
+  return (await isStaffEmail(req)) ? 'staff' : null;
+}
+
+/** Why this request is privileged (founder email / staff), or null. One lookup per request. */
+export function privilegeBasis(req: Request): Promise<PrivilegeBasis | null> {
+  let p = basisByRequest.get(req);
+  if (!p) {
+    p = lookupBasis(req);
+    basisByRequest.set(req, p);
+  }
+  return p;
+}
+
+/** Founder / staff may use Mid/High writers and hosted images. */
+export async function isPrivilegedPlayRequest(req: Request): Promise<boolean> {
+  return (await privilegeBasis(req)) !== null;
 }
 
 export function freeWriterModelId(): string {

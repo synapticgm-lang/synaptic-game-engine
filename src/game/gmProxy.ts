@@ -21,6 +21,9 @@ import {
 } from './openRouterChat';
 import { assertNoLiveAiTurnForUmbra } from './umbraOffline';
 import type { GmCheckPayload, GmRepairPayload } from './gmSideRequests';
+import { currentGmCaptureContext, newCaptureCallId, noteGmWriterCall } from './gmCaptureContext';
+import { BUILD_STAMP } from './runManifest';
+import { GENERATED_GIT_SHA } from './buildInfo.generated';
 import { parseGmTurnResponse } from './schemas';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
 import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from './openingWriterNotes';
@@ -170,8 +173,26 @@ export async function invokeGmProxy(params: {
           tier,
         });
 
+    // Training-capture ids + the player's original input (data only; gm-turn decides consent and rights).
+    const liveCtx = currentGmCaptureContext();
+    // A context from another turn (or another game) never links to this call.
+    const captureCtx = liveCtx && (liveCtx.turnNo == null || liveCtx.turnNo === params.state.turn) ? liveCtx : null;
+    const callId = newCaptureCallId();
+    const callKind = params.mode === 'turn' ? (captureCtx?.writerCallId ? 'rewrite' : 'writer') : params.mode;
+    const capture = {
+      callId,
+      callKind,
+      rootTurnId: captureCtx?.rootTurnId ?? null,
+      parentCallId: callKind === 'writer' ? null : captureCtx?.writerCallId ?? null,
+      turnNo: captureCtx?.turnNo ?? params.state.turn ?? null,
+      input: captureCtx?.input ?? null,
+      resolvedAction: captureCtx?.resolvedAction ?? null,
+      buildStamp: BUILD_STAMP,
+      gitSha: GENERATED_GIT_SHA,
+    };
     const body = {
       mode: params.mode,
+      capture,
       playerInput: params.playerInput,
       ...(params.mode === 'repair' && params.repair ? { repair: params.repair } : {}),
       ...(params.mode === 'check' && params.check ? { check: params.check } : {}),
@@ -281,6 +302,7 @@ export async function invokeGmProxy(params: {
       noteWriterRawIssue('empty');
       return '';
     }
+    if (params.mode === 'turn') noteGmWriterCall(callId);
     return text;
   };
 

@@ -28,6 +28,7 @@ import {
 } from '../_shared/gm/openRouterChat.ts';
 import { pinnedModel } from '../_shared/gm/modelIds.ts';
 import { isUnwrittenLiveOpening, OPENING_PAGE_JSON_SCHEMA } from '../_shared/gm/openingWriterNotes.ts';
+import { buildCaptureRow, readClientCapture, scheduleCapture, type CaptureAttempt } from '../_shared/trainingCapture.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 /**
@@ -51,6 +52,8 @@ interface GmRequestBody {
   /** Phase 0 — mode 'repair' / 'check': typed data only; the prompt is built here. */
   repair?: unknown;
   check?: unknown;
+  /** Training capture ids + the player's original input (data only; consent and rights are decided here). */
+  capture?: unknown;
   // Phase 0 — trainLog / baseUrl / aiProvider fields from older clients are ignored.
 }
 
@@ -196,32 +199,39 @@ async function callOpenRouter(
   systemPrompt: string,
   apiKey: string,
   model: string,
-  opts: { tokenProse?: boolean; tokenSchema?: Record<string, unknown>; maxTokens: number }
+  opts: {
+    tokenProse?: boolean;
+    tokenSchema?: Record<string, unknown>;
+    maxTokens: number;
+    /** Training capture: receives the exact JSON body sent (no headers, no key). */
+    onSent?: (sentBody: Record<string, unknown>) => void;
+  }
 ): Promise<ChatCompletionRead> {
   const maxTokens = opts.maxTokens;
   const tokenProse = !!opts?.tokenProse;
-  const post = (withSchema: boolean) =>
-    fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+  const post = (withSchema: boolean) => {
+    const sentBody = openRouterChatBody(
+      model,
+      systemPrompt,
+      prompt,
+      maxTokens,
+      withSchema
+        ? {
+            tokenProse: true,
+            n: isOpeningPageSchema(opts.tokenSchema) ? 1 : 2,
+            schema: opts.tokenSchema,
+            schemaName: isOpeningPageSchema(opts.tokenSchema) ? 'opening_page' : 'token_prose',
+            attachNewPlaces: !isOpeningPageSchema(opts.tokenSchema),
+          }
+        : undefined
+    );
+    opts.onSent?.(sentBody);
+    return fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: openRouterChatHeaders(apiKey),
-      body: JSON.stringify(
-        openRouterChatBody(
-          model,
-          systemPrompt,
-          prompt,
-          maxTokens,
-          withSchema
-            ? {
-                tokenProse: true,
-                n: isOpeningPageSchema(opts.tokenSchema) ? 1 : 2,
-                schema: opts.tokenSchema,
-                schemaName: isOpeningPageSchema(opts.tokenSchema) ? 'opening_page' : 'token_prose',
-                attachNewPlaces: !isOpeningPageSchema(opts.tokenSchema),
-              }
-            : undefined
-        )
-      ),
+      body: JSON.stringify(sentBody),
     });
+  };
   let res = await post(tokenProse);
   if (!res.ok && tokenProse && res.status !== 429) {
     res = await post(false);
@@ -374,10 +384,49 @@ Deno.serve(async (req) => {
         }
       : undefined;
 
+  // Training capture — every attempt of this call, exactly as sent, plus what served it. Built and stored
+  // in the background after the response; consent / switch / rights are decided in trainingCapture.ts.
+  const captureClient = readClientCapture(body.capture, mode);
+  const captureAttempts: CaptureAttempt[] = [];
+  const keySource: 'server' | 'player' =
+    typeof body.clientApiKey === 'string' && body.clientApiKey.trim() ? 'player' : 'server';
+  const scheduleTurnCapture = (finalText: string, status: 'ok' | 'empty' | 'error' | 'rate_limited') => {
+    if (!captureAttempts.length) return;
+    const state = body.state as Record<string, unknown>;
+    const usage = turnUsage() ?? null;
+    scheduleCapture(req, caller.userId ?? null, (basis, userId) =>
+      buildCaptureRow({
+        basis,
+        userId,
+        client: captureClient,
+        state,
+        attempts: captureAttempts,
+        finalText,
+        completionStatus: status,
+        requestedModel: model ?? null,
+        keySource,
+        usage,
+      })
+    );
+  };
+
   try {
-    const runOnce = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
+    const runOnce = async (
+      sys: string,
+      maxTokens: number,
+      sent: { body?: Record<string, unknown> }
+    ): Promise<ChatCompletionRead> => {
       if (provider === 'gemini') {
         calledModel = model || 'gemini-2.0-flash';
+        sent.body = {
+          model: calledModel,
+          upstream: 'gemini',
+          max_tokens: maxTokens,
+          messages: [
+            { role: 'system', content: sys },
+            { role: 'user', content: userPrompt },
+          ],
+        };
         return callGoogle(userPrompt, sys, apiKey, model, maxTokens);
       }
       const modelName = model || pinnedModel('openrouter');
@@ -386,14 +435,35 @@ Deno.serve(async (req) => {
         tokenProse: mode === 'turn',
         tokenSchema: mode === 'turn' ? schemaForTurn(body.state, body.tokenSchema) : undefined,
         maxTokens,
+        onSent: (b) => {
+          sent.body = b;
+        },
+      });
+    };
+    const noteAttempt = (sent: { body?: Record<string, unknown> }, read: ChatCompletionRead | null) => {
+      if (!sent.body) return;
+      const { messages, ...settings } = sent.body;
+      captureAttempts.push({
+        messages: Array.isArray(messages) ? (messages as CaptureAttempt['messages']) : [],
+        settings,
+        text: read?.text ?? '',
+        issue: read?.issue ?? null,
+        servedProvider: read?.servedProvider,
+        servedModel: read?.servedModel,
+        generationId: read?.generationId,
+        finishReason: read?.finishReason,
+        usage: read?.usage ?? null,
+        failed: !read,
       });
     };
 
     // Any model: a thrown provider error (not 429) is the same case as an empty reply.
     let providerError = '';
     const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
+      const sent: { body?: Record<string, unknown> } = {};
       try {
-        const read = await runOnce(sys, maxTokens);
+        const read = await runOnce(sys, maxTokens, sent);
+        noteAttempt(sent, read);
         if (read.servedModel) {
           calledModel = read.servedModel;
           servedModel = read.servedModel;
@@ -409,6 +479,7 @@ Deno.serve(async (req) => {
         });
         return read;
       } catch (err) {
+        noteAttempt(sent, null);
         if ((err as { status?: number })?.status === 429) throw err;
         providerError = 'The AI provider request failed.';
         return { text: '', issue: 'empty' };
@@ -428,6 +499,7 @@ Deno.serve(async (req) => {
 
     const usage = turnUsage();
     if (!best.text) {
+      scheduleTurnCapture('', providerError ? 'error' : 'empty');
       return respond(
         {
           error: providerError || 'The AI provider returned no content.',
@@ -447,14 +519,17 @@ Deno.serve(async (req) => {
     } catch {
       /* freeform prose — no structured places */
     }
-    return respond({
+    const ok = respond({
       text: best.text,
       ...(rawIssue ? { rawIssue } : {}),
       ...(usage ? { usage } : {}),
       ...(newPlaces ? { newPlaces } : {}),
     });
+    scheduleTurnCapture(best.text, 'ok');
+    return ok;
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
+    scheduleTurnCapture('', status === 429 ? 'rate_limited' : 'error');
     const message = status === 429 ? 'Rate limit exceeded (429).' : 'GM proxy failure';
     return respond(
       { error: message },

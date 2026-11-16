@@ -1,3 +1,4 @@
+import { beginGmCaptureTurn, describeCapturedInput } from './gmCaptureContext';
 import { registerWriterIntroductions } from './writerIntroductions';
 import { placeVessel, stampPlaceVessel } from './vesselPlace';
 import { useCallbackRef } from './useCallbackRef';
@@ -1950,6 +1951,8 @@ export function useGame() {
   });
   const sendAction = useCallbackRef(async (input: string) => {
     if (!input.trim()) return;
+    // Training capture: the player's original line / button, before any rewriting (data only).
+    const captureInputAtSend = describeCapturedInput(input, stateRef.current);
     // q75r: busy / mid-reveal never silently drop a typed line — toast + restore (clear UI feedback).
     if (busy || turnInFlightRef.current) {
       addToast('Still working on the last turn — wait a moment, then send again.', 'info');
@@ -3164,6 +3167,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
       const gmStartTime = performance.now();
       const turnRequestId = crypto.randomUUID();
+      beginGmCaptureTurn({ rootTurnId: turnRequestId, turnNo: liveCurrent.turn, input: captureInputAtSend, resolvedAction: sanitizedInput });
       const writerTierForBudget = resolveWriterTierForTurn(settingsRef.current.subscriptionTier ?? 'free');
       const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent, { writerTier: writerTierForBudget });
       debugLogger.record('INFO', 'GM proxy budget', {
