@@ -1,54 +1,80 @@
-# Keep Cursor sessions small (cost rules 2026-09-27)
+# This file only affects Cursor indexing and AI context.
+# It does not change git, the build, or what is deployed.
+#
+# Ignore build output, dependencies, logs, large binaries, and bulky
+# pasted research/bug dumps so sessions stay small. Do not ignore
+# source, tests, configs, ordinary docs, theme SVGs, or the JSON/TS
+# game data tables under src/data, src/game/data, public/data and
+# similar folders.
+
+# Dependencies and build / deploy output
 node_modules/
 dist/
-**/dist/
-scripts/fate-autoplay/runs/
+dist-ssr/
+build/
+coverage/
+.vercel/
+.next/
+out/
+
+# Logs and local tool output
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 scripts/ai-player-browser/runs/
+scripts/fate-autoplay/runs/
 scripts/tmp-diag/
-**/runs/
-**/transcripts/
-**/*transcript*.log
-**/*transcript*.txt
-**/*transcript*.json
-**/*transcript*.jsonl
-**/*transcript*/
-**/*backup*/
-**/*.bak
-docs/research/
-docs/bugs/
-public/assets/
-public/themes/
-**/assets/
+supabase/.temp/
+
+# Large binary assets (images, audio, fonts, video, archives)
 *.png
 *.jpg
 *.jpeg
 *.webp
 *.gif
+*.ico
+*.bmp
 *.mp3
 *.ogg
 *.wav
+*.opus
+*.flac
+*.m4a
+*.mp4
+*.webm
+*.avi
+*.mov
+*.woff
+*.woff2
+*.ttf
+*.otf
+*.eot
 *.zip
-*.log
-wof/
-.bolt/
+*.apk
+*.pdf
+*.cbz
 
-# Added 15 Oct 13:05 (Grok Bot): temp dirs/files, build output, datasets, backups, logs
+# Image asset folder (binaries also matched by the patterns above)
+public/assets/
+
+# Bulky pasted research dumps and playtest/bug packs, not project docs
+docs/research/pasted/
+docs/research/wof/pasted/
+docs/bugs/
+
+# Local temp, backup, and env files (keep .env.example visible)
 .tmp-*/
 .tmp-*
 **/.tmp-*
-build/
-**/build/
-out/
-coverage/
-.vercel/
-data/
-**/datasets/
-**/*.jsonl
-**/*backup*
+**/*.bak
 **/*.orig
+**/*backup*/
 **/*.log.*
-**/logs/
-*.mp4
-*.webm
-*.pdf
-*.cbz
+.env
+.env.*
+!.env.example
+*.local
