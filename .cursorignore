@@ -1,11 +1,11 @@
 # This file only affects Cursor indexing and AI context.
 # It does not change git, the build, or what is deployed.
 #
-# Ignore build output, dependencies, logs, large binaries, and bulky
-# pasted research/bug dumps so sessions stay small. Do not ignore
-# source, tests, configs, ordinary docs, theme SVGs, or the JSON/TS
-# game data tables under src/data, src/game/data, public/data and
-# similar folders.
+# Ignore build output, dependencies, logs, large binaries, bulky pasted
+# research/bug dumps, and local/gitignored run data (training captures,
+# tapes, transcripts) so sessions stay small. Do not ignore source,
+# tests, configs, ordinary docs, theme SVGs, or the JSON/TS game data
+# tables under src/data, src/game/data, public/data and similar folders.
 
 # Dependencies and build / deploy output
 node_modules/
@@ -29,6 +29,27 @@ scripts/ai-player-browser/runs/
 scripts/fate-autoplay/runs/
 scripts/tmp-diag/
 supabase/.temp/
+
+# Local and gitignored bulky data (Sept/Oct cost rules): run output,
+# transcripts, training captures/tapes, datasets and backups. These
+# often exist on a laptop checkout even when they are not in git.
+**/runs/
+**/transcripts/
+**/*transcript*.log
+**/*transcript*.txt
+**/*transcript*.json
+**/*transcript*.jsonl
+**/*transcript*/
+**/datasets/
+**/*.jsonl
+# Small checked-in test fixtures. Parent dirs are not ignored, so these
+# gitignore-style negations should work in Cursor too.
+!src/__tests__/fixtures/**/*.jsonl
+!src/game/__fixtures__/**/*.jsonl
+.bolt/
+wof/
+**/*backup*
+**/*backup*/
 
 # Large binary assets (images, audio, fonts, video, archives)
 *.png
@@ -72,7 +93,6 @@ docs/bugs/
 **/.tmp-*
 **/*.bak
 **/*.orig
-**/*backup*/
 **/*.log.*
 .env
 .env.*
