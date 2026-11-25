@@ -1,0 +1,142 @@
+{
+  "runId": "2026-11-10T08-57-18-494Z",
+  "bibleId": "cursed-keep",
+  "bibleTitle": "Cursed Keep",
+  "engineMode": "dnd",
+  "personalityId": "chilled-gm",
+  "seed": 884211,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T08:57:18.494Z",
+  "endedAt": "2026-11-10T08:57:20.523Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 25,
+    "p95": 48,
+    "mean": 28
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40/2026-11-10T08-57-18-494Z_cursed-keep_chilled-gm_s884211",
+  "receiptTotals": {
+    "combat": 0,
+    "questStage": 0,
+    "beatCommit": 0,
+    "crisis": 0,
+    "total": 0
+  },
+  "finalReplayHash": "8ec24d88",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 0,
+  "evalHarness": {
+    "manifestBound": false,
+    "livenessGates": {
+      "combatByT8": false
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 17,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-impossible-chip",
+        "turn": 4,
+        "quote": "\"Travel toward place_greyhollow-at-the-inn\" names a destination the travel engine cannot reach from here"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 5,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Silas Thorne\""
+      },
+      {
+        "kind": "turn-impossible-chip",
+        "turn": 6,
+        "quote": "\"Travel toward place_greyhollow-at-the-inn\" names a destination the travel engine cannot reach from here"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 7,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Review the crumbling old survey map\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 9,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Silas Thorne\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 11,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Silas Thorne\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 12,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Follow up: The Lost Survey\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 13,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Read Silas Thorne\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to Silas Thorne\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 15,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Ask Silas Thorne about the lead\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 16,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Review the crumbling old survey map\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 17,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Review the crumbling old survey map\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 22,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Follow up: The Lost Survey\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 29,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Follow up: The Lost Survey\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 32,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Fight the writhing roots\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 38,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Follow up: The Lost Survey\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 40,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Follow up: The Lost Survey\""
+      }
+    ]
+  }
+}
