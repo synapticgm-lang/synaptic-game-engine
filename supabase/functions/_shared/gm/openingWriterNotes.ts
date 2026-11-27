@@ -147,83 +147,25 @@ export function formatOpeningWriterNotes(state: GameState, retryErrors?: string[
   return [rail, extra, retry].filter(Boolean).join('\n\n');
 }
 
-/** Single words that are not distinctive proper names even when Title-Cased. */
-export const COMMON_OPENING_LEXEMES = new Set([
-  'the', 'a', 'an', 'and', 'or', 'of', 'in', 'on', 'at', 'to', 'for', 'from', 'with', 'by', 'as',
-  'you', 'your', 'yours', 'yourself', 'they', 'them', 'their', 'theirs', 'this', 'that', 'these',
-  'those', 'who', 'what', 'why', 'how', 'when', 'where', 'both', 'each', 'every', 'some', 'any',
-  'all', 'none', 'here', 'there', 'already', 'just', 'still',
-  'walk', 'stay', 'take', 'hear', 'keep', 'look', 'wait', 'ask', 'stand', 'sit', 'lie', 'give',
-  'sign', 'refuse', 'accept', 'speak', 'say', 'come', 'go', 'run', 'hold', 'carry', 'offer',
-  'enter', 'leave', 'follow', 'turn', 'open', 'close', 'step', 'move', 'share', 'raise', 'draw',
-  'put', 'hang', 'wake', 'arrive', 'return', 'call', 'tell', 'make', 'bring', 'find', 'see',
-  'start', 'stop', 'begin', 'end', 'choose', 'decide', 'try', 'help', 'guard', 'watch', 'rest',
-  'sleep', 'eat', 'drink', 'trade', 'buy', 'sell', 'hide', 'search', 'study',
-  'salt', 'glass', 'earth', 'heat', 'light', 'water', 'scarf', 'bread', 'blanket', 'kit',
-  'work', 'job', 'hunt', 'brand', 'iron', 'pact', 'oath', 'circle', 'panel', 'system',
-  'wind', 'dust', 'ash', 'fire', 'stone', 'wood', 'gold', 'coin', 'blade', 'hand', 'pack',
-  'gear', 'cloak', 'coat', 'food', 'waterskin', 'people', 'person', 'figure', 'someone',
-  'anyone', 'everyone', 'nobody', 'nothing', 'something',
-  'trail', 'road', 'camp', 'war', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'harbor',
-  'harbour', 'waystation', 'station', 'wake', 'market', 'square', 'hollow', 'lane', 'court',
-  'quay', 'mill', 'well', 'bridge', 'pass', 'crossing',
-]);
-
-const GENERIC_PLACE_BITS = new Set([
-  'trail', 'road', 'camp', 'war', 'inn', 'ford', 'gate', 'keep', 'hall', 'ward', 'circle', 'court',
-  'harbor', 'harbour', 'waystation', 'station', 'wake', 'market', 'square', 'hollow', 'lane',
-  'quay', 'mill', 'well', 'bridge', 'pass', 'crossing', 'place',
-]);
-
-/** Honorifics are not distinctive retired stems — "his brother" must not fail a "Brother Oren" ban. */
-const HONORIFIC_BITS = new Set([
-  'brother', 'sister', 'father', 'mother', 'sir', 'lady', 'lord', 'captain', 'sergeant',
-  'high', 'chanter', 'priest', 'priestess', 'tracker', 'scout', 'novice', 'elder',
-  'master', 'mistress', 'doctor', 'dame', 'warden', 'keeper', 'ranger', 'hunter',
-]);
+/** @deprecated Empty — lexeme stop-lists deleted (brief 03 / H8). Names come from cast data. */
+export const COMMON_OPENING_LEXEMES = new Set<string>();
 
 export function isCommonOpeningLexeme(word: string): boolean {
   const k = (word ?? '').trim().toLowerCase();
-  return !k || COMMON_OPENING_LEXEMES.has(k) || GENERIC_PLACE_BITS.has(k);
+  return !k;
 }
 
-/**
- * Retired names as whole names. Never a single common English word (cinder, first, talk).
- * Honorific-stripped full names are included (Brother Oren → Oren).
- * A long coined stem of a multi-word place (Cinderwake from Cinderwake Trail) may be included.
- */
+/** Retired catalog names as authored on the opening instance (no lexeme stop-list). */
 export function distinctiveRetiredNames(retiredNames: string[] | undefined): string[] {
   const out: string[] = [];
   const seen = new Set<string>();
-  const push = (n: string) => {
-    const k = n.trim();
-    if (!k) return;
-    if (k.split(/\s+/).length === 1 && (isCommonOpeningLexeme(k) || GENERIC_PLACE_BITS.has(k.toLowerCase()) || HONORIFIC_BITS.has(k.toLowerCase()))) {
-      return;
-    }
+  for (const r of retiredNames ?? []) {
+    const k = r.trim();
+    if (!k) continue;
     const key = k.toLowerCase();
-    if (seen.has(key)) return;
+    if (seen.has(key)) continue;
     seen.add(key);
     out.push(k);
-  };
-  for (const r of retiredNames ?? []) {
-    const t = r.trim();
-    if (!t) continue;
-    push(t);
-    const bare = t.replace(/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High Chanter|Priest|Priestess|Tracker|Scout|Novice|Elder|Master|Mistress|Doctor|Dame|Warden|Keeper)\s+/i, '').trim();
-    if (bare && bare.toLowerCase() !== t.toLowerCase()) push(bare);
-    const parts = bare.split(/\s+/).filter(Boolean);
-    if (parts.length >= 2) {
-      const first = parts[0]!;
-      if (
-        first.length >= 8
-        && !isCommonOpeningLexeme(first)
-        && !GENERIC_PLACE_BITS.has(first.toLowerCase())
-        && !HONORIFIC_BITS.has(first.toLowerCase())
-      ) {
-        push(first);
-      }
-    }
   }
   return out;
 }

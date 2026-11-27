@@ -860,6 +860,10 @@ export interface OpeningCastMember {
   name: string;
   /** Minted gender for this person; pronouns and self-introductions must match it. */
   gender?: 'male' | 'female';
+  /** From typed hook cast data — not guessed from English. */
+  pronouns?: 'he/him' | 'she/her' | 'they/them';
+  /** From typed hook cast data — heirloom / roster durability. */
+  durability?: 'durable' | 'passer';
 }
 /** A player-facing opening chip that names the actual offer. */
 export interface OpeningOfferChip {
@@ -2148,6 +2152,8 @@ export interface NpcMemory {
   relationshipStatus?: 'stranger' | 'acquaintance' | 'ally' | 'rival' | 'friend' | 'enemy';
   /** 12c — bible / inferred role (merchant stays; quest-patron may exit). */
   roleHint?: string;
+  /** From typed opening cast (or authored roster). Not inferred from English job words. */
+  durability?: 'durable' | 'passer';
   /** Engine-rolled heirloom. One per durable NPC, at most one in a settlement. */
   heirloom?: NpcHeirloom;
   /** Authored roster signature. Not rolled, and never joined by a second famous item. */

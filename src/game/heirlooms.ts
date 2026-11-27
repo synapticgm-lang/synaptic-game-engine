@@ -1,15 +1,13 @@
 /**
  * One heirloom roll when a durable NPC's sheet is first saved.
  * Speech does not create one. Roster people do not roll.
+ * Durability comes from typed cast / memory data — not English job regexes (brief 03 / H8).
  */
 import type { GameState, HeirloomReason, NpcHeirloom, NpcMemory, Rarity } from './types';
 import { ensureRegionBands, regionBand } from './regionLevels';
 import { WORLD_MAX_CREATURE_LEVEL } from './rules/wildlifeConfig';
 
 const REASONS: HeirloomReason[] = ['retired-higher-band', 'family-relic', 'war-trophy', 'temple-charge'];
-
-const DURABLE = /\b(sheriff|priest|cleric|veteran|retired|keeper|innkeeper|jailer|artisan|quartermaster|ruler|mentor|gatekeeper)\b/i;
-const PASSER = /\b(courier|refugee|herald|bandit|outlaw|prisoner)\b/i;
 
 const LABELS: Record<HeirloomReason, string> = {
   'retired-higher-band': 'old campaign blade',
@@ -32,11 +30,17 @@ export function heirloomDraw(seed: string, npcId: string): { hit: boolean; reaso
   return { hit: n % 12 === 0, reason: REASONS[Math.floor(n / 12) % REASONS.length]! };
 }
 
-export function isDurableRole(job: string, hint?: string, place?: string): boolean {
-  const hay = `${job} ${hint ?? ''}`;
-  if (PASSER.test(job) && !DURABLE.test(hint ?? '')) return false;
-  if (place === 'road' && !DURABLE.test(hay)) return false;
-  return DURABLE.test(hay);
+/**
+ * Durable when memory/cast data says so. Without authored durability, no heirloom
+ * (passers and unmarked roles never roll).
+ */
+export function isDurableRole(
+  _job: string,
+  _hint?: string,
+  _place?: string,
+  durability?: 'durable' | 'passer'
+): boolean {
+  return durability === 'durable';
 }
 
 export function settlementId(state: GameState, location?: string | null): string {
@@ -91,7 +95,7 @@ export function maybeGrantHeirloom(state: GameState, memory: NpcMemory, location
   if (memory.heirloom || memory.listedSignature) return memory;
   const job = memory.sheet?.job ?? '';
   const place = memory.sheet?.place;
-  if (!isDurableRole(job, memory.roleHint, place)) return memory;
+  if (!isDurableRole(job, memory.roleHint, place, memory.durability)) return memory;
   const draw = heirloomDraw(state.seed ?? 'seed', memory.npcId);
   if (!draw.hit) return memory;
   const settlement = settlementId(state, location ?? memory.location ?? state.currentLocation);
@@ -148,7 +152,8 @@ export function clauseNamesHeirloom(clause: string, label: string): boolean {
   const name = label.toLowerCase().replace(/\s+/g, ' ').trim();
   if (!name) return false;
   if (clause.toLowerCase().includes(name)) return true;
-  const head = name.split(/[^a-z0-9']+/).filter((w) => w.length >= 3).at(-1);
+  const bits = name.split(/[^a-z0-9']+/).filter((w) => w.length >= 3);
+  const head = bits[bits.length - 1];
   if (!head) return false;
   return new RegExp(`\\b${head}\\b`, 'i').test(clause);
 }
