@@ -281,20 +281,29 @@ export async function waitOpeningReady(page, { timeoutMs = 90000 } = {}) {
   return last;
 }
 
+/**
+ * True when the book advanced: a new story card count, or a different last GM body.
+ * Thumbs (`feedbacks`) alone do not count — late thumbs on the previous beat
+ * (e.g. after streaming reveal) used to fake a Look-around success with identical prose.
+ */
+export function gmBeatAdvanced(prev, snap) {
+  const prevGmCount = Number(prev?.gmStoryCount || 0);
+  const prevStory = String(prev?.lastGm || '').replace(/\s+/g, ' ').trim();
+  const story = String(snap?.lastGm || '').replace(/\s+/g, ' ').trim();
+  const countGrew = Number(snap?.gmStoryCount || 0) > prevGmCount;
+  const storyChanged = Boolean(story && story !== prevStory);
+  return countGrew || storyChanged;
+}
+
 /** A turn is not done until a new GM story bubble lands (hasRealGmStory). Player lines do not count. */
 export async function waitNewGmBeat(page, prev, { timeoutMs = 180000 } = {}) {
   const start = Date.now();
   const prevGmCount = Number(prev.gmStoryCount || 0);
-  const prevFeedbacks = Number(prev.feedbacks || 0);
-  const prevStory = (prev.lastGm || '').trim();
   while (Date.now() - start < timeoutMs) {
     await dismissQuestUnlock(page);
     const snap = await readGameSnapshot(page);
     const story = (snap.lastGm || '').trim();
-    const countGrew = Number(snap.gmStoryCount || 0) > prevGmCount
-      || Number(snap.feedbacks || 0) > prevFeedbacks;
-    const storyChanged = Boolean(story && story !== prevStory);
-    const newGmBubble = countGrew || storyChanged;
+    const newGmBubble = gmBeatAdvanced(prev, snap);
     const hudNotBook = /equipped set:|Show Profile/i.test(story) && story.length < 240;
     const plateOnly = /^(?:_>\s*)?SYSTEM\b/i.test(story)
       && /\b(?:Name|Level|HP|Registration)\b/i.test(story)
@@ -309,10 +318,7 @@ export async function waitNewGmBeat(page, prev, { timeoutMs = 180000 } = {}) {
     await sleep(500);
   }
   const last = await readGameSnapshot(page);
-  const lastStory = (last.lastGm || '').trim();
-  last.newGmBubble = Number(last.gmStoryCount || 0) > prevGmCount
-    || Number(last.feedbacks || 0) > prevFeedbacks
-    || Boolean(lastStory && lastStory !== prevStory);
+  last.newGmBubble = gmBeatAdvanced(prev, last);
   last.prevGmStoryCount = prevGmCount;
   last.waitTimedOut = !last.newGmBubble;
   return last;
