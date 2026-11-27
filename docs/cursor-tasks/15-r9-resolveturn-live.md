@@ -4,7 +4,9 @@
 **Depends on:** None to start; land after 12 or rebase on it  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Move the turn out of the 1,500+ line `sendAction` in useGame.ts into one `resolveTurn` with typed stages. Live play calls it. No behaviour change.
@@ -13,6 +15,9 @@ Move the turn out of the 1,500+ line `sendAction` in useGame.ts into one `resolv
 John agreed on 27 Nov that R9 is its own phase beside Phase 3. The turn is copied in fateAutoplay.ts and liveDrive.ts, so fixes are made three times (for example `maxTurns: 6` at useGame.ts ~3001 and fateAutoplay.ts ~1652, 1930). This brief is a pure extraction for the live path.
 
 **Previous attempts:** see HISTORY.md H11. Fixes were repeatedly made in one copy of the turn only (for example `maxTurns: 6` in three places, and the runner's double fight resolve). Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D1. `resolveTurn` must become the **only** caller of the turn's stage functions (for example `applyFactGate`, `applyFactLocks`, `commitTurnRecord`, `extractUpdates`, `callGm`). Add an ESLint `no-restricted-imports` rule in `eslint.config.js` that stops `useGame.ts` importing those stage modules directly, so a fourth copy can't grow back (`eslint.config.js` may be changed for this rule only). The PR reports how many stage symbols `useGame.ts` imported before and after.
 
 ## Files you may read
 - src/game/useGame.ts
@@ -49,5 +54,5 @@ Top model to plan the stages; Auto for the move.
 ## Branch and PR
 - Branch: `cursor/15-r9-resolveturn-live` from the latest `main`.
 - PR title: `[15] Extract one resolveTurn with typed stages; live play calls it`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

@@ -5,7 +5,9 @@
 **Who does it:** Synapticgm / John (not a Cursor task)  
 **Gate:** Needs John's yes and a price first. Log the spend to shared_journal and tell The Accountant.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 After phases 1–4 are in, one paid live run of 40 turns in LitRPG, RPG and tabletop, read by a person, to confirm the root-cause fixes hold in real prose.

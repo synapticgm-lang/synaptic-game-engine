@@ -5,7 +5,9 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** Parked until a bought asset pack is actually used, unless John says add it now.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 The game's terms say players may not extract, download or redistribute bundled art and interface assets, so licences such as GameDev Market's are honoured.
@@ -47,5 +49,5 @@ Auto.
 ## Branch and PR
 - Branch: `cursor/11-terms-no-extraction-line` from the latest `main`.
 - PR title: `[11] Terms: no-extraction line for bought assets`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

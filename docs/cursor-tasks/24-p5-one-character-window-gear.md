@@ -4,7 +4,9 @@
 **Depends on:** None  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Gear changes by tapping in one character window in every mode; Status, Progress, Adventurer and Show stats agree.
@@ -13,6 +15,9 @@ Gear changes by tapping in one character window in every mode; Status, Progress,
 Gear changes only by typing; the character views are read-only. UI review Q8 (one `visibleAttributes` selector) and Q18 (one wornGear display mapper so 'Body' and 'Chest' cannot drift).
 
 **Previous attempts:** none found in HISTORY.md.
+
+## Duplication to remove
+DUPLICATION.md D19: one `visibleAttributes` selector and one worn-gear mapper. Delete the per-view copies.
 
 ## Files you may read
 - src/components/CharacterWindow.tsx
@@ -53,5 +58,5 @@ Auto.
 ## Branch and PR
 - Branch: `cursor/24-p5-one-character-window-gear` from the latest `main`.
 - PR title: `[24] One character window with equip and unequip in all three modes`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

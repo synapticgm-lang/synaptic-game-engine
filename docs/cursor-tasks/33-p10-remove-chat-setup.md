@@ -4,7 +4,9 @@
 **Depends on:** 32  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Delete the chat-based setup after page 1.
@@ -13,6 +15,9 @@ Delete the chat-based setup after page 1.
 Audit 30 (`stitchOpeningContinue` canned hall talk, openingStitch.ts ~283, useGame.ts ~2563-2565), 45 (`ACTION_FUNCTION_WORD` name harvest, openingEstablishment.ts ~2512-2525).
 
 **Previous attempts:** see HISTORY.md H15, H5, H7. Stitch removal was claimed on 29 Sep but stitching is still on main. Prove it's gone with `rg`. Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D20: remove the remaining stitch and setup-in-chat copies. After this, `openingStitch.ts` should have no importers, so delete it.
 
 ## Files you may read
 - src/game/openingStitch.ts
@@ -54,5 +59,5 @@ Auto.
 ## Branch and PR
 - Branch: `cursor/33-p10-remove-chat-setup` from the latest `main`.
 - PR title: `[33] Remove setup-in-chat: stitched hall talk and name harvesting`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

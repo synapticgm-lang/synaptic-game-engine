@@ -5,7 +5,9 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Every game start is live AI prose written from a dedicated opening request that never says the player already acted. On a miss, show an honest Try again instead of a silent automatic retry.
@@ -63,5 +65,5 @@ Top model to plan; Auto to edit.
 ## Branch and PR
 - Branch: `cursor/05-page1-own-request` from the latest `main`.
 - PR title: `[05] Page 1 gets its own writer request; honest Try again, no hidden retry`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

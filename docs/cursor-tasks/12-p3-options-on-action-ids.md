@@ -5,7 +5,9 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Each option shown is a pair: a legal engine action id plus the writer's wording. Engine chips no longer overwrite the writer's options.
@@ -14,6 +16,9 @@ Each option shown is a pair: a legal engine action id plus the writer's wording.
 Options are plain strings and clicks are recognised by phrase. Audit G8 (`CHOICE_TIER_PROMPT_RULES`, choiceTierRules.ts, 9 NEVER rules), 30b (`chipFollowsProse`, `OPTION_STOP`, `INSPECT_VERBS`), 30c (`fallbackOpeningPads`), 34b (`properNamesInOption`). Open question: does the writer see the exact words the player typed? (completedEventPacket.ts ~1680 blanks the PLAYER line.) Report what you find; do not change it here.
 
 **Previous attempts:** see HISTORY.md H1, H2, H10. Action ids already exist (q37-C1b `actionId` repeat suppression, 17 Oct; q31-RC3 'chips recognised by their builder and resolved action', 15 Oct), but the phrase recognisers were never deleted and #34 added new ones. Build on the existing `actionId`: no second id field. Delete the recognisers in this PR. T10ECHO (31 Oct) blanked the player's typed words from the packet. Report whether that is why replies miss what the player said, but don't change it here. Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D5: options get ids here, and the count stays with brief 13. Don't add any new cap, floor or `slice(0, N)`.
 
 ## Files you may read
 - src/game/playerOptions.ts
@@ -64,5 +69,5 @@ Top model to plan; Auto to edit. If large, split into 12a (types and pipeline) a
 ## Branch and PR
 - Branch: `cursor/12-p3-options-on-action-ids` from the latest `main`.
 - PR title: `[12] Options carry a legal engine action id; the writer words them`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

@@ -1,10 +1,12 @@
 # 31 — Places carry a kind and role; map template by kind; shops, recruiting and dungeons reachable
 
 **Phase:** Phase 9, part B  
-**Depends on:** 30  
+**Depends on:** 43; 30  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Places and rooms carry kind and role; map templates are chosen by kind (naval decks for ships, one template per building type); world outlines declare a setting; shops, recruiting and dungeons are reachable, with a Trade control in every mode when a merchant is here.
@@ -13,6 +15,9 @@ Places and rooms carry kind and role; map templates are chosen by kind (naval de
 Audit 19 (`HOLDING`/`MANY`, dungeonRescue.ts ~20-21), 36 (`ABOARD`, `LAND_PLACE_NAME`, vesselPlace.ts ~13, placeTemplates.ts ~467). Absorbs 'Shop/recruit/dungeon reach'. Q6: `pickWorldOutline` must not hash a LitRPG seed onto a modern map. Travel terrain costs are designed but not approved as a separate build: leave them out. Open for John: System store or NPC merchant for LitRPG and RPG — do not decide it.
 
 **Previous attempts:** see HISTORY.md H13. Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D10: land kind and role on the one place store from brief 43. Don't add kind to several place lists. Depends on 43.
 
 ## Files you may read
 - src/game/vesselPlace.ts
@@ -61,5 +66,5 @@ Top model to plan; Auto to edit. If large, put shop/recruit/dungeon reach in its
 ## Branch and PR
 - Branch: `cursor/31-p9-places-by-kind-reach` from the latest `main`.
 - PR title: `[31] Places carry a kind and role; map template by kind; shops, recruiting and dungeons reachable`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

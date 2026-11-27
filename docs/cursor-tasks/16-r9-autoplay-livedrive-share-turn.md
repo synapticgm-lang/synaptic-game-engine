@@ -4,7 +4,9 @@
 **Depends on:** 15  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Delete the turn copies in fateAutoplay.ts and liveDrive.ts; both call resolveTurn.
@@ -13,6 +15,9 @@ Delete the turn copies in fateAutoplay.ts and liveDrive.ts; both call resolveTur
 Absorbs 'Runner double fight resolve' (the runner is a copy of the turn). Removes audit 28c (`maxTurns: 6` in three copies).
 
 **Previous attempts:** see HISTORY.md H11. Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D1, D2. On `9ab6b311`, 248 of the 360 symbols `fateAutoplay.ts` imports are also imported by `useGame.ts`, because the runner re-wires the turn. After this brief, `fateAutoplay.ts` and `liveDrive.ts` import only `resolveTurn`, state setup and their input drivers. Extend brief 15's lint rule to cover both files. Acceptance adds: the shared-import count drops to driver and setup symbols only (list them in the PR), and `maxTurns` appears once. `liveDrive.ts`'s use of `openingStitch` goes with brief 06/33, so don't keep it alive here.
 
 ## Files you may read
 - src/game/resolveTurn.ts
@@ -49,5 +54,5 @@ Auto.
 ## Branch and PR
 - Branch: `cursor/16-r9-autoplay-livedrive-share-turn` from the latest `main`.
 - PR title: `[16] Autoplay and live-drive call the same resolveTurn`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

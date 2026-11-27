@@ -5,7 +5,9 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 One function returns exactly 4 options for LitRPG and RPG and 3 for tabletop. Every other count, cap, floor and pad is deleted.
@@ -14,6 +16,9 @@ One function returns exactly 4 options for LitRPG and RPG and 3 for tabletop. Ev
 The count is set in at least five places: fourSlotPads.ts; playerOptions.ts (`declaredCap`, `FILLER_LABELS`, `isProtectedOption`); openingEstablishment.ts ~279 and openingWriterNotes.ts ~14-15 (`dnd ? 3 : 4`); caps of 6 and floors of 3 in choiceCompiler.ts and choiceRanking.ts; `padChoicesToCount` in choicePipeline.ts ~1362. Audit 28, 37, 43b, P11. Exceptions (death saves, first-fight choice, a road with a waiting threat) are John's decision: add a typed exceptions hook with none enabled and list candidates in the PR. Absorbs 'Short pads', the camp off-pad loop (with 19) and 'Hero Awakening name button crowded out' (the name moves to Setup in 32).
 
 **Previous attempts:** see HISTORY.md H1, H3. FOURSLOT 1–6 (2–3 Nov) tried 'always four slots' by adding a sixth layer (`fourSlotPads.ts`) and filling gaps with filler, streak caps and starve rules. It ended MISS. This brief differs only if it deletes the other count owners and every slot is a legal, scene-grounded action from brief 12. No invented or dead chips (absent people, unvisited places), no filler-label pool, no streak counter. Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D5 lists **every** count site found on `9ab6b311`. Delete them all, not only the ones in the background above. Also: `quickResponseButtons.ts:~267` (`kit ? 3 : 4`), `openingRite.ts:RITE_SCENE_SLOTS`, `openingEstablishment.ts` `slice(0,4)` ~83 and ~3618 and `slice(0,3)` ~2405 and ~2810, `qualityGovernance.ts:~627` `slice(0,3)`, `chipRules.ts` `slice(0,4)` ~27 and ~44, and `scripts/option-audit.mjs:~74` (make it import the count, or delete the script). These files may be read and changed for their count lines only. Acceptance adds: `rg "\? 3 : 4" src scripts` finds nothing outside `finalOptions.ts`. Brief 41 later moves the number itself into the mode profile.
 
 ## Files you may read
 - src/game/fourSlotPads.ts
@@ -65,5 +70,5 @@ Top model to plan; Auto to edit.
 ## Branch and PR
 - Branch: `cursor/13-p3-one-433-function` from the latest `main`.
 - PR title: `[13] One final function returns exactly 4 / 4 / 3 options`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

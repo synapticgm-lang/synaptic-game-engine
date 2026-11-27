@@ -13,6 +13,7 @@ Written 27 November 2026 (Europe/London) by Synapticgm for John's rule: the proj
 7. **One brief, one PR, one review, one merge.** The October merge waves had 26 merge reverts in four days (17–20 Oct). Autonomous fix loops (the 2–3 Nov FOURSLOT watch, gate-fix retries) burnt Cursor credit and left the prose unchanged (H12).
 8. **If a problem matches a ledger entry that has already failed twice, stop and report.** Don't try the same approach a third time.
 9. **Tests that pin one seed's symptom are not evidence.** `src/game/` holds 549 test files, and 276 of them are named `playtest*`. Many pin one seed's old output.
+10. **Duplication is a repeat factory (John, 27 Nov).** Every recurring problem above had several owners: the count (H1), fact views (H9), wardens (H10), the turn and the twins (H11). One source per thing, generated copies only where a runtime forces it. See `DUPLICATION.md` and `CODING.md`.
 
 ## How this ledger was built (and its limits)
 
@@ -164,6 +165,7 @@ Written 27 November 2026 (Europe/London) by Synapticgm for John's rule: the proj
   - 7 Nov: drop repeated writer-leaf lines.
   - 10 Nov #23: quote recall by 8 turns plus first four words.
   - 13 Nov #37: 85% word-overlap echo filter.
+- **Still on main (checked 27 Nov, `9ab6b311`):** `proseWarden.ts` (1,470 lines) was "retired" on 27 Oct but still exists. `useGame.ts`, `fateAutoplay.ts` and `readabilityGate.ts` still import `scrubFalseArrivalWhenHere` / `scrubEntityMadLibs` from it. Brief 44 deletes it.
 - **Why it came back:** the writer packet doesn't carry speaker ids, quote ids or what has already been said, so post-filters guessed by word overlap.
 - **Open question for brief 12:** T10ECHO blanked the player's typed words from the packet, which may be why replies don't answer what the player said. Report what you find. Don't silently undo it.
 
@@ -172,8 +174,9 @@ Written 27 November 2026 (Europe/London) by Synapticgm for John's rule: the proj
   - `maxTurns: 6` is in three files.
   - The runner had a double fight resolve (PR #27/#28 leftover).
   - 27 Oct build: gm-turn BOOT_ERROR because the edge copy of `stateTx.ts` was old, and it was rolled back.
-  - About 130 twin files.
-- **Why it came back:** fixes were made in the copy the failing test used. Briefs 15–17 own this. Never hand-edit twins.
+  - Twin files (recounted 27 Nov on `9ab6b311`): 157 files and ~49k lines in `supabase/functions/_shared/gm/`. 123 match `src/` apart from import paths, 12 carry other generator rewrites, and **16 are hand-written stubs** (second implementations the generator skips). `check:gm-edge` passes, but nothing enforces it: there is no CI workflow, and `prepush` runs only `codemap`.
+  - The turn: 248 of the 360 symbols `fateAutoplay.ts` imports are also imported by `useGame.ts`. The runner re-wires the turn rather than copy-pasting it, which is why copy-detection tools miss it.
+- **Why it came back:** fixes were made in the copy the failing test used. Briefs 15–17 own the turn copies, and brief 39 owns the hand stubs and the build check. Never hand-edit twins. Full list: `DUPLICATION.md`.
 
 ### H12. Merge waves, reverts and autonomous loops
 - **Evidence:**
@@ -237,5 +240,13 @@ Written 27 November 2026 (Europe/London) by Synapticgm for John's rule: the proj
 | 31 | H13 |
 | 32–33 | H15, H5, H7 |
 | 38 | H4, H12 |
+| 39 | H11 |
+| 40 | H9, H10 |
+| 41 | H1 |
+| 42 | H8, H10 |
+| 43 | H13 |
+| 44 | H5, H6, H10 |
+| 45 | H6 |
+| 46 | none found |
 
 "None found" means none found in the sources above, not that it has never been tried.

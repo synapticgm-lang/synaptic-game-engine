@@ -5,7 +5,9 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** Every item needs John's go first. Do not rotate the OpenRouter key until he says so.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 Remove the server Gemini fallback, move per-user metering into the database, and key rate limits on the real client IP header.
@@ -48,5 +50,5 @@ Auto.
 ## Branch and PR
 - Branch: `cursor/37-phase0-leftovers` from the latest `main`.
 - PR title: `[37] Phase 0 leftovers: server Gemini fallback, database metering, IP headers`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.

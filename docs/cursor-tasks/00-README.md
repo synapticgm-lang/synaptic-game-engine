@@ -2,9 +2,14 @@
 
 Written 27 November 2026 (Europe/London) by Synapticgm from the living plan, "SynapticGM plan to get the game running" (Grok Bot Page f581bcfa). Main was `9ab6b311` when this pack was written. Line numbers in the briefs come from the 16 Nov patch audit and may have moved, so find code by its name, not its line number.
 
-## Read HISTORY.md first (John, 27 Nov: only move forward)
+## Read CODING.md, HISTORY.md and DUPLICATION.md first (John, 27 Nov)
 
-Every Cursor chat reads `docs/cursor-tasks/HISTORY.md` before the brief. It lists every earlier attempt at each recurring problem and why it came back.
+At the start of **every** brief, every Cursor chat reads these three files before the brief:
+- **`CODING.md`**: how to code here. It has John's **House rules for Cursor** (tidy coding, token efficiency and loops, approval gates, money and secrets, the never-touch path, wording), then root cause first, test first, verify before "done", and the one-source rule. Every brief has a `Method: follow CODING.md` line.
+- **`HISTORY.md`**: every earlier attempt at each recurring problem and why it came back. Only move forward.
+- **`DUPLICATION.md`**: every known duplicate (logic, data, rules, facts, counts), its single source, and the brief that removes it.
+
+From HISTORY.md:
 - In the plan (the 3–6 lines before editing), name the ledger entries the brief touches.
 - **The PR body must have a "How this differs from earlier attempts" section.** Name each matching ledger entry and say in one or two lines why this change won't repeat it.
 - **Never reintroduce removed code.** That includes proseWarden or any final-prose "warden", stitch banks, fallback prose, hidden retries or re-asks, option cooldowns, streak caps, filler pools and phrase recognisers, under any name. If the fix seems to need one of them back, stop and report.
@@ -14,7 +19,7 @@ Every Cursor chat reads `docs/cursor-tasks/HISTORY.md` before the brief. It list
 ## How to use this pack
 
 1. **One fresh Cursor chat per brief.** Never carry on with a second brief in the same chat.
-2. In the new chat, @-mention this README, HISTORY.md and the brief, for example `@docs/cursor-tasks/00-README.md @docs/cursor-tasks/HISTORY.md @docs/cursor-tasks/01-hooks-as-data-schema.md`, and say "Do this brief."
+2. In the new chat, @-mention this README, CODING.md, HISTORY.md, DUPLICATION.md and the brief, for example `@docs/cursor-tasks/00-README.md @docs/cursor-tasks/CODING.md @docs/cursor-tasks/HISTORY.md @docs/cursor-tasks/DUPLICATION.md @docs/cursor-tasks/01-hooks-as-data-schema.md`, and say "Do this brief."
 3. **Model:**
    - Use **Auto** (or a cheaper model) for routine edits, searches, renames, deletions and test rewrites.
    - Use the **top model** only to plan a change (the first message of a brief marked "Top model to plan"), or when the same error comes back after a fix. Then switch back to Auto.
@@ -29,11 +34,20 @@ Every Cursor chat reads `docs/cursor-tasks/HISTORY.md` before the brief. It list
 - the brief needs a file it doesn't list (name the file and the reason);
 - the same error comes back after one fix (switch to the top model once; if it comes back again, stop);
 - the only way to pass looks like a word list, phrase regex, name list, special case, timer or canned text;
+- the change would add a second copy of logic, data, rules or facts, or a hand-written edge twin (see DUPLICATION.md);
 - a secret, API key, OpenRouter call, payment, live game or deploy seems needed;
 - the change would touch PYOA prose, or would grow past roughly 600 changed lines (propose a split instead);
 - a brief's background turns out to be wrong about the code (report what you found).
 
 ## Global rules (every brief inherits these, and they win over the brief)
+
+**House rules.** John's house rules for Cursor are in `CODING.md` ("House rules for Cursor"), and they apply to every brief alongside the rules below.
+
+**One source, no duplication (John, 27 Nov)**
+- Never add a second copy of logic, data, rules, facts, constants, prompt text or a validator, under any name. Find the single source in `DUPLICATION.md` and extend it.
+- If a copy is truly unavoidable (the Deno edge runtime can't import `src/`), it must be generated from the source by a script, with a check that fails on drift. No hand copies. The PR must justify it.
+- Every PR has a **"Duplication removed"** section listing each copy it deleted (file:symbol), or "none" with a reason. A PR that adds a copy fails review.
+- When a brief touches a file listed in `DUPLICATION.md`, it deletes the copies listed for that brief.
 
 **Fix the root cause**
 - Root-cause fixes only. Name the failing layer (screen, network, AI output, database, or the code that owns the wrong fact) before changing anything.
@@ -74,18 +88,18 @@ Every Cursor chat reads `docs/cursor-tasks/HISTORY.md` before the brief. It list
 - Never claim more than was checked.
 
 **Edge twins**
-- Many `src/game/` files have copies under `supabase/functions/_shared/gm/`. Never hand-edit those copies. Run `npm run sync:gm-edge` and check with `npm run check:gm-edge`. A PR that changes `supabase/functions/` needs a gm-turn deploy, and that needs John's yes.
+- Many `src/game/` files have generated copies under `supabase/functions/_shared/gm/` (157 files on `9ab6b311`, 16 of them hand-written stubs that brief 39 removes). Never hand-edit those copies, and never add a new hand stub. Run `npm run sync:gm-edge` and check with `npm run check:gm-edge`. A PR that changes `supabase/functions/` needs a gm-turn deploy, and that needs John's yes.
 
 **Sanity commands** (allowed, but not proof): `npm run typecheck`, `npm run lint`, `npx vitest run <files>`, `npm run check:gm-edge`.
 
 ## Naming
 - Branch: `cursor/<NN>-<slug>`, taken from the latest `main`.
 - PR title: `[NN] <brief title>`.
-- PR body: a "How this differs from earlier attempts" section (HISTORY.md entries), the root cause and failing layer, the files changed, what was deleted, the sanity results, what the live check should look at, and "gm-turn deploy needed" when `supabase/functions/` changed.
+- PR body: a "How this differs from earlier attempts" section (HISTORY.md entries), a "Duplication removed" section (DUPLICATION.md), "Structural decisions" if any (Synapticgm copies them into the project FACTS.md on the box, so don't create a FACTS.md in the repo), evidence pasted from fresh sanity runs (CODING.md section 3), the root cause and failing layer, the files changed, what was deleted, the sanity results, what the live check should look at, and "gm-turn deploy needed" when `supabase/functions/` changed.
 
 ## Order and checklist
 
-Work top to bottom, and only start a brief once its dependencies are merged. The R9 briefs (15–17) are their own phase alongside phase 3 (John, 27 Nov). Interface quick repairs (34–35) and gear swap (24) can slot in any time they don't share files with an open brief. Gated briefs wait for John's yes.
+Work top to bottom, and only start a brief once its dependencies are merged. The de-dup briefs 39–46 (27 Nov) are placed in order below, so the list is not in number order. The R9 briefs (15–17) are their own phase alongside phase 3 (John, 27 Nov). Interface quick repairs (34–35) and gear swap (24) can slot in any time they don't share files with an open brief. Gated briefs wait for John's yes.
 
 - [ ] **01** [Hook cards as typed data: cast, place, offer, rite, beat order](01-hooks-as-data-schema.md) — Phase 1 (opening slices, part A)
 - [ ] **02** [Offers and rites read from data; delete the offer and rite parsers](02-offers-and-rites-as-data.md) — Phase 1 (opening slices, part B: concrete offer chips)
@@ -104,8 +118,10 @@ Work top to bottom, and only start a brief once its dependencies are merged. The
 - [ ] **15** [Extract one resolveTurn with typed stages; live play calls it](15-r9-resolveturn-live.md) — R9 (own phase, alongside Phase 3), part A
 - [ ] **16** [Autoplay and live-drive call the same resolveTurn](16-r9-autoplay-livedrive-share-turn.md) — R9, part B
 - [ ] **17** [Client sends gm-turn a small typed writer request, not the whole save](17-r9-small-writer-request.md) — R9, part C — *gated: John's yes*
+- [ ] **39** [Edge twins: generated only, no hand stubs, drift fails the build](39-dedup-edge-twins-generated-only.md) — De-dup (after R9 part C) — *gated: John's yes*
 - [ ] **18** [Delete count-based forced events](18-p4-remove-turn-timers.md) — Phase 4, part A
 - [ ] **19** [Repeated options stay on screen, ranked lower; remove the 5-turn cooldown and streak caps](19-p4-repeats-ranked-lower-no-cooldown.md) — Phase 4, part B (John's 27 Nov decision)
+- [ ] **41** [Mode rules live in the mode profile, not in inline mode checks](41-dedup-mode-profile-one-source.md) — De-dup (after Phase 4)
 - [ ] **20** [Look, wait, rest, refuse and plain travel never roll](20-p4-no-dice-on-plain-actions.md) — Phase 4, part C
 - [ ] **21** [Tabletop: build or import the character before page 1](21-p5-tabletop-character-first.md) — Phase 5, part A
 - [ ] **22** [Keep the whole pasted sheet; features, spells and XP to SRD 5.2 as written](22-p5-full-sheet-srd-xp-spells.md) — Phase 5, part B
@@ -113,8 +129,13 @@ Work top to bottom, and only start a brief once its dependencies are merged. The
 - [ ] **24** [One character window with equip and unequip in all three modes](24-p5-one-character-window-gear.md) — Phase 5, part D (can start any time)
 - [ ] **25** [Fact checker compares what the writer bound with what the engine committed](25-p6-fact-check-by-ids.md) — Phase 6, part A — *gated: John's yes*
 - [ ] **26** [Speech and quotes carry speaker and quote ids](26-p6-speech-and-quote-ids.md) — Phase 6, part B — *gated: John's yes*
+- [ ] **40** [One writer packet built once per turn from committed state](40-dedup-one-writer-packet.md) — De-dup (after Phase 6) — *gated: John's yes*
+- [ ] **42** [One people store keyed by NPC id](42-dedup-one-people-store.md) — De-dup (after brief 40) — *gated: John's yes*
+- [ ] **43** [One place store keyed by place id](43-dedup-one-place-store.md) — De-dup (before brief 31) — *gated: John's yes*
 - [ ] **27** [Paid balances, purchases and the free earn path on the server](27-p7-server-balances.md) — Phase 7 — *gated: John's yes*
 - [ ] **28** [One writer output contract and one validator](28-p8-one-output-contract.md) — Phase 8, part A — *gated: John's yes*
+- [ ] **44** [Delete leftover prose guards and dead validators](44-dedup-delete-leftover-guards.md) — De-dup (after Phase 8 part A) — *gated: John's yes*
+- [ ] **45** [One system-prompt builder and one writer call path](45-dedup-one-prompt-one-writer-path.md) — De-dup (after Phase 8 part A) — *gated: John's yes*
 - [ ] **29** [Model profiles, a per-save language setting, and a 30-scenario conformance set](29-p8-model-profiles-language.md) — Phase 8, part B — *gated: John's yes*
 - [ ] **30** [Writer quest proposals reach the game; hubs offer several side jobs](30-p9-typed-proposals-hub-jobs.md) — Phase 9, part A — *gated: John's yes*
 - [ ] **31** [Places carry a kind and role; map template by kind; shops, recruiting and dungeons reachable](31-p9-places-by-kind-reach.md) — Phase 9, part B
@@ -122,6 +143,7 @@ Work top to bottom, and only start a brief once its dependencies are merged. The
 - [ ] **33** [Remove setup-in-chat: stitched hall talk and name harvesting](33-p10-remove-chat-setup.md) — Phase 10, part B
 - [ ] **34** [Shared modal hook, tab strips that fit, staff chrome behind the staff check](34-ui-shared-modal-and-tabs.md) — Interface quick repairs (any time; avoid files in active briefs)
 - [ ] **35** [One toast stack, Themes Save bar, one currency formatter, honest merchant header](35-ui-toasts-themes-currency.md) — Interface quick repairs
+- [ ] **46** [One script per job; archive docs that restate replaced systems](46-dedup-dev-scripts-and-stale-docs.md) — De-dup housekeeping (any time; avoid files in active briefs)
 - [ ] **36** [Player opt-in screen for training capture, default OFF](36-player-opt-in-screen.md) — Before other players (training) — *gated: John's yes*
 - [ ] **37** [Phase 0 leftovers: server Gemini fallback, database metering, IP headers](37-phase0-leftovers.md) — Phase 0 leftovers — *gated: John's yes*
 - [ ] **38** [Paid 40-turn live AI-prose run in all three modes](38-paid-40x3-prose-run.md) — Leftover: verification (not Cursor) — *not Cursor* — *gated: John's yes*

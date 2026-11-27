@@ -5,7 +5,9 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md`, `docs/cursor-tasks/CODING.md`, `docs/cursor-tasks/HISTORY.md` and `docs/cursor-tasks/DUPLICATION.md` first. Their rules apply here and win over anything in this brief.
+
+Method: follow CODING.md (house rules for Cursor, root cause first, test first, verify before "done", one source and no duplication). Check DUPLICATION.md for the copies this brief removes.
 
 ## Goal
 The client sends the edge only the typed writer request; the edge stops rebuilding the packet from the whole save.
@@ -14,6 +16,9 @@ The client sends the edge only the typed writer request; the edge stops rebuildi
 Audit G9 (gm-turn/index.ts ~398-401 rebuilds the packet on the edge; about 130 twin files in supabase/functions/_shared/gm/). Fewer twins means fewer drift bugs and lower cost.
 
 **Previous attempts:** see HISTORY.md H11. Your PR must say how this approach differs from those attempts.
+
+## Duplication to remove
+DUPLICATION.md D3, D6. The edge stops rebuilding the writer packet (D6) and the twin set shrinks to what gm-turn actually imports (D3). Acceptance adds: report the twin file count and line count before and after (157 files, ~49k lines on `9ab6b311`). Brief 39 then removes the hand stubs and makes drift fail the build.
 
 ## Files you may read
 - supabase/functions/gm-turn/index.ts
@@ -50,5 +55,5 @@ Top model to plan; Auto to edit.
 ## Branch and PR
 - Branch: `cursor/17-r9-small-writer-request` from the latest `main`.
 - PR title: `[17] Client sends gm-turn a small typed writer request, not the whole save`.
-- PR body: root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, and "gm-turn deploy needed" if `supabase/functions/` changed.
+- PR body: "How this differs from earlier attempts", "Duplication removed" (file:symbol, or "none" and why), root cause and failing layer, files changed, what was deleted, sanity results, what the live check should look at, "Structural decisions" (if any), and "gm-turn deploy needed" if `supabase/functions/` changed.
 - One PR for this brief only. Do not merge. Do not deploy.
