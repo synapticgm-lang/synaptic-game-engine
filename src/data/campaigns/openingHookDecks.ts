@@ -1141,31 +1141,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'giltwood-estate-conundrum': [
     {
+    place: { id: 'giltwood-estate-conundrum-the-billiard-room-of-g', kind: 'room' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'giltwood-estate-conundrum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Billiard Room of Giltwood Estate',
       text:
         'Thunder. Midnight. Lord Harrington dead on the rug. A pocket watch that runs backward in your hand. Beatrice drops brandy and names a servants’ passage — if you will not pin it on her.',
     },
     {
+    place: { id: 'giltwood-estate-conundrum-the-servants-passage-o', kind: 'estate' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'giltwood-estate-conundrum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the servants’ passage of Giltwood Estate',
       text:
         'You are already in the passage when the thud lands in the billiard room. The watch is ticking the wrong way. Beatrice is ahead of you, or behind you.',
     },
     {
+    place: { id: 'giltwood-estate-conundrum-giltwood-library-at-th', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'giltwood-estate-conundrum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Giltwood library at the storm',
       text:
         'Library first. The body is a shout from down the hall. The watch is still in Harrington’s hand until you take it. Guests are already lying.',
     },
     {
+    place: { id: 'giltwood-estate-conundrum-giltwood-storm-porch', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'giltwood-estate-conundrum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Giltwood storm porch',
       text:
         'You arrive by the porch as midnight hits. Stained glass. A thud. Six guests, one corpse, a maid who knows a cellar.',
     },
     {
+    place: { id: 'giltwood-estate-conundrum-giltwood-wine-cellar', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'giltwood-estate-conundrum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Giltwood wine cellar',
       text:
         'Beatrice’s passage dumps you in the cellar first. Above, a murder. In your pocket, later, a watch that runs backward. The next page is whether you go up.',
     },
     {
+    place: { id: 'giltwood-estate-conundrum-giltwood-guest-corrido', kind: 'corridor' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'giltwood-estate-conundrum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Giltwood guest corridor',
       text:
         'Corridor doors opening. A scream that is not thunder. You reach the rug with everyone else. The watch is already wrong.',
@@ -1174,31 +1204,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'vesper-glass-cipher': [
     {
+    place: { id: 'vesper-glass-cipher-the-flooded-archives-of-oakh', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'vesper-glass-cipher-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Flooded Archives of Oakhaven',
       text:
         'Stolen tome. Vesper-Glass humming on your chest. Guild bells in the flooded tunnel. Silas offers a soot-stained hand and a smuggler’s route. Boots behind you.',
     },
     {
+    place: { id: 'vesper-glass-cipher-a-flooded-side-tunnel-of-oak', kind: 'tunnel' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'vesper-glass-cipher-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a flooded side tunnel of Oakhaven',
       text:
         'You are already in the side tunnel. The archives are a noise. Silas is bleeding. The glass is warm. Enforcers have the main route.',
     },
     {
+    place: { id: 'vesper-glass-cipher-oakhaven-surface-grate', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'vesper-glass-cipher-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Oakhaven surface grate',
       text:
         'You surface first — bells still below. The cipher is wet. Silas wants you to go back down for his sister’s name. The Guild wants the glass.',
     },
     {
+    place: { id: 'vesper-glass-cipher-an-oakhaven-pipe-listener-ne', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'vesper-glass-cipher-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'an Oakhaven pipe-listener nest',
       text:
         'Pipe-listeners heard the theft. You start in their nest, not the stacks. Silas is a rumor until he is not. The glass hums anyway.',
     },
     {
+    place: { id: 'vesper-glass-cipher-oakhaven-archive-stairs-half', kind: 'archive' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'vesper-glass-cipher-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Oakhaven archive stairs, half-flooded',
       text:
         'Stairs, not the deep stacks. Water at the calves. Bells. Silas’s split lip. The next page is route, not lore.',
     },
     {
+    place: { id: 'vesper-glass-cipher-a-collapsing-oakhaven-tunnel', kind: 'tunnel' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'vesper-glass-cipher-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a collapsing Oakhaven tunnel',
       text:
         'The tunnel is already coming down. The glass is the only light. Silas’s hand. Trust is a direction, not a speech.',
@@ -1207,31 +1267,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'erebus-9-swarm-directive': [
     {
+    place: { id: 'erebus-9-swarm-directive-air-lock-bay-4-deep-sea', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'erebus-9-swarm-directive-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Air-Lock Bay 4, Deep-Seam Mining Rig Charybdis',
       text:
         'Strobes. Outer bulkhead under chitin. Vance begs you to override. The nav-drive is ice in your hands. Wet clicking in the vents. Share the air or seal it.',
     },
     {
+    place: { id: 'erebus-9-swarm-directive-inner-bulkhead-corridor', kind: 'corridor' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'erebus-9-swarm-directive-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'inner bulkhead corridor, Rig Charybdis',
       text:
         'You start one door inward. Bay 4 is a sound. Vance is on the radio. The drive is yours. The swarm is in the vents either way.',
     },
     {
+    place: { id: 'erebus-9-swarm-directive-charybdis-med-bay-durin', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'erebus-9-swarm-directive-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Charybdis med-bay during the breach',
       text:
         'Med-bay first. Casualties. Then the lock alarm. The nav-drive was stashed in a locker you should not have opened.',
     },
     {
+    place: { id: 'erebus-9-swarm-directive-charybdis-canteen-at-kl', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'erebus-9-swarm-directive-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Charybdis canteen at klaxon',
       text:
         'Canteen. Then klaxon. Then everyone running the wrong way. Vance is at Bay 4. You still have the sphere.',
     },
     {
+    place: { id: 'erebus-9-swarm-directive-a-charybdis-maintenance', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'erebus-9-swarm-directive-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Charybdis maintenance crawl',
       text:
         'Crawlspace. Clicking above the grate. You hear Vance on the lock. The drive knocks against the pipe. First page is whether you drop into the bay.',
     },
     {
+    place: { id: 'erebus-9-swarm-directive-charybdis-bridge-with-n', kind: 'bridge' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'erebus-9-swarm-directive-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Charybdis bridge with no helm',
       text:
         'Bridge is empty. Swarm on the cameras. Bay 4 is the only undogged lock. The fleet does not know. You do.',
@@ -1240,31 +1330,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'rose-gold-ultimatum': [
     {
+    place: { id: 'rose-gold-ultimatum-the-vip-powder-room-at-the-s', kind: 'room' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'rose-gold-ultimatum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the VIP Powder Room at the Starlight Gala',
       text:
         'Bride sobbing. Dossier in your clutch. Julian’s knock. Chloe knows the laundry chutes. Lie, leak, or walk — the gala is already a crime scene of manners.',
     },
     {
+    place: { id: 'rose-gold-ultimatum-the-hotel-service-hallway', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'rose-gold-ultimatum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the hotel service hallway',
       text:
         'You are already in the service hall. The powder room is a closed door and a knock. Chloe has the chutes. The dossier is still yours.',
     },
     {
+    place: { id: 'rose-gold-ultimatum-starlight-gala-ballroom-edge', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'rose-gold-ultimatum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Starlight Gala ballroom edge',
       text:
         'Ballroom first. Then the bride’s collapse. Then the powder room. Julian is already smiling for cameras that are not yours.',
     },
     {
+    place: { id: 'rose-gold-ultimatum-starlight-gala-cloakroom', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'rose-gold-ultimatum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Starlight Gala cloakroom',
       text:
         'Cloakroom. The dossier was planted in a coat. You took it. The powder-room crisis is one corridor away.',
     },
     {
+    place: { id: 'rose-gold-ultimatum-a-starlight-gala-balcony', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'rose-gold-ultimatum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Starlight Gala balcony',
       text:
         'Balcony air. Phone lights below. Chloe texts: now. Julian is at the powder-room door. The clutch is heavy.',
     },
     {
+    place: { id: 'rose-gold-ultimatum-starlight-kitchens-during-th', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'rose-gold-ultimatum-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Starlight kitchens during the gala',
       text:
         'Kitchens. Chloe’s turf. The bride is a rumor upstairs. The dossier is real. Julian will find this room third.',
@@ -1273,31 +1393,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'null-parameter-protocol': [
     {
+    place: { id: 'null-parameter-protocol-the-shattered-summoning-', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'null-parameter-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Shattered Summoning Dais of Aethelgard',
       text:
         'Cubicle gone. Ozone. You lie in a crater of runes. ERROR 404: HERO NOT FOUND. Kaelen offers a cloak. Executioners are coming for failed summons.',
     },
     {
+    place: { id: 'null-parameter-protocol-the-jagged-wilds-beyond-', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'null-parameter-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the jagged wilds beyond the crater',
       text:
         'You wake past the dais, not on it. The error still hangs in your eyes. Kaelen finds you. The Vanguard wants the glitch dead, not interviewed.',
     },
     {
+    place: { id: 'null-parameter-protocol-an-aethelgard-roadside-a', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'null-parameter-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'an Aethelgard roadside after the failed summon',
       text:
         'Road, not crater. Office clothes. A crystal in your fist. A battle-mage bleeding. The System is a story object you can crash.',
     },
     {
+    place: { id: 'null-parameter-protocol-a-vanguard-checkpoint-ou', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'null-parameter-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Vanguard checkpoint outside Aethelgard',
       text:
         'You are already in a cage-wagon. Failed summon. Kaelen is the other prisoner. The error in your eyes is the only key.',
     },
     {
+    place: { id: 'null-parameter-protocol-aethelgard-tavern-still-', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'null-parameter-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Aethelgard tavern, still in Earth clothes',
       text:
         'Someone dragged you to a tavern before the purge squad. The crystal is in the ale-stain. Kaelen wants you to run. The Crown wants a hero that exists.',
     },
     {
+    place: { id: 'null-parameter-protocol-the-dais-under-rain', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'null-parameter-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the dais under rain',
       text:
         'Rain on shattered obsidian. Same error. Fewer witnesses. Kaelen’s cloak. The next page is run, talk, or poke the hologram.',
@@ -1306,31 +1456,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'resin-sonata': [
     {
+    place: { id: 'resin-sonata-the-glass-atrium-of-the-grand-funic', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'resin-sonata-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Glass Atrium of the Grand Funicular',
       text:
         'Seawater weeps in. High-Architect dead. Eden-Resin syringe in your hand. Aris offers maintenance shafts. Brass-Gargant footsteps on the promenade.',
     },
     {
+    place: { id: 'resin-sonata-opaline-maintenance-shafts', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'resin-sonata-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Opaline maintenance shafts',
       text:
         'You start in the shafts. The atrium is a groan above. Aris is ahead with a wrench. The syringe is still unspent.',
     },
     {
+    place: { id: 'resin-sonata-an-opaline-pressure-lock', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'resin-sonata-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'an Opaline pressure-lock',
       text:
         'Lock first. Then the atrium news. The last uncorrupted resin is a rumor until it is in your fist. The Gargant is a timetable.',
     },
     {
+    place: { id: 'resin-sonata-opaline-promenade-before-the-atrium', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'resin-sonata-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Opaline promenade before the atrium',
       text:
         'Promenade. Mutated socialites. Then the Glass Atrium. Aris. The syringe. Follow the drip or seal a hatch.',
     },
     {
+    place: { id: 'resin-sonata-a-dry-opaline-side-chapel', kind: 'chapel' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'resin-sonata-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a dry Opaline side-chapel',
       text:
         'One dry room. The parasite is a hymn in the pipes. The syringe is the last clean note. Aris knows the shafts.',
     },
     {
+    place: { id: 'resin-sonata-opaline-funicular-car-stalled', kind: 'car' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'resin-sonata-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Opaline funicular car, stalled',
       text:
         'The car stalled between wards. Ocean against the glass. The Architect is already dead above. You still have to climb.',
@@ -1339,31 +1519,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'umbra-protocol': [
     {
+    place: { id: 'umbra-protocol-the-bell-tower-of-the-grand-excha', kind: 'tower' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'umbra-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Bell-Tower of the Grand Exchange',
       text:
         'Archbishop dead. Architect’s Ledger ticking in your hands. Guard hounds through stained glass. Sable tosses a climbing harness. Blend or climb.',
     },
     {
+    place: { id: 'umbra-protocol-the-rooftops-of-veridia', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'umbra-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the rooftops of Veridia',
       text:
         'You are already on the roofs. The tower is a bell-scream behind. Sable is hit. The Ledger still ticks. The list of architects is not safe.',
     },
     {
+    place: { id: 'umbra-protocol-grand-exchange-floor-during-the-b', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'umbra-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Grand Exchange floor during the bells',
       text:
         'Floor crowd, not tower. Then the bells. Then blood upstairs. You still have to get the book. Sable already has a hole in her side.',
     },
     {
+    place: { id: 'umbra-protocol-a-veridia-blind-spot-alley', kind: 'alley' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'umbra-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Veridia blind-spot alley',
       text:
         'Alley first. Harness second. Tower third. The Ledger is a weight you stole on the way down — or have not stolen yet.',
     },
     {
+    place: { id: 'umbra-protocol-veridia-belfry-stair', kind: 'stair' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'umbra-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Veridia belfry stair',
       text:
         'Stair, not floor. Glass going. Sable above. The Archbishop is a problem you are about to own.',
     },
     {
+    place: { id: 'umbra-protocol-a-veridia-disguise-shop-at-dusk', kind: 'shop' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'umbra-protocol-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Veridia disguise shop at dusk',
       text:
         'You start in a change of clothes. The tower job is tonight. The Ledger is the reason. Sable is the complication.',
@@ -1372,31 +1582,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'crimson-nocturne': [
     {
+    place: { id: 'crimson-nocturne-the-weeping-mausoleum-of-house-', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'crimson-nocturne-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'The Weeping Mausoleum of House Valerius',
       text:
         'Blood on lace. Ampoule from your sire’s ashes. Rams at the marble. Julian weeps scarlet and offers the catacombs. Drink, refuse, or kneel to hunters.',
     },
     {
+    place: { id: 'crimson-nocturne-the-catacombs-beneath-house-val', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'crimson-nocturne-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the catacombs beneath House Valerius',
       text:
         'Catacombs first. Fire is a rumor above. Julian is already here. The vial is in your cuff. The Inquisition will find the stairs.',
     },
     {
+    place: { id: 'crimson-nocturne-lacrimosa-street-outside-the-ma', kind: 'street' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'crimson-nocturne-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Lacrimosa street outside the mausoleum',
       text:
         'You are in the street when the rams hit. Blessed fire. You still have the Ampoule. Julian is a voice from the dark.',
     },
     {
+    place: { id: 'crimson-nocturne-a-valerius-crypt-alcove', kind: 'alcove' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'crimson-nocturne-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Valerius crypt alcove',
       text:
         'Alcove. Sire already ash. The vial is yours. Julian’s hand. Hunters’ Latin. The next page is thirst.',
     },
     {
+    place: { id: 'crimson-nocturne-house-valerius-chapel-under-sie', kind: 'chapel' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'crimson-nocturne-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'House Valerius chapel under siege',
       text:
         'Chapel, not mausoleum. Same fire. Same vial. Julian wants the dark. The hunters want a kneeling corpse.',
     },
     {
+    place: { id: 'crimson-nocturne-the-mausoleum-doors-from-the-in', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'crimson-nocturne-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the mausoleum doors from the inside',
       text:
         'You hold the doors. The rams hit your shoulders. Julian has the catacomb key. The Ampoule is a choice that will not wait.',
@@ -1405,31 +1645,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'onyx-blood-covenant': [
     {
+    place: { id: 'onyx-blood-covenant-the-vip-mezzanine-of-the-obs', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'onyx-blood-covenant-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: "The VIP Mezzanine of 'The Obsidian Orchid'",
       text:
         'Bass. A Lycan snaps the bouncer. Sanguine Ledger against your chest. Kaelen’s motorcycle is the night’s only exit. Get on, refuse, or walk into the pack.',
     },
     {
+    place: { id: 'onyx-blood-covenant-the-alley-behind-the-obsidia', kind: 'alley' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'onyx-blood-covenant-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the alley behind The Obsidian Orchid',
       text:
         'Alley first. Bike already hot. The club is a bass-thud. Kaelen is possessive. The Ledger is still upstairs until you say otherwise.',
     },
     {
+    place: { id: 'onyx-blood-covenant-the-obsidian-orchid-dance-fl', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'onyx-blood-covenant-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: "The Obsidian Orchid dance floor",
       text:
         'Floor, not mezzanine. Then the snap. Then the Ledger. Kaelen’s jaw is crimson. The pack is already in the stairwell.',
     },
     {
+    place: { id: 'onyx-blood-covenant-a-night-lord-safehouse-after', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'onyx-blood-covenant-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Night-Lord safehouse after the club',
       text:
         'You are already out. The Ledger is warm. Kaelen wants the bond named. The pack wants the book. First page is still the night.',
     },
     {
+    place: { id: 'onyx-blood-covenant-vip-stairs-of-the-obsidian-o', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'onyx-blood-covenant-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: "VIP stairs of The Obsidian Orchid",
       text:
         'Stairs. Bouncer dying above. Kaelen below. You have not decided if the Ledger is leverage or a love-letter.',
     },
     {
+    place: { id: 'onyx-blood-covenant-a-rain-slick-night-city-over', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'onyx-blood-covenant-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a rain-slick Night-city overpass',
       text:
         'Overpass. Bike. Club behind. Ledger in the jacket. Kaelen asks once. The coven and the pack are both on the radio.',
