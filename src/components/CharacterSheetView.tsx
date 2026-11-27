@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { GameState } from '@/game/types';
 import { equippedSetLabel } from '@/game/uiTheme';
 import { progressPanel } from '@/game/progressPanel';

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10V — typed ask to a present NPC must keep/land an answer with content;
  * System ping returns a readout; physical I-acts are not talk turns.
  */

@@ -120,7 +120,7 @@ describe('s80 Root A — cooldown keys by named target', () => {
 
   it('back at the card place, "Talk to someone in the street" on the road does not cool "Ask what they want"', () => {
     // Harness turn 8 in the seed-80 run: the cooldown no longer removes the talk-step chip. (Talk at the
-    // hold is also starved while no person record is here � that is the card-cast presence owner.)
+    // hold is also starved while no person record is here — that is the card-cast presence owner.)
     const cooldowns = new Map(Object.entries(cooldownsThrough(7)));
     expect(filterCooldownChoices(['Ask what they want', 'Look around', 'Search the area'], 8, cooldowns).filtered).toContain(
       'Ask what they want',

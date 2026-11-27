@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Act-3/4 sandbox — factions, hubs, encounters, XP, resume; ports beyond SP/HA.
  */
 import { describe, expect, it } from 'vitest';

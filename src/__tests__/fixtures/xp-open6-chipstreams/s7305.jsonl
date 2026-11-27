@@ -1,4 +1,4 @@
-﻿{"turn":2,"location":"where this tale opens","offeredChoices":["Ask what they want","Reach into the pocket","Look around"],"level":1,"playerInput":"Look around","xpGained":0}
+{"turn":2,"location":"where this tale opens","offeredChoices":["Ask what they want","Reach into the pocket","Look around"],"level":1,"playerInput":"Look around","xpGained":0}
 {"turn":3,"location":"On the road between places","offeredChoices":["Travel toward First Threshold Gate","Ask the people who pulled you about the lead","Read the people who pulled you","Search the scene for signs","Read the System trail","Say somethingâ€¦","Do something elseâ€¦"],"level":2,"playerInput":"Travel toward First Threshold Gate","xpGained":150}
 {"turn":4,"location":"On the road between places","offeredChoices":["Walk on","Hunt the wildlife nearby","Turn back toward where this tale opens"],"level":2,"playerInput":"Hunt the wildlife nearby","xpGained":42}
 {"turn":5,"location":"where this tale opens","offeredChoices":["Walk on","Turn back toward where this tale opens"],"level":2,"playerInput":"Turn back toward where this tale opens","xpGained":0}

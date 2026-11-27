@@ -269,6 +269,7 @@ export async function fetchCloudSaveSlot(): Promise<SaveSlotInfo | null> {
     return {
       saveId: cloud.saveId,
       storyName: cloud.storyName,
+      startedAt: cloud.lastUpdated,
       characterName: cloud.characterName,
       lastUpdated: cloud.lastUpdated,
       turn: cloud.dungeon.turn,

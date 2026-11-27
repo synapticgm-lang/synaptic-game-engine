@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10U — Then Jax harvest, speech stitch (shout + while), met memory, death book prose.
  */
 import { describe, expect, it } from 'vitest';

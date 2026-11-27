@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { GameState, NpcMemory, PlaceRecord } from "./types";
 import { isEmptyRoomPersonSlot } from "./chromeAuthority";
 import { peopleHere } from "./scenePresence";

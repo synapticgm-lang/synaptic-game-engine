@@ -1,4 +1,4 @@
-﻿/**
+/**
  * PYOA flag conditions (pure, no imports so scripts can import it directly).
  *
  * A condition is a plain JSON object used by authored books:

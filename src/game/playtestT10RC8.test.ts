@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10RC8 — absent speakers: seat-only attribution, catalog role labels, ghost Talk chip,
  * arrival figure = one seated person, final-page drop after append/seal.
  */
