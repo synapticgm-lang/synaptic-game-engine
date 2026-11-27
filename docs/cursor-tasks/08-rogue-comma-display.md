@@ -4,13 +4,15 @@
 **Depends on:** None  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Find where 'Rogue,.' (a class or role label followed by stray punctuation) is produced, name the failing layer, and fix it at the source.
 
 ## Background
 Still listed as open; not re-produced and the root cause was not confirmed on 27 Nov. Likely a label or sentence joined from parts where one part is empty. Diagnose first; if the fix needs files outside the list below, stop and report.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - search only: `rg -n "Rogue" src/game src/components` and the join or format helpers it leads to

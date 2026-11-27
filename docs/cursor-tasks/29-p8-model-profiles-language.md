@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** The 5-model live check spends OpenRouter credit: John's go and a price first.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Each supported model has a profile (reasoning, budget, schema support). Replies are no longer emptied for containing another script; a per-save language setting decides. A 30-scenario conformance set is defined, to run before a model is marked supported.
 
 ## Background
 Audit G5 (`hasHanScript` empties the reply, openRouterChat.ts ~238), G6 (silent re-ask with `NO_REASONING_HINT`, gm-turn/index.ts ~554). No Fireworks or Gemini profiles. Removing the server Gemini fallback is brief 37 and needs John's go.
+
+**Previous attempts:** see HISTORY.md H6. A silent re-ask was added on 28 Sep (28l). Retries hid the cause each time (H6), and a broken deploy's retries cost money on 28 Oct. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/openRouterChat.ts

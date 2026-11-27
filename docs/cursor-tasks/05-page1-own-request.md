@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Every game start is live AI prose written from a dedicated opening request that never says the player already acted. On a miss, show an honest Try again instead of a silent automatic retry.
 
 ## Background
 Page 1 goes through the ordinary turn packet (`buildCompletedEventPacket`), so the writer is told the player already acted. Audit 31b (automatic retry of any failed first draft, liveOpening.ts ~908-929) and 33 (`mentionsRequiredPlace`, `PAD_ITEM_NOUNS`, `TITLE_FUNCTION_WORDS`). Absorbs 'SI page 1 omits the name'. Still John's decision: second person ('you') or third person — do not change it here; keep what the save setting says. Page-1 housing rule (11 Oct): show the rule through the scene, not a stated rules line.
+
+**Previous attempts:** see HISTORY.md H7, H6, H4. #31 found every live first draft needed the hidden retry. #33 then loosened the validators instead of fixing why drafts failed. Don't tune validator strictness as the fix: fix the packet framing (page 1 sent as a completed turn) and remove the retry. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/liveOpening.ts

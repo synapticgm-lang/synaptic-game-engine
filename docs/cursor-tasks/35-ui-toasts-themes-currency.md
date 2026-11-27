@@ -4,13 +4,15 @@
 **Depends on:** 34  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Toasts and the save indicator share one stack; the Themes Save bar does not cover tiles; prices use one currency formatter; the merchant header and Salvage buttons follow real state.
 
 ## Background
 UI review Q9 (honesty), Q10, Q11, Q12 (display), Q15, Q17. A glossary (R8) is a display source only, never a filter.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/components/ToastStack.tsx

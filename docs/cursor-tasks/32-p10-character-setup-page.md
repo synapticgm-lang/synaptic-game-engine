@@ -4,13 +4,15 @@
 **Depends on:** 03, 05, 21  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 One setup page before turn 1: 4–5 core questions, each with a one-tap pick and an optional Expand, plus Quick start and 'Use my saved character'. Structured answers are applied once.
 
 ## Background
 Rule 6 and the 14 Nov opening setup study. UI review R2, Q13, Q14: Quick Start includes a Character / Origin step; step labels come from the real step list; a typed campaign name is not overwritten; a GM Library click opens this setup with that bible; premade strictness matches the story's difficulty badge. Absorbs 'Hero Awakening name button'. Single save versus several saves is John's open decision: do not build a multi-save list.
+
+**Previous attempts:** see HISTORY.md H15, H5, H7. Setup was mixed into the story loop. AIPSETUP (19 Oct) was one of the reverted merges. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/components/SetupScreen.tsx

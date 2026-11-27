@@ -4,13 +4,15 @@
 **Depends on:** None (avoid files open in 01–06)  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Save and campaign names show real characters (for example a real dash), because the source encoding is fixed and the date is no longer stored inside the name.
 
 ## Background
 16 Nov UI review Q1. Not re-produced on 27 Nov. Root cause: a mis-encoded file plus a date baked into the save name. The label builder is not pinned down yet: start by searching src/game/storySave.ts, src/game/campaignSeed.ts, src/components/MainMenu.tsx and src/components/PlayerProfilePanel.tsx, and name the real file in the PR.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/game/storySave.ts

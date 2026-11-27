@@ -4,13 +4,15 @@
 **Depends on:** 30  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Places and rooms carry kind and role; map templates are chosen by kind (naval decks for ships, one template per building type); world outlines declare a setting; shops, recruiting and dungeons are reachable, with a Trade control in every mode when a merchant is here.
 
 ## Background
 Audit 19 (`HOLDING`/`MANY`, dungeonRescue.ts ~20-21), 36 (`ABOARD`, `LAND_PLACE_NAME`, vesselPlace.ts ~13, placeTemplates.ts ~467). Absorbs 'Shop/recruit/dungeon reach'. Q6: `pickWorldOutline` must not hash a LitRPG seed onto a modern map. Travel terrain costs are designed but not approved as a separate build: leave them out. Open for John: System store or NPC merchant for LitRPG and RPG — do not decide it.
+
+**Previous attempts:** see HISTORY.md H13. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/vesselPlace.ts

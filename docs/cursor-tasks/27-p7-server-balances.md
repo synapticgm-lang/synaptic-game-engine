@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** Needs a Supabase migration; applying it to the live database needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Balances and purchases live on the server; a free player can earn everything (including illustrated turns), just slower; 'Buy (soon)' never grants packs on a normal account.
 
 ## Background
 Audit P12: bought packs are credited and spent in localStorage (capacityLedger.ts ~10, 434-446). Rule 10. Stripe functions exist (supabase/functions/create-checkout, stripe-webhook). Latest migration on main is 025.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/game/capacityLedger.ts

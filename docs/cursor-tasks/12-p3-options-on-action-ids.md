@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Each option shown is a pair: a legal engine action id plus the writer's wording. Engine chips no longer overwrite the writer's options.
 
 ## Background
 Options are plain strings and clicks are recognised by phrase. Audit G8 (`CHOICE_TIER_PROMPT_RULES`, choiceTierRules.ts, 9 NEVER rules), 30b (`chipFollowsProse`, `OPTION_STOP`, `INSPECT_VERBS`), 30c (`fallbackOpeningPads`), 34b (`properNamesInOption`). Open question: does the writer see the exact words the player typed? (completedEventPacket.ts ~1680 blanks the PLAYER line.) Report what you find; do not change it here.
+
+**Previous attempts:** see HISTORY.md H1, H2, H10. Action ids already exist (q37-C1b `actionId` repeat suppression, 17 Oct; q31-RC3 'chips recognised by their builder and resolved action', 15 Oct), but the phrase recognisers were never deleted and #34 added new ones. Build on the existing `actionId`: no second id field. Delete the recognisers in this PR. T10ECHO (31 Oct) blanked the player's typed words from the packet. Report whether that is why replies miss what the player said, but don't change it here. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/playerOptions.ts

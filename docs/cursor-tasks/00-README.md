@@ -2,10 +2,19 @@
 
 Written 27 November 2026 (Europe/London) by Synapticgm from the living plan, "SynapticGM plan to get the game running" (Grok Bot Page f581bcfa). Main was `9ab6b311` when this pack was written. Line numbers in the briefs come from the 16 Nov patch audit and may have moved, so find code by its name, not its line number.
 
+## Read HISTORY.md first (John, 27 Nov: only move forward)
+
+Every Cursor chat reads `docs/cursor-tasks/HISTORY.md` before the brief. It lists every earlier attempt at each recurring problem and why it came back.
+- In the plan (the 3–6 lines before editing), name the ledger entries the brief touches.
+- **The PR body must have a "How this differs from earlier attempts" section.** Name each matching ledger entry and say in one or two lines why this change won't repeat it.
+- **Never reintroduce removed code.** That includes proseWarden or any final-prose "warden", stitch banks, fallback prose, hidden retries or re-asks, option cooldowns, streak caps, filler pools and phrase recognisers, under any name. If the fix seems to need one of them back, stop and report.
+- **Two strikes:** if the brief's problem matches a ledger entry whose approach has already failed twice, and your plan is the same approach, stop and report. Don't retry it.
+- **No loops:** one fix attempt per failing check. If the same check fails again, stop. Never run an autoplay, gate or watch loop to "keep fixing until green".
+
 ## How to use this pack
 
 1. **One fresh Cursor chat per brief.** Never carry on with a second brief in the same chat.
-2. In the new chat, @-mention this README and the brief, for example `@docs/cursor-tasks/00-README.md @docs/cursor-tasks/01-hooks-as-data-schema.md`, and say "Do this brief."
+2. In the new chat, @-mention this README, HISTORY.md and the brief, for example `@docs/cursor-tasks/00-README.md @docs/cursor-tasks/HISTORY.md @docs/cursor-tasks/01-hooks-as-data-schema.md`, and say "Do this brief."
 3. **Model:**
    - Use **Auto** (or a cheaper model) for routine edits, searches, renames, deletions and test rewrites.
    - Use the **top model** only to plan a change (the first message of a brief marked "Top model to plan"), or when the same error comes back after a fix. Then switch back to Auto.
@@ -15,6 +24,8 @@ Written 27 November 2026 (Europe/London) by Synapticgm from the living plan, "Sy
 7. Tick the box in the checklist below in the same PR (`[ ]` → `[x]` means the PR is open, not merged). Synapticgm marks it merged.
 
 ### Stop and report (don't push on) when:
+- the problem matches a HISTORY.md entry whose approach has failed twice, and your plan is that approach again;
+- your fix would bring back something HISTORY.md says was removed;
 - the brief needs a file it doesn't list (name the file and the reason);
 - the same error comes back after one fix (switch to the top model once; if it comes back again, stop);
 - the only way to pass looks like a word list, phrase regex, name list, special case, timer or canned text;
@@ -59,6 +70,7 @@ Written 27 November 2026 (Europe/London) by Synapticgm from the living plan, "Sy
 - Offline tests, unit builds and scripts are a sanity check only. They never prove a fix.
 - The real check is a short live game on www.synapticgm.com (or the PR's Vercel preview, if one exists), focused on prose and read by a person. Synapticgm or John runs it after review. It costs about a penny per 20 turns.
 - The paid 40-turn run in all 3 modes happens once, after phases 1–4 (and R9) are merged, and only with John's yes (brief 38).
+- **Acceptance needs a person-read live game.** A person (Synapticgm or John) plays it and reads the prose of every turn checked, and counts the options on every turn: exactly 4 in LitRPG and RPG, exactly 3 in tabletop. Tests, replay banks, gate counts, fact-check pass rates and autoplay runs never count as acceptance on their own (HISTORY.md H4). A brief is not ticked as merged until that read is written up.
 - Never claim more than was checked.
 
 **Edge twins**
@@ -69,7 +81,7 @@ Written 27 November 2026 (Europe/London) by Synapticgm from the living plan, "Sy
 ## Naming
 - Branch: `cursor/<NN>-<slug>`, taken from the latest `main`.
 - PR title: `[NN] <brief title>`.
-- PR body: the root cause and failing layer, the files changed, what was deleted, the sanity results, what the live check should look at, and "gm-turn deploy needed" when `supabase/functions/` changed.
+- PR body: a "How this differs from earlier attempts" section (HISTORY.md entries), the root cause and failing layer, the files changed, what was deleted, the sanity results, what the live check should look at, and "gm-turn deploy needed" when `supabase/functions/` changed.
 
 ## Order and checklist
 

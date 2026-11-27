@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 The client sends the edge only the typed writer request; the edge stops rebuilding the packet from the whole save.
 
 ## Background
 Audit G9 (gm-turn/index.ts ~398-401 rebuilds the packet on the edge; about 130 twin files in supabase/functions/_shared/gm/). Fewer twins means fewer drift bugs and lower cost.
+
+**Previous attempts:** see HISTORY.md H11. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - supabase/functions/gm-turn/index.ts

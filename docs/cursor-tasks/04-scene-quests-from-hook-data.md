@@ -4,13 +4,15 @@
 **Depends on:** 01, 02  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 The opening quest(s) are built from the hook's typed beats and cast and place ids, so they adapt to the story and name real people and places in this game.
 
 ## Background
 Opening quests are derived from card text. Rule 2: quests adapt to the story. Rule 3: names and places change per game. Side-quest spacing (P6) is Phase 9 work (brief 30), not this brief.
+
+**Previous attempts:** see HISTORY.md H7, H8, H16. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/openingInstance.ts

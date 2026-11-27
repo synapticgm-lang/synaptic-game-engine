@@ -4,13 +4,15 @@
 **Depends on:** 13  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 A repeated option is never removed by a counter. It may rank lower. Remove the 5-turn repeat cooldown and the streak caps.
 
 ## Background
 John decided on 27 Nov: repeated options stay on screen and are only ranked lower, with no 5-turn cooldown timer. Code: `isOnCooldown` in src/game/optionDiversityContract.ts and `REPEAT_COOLDOWN_TURNS` in src/game/sceneAffordances.ts (~225), used in fourSlotPads.ts ~810-816 (`state.qualityGovernance.optionCooldowns`); streak caps of 2 in fourSlotPads.ts ~54-58 (P4); `inspectStreak`, `waitStreak`, `engineRecoveryStreak` in types.ts ~1996-2015 (36b). Absorbs the camp off-pad loop (with 13). The hunt death cooldown (`wildsHuntDeathCooldownUntilTurn`, choiceRanking.ts ~960-1145) also withholds options by counter: rank Hunt and Seek lower when hurt instead, and say so in the PR.
+
+**Previous attempts:** see HISTORY.md H3, H1. The cooldown was John's 17 Oct ask. G-OCD failed twice and was reverted, G-OCD2/OCD3 were merged several times, and later streak and death-farm cooldowns were added. It starved pads, which were then filled with filler (H1). John reversed it on 27 Nov. Don't replace it with any other counter. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/optionDiversityContract.ts

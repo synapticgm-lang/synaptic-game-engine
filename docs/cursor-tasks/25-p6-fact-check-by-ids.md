@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 factGate checks refs, inventory changes and movement by id. On a failure it repairs or drops that one line. It stops judging sentences with English word sets.
 
 ## Background
 factGate.ts judges sentences with English word sets and deletes on doubt ('She opened the shutters slowly' is cut). Audit 14 (`PLACED_VERBS`, roomProps.ts), 16 (`sells|offers` regex, factGate.ts ~531), 22 (factGate.ts ~43-73, 471-490, 649-657). Absorbs 'Knife pop-in'. Writer-rejection rule (11 Oct): a rejected draft never reaches the page; one targeted repair request names only the flagged error; no plain fallback lines; every rejection is logged to the writer dataset. John's batched AI check (9 Nov) is used only where ids cannot decide. Open question: factGate.ts ~76 and ~89 read process.env in the browser; report what you find.
+
+**Previous attempts:** see HISTORY.md H9, H10. The fact gate was consolidated three times (29z9e 1 Oct, M4 27 Oct, #8/#10/#22 9–10 Nov). Each time, English word sets came back. Ids decide, or the line is kept: no new word set, and no deleting on doubt. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/factGate.ts

@@ -4,13 +4,15 @@
 **Depends on:** None  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 The in-game credits page lists every third-party library, model and asset source with its licence. Anything with an unconfirmed licence is listed for John, not guessed.
 
 ## Background
 A credits page exists (src/components/CreditsPage.tsx, data in src/legal/credits.ts). Transformers.js and other sources are missing. From 8 Nov: five npm package grant texts open, 24 asset archives unmapped. The free tabletop library's credits are on the bot box, not in the repo; it is not wired into the game yet, so it is not credited here.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/legal/credits.ts

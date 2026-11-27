@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** Every item needs John's go first. Do not rotate the OpenRouter key until he says so.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Remove the server Gemini fallback, move per-user metering into the database, and key rate limits on the real client IP header.
 
 ## Background
 gm-turn/index.ts ~119-130 still has a server Gemini path (`GEMINI_API_KEY`). The in-memory 60-per-minute cap is not enough. The old-log abuse check, key rotation and the broken OPENROUTER_API_KEY_SYNAPTICGM box variable are Synapticgm or John steps, not Cursor.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - supabase/functions/gm-turn/index.ts

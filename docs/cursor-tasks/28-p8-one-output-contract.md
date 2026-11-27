@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 One output contract (rendered for JSON-schema, tool-call and plain models) and one validator. No XML tags inside a JSON call.
 
 ## Background
 Audit G7 (gm-turn/index.ts ~104-106, XML map tags inside JSON), 31c (openingWriterNotes.ts ~648 strips [SYSTEM] and [THE AUDITOR] leaks).
+
+**Previous attempts:** see HISTORY.md H5, H6, H10. Leak-stripping and wardens were added and retired more than once (H10). The contract removes tags at the source. No new strip step. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - supabase/functions/gm-turn/index.ts

@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 A typed proposals field from the writer feeds the existing acceptance code; hubs offer several side jobs of different shapes; the main quest is never pushed.
 
 ## Background
 Side quests appear only when none is open, on an 8-turn spacing, from a fixed rotation (P6, questGenerator.ts ~36, 207). `applyQuestAddProposals` reads `quest-add` events but nothing asks the writer for one. Audit 20 (`NOT_IN_MEDIEVAL`, midVisitProposal.ts ~139-147): proposals carry a tech level checked against the world's genre template; only clear breaks are rejected (16 Oct rule). Quest descriptions are a structured summary (Q7).
+
+**Previous attempts:** see HISTORY.md H16. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/questGenerator.ts

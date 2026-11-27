@@ -4,13 +4,15 @@
 **Depends on:** 01  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Concrete offer chips: the offer the NPC makes comes from the hook's offer items (with a carryable flag), and rite steps come from data. Delete the English parsers.
 
 ## Background
 Audit rows 38 (`OFFER_LABEL_SKIP`, openingEstablishment.ts ~1875-1887), 39 (`attachItemsToCast` ACTION_VERB, openingInstance.ts ~506-550), 40 (`OFFER_PLACE_HEAD`, `OFFER_ABSTRACT_HEAD`, `offerHeadNoun`, openingEstablishment.ts ~1795-1818), 43 (rite split on 'and then|and|then', openingRite.ts ~142-143). Absorbs 'Mana Crystal before Register' (beat order is now data). Line numbers are from 16 Nov; find them by name.
+
+**Previous attempts:** see HISTORY.md H7, H8, H16. PRs #34 and #38–#42 patched offer parsing and chip recognition five times. Delete the parsers. Don't add a new head-noun rule, verb list or relabel rule in their place. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/openingEstablishment.ts

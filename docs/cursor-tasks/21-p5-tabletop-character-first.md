@@ -4,13 +4,15 @@
 **Depends on:** 05  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Tabletop page 1 is written after the character exists, so a wizard never opens holding a sword.
 
 ## Background
 Tabletop page 1 is written before the character exists. Rule 6: origin and setup are their own step before turn 1. This brief only reorders creation; the full Setup page is brief 32.
+
+**Previous attempts:** see HISTORY.md H15. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/components/SetupScreen.tsx

@@ -4,13 +4,15 @@
 **Depends on:** 01  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Names and places change between games because minting fills cast ids, and pronouns come from cast data. Delete the renamer, pronoun reader and catalog-name guard.
 
 ## Background
 Audit rows 15 (`DURABLE`/`PASSER`, heirlooms.ts ~11-12), 29 (`COMMON_STORY_WORDS`, `PLACE_SUFFIX`, `FACTION_WORDS`, `TITLE_STOP` in liveOpening.ts and openingInstance.ts), 30d (openingWriterNotes.ts lexeme lists), 30e (`GENERIC_HUB_ALIAS`, outdoorHubs.ts), 30f (`extractTitleNames`), 31 (`prosePronounForName`), 32 (openingCatalogGuard.ts hard-coded NPC names), 33b (`applyReplacements` him→her), 33c (`peopleFromWhoHere`, `impliedRoleFromWhoHere`). PR #45's fixed per-race name table is kept (it is real data).
+
+**Previous attempts:** see HISTORY.md H7, H8, H16. Names were fixed by text replacement and stop-word lists in #30, #31, #35 and #44, and Orel Vane/Sera Quill catalog leaks recurred (4 Oct, #35). Don't add another guard list. Delete them. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/liveOpening.ts

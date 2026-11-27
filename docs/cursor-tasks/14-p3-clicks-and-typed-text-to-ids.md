@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 A click sends its action id. Typed free text resolves to action and item ids. Delete the phrase recognisers.
 
 ## Background
 Audit 34 (`CLASSIC_REFUSE`, `OFFER_NOUN`, `TIGHT_ACCEPT_PHRASE` in openingOfferRecognize.ts; openingEstablishment.ts ~1084), 28b (`CONSUMABLE` regex, typedFreeText.ts ~116), P10 (`classifyVerb`, completedEventPacket.ts ~342). Rule 8: free text always, including speech in fights.
+
+**Previous attempts:** see HISTORY.md H2. Same history as brief 12: label matching survived beside action ids since 15 Oct. The PR lists every recogniser deleted, with `rg` proof. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/openingOfferRecognize.ts

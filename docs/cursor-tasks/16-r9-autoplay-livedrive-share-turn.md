@@ -4,13 +4,15 @@
 **Depends on:** 15  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Delete the turn copies in fateAutoplay.ts and liveDrive.ts; both call resolveTurn.
 
 ## Background
 Absorbs 'Runner double fight resolve' (the runner is a copy of the turn). Removes audit 28c (`maxTurns: 6` in three copies).
+
+**Previous attempts:** see HISTORY.md H11. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/resolveTurn.ts

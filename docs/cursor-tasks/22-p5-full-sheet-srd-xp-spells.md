@@ -4,13 +4,15 @@
 **Depends on:** 21  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 A pasted sheet keeps everything; level features, spells above level 1 and XP follow SRD 5.2 as written.
 
 ## Background
 A pasted sheet keeps 6 picks; rules stop around level 4–5; only level-1 spells exist; tabletop XP is unfinished. Absorbs 'Tabletop XP' and 'Tabletop reference comparison'. SRD data: src/data/srd/srd521.json. Kobold Press is left out (John, 27 Nov). The free CC-BY/CC0/ORC library is on the bot box, not in the repo; do not add it here.
+
+**Previous attempts:** see HISTORY.md H15. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/data/srd/srd521.json (search by key; do not read the whole file)

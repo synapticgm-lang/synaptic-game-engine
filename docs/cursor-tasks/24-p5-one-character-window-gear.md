@@ -4,13 +4,15 @@
 **Depends on:** None  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Gear changes by tapping in one character window in every mode; Status, Progress, Adventurer and Show stats agree.
 
 ## Background
 Gear changes only by typing; the character views are read-only. UI review Q8 (one `visibleAttributes` selector) and Q18 (one wornGear display mapper so 'Body' and 'Chest' cannot drift).
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/components/CharacterWindow.tsx

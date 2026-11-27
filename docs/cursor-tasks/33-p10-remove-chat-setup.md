@@ -4,13 +4,15 @@
 **Depends on:** 32  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Delete the chat-based setup after page 1.
 
 ## Background
 Audit 30 (`stitchOpeningContinue` canned hall talk, openingStitch.ts ~283, useGame.ts ~2563-2565), 45 (`ACTION_FUNCTION_WORD` name harvest, openingEstablishment.ts ~2512-2525).
+
+**Previous attempts:** see HISTORY.md H15, H5, H7. Stitch removal was claimed on 29 Sep but stitching is still on main. Prove it's gone with `rg`. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/openingStitch.ts

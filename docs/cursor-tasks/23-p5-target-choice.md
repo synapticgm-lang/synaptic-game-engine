@@ -4,13 +4,15 @@
 **Depends on:** 13, 22  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 With more than one enemy, the player chooses the target, inside the 3-option rule.
 
 ## Background
 There is no target choice. Targets attach to the attack action (a target id), not a new option count.
+
+**Previous attempts:** see HISTORY.md H15. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/engineFight.ts

@@ -4,13 +4,15 @@
 **Depends on:** None  
 **Who does it:** Synapticgm / John (not a Cursor task)  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Close draft PR #27 (engine-only 40-turn playtest report, 10 Nov) so the PR list only shows live work.
 
 ## Background
 The plan says close, do not merge. Its findings are folded into phases 3, 4, 5, 9 and R9.
+
+**Previous attempts:** see HISTORY.md H4. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - https://github.com/synapticgm-lang/synaptic-game-engine/pull/27

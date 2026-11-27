@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** Parked until a bought asset pack is actually used, unless John says add it now.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 The game's terms say players may not extract, download or redistribute bundled art and interface assets, so licences such as GameDev Market's are honoured.
 
 ## Background
 GDM and similar licences require that bought assets are never exposed as a download, and ban raw-file resale, logos, NFTs and AI training. Terms live in docs/legal/terms-of-service.md and are served through src/legal/legalDocs.ts. The legal pages still carry draft placeholders (legal entity, postal address): do not fill those in; that is John's call. Nothing has been bought yet.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - docs/legal/terms-of-service.md

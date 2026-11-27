@@ -4,13 +4,15 @@
 **Depends on:** 14  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Plain actions resolve without a roll; only actions with real risk call for a check.
 
 ## Background
 Plain actions fall through to a DC 15 roll. The file that sets that default is not pinned down: search `rg -n "15" src/game/rules/dice.ts src/game/intentParser.ts src/game/rules/exploration.ts` and name it in the PR. Tabletop follows SRD 5.2 as written.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/game/rules/dice.ts

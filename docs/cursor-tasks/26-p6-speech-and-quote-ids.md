@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Speech is a typed beat with a speaker id; quote recall uses quote ids, not first-four-words matching.
 
 ## Background
 Audit 23 (sceneBlock.ts ~200, quote recall by 8 turns plus first four words), 37b (intentParser.ts ~712-736, 85% word-overlap echo filter), and `stripUnauthorizedNpcSpeech`.
+
+**Previous attempts:** see HISTORY.md H10. proseWarden was retired on 27 Oct and 'Warden v2' re-added a final-prose repeat guard on 31 Oct. An 85% echo filter followed on 13 Nov. Don't add any new post-filter or warden. Speaker and quote ids replace them. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/sceneBlock.ts

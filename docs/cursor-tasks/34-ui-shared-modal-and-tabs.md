@@ -4,13 +4,15 @@
 **Depends on:** None  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Escape, focus and dialog roles come from one shared hook; Adventurer and Settings tabs fit without clipping; Debug, build-id and test-account chrome show only for staff.
 
 ## Background
 UI review Q2, Q3, Q4, Q5. Use the existing staff check, not a new login system. Bigger redesigns (R1, R3–R7) are not in this brief.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - src/components/SettingsModal.tsx

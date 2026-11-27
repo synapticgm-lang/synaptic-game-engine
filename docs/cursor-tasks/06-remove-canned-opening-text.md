@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** gm-turn deploy needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Remove the canned prose that covers misses, so every page is live AI prose or an honest Try again. Speech becomes a typed beat rendered once.
 
 ## Background
 Audit P7 (`STITCH_BANKS`, about 55 lines, and `cardPageParagraph`, completedEventPacket.ts ~1834-2291), P8 (`BANNED_FALLBACK_STUB`, sealedManifest.ts ~162), 37c (empty 'X said' quote removal, writerTurn.ts ~1031). About 19 test files pin canned fallback text.
+
+**Previous attempts:** see HISTORY.md H5, H10. Stitch removal was claimed on 29 Sep (29u) and fallbacks were cut on 28 Sep (28g), yet both are still on main. The PR must show an `rg` for `STITCH_BANKS|cardPageParagraph|BANNED_FALLBACK_STUB|stitchOpening` returning nothing, and must not add a replacement fallback under another name. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/completedEventPacket.ts

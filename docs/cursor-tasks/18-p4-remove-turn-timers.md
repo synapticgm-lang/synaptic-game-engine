@@ -4,13 +4,15 @@
 **Depends on:** 13  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 No event is forced by a turn counter: no fights every N turns, no class after 3 turns, no hub exit by turn 50, no nudge after 3 turns, no 'will not wait' lines.
 
 ## Background
 Audit P1 (arcDirector.ts ~406-427, fights every 8/12/15/20 turns, `shouldSpawnCombat`), P2 (rules/characterClass.ts ~36-57, class after 3 turns and a turn-20 unlock), P3 (choiceCompiler.ts ~418, 549-566, hub exit by turn 50), P5 (choiceRanking.ts ~487 `nudgeIfStuck`), P9 (director.ts ~596, 762 'will not wait'). Absorbs 'Rest/camp arriving early'.
+
+**Previous attempts:** see HISTORY.md H14. No earlier removal attempt was found. A '4 turns remaining' timer leaked into the prose on 7 Oct. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/game/arcDirector.ts

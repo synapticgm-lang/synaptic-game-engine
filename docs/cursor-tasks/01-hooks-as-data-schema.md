@@ -4,13 +4,15 @@
 **Depends on:** None  
 **Who does it:** Cursor, in a fresh chat  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 Give every opening hook card a typed data shape so code never reads meaning out of the card's English. This is the foundation for the four opening slices (live AI page 1, concrete offer chips, scene quests, per-game names).
 
 ## Background
 Hook cards, offers and rites are English sentences that code takes apart with about 20 word lists and regexes, then renames by search-and-replace. PRs #29–#45 were mostly patches of this one cause. Audit rows 15, 29, 30d–f, 31, 32, 33b–c, 38–43. This PR only adds the data shape and migrates the cards; the parsers are deleted in briefs 02–04.
+
+**Previous attempts:** see HISTORY.md H7, H8, H16. These four slices were already claimed as built in PR #29 (11 Nov), then patched 15 more times in #30–#45 because the cards stayed English. This brief differs by replacing the text with typed data, not by adding another parser or validator. Your PR must say how this approach differs from those attempts.
 
 ## Files you may read
 - src/data/campaigns/types.ts

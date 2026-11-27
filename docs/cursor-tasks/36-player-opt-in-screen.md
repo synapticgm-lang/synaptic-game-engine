@@ -5,13 +5,15 @@
 **Who does it:** Cursor, in a fresh chat  
 **Gate:** Switching on other-player capture needs John's yes.  
 
-Read `docs/cursor-tasks/00-README.md` first. Its global rules apply here and win over anything in this brief.
+Read `docs/cursor-tasks/00-README.md` and `docs/cursor-tasks/HISTORY.md` first. Its global rules apply here and win over anything in this brief.
 
 ## Goal
 A clear player-facing opt-in for training capture that defaults OFF; other players are captured only after an explicit yes.
 
 ## Background
 PR #47 limits capture to founder, staff and test accounts while PLAYER_CAPTURE_ENABLED is unset (table gm_turn_captures, migration 025). Strip credentials, personal information and provider reasoning. PYOA is excluded from training.
+
+**Previous attempts:** none found in HISTORY.md.
 
 ## Files you may read
 - supabase/migrations/025_gm_turn_captures.sql
