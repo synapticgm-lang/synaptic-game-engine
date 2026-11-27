@@ -606,7 +606,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           {state.playPhase !== 'ended' && state.playPhase !== 'down' && (
           <ActionBar
             state={state}
-            busy={busy || !!state.pendingTurn}
+            busy={turnUiBlocked || !!state.pendingTurn}
             onAction={onSend}
             engineMode={engineMode}
             hidden={hideOptions}
