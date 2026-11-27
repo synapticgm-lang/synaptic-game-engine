@@ -66,6 +66,8 @@ describe('openingInstance (brief 03 typed mint)', () => {
     expect(a.cast[0]!.durability).toBe('durable');
     expect(a.cast.some((c) => /Oren|Kessa|Cinder/i.test(c.name))).toBe(false);
     expect(a.retiredNames).toEqual([]);
+    expect(a.beatOrder).toEqual(['wake', 'offer']);
+    expect(a.offerItemNotes).toEqual(expect.arrayContaining(['waterskin', 'scarf']));
   });
 
   it('names offer chips from typed carryable items', () => {

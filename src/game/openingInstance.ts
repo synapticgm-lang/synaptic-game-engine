@@ -286,6 +286,7 @@ function mintOpeningInstanceFromTypedData(
     offerSummary: itemNotes.length ? itemNotes.join(', ') : undefined,
     offerChips,
     ...(itemNotes.length ? { offerItemNotes: itemNotes } : {}),
+    beatOrder: hook.beatOrder.slice(),
     alone: cast.length === 0,
     nearbyLandmark,
     retiredNames: [],
