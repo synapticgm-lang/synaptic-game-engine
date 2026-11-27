@@ -152,22 +152,29 @@ describe('liveOpening', () => {
   it('journal and rite wording come from the live instance, not Pellane or Orel Vane', () => {
     const state = game();
     const prose = mockLiveOpeningProse(state);
+    const inst = state.openingEstablishment!.instance!;
     const journal = deriveOpeningJournal(state, prose);
+    expect(inst.beatOrder?.length).toBeGreaterThan(0);
     expect(journal.title).not.toMatch(/Pellane/i);
     expect(journal.title).not.toMatch(/^Hear \S+ out$/i);
     expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
     expect(journal.title).not.toMatch(/\w…|…\w/);
-    // Pellane is a summoned-pact hub still on the map; pressing may mention the scouts.
     expect(journal.description).not.toMatch(/Orel Vane|High Chanter/i);
     expect(journal.title + journal.description).toMatch(
-      new RegExp(state.openingEstablishment!.instance!.cast[0]!.name.split(/\s+/)[0]!, 'i')
+      new RegExp(inst.cast[0]!.name.split(/\s+/)[0]!, 'i')
     );
+    expect(journal.description).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    expect(journal.objectives.some((o) => o.includes(inst.placeName) || /panel|offer|Hear why/i.test(o))).toBe(true);
     const committed = applySuccessfulLiveOpening(state, prose);
     const rite = riteEntryForState(committed);
     expect(rite?.giver).not.toMatch(/Orel Vane/i);
     expect(rite?.acceptChip).not.toBe('Sign the pact');
     expect(rite?.refuseChip).toMatch(/Keep your own kit/i);
     expect(committed.quests?.some((q) => q.revealed && /Hear why Pellane wanted you/i.test(q.name))).toBe(false);
+    const live = committed.quests?.find((q) => q.id === 'opening-live-journal');
+    expect(live?.name).toBe(journal.title);
+    expect(live?.location).toBe(inst.placeName);
+    expect(live?.giver).toBe(inst.cast[0]!.name);
   });
 
   it('free (non-JSON) writer prose fails once with Try again — no automatic retry', async () => {
@@ -206,24 +213,31 @@ describe('liveOpening', () => {
     expect(pads.some((p) => new RegExp(he.name.split(/\s+/)[0]!, 'i').test(p) || new RegExp(inst.placeName, 'i').test(p))).toBe(true);
   });
 
-  it('derives a short whole-word journal title and does not clip inside working', () => {
+  it('journal title comes from minted cast + place when offer items are empty (never prose)', () => {
     const state = game();
     const inst = state.openingEstablishment!.instance!;
     const emptyOffer: GameState = {
       ...state,
       openingEstablishment: {
         ...state.openingEstablishment!,
-        instance: { ...inst, offerSummary: undefined, offerChips: inst.offerChips.filter((c) => c.kind === 'refuse') },
+        instance: {
+          ...inst,
+          offerSummary: undefined,
+          offerItemNotes: undefined,
+          offerChips: inst.offerChips.filter((c) => c.kind === 'refuse'),
+        },
       },
     };
     const prose = `${inst.placeName} is under you. ${inst.cast[0]!.name} waits. Long-handled scrapers working the ash are not an offer. Heat rises. You keep your own kit.`;
     const journal = deriveOpeningJournal(emptyOffer, prose);
-    expect(journal.title).not.toMatch(/Ng-handled|scrapers working/i);
+    const given = inst.cast[0]!.name.split(/\s+/)[0]!;
+    expect(journal.title.toLowerCase()).toBe(`${given} at ${inst.placeName}`.toLowerCase());
+    // Title is structured data, not a mid-sentence clip from prose.
+    expect(journal.title).not.toMatch(/Ng-handled|scrapers working|Long-handled/i);
     expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
-    expect(journal.title.length).toBeGreaterThan(3);
   });
 
-  it('does not title the journal from a hear-them-out reason note', () => {
+  it('journal title ignores accept-chip English and uses typed offerItemNotes or cast+place', () => {
     const state = game('dnd', 'journal-reason');
     const inst = state.openingEstablishment!.instance!;
     const withReason: GameState = {
@@ -233,6 +247,7 @@ describe('liveOpening', () => {
         instance: {
           ...inst,
           offerSummary: undefined,
+          offerItemNotes: undefined,
           offerChips: [
             { kind: 'accept', label: `Hear ${inst.cast[0]!.name.split(/\s+/)[0]} out`, note: `${inst.cast[0]!.name} is here with a reason — hear it before you decide.` },
             inst.offerChips.find((c) => c.kind === 'refuse')!,
@@ -242,10 +257,12 @@ describe('liveOpening', () => {
     };
     const prose = `${inst.placeName} keeps still. ${inst.cast[0]!.name} waits among the stones with a lantern. You keep your own kit.`;
     const journal = deriveOpeningJournal(withReason, prose);
+    const given = inst.cast[0]!.name.split(/\s+/)[0]!;
     expect(journal.title).not.toMatch(/is here with a reason/i);
-    expect(journal.title).not.toMatch(new RegExp(`${inst.cast[0]!.name.split(/\s+/)[0]}'s ${inst.cast[0]!.name}`, 'i'));
+    expect(journal.title).not.toMatch(/^Hear \S+ out$/i);
+    expect(journal.title).toContain(given);
+    expect(journal.title).toContain(inst.placeName);
     expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
-    expect(journal.title).toMatch(new RegExp(inst.cast[0]!.name.split(/\s+/)[0]!, 'i'));
   });
 
   it('ask pads without cast data stay neutral (no prose pronoun scrape)', () => {
@@ -295,23 +312,49 @@ describe('liveOpening', () => {
     expect(chrome).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   });
 
-  it('does not title the journal from a mid-sentence offer or contract', () => {
+  it('journal ignores prose mid-sentence offer wording; title and summary stay structured', () => {
     const state = game();
     const inst = state.openingEstablishment!.instance!;
     const emptyOffer: GameState = {
       ...state,
       openingEstablishment: {
         ...state.openingEstablishment!,
-        instance: { ...inst, offerSummary: undefined, offerChips: inst.offerChips.filter((c) => c.kind === 'refuse') },
+        instance: {
+          ...inst,
+          offerSummary: undefined,
+          offerItemNotes: undefined,
+          offerChips: inst.offerChips.filter((c) => c.kind === 'refuse'),
+        },
       },
     };
     const junk = `${inst.placeName} is already under you. The offer is laid on the crate beside a contract none of you have signed. Heat rises. You keep your own kit.`;
     const journal = deriveOpeningJournal(emptyOffer, junk);
+    const preferred = 'The offer is laid on the crate beside a contract';
+    const withPreferred = deriveOpeningJournal(emptyOffer, junk, preferred);
+    expect(withPreferred.title).toBe(journal.title);
     expect(journal.title).not.toMatch(/Under you\. The offer is laid on the/i);
     expect(journal.title).not.toMatch(/the offer is laid/i);
     expect(journal.title).not.toMatch(/beside a contract/i);
+    expect(journal.description).not.toMatch(/beside a contract|laid on the crate/i);
     expect(journal.title.split(/\s+/).length).toBeLessThanOrEqual(8);
     expect(journal.title.length).toBeGreaterThan(3);
+  });
+
+  it('objectives follow typed beatOrder and minted names, not prose', () => {
+    const state = game();
+    const inst = state.openingEstablishment!.instance!;
+    expect(inst.beatOrder).toEqual(expect.arrayContaining(['wake', 'offer']));
+    const journal = deriveOpeningJournal(state, 'Irrelevant prose about scrapers working the ash.');
+    expect(journal.objectives.some((o) => o.includes(inst.placeName))).toBe(true);
+    expect(journal.objectives.some((o) => /Decide whether to take/i.test(o))).toBe(true);
+    expect(journal.objectives.join(' ')).not.toMatch(/scrapers working/i);
+    if (inst.offerItemNotes?.length) {
+      expect(journal.description).toMatch(/On offer:/);
+      expect(journal.description).toContain(inst.offerItemNotes[0]!);
+      expect(journal.objectives.some((o) => o.includes(inst.offerItemNotes![0]!))).toBe(true);
+    }
+    expect(journal.title).toContain(inst.cast[0]!.name.split(/\s+/)[0]!);
+    expect(journal.title).toContain(inst.placeName);
   });
 
   it('typed mint ignores English faction labels — place and cast come from ids', () => {

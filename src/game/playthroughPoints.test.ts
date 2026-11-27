@@ -52,11 +52,24 @@ function yarrow(over: Partial<GameState> = {}): GameState {
 }
 
 describe('Play-through points (12 Nov)', () => {
-  it('1. journal quest text is who is here + the offer, no prose snippet cut mid-word', () => {
-    const j = deriveOpeningJournal(yarrow(), PROSE);
+  it('1. journal quest text is who is here + typed offer items, no prose snippet cut mid-word', () => {
+    const state = yarrow();
+    // Typed offer labels on the instance (brief 04) — not English scraped from PROSE.
+    state.openingEstablishment = {
+      ...state.openingEstablishment!,
+      instance: {
+        ...state.openingEstablishment!.instance!,
+        offerItemNotes: ['knife', 'oilskin', 'a bunk'],
+        beatOrder: ['arrive', 'offer'],
+      },
+    };
+    const j = deriveOpeningJournal(state, PROSE);
+    expect(j.description).toMatch(/Place:/);
     expect(j.description).toContain('Brannoc Tew is here');
-    expect(j.description).toContain('The offer on the table:');
+    expect(j.description).toContain('On offer: knife, oilskin, a bunk.');
     expect(j.description).not.toMatch(/lamps|hull timbers|He st/);
+    expect(j.title.toLowerCase()).toContain('brannoc');
+    expect(j.objectives.some((o) => /knife/i.test(o))).toBe(true);
   });
 
   it('2. the world-status button reads "Check your level"; old saves still treat "Ask the world" as status', () => {

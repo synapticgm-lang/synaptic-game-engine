@@ -473,80 +473,87 @@ export function askPadFor(name: string, prose: string, state?: GameState): strin
 }
 
 function clipJournalTitle(raw: string, maxWords = 8): string {
-  let t = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
-  t = t.replace(/^(?:the offer on the table:\s*)/i, '');
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
   if (!t) return '';
-  if (/^hear \S+ out$/i.test(t)) return '';
   const words = t.split(' ').filter(Boolean);
   if (!words.length) return '';
   const clipped = words.slice(0, maxWords).join(' ');
   return clipped.charAt(0).toUpperCase() + clipped.slice(1);
 }
 
-function titleFromScene(prose: string, leadName: string | undefined, place: string): string {
-  const fromScene = (prose ?? '').replace(/\s+/g, ' ').trim();
-  if (!fromScene) return '';
-  const hit = fromScene.match(/\b(?:waterskin|scarf|brand-iron|brand iron|pact|hunt|blanket|bread|cloak)\b/i);
-  if (!hit || hit.index == null) return '';
-  const words = fromScene.split(' ').filter(Boolean);
-  // Find the word that contains the match; take a short whole-word window around it.
-  let acc = 0;
-  let at = 0;
-  for (let i = 0; i < words.length; i++) {
-    if (acc <= hit.index && hit.index < acc + words[i]!.length + 1) {
-      at = i;
-      break;
+/** Objectives from typed beat ids + minted names — never from prose or English scrape of the id. */
+function objectivesFromBeats(
+  beats: string[],
+  leadName: string | undefined,
+  place: string,
+  offerNotes: string[] | undefined
+): string[] {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const add = (line: string) => {
+    if (!line || seen.has(line)) return;
+    seen.add(line);
+    out.push(line);
+  };
+  const given = leadName ? givenNameOf(leadName) : '';
+  for (const beat of beats) {
+    switch (beat) {
+      case 'arrive':
+      case 'wake':
+        add(`Get your bearings in ${place}`);
+        break;
+      case 'panel':
+        add('Read what the panel shows');
+        break;
+      case 'offer':
+        add(
+          offerNotes?.length
+            ? `Decide whether to take ${offerNotes.join(', ')} or keep your own kit`
+            : 'Decide whether to take the offer or keep your own kit'
+        );
+        break;
+      case 'alone':
+        add(`Stand alone at ${place}`);
+        break;
+      default:
+        // Mid-beat ids stay opaque; objective names the minted person/place only.
+        add(given ? `Hear why ${given} is here with you` : `Learn why you arrived at ${place}`);
+        break;
     }
-    acc += words[i]!.length + 1;
   }
-  const slice = words.slice(Math.max(0, at - 3), at + 5);
-  return clipJournalTitle(slice.join(' '));
+  if (!out.length) {
+    add(`Get your bearings in ${place}`);
+    if (given) add(`Hear why ${given} is here with you`);
+  }
+  return out;
 }
 
-
-/** Only turn a concrete offered object into a title fragment — not "X is here with a reason". */
-function concreteOfferItem(note: string | undefined, leadName?: string): string {
-  const t = (note ?? '').replace(/^.*?\boffers\s+/i, '').replace(/\s+/g, ' ').trim();
-  if (!t) return '';
-  if (/\bis here with a reason\b/i.test(t)) return '';
-  if (/^hear \S+ out$/i.test(t)) return '';
-  const lead = leadName ? givenNameOf(leadName) : '';
-  if (lead && t.toLowerCase().startsWith(lead.toLowerCase())) return '';
-  const words = t.split(' ').filter(Boolean);
-  if (words.length > 6) return '';
-  return t.replace(/[.,;:]+$/, '');
-}
-
+/**
+ * Opening journal from minted cast/place and typed beats/offer items (brief 04 / H16).
+ * `prose` and `preferredTitle` are ignored — never parse quest text from English.
+ */
 export function deriveOpeningJournal(state: GameState, prose?: string, preferredTitle?: string): DerivedOpeningJournal {
+  void prose;
+  void preferredTitle;
   const inst = openingInstanceOf(state);
   const lead = inst?.cast[0];
   const place = inst?.placeName || state.currentLocation || 'this place';
-  const offer = inst?.offerSummary || inst?.offerChips.find((c) => c.kind === 'accept')?.note;
-  const accept = inst?.offerChips.find((c) => c.kind === 'accept');
-  const fromScene = (prose ?? '').replace(/\s+/g, ' ').trim();
-  const itemFromNote = concreteOfferItem(accept?.note, lead?.name);
-  const sceneDefault = lead ? `${givenNameOf(lead.name)} at ${place}` : `Arrival at ${place}`;
-  const preferred = (preferredTitle ?? '').replace(/\s+/g, ' ').trim();
-  const title =
-    (preferred && !validateOpeningJournalTitle(state, preferred).length ? clipJournalTitle(preferred) : '')
-    || clipJournalTitle(itemFromNote && lead ? `${givenNameOf(lead.name)}'s ${itemFromNote}` : itemFromNote || '')
-    || clipJournalTitle(concreteOfferItem(offer, lead?.name))
-    || clipJournalTitle(accept?.label && !/^hear \S+ out$/i.test(accept.label) ? accept.label : '')
-    || titleFromScene(fromScene, lead?.name, place)
-    || sceneDefault;
+  const offerNotes = (inst?.offerItemNotes ?? []).map((n) => n.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const beats = inst?.beatOrder?.length ? inst.beatOrder : [];
+  const given = lead ? givenNameOf(lead.name) : '';
+  // Title always names minted cast + place — never writer prose or scraped offer English.
+  const titleRaw = given ? `${given} at ${place}` : `Arrival at ${place}`;
+  const title = clipJournalTitle(titleRaw) || titleRaw;
   const description = [
-    lead ? `${lead.name} is here — ${lead.role}.` : `You are on your own at ${place}.`,
-    offer ? `The offer on the table: ${offer}` : '',
+    `Place: ${place}.`,
+    lead ? `${lead.name} is here — ${lead.role}.` : `You are on your own here.`,
+    offerNotes.length ? `On offer: ${offerNotes.join(', ')}.` : '',
   ]
     .filter(Boolean)
     .join(' ')
     .replace(/\s+/g, ' ')
     .trim();
-  const objectives = [
-    `Get your bearings in ${place}`,
-    lead ? `Hear why ${givenNameOf(lead.name)} is here with you` : 'Learn why you arrived',
-    'Decide whether to take the offer or keep your own kit',
-  ];
+  const objectives = objectivesFromBeats(beats, lead?.name, place, offerNotes.length ? offerNotes : undefined);
   return { title, description, objectives };
 }
 
@@ -567,7 +574,9 @@ export function deriveOpeningRite(state: GameState, prose?: string): DerivedOpen
 }
 
 export function derivedJournalQuest(state: GameState, prose?: string, preferredTitle?: string): Quest {
-  const j = deriveOpeningJournal(state, prose, preferredTitle);
+  void prose;
+  void preferredTitle;
+  const j = deriveOpeningJournal(state);
   const inst = openingInstanceOf(state);
   return {
     id: 'opening-live-journal',
@@ -634,7 +643,8 @@ export function applySuccessfulLiveOpening(
     return applyFailedLiveOpening(state);
   }
   const pads = extras?.pads?.length ? extras.pads : shapeOpeningPads(state, clean);
-  const journal = derivedJournalQuest(state, clean, extras?.journalTitle);
+  // Quest text from typed beats + minted names only — ignore writer journalTitle / prose.
+  const journal = derivedJournalQuest(state);
   const privateSpineId = state.openingEstablishment?.privateSpineId;
   const quests = [...(state.quests ?? [])];
   const idx = quests.findIndex((q) => q.id === journal.id);
