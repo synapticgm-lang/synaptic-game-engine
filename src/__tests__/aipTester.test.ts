@@ -263,68 +263,6 @@ describe('q51-AIP aipTester', () => {
     expect(line).toContain('Thumb: up — clear progress');
   });
 
-  it('random-pick: parsePickMode / seed / uniform pick + play-log entry', async () => {
-    const {
-      parsePickMode,
-      resolvePickSeed,
-      createPickRng,
-      pickRandomOption,
-    } = await load('scripts/ai-player-browser/randomPick.mjs') as {
-      parsePickMode: (a?: string[], e?: NodeJS.ProcessEnv) => 'brain' | 'random';
-      resolvePickSeed: (a?: string[], e?: NodeJS.ProcessEnv, now?: number) => number;
-      createPickRng: (seed: number) => () => number;
-      pickRandomOption: (opts: string[], rng: () => number) => string;
-    };
-    const { formatRandomPlayLogEntry } = await load('scripts/ai-player-browser/playLog.mjs') as {
-      formatRandomPlayLogEntry: (e: {
-        step: string | number;
-        options: string[];
-        picked: string;
-        gmProse: string;
-      }) => string;
-    };
-    expect(parsePickMode([], {})).toBe('brain');
-    expect(parsePickMode(['--pick=random'], {})).toBe('random');
-    expect(parsePickMode([], { AI_PLAYER_PICK: 'random' })).toBe('random');
-    expect(resolvePickSeed(['--seed=42'], {})).toBe(42);
-    expect(resolvePickSeed([], {}, 1_700_000_000_123)).toBe(1_700_000_000_123 >>> 0);
-    const rng = createPickRng(7);
-    const opts = ['Look around', 'Ask what they want', 'Wait'];
-    const a = pickRandomOption(opts, rng);
-    const b = pickRandomOption(opts, createPickRng(7));
-    expect(opts).toContain(a);
-    expect(a).toBe(b);
-    expect(pickRandomOption([], rng)).toBe('');
-    const prose = '  Line one.\n\nLine two with  spaces.  ';
-    const setupLine = formatRandomPlayLogEntry({
-      step: 'setup',
-      options: opts,
-      picked: 'Wait',
-      gmProse: prose,
-    });
-    expect(setupLine.startsWith('Setup: options (3): Look around | Ask what they want | Wait → picked: Wait')).toBe(true);
-    expect(setupLine).toContain(`GM: ${prose}`);
-    const t1 = formatRandomPlayLogEntry({
-      step: 1,
-      options: ['Give your name'],
-      picked: 'Give your name',
-      gmProse: 'Hello.',
-    });
-    expect(t1.startsWith('T1: options (1):')).toBe(true);
-  });
-
-  it('random-pick: run.mjs skips OpenRouter key when pick=random', async () => {
-    const fs = await import('node:fs');
-    const src = fs.readFileSync(resolve('scripts/ai-player-browser/run.mjs'), 'utf8');
-    expect(src).toMatch(/parsePickMode/);
-    expect(src).toMatch(/pick=random/);
-    expect(src).toMatch(/if \(randomPick\) \{[\s\S]*?no OpenRouter player/);
-    expect(src).toMatch(/if \(!loginCheck && !randomPick\)/);
-    expect(src).toMatch(/useRandomPick/);
-    expect(src).toMatch(/if \(useRandomPick\) \{[\s\S]*?pickRandomOption/);
-    expect(src).toMatch(/skipped: 'random_pick'/);
-  });
-
   it('persona block is included in the player prompt builder', async () => {
     const { buildPlaytesterPrompt } = await load('scripts/ai-player-browser/geminiTab.mjs') as {
       buildPlaytesterPrompt: (p: Record<string, unknown>) => string;

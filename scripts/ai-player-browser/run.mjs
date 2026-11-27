@@ -18,12 +18,10 @@
  *   npm run ai-player-smoke
  *   npm run ai-player-t10
  *   node scripts/ai-player-browser/run.mjs --persona dungeon-diver --goal 'max out dungeon levels'
- *   node scripts/ai-player-browser/run.mjs --pick=random --bible=summoned-pact
  *
  * Env (.env / .env.local, gitignored):
  *   AI_PLAYER_EMAIL / AI_PLAYER_PASSWORD
- *   OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY (not required when --pick=random)
- *   AI_PLAYER_PICK=random · AI_PLAYER_SEED=<n>
+ *   OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY
  *   AI_PLAYER_HOST=http://127.0.0.1:5173
  *   AI_PLAYER_CDP=http://127.0.0.1:9222
  *   AI_PLAYER_MODEL=deepseek/deepseek-v4-pro
@@ -82,7 +80,7 @@ import {
   loadPersona,
   parsePersonaArgs,
 } from './persona.mjs';
-import { appendPlayLog, ensurePlayLog, formatPlayLogLine, formatRandomPlayLogEntry } from './playLog.mjs';
+import { appendPlayLog, ensurePlayLog, formatPlayLogLine } from './playLog.mjs';
 import {
   AI_TESTER_EMAIL,
   buildTesterMeta,
@@ -106,12 +104,6 @@ import {
   settleHarnessTurn,
   setupStuck,
 } from './setupStep.mjs';
-import {
-  createPickRng,
-  parsePickMode,
-  pickRandomOption,
-  resolvePickSeed,
-} from './randomPick.mjs';
 
 loadProjectEnv();
 
@@ -128,10 +120,6 @@ const host = (process.env.AI_PLAYER_HOST || 'http://127.0.0.1:5173').replace(/\/
 const cdp = process.env.AI_PLAYER_CDP || 'http://127.0.0.1:9222';
 const email = (process.env.AI_PLAYER_EMAIL || AI_TESTER_EMAIL).trim();
 const password = process.env.AI_PLAYER_PASSWORD || '';
-const pickMode = parsePickMode(args);
-const randomPick = pickMode === 'random';
-const pickSeed = resolvePickSeed(args);
-const pickRng = createPickRng(pickSeed);
 const personaArgs = parsePersonaArgs(args);
 const persona = loadPersona(personaArgs);
 const personaBlock = buildPersonaPromptBlock(persona);
@@ -150,21 +138,18 @@ const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
 const runDir = path.join(ROOT, 'scripts', 'ai-player-browser', 'runs', stamp);
 fs.mkdirSync(runDir, { recursive: true });
 const runSaveId = makeAiTestSaveId(stamp);
-const playerModelAtStart = randomPick ? 'random' : openRouterPlayerModel();
-const playerLicenceAtStart = randomPick ? 'none' : licenceFor(playerModelAtStart);
-const testerOnlyAtStart = randomPick ? false : testerOnlyForModel(playerModelAtStart);
-const testerMeta = buildTesterMeta({
-  model: playerModelAtStart,
-  licence: playerLicenceAtStart,
-});
+const playerModelAtStart = openRouterPlayerModel();
+const playerLicenceAtStart = licenceFor(playerModelAtStart);
+const testerOnlyAtStart = testerOnlyForModel(playerModelAtStart);
+const testerMeta = buildTesterMeta({ model: playerModelAtStart, licence: playerLicenceAtStart });
 const playLogPath = path.join(runDir, 'play-log.md');
 ensurePlayLog(playLogPath, [
-  randomPick ? 'Pick: random (no AI player)' : `Persona: ${persona.id}`,
-  !randomPick && persona.goal ? `Goal: ${persona.goal}` : '',
-  randomPick ? `Seed: ${pickSeed}` : `Model: ${playerModelAtStart} (${playerLicenceAtStart})`,
+  `Persona: ${persona.id}`,
+  persona.goal ? `Goal: ${persona.goal}` : '',
+  `Model: ${playerModelAtStart} (${playerLicenceAtStart})`,
   `Save id: ${runSaveId}`,
   testerOnlyAtStart ? 'testerOnly: true (restricted licence)' : '',
-].filter(Boolean), { randomPick });
+].filter(Boolean));
 
 function appendJsonl(file, obj) {
   fs.appendFileSync(file, `${JSON.stringify(obj)}\n`, 'utf8');
@@ -444,8 +429,6 @@ async function playBible(gamePage, bibleId, opts = {}) {
   const resumeThis = Boolean(opts.resume);
   const feedbackClient = opts.feedbackClient || null;
   const saveId = opts.saveId || runSaveId;
-  const useRandomPick = Boolean(opts.randomPick);
-  const rng = opts.pickRng || pickRng;
   appendMd(transcript, `# ${spec.title} (${bibleId})\n\nHost: ${host}${resumeThis ? '\n\nResume: live tab (no New Game)\n' : '\n'}`);
 
   let snap;
@@ -475,8 +458,6 @@ async function playBible(gamePage, bibleId, opts = {}) {
   const ratedKeys = new Set(); // GM replies already rated, by replyKey (00:40 decision)
   let voteTarget = null;
   let skippedNewReply = false;
-  /** Non-setup story turns for random play-log T numbers (setup is logged before T1). */
-  let storyTurnNo = 0;
   const turnRows = [];
   bindCoverLog((row) => {
     appendJsonl(jsonl, { turn: coverTurn, ...row });
@@ -678,10 +659,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const stuck = setupStuck({ smoke, setup, setupClicks });
     if (stuck.stop) return stopSetup(stuck.reason, stuck.exitCode);
     hallAnswered = markHallTopics(hallAnswered, lastPlayer);
-    const visibleOptions = (snap.chips || []).map((c) => String(c || '').trim()).filter(Boolean);
-    const liveChips = useRandomPick
-      ? visibleOptions
-      : filterAnsweredHallChips(snap.chips, hallAnswered);
+    const liveChips = filterAnsweredHallChips(snap.chips, hallAnswered);
     const gmStory = storyForBrain(snap);
     const prevGm = lastJudgedGm;
     const skipSelfCompare = resumeThis && turn === startTurn && prevGm && prevGm === gmStory;
@@ -691,17 +669,43 @@ async function playBible(gamePage, bibleId, opts = {}) {
       lastPlayer,
       waitTimedOut: Boolean(snap.waitTimedOut),
     });
-    const chipsOnly = useRandomPick || spec.chipsOnly || !snap.inputPresent;
-    let decision;
-    if (useRandomPick) {
-      const picked = pickRandomOption(visibleOptions, rng);
-      if (!picked) {
-        harnessErrors += 1;
-        console.log(`AI_PLAYER fail ${bibleId}: random pick found no visible chips at T${turn}`);
+    const chipsOnly = spec.chipsOnly || !snap.inputPresent;
+    const decision = await askOpenRouterPlayer({
+      bibleId,
+      modeLabel: spec.mode,
+      turn,
+      chipsOnly,
+      chips: liveChips,
+      lastPlayer,
+      recentActions: recentActions.slice(-8),
+      gmStory,
+      lastGm: skipSelfCompare ? '' : prevGm,
+      hallAnswered,
+      personaBlock,
+      goal: persona.goal,
+    });
+    if (decision.harnessError) {
+      // Harness error, not a game verdict: no thumb, no action; re-ask this turn (max 3 in a row).
+      harnessErrors += 1;
+      consecutiveHarnessErrors += 1;
+      console.log(`[ai-player] T${turn} harness_error ${decision.harnessError} finish=${JSON.stringify(decision.harnessDetail?.finish || [])}`);
+      appendJsonl(jsonl, {
+        event: 'harness_error',
+        turn,
+        bibleId,
+        saveId,
+        harnessError: decision.harnessError,
+        harnessDetail: decision.harnessDetail || null,
+        consecutive: consecutiveHarnessErrors,
+        chipsSeen: snap.chips,
+        meta: testerMeta,
+      });
+      if (consecutiveHarnessErrors >= 3) {
+        console.log(`AI_PLAYER fail ${bibleId}: 3 harness errors in a row at T${turn}`);
         return {
           bibleId,
           ok: false,
-          harnessError: 'random_no_options',
+          harnessError: decision.harnessError,
           harnessErrors,
           unverified,
           turns: completed,
@@ -713,130 +717,68 @@ async function playBible(gamePage, bibleId, opts = {}) {
           stoppedRepeat: false,
         };
       }
-      decision = {
-        kind: 'chip',
-        action_kind: 'chip',
-        action: picked,
-        thumb: null,
-        reason: '',
-        comment: '',
-        note: 'random',
-        model: 'random',
-      };
-      consecutiveHarnessErrors = 0;
-    } else {
-      decision = await askOpenRouterPlayer({
-        bibleId,
-        modeLabel: spec.mode,
-        turn,
-        chipsOnly,
-        chips: liveChips,
-        lastPlayer,
-        recentActions: recentActions.slice(-8),
-        gmStory,
-        lastGm: skipSelfCompare ? '' : prevGm,
-        hallAnswered,
-        personaBlock,
-        goal: persona.goal,
-      });
-      if (decision.harnessError) {
-        // Harness error, not a game verdict: no thumb, no action; re-ask this turn (max 3 in a row).
-        harnessErrors += 1;
-        consecutiveHarnessErrors += 1;
-        console.log(`[ai-player] T${turn} harness_error ${decision.harnessError} finish=${JSON.stringify(decision.harnessDetail?.finish || [])}`);
-        appendJsonl(jsonl, {
-          event: 'harness_error',
-          turn,
-          bibleId,
-          saveId,
-          harnessError: decision.harnessError,
-          harnessDetail: decision.harnessDetail || null,
-          consecutive: consecutiveHarnessErrors,
-          chipsSeen: snap.chips,
-          meta: testerMeta,
-        });
-        if (consecutiveHarnessErrors >= 3) {
-          console.log(`AI_PLAYER fail ${bibleId}: 3 harness errors in a row at T${turn}`);
-          return {
-            bibleId,
-            ok: false,
-            harnessError: decision.harnessError,
-            harnessErrors,
-            unverified,
-            turns: completed,
-            startTurn,
-            resumed: resumeThis,
-            autoFightSelector: AUTO_FIGHT_SELECTOR,
-            autoFightFired,
-            stoppedNoGm: false,
-            stoppedRepeat: false,
-          };
-        }
-        turn -= 1;
-        continue;
-      }
-      consecutiveHarnessErrors = 0;
-      // q75: after 3 consecutive typed_action_not_sent, force an on-screen chip (do not keep typing).
-      if (!setup && !chipsOnly && shouldForceChipAfterTypedFail(consecutiveTypedNotSent) && liveChips.length) {
-        const forced = pickNonHallChip(liveChips, hallAnswered, recentActions) || liveChips[0];
-        if (forced) {
-          decision.kind = 'chip';
-          decision.action_kind = 'chip';
-          decision.action = forced;
-          console.log(`[ai-player] T${turn} typed_not_sent×${consecutiveTypedNotSent} → force chip: ${forced}`);
-        }
-      } else if (setup) {
-        const planned = planSetupAction({ action: decision.action, chips: snap.chips });
+      turn -= 1;
+      continue;
+    }
+    consecutiveHarnessErrors = 0;
+    // q75: after 3 consecutive typed_action_not_sent, force an on-screen chip (do not keep typing).
+    if (!setup && !chipsOnly && shouldForceChipAfterTypedFail(consecutiveTypedNotSent) && liveChips.length) {
+      const forced = pickNonHallChip(liveChips, hallAnswered, recentActions) || liveChips[0];
+      if (forced) {
         decision.kind = 'chip';
         decision.action_kind = 'chip';
-        decision.action = planned.action;
-      } else if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly) && !shouldForceChipAfterTypedFail(consecutiveTypedNotSent)) {
+        decision.action = forced;
+        console.log(`[ai-player] T${turn} typed_not_sent×${consecutiveTypedNotSent} → force chip: ${forced}`);
+      }
+    } else if (setup) {
+      const planned = planSetupAction({ action: decision.action, chips: snap.chips });
+      decision.kind = 'chip';
+      decision.action_kind = 'chip';
+      decision.action = planned.action;
+    } else if (shouldForceTypedHumanMove(liveChips, recentActions, chipsOnly) && !shouldForceChipAfterTypedFail(consecutiveTypedNotSent)) {
+      decision.kind = 'free';
+      decision.action_kind = 'type';
+      if (!decision.action || liveChips.includes(decision.action)
+        || /inspect the panel|look around|who are you|ask what they want/i.test(decision.action)) {
+        decision.action = naturalTypedFallback(recentActions);
+      }
+    }
+    if (hardJudge.down) {
+      decision.thumb = 'down';
+      if (hardJudge.nonsense_options) decision.nonsense_options = true;
+      const why = `human_floor:${hardJudge.reasons.join(',')}`;
+      decision.reason = [decision.reason || decision.comment, why].filter(Boolean).join(' · ').slice(0, 500);
+      decision.comment = decision.reason;
+    }
+    if (!setup && decision.action && !liveChips.includes(decision.action)
+      && /who are you|ask what they want/i.test(decision.action)
+      && (hallAnswered.who || hallAnswered.want)) {
+      const nextChip = pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      if (nextChip && !shouldForceTypedHumanMove([nextChip], recentActions, chipsOnly)) {
+        decision.kind = 'chip';
+        decision.action_kind = 'chip';
+        decision.action = nextChip;
+      } else if (!spec.chipsOnly) {
         decision.kind = 'free';
         decision.action_kind = 'type';
-        if (!decision.action || liveChips.includes(decision.action)
-          || /inspect the panel|look around|who are you|ask what they want/i.test(decision.action)) {
-          decision.action = naturalTypedFallback(recentActions);
-        }
-      }
-      if (hardJudge.down) {
-        decision.thumb = 'down';
-        if (hardJudge.nonsense_options) decision.nonsense_options = true;
-        const why = `human_floor:${hardJudge.reasons.join(',')}`;
-        decision.reason = [decision.reason || decision.comment, why].filter(Boolean).join(' · ').slice(0, 500);
-        decision.comment = decision.reason;
-      }
-      if (!setup && decision.action && !liveChips.includes(decision.action)
-        && /who are you|ask what they want/i.test(decision.action)
-        && (hallAnswered.who || hallAnswered.want)) {
-        const nextChip = pickNonHallChip(snap.chips, hallAnswered, recentActions);
-        if (nextChip && !shouldForceTypedHumanMove([nextChip], recentActions, chipsOnly)) {
-          decision.kind = 'chip';
-          decision.action_kind = 'chip';
-          decision.action = nextChip;
-        } else if (!spec.chipsOnly) {
-          decision.kind = 'free';
-          decision.action_kind = 'type';
-          decision.action = naturalTypedFallback(recentActions);
-        }
-      }
-
-      if (!setup && !liveChips.length && !spec.chipsOnly) {
-        decision.kind = 'free';
-        decision.action_kind = 'type';
-        if (!decision.action || /who are you|ask what they want|what happens if i refuse|inspect the panel/i.test(decision.action)) {
-          decision.action = naturalTypedFallback(recentActions);
-        }
+        decision.action = naturalTypedFallback(recentActions);
       }
     }
 
-    let comment = useRandomPick
-      ? ''
-      : [
-        thumbReasonFromDecision(decision),
-        decision.note && decision.note !== thumbReasonFromDecision(decision) ? `note: ${decision.note}` : '',
-        decision.nonsense_options ? 'flag:nonsense_options' : '',
-        decision.future_leak ? 'flag:future_leak' : '',
-      ].filter(Boolean).join(' · ').slice(0, 500);
+    if (!setup && !liveChips.length && !spec.chipsOnly) {
+      decision.kind = 'free';
+      decision.action_kind = 'type';
+      if (!decision.action || /who are you|ask what they want|what happens if i refuse|inspect the panel/i.test(decision.action)) {
+        decision.action = naturalTypedFallback(recentActions);
+      }
+    }
+
+    let comment = [
+      thumbReasonFromDecision(decision),
+      decision.note && decision.note !== thumbReasonFromDecision(decision) ? `note: ${decision.note}` : '',
+      decision.nonsense_options ? 'flag:nonsense_options' : '',
+      decision.future_leak ? 'flag:future_leak' : '',
+    ].filter(Boolean).join(' · ').slice(0, 500);
     decision.reason = comment;
     decision.comment = comment;
 
@@ -860,13 +802,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     if (consecutiveRepeats >= 2) {
       await gamePage.bringToFront();
-      const voted = useRandomPick
-        ? {
-          thumb: { ok: true, skipped: 'random_pick', thumb: null, reason: '' },
-          verified: { verified: null, reason: 'random_pick', lookup: null },
-        }
-        : await voteOnce(turn, { thumb: 'down', reason: comment });
-      const { thumb, verified } = voted;
+      const { thumb, verified } = await voteOnce(turn, { thumb: 'down', reason: comment });
       appendJsonl(jsonl, {
         event: 'repeat_abort',
         turn,
@@ -878,7 +814,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
         prevGm,
         chipsSeen: snap.chips,
         lastPlayer,
-        thumb: useRandomPick ? null : 'down',
+        thumb: 'down',
         thumbOk: thumb.ok,
         thumbReason: thumb.reason || comment,
         verified: verified.verified,
@@ -889,27 +825,18 @@ async function playBible(gamePage, bibleId, opts = {}) {
       appendMd(
         transcript,
         `## T${turn} (not acted)\n\n**GM:** ${gmStory || '(none)'}\n\n`
-        + (useRandomPick ? 'Thumb: (random pick — no vote)\n\n' : `Thumb: down · ${comment}\n\n`)
+        + `Thumb: down · ${comment}\n\n`
         + `Verified: ${verified.verified}\n\n`
         + `_Stopped: 2 consecutive GM repeats at T${turn}. Did not click the next chip._\n\n`,
       );
-      if (useRandomPick) {
-        appendPlayLog(playLogPath, formatRandomPlayLogEntry({
-          step: setup ? 'setup' : (storyTurnNo || turn),
-          options: visibleOptions,
-          picked: '(not acted — repeat abort)',
-          gmProse: snap?.lastGm ?? gmStory ?? '',
-        }));
-      } else {
-        appendPlayLog(playLogPath, formatPlayLogLine({
-          turn,
-          wanted: persona.goal || 'stop the repeat',
-          did: '(not acted — repeat abort)',
-          happened: gmStory || '(none)',
-          thumb: 'down',
-          reason: comment,
-        }));
-      }
+      appendPlayLog(playLogPath, formatPlayLogLine({
+        turn,
+        wanted: persona.goal || 'stop the repeat',
+        did: '(not acted — repeat abort)',
+        happened: gmStory || '(none)',
+        thumb: 'down',
+        reason: comment,
+      }));
       writeRepeatReview(runDir, {
         bibleId,
         stopBeforeTurn: turn,
@@ -947,30 +874,23 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
     // Thumb the judged GM beat once (reason as comment), verify the row, then act in the real UI.
     // A re-asked turn carries the vote already pressed on this reply. Never press twice.
-    // Random-pick: no player reason → no thumbs / feedback writes.
+    const votePlan = nextVoteAction(carriedVote);
     let thumb;
     let verified;
     let voteCarried = false;
-    if (useRandomPick) {
+    if (!votePlan.press) {
+      carriedVote = null;
       voteCarried = true;
-      thumb = { ok: true, skipped: 'random_pick', thumb: null, reason: '' };
-      verified = { verified: null, reason: 'random_pick', lookup: null };
+      thumb = votePlan.thumb;
+      verified = {
+        verified: votePlan.verified,
+        reason: votePlan.verifyReason,
+        lookup: votePlan.feedbackKey,
+      };
     } else {
-      const votePlan = nextVoteAction(carriedVote);
-      if (!votePlan.press) {
-        carriedVote = null;
-        voteCarried = true;
-        thumb = votePlan.thumb;
-        verified = {
-          verified: votePlan.verified,
-          reason: votePlan.verifyReason,
-          lookup: votePlan.feedbackKey,
-        };
-      } else {
-        const voted = await voteOnce(turn, { thumb: decision.thumb, reason: comment });
-        thumb = voted.thumb;
-        verified = voted.verified;
-      }
+      const voted = await voteOnce(turn, { thumb: decision.thumb, reason: comment });
+      thumb = voted.thumb;
+      verified = voted.verified;
     }
     const afterThumb = await readGameSnapshot(gamePage);
 
@@ -1029,17 +949,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
         typeOverlay = sentName.overlay || null;
       }
     }
-    if (!acted && kind === 'chip' && decision.action
-      && (useRandomPick || !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(decision.action))) {
+    if (!acted && kind === 'chip' && decision.action && !/\b(press the attack|try to flee|parley|attack|flee)\b/i.test(decision.action)) {
       submitStamp = startTurnClock();
       acted = await clickChip(gamePage, decision.action);
       noteOverlay(turn);
     }
     if (!acted && kind === 'chip') {
-      const safe = useRandomPick
-        ? pickRandomOption(visibleOptions.filter((c) => c !== decision.action), rng) || visibleOptions[0] || ''
-        : pickNonHallChip(snap.chips, hallAnswered, recentActions);
-      if (safe && (useRandomPick || !shouldForceTypedHumanMove([safe], recentActions, chipsOnly))) {
+      const safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      if (safe && !shouldForceTypedHumanMove([safe], recentActions, chipsOnly)) {
         submitStamp = startTurnClock();
         acted = await clickChip(gamePage, safe);
         noteOverlay(turn);
@@ -1212,20 +1129,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
       }
     }
     // The vote above was on the previous reply (or carried from the first attempt). A timeout is logged as no_reply, never as a second vote.
-    const finalThumb = useRandomPick
-      ? null
-      : (voteCarried ? (thumb?.thumb ?? null) : (thumb.skipped ? null : decision.thumb));
-    const finalReason = useRandomPick
-      ? '(random pick — no vote)'
-      : (voteCarried
-        ? (thumb?.reason || comment)
-        : (thumb.skipped ? `(no vote: ${thumb.skipped})` : (thumb.reason || comment)));
+    const finalThumb = voteCarried ? (thumb?.thumb ?? null) : (thumb.skipped ? null : decision.thumb);
+    const finalReason = voteCarried
+      ? (thumb?.reason || comment)
+      : (thumb.skipped ? `(no vote: ${thumb.skipped})` : (thumb.reason || comment));
     const timing = turnTimeFields(submitStamp);
     const where = await readPlace(gamePage);
 
-    const voteSkipWrongNow = !useRandomPick
-      && voteCarried !== true
-      && voteSkipWrong({ skipped: thumb?.skipped, targetKey: voteTarget, ratedKeys });
+    const voteSkipWrongNow = voteCarried !== true && voteSkipWrong({ skipped: thumb?.skipped, targetKey: voteTarget, ratedKeys });
     if (voteSkipWrongNow) skippedNewReply = true;
 
     // q76c — checkTurnInvariants; log every hit; P0 stops cleanly.
@@ -1283,7 +1194,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
         nonsense_options: decision.nonsense_options,
         future_leak: decision.future_leak,
         raw_ok: decision.raw_ok,
-        model: useRandomPick ? 'random' : (decision.model || openRouterPlayerModel()),
+        model: decision.model || openRouterPlayerModel(),
         reason: finalReason,
       },
       ts: timing.ts,
@@ -1332,25 +1243,14 @@ async function playBible(gamePage, bibleId, opts = {}) {
       + `Thumb: ${finalThumb} · ${finalReason}\n\n`
       + `Verified: ${verified.verified}\n\n`,
     );
-    const gmProseForLog = next?.lastGm ?? nextStory ?? snap?.lastGm ?? gmStory ?? '';
-    if (useRandomPick) {
-      const logStep = setup ? 'setup' : (++storyTurnNo);
-      appendPlayLog(playLogPath, formatRandomPlayLogEntry({
-        step: logStep,
-        options: visibleOptions,
-        picked: acted,
-        gmProse: gmProseForLog,
-      }));
-    } else {
-      appendPlayLog(playLogPath, formatPlayLogLine({
-        turn,
-        wanted: persona.goal || decision.note || 'progress the scene',
-        did: acted,
-        happened: nextStory || gmStory || '(none)',
-        thumb: finalThumb,
-        reason: finalReason,
-      }));
-    }
+    appendPlayLog(playLogPath, formatPlayLogLine({
+      turn,
+      wanted: persona.goal || decision.note || 'progress the scene',
+      did: acted,
+      happened: nextStory || gmStory || '(none)',
+      thumb: finalThumb,
+      reason: finalReason,
+    }));
     lastPlayer = acted;
     recentActions.push(acted);
     lastJudgedGm = setup ? lastJudgedGm : gmStory;
@@ -1407,41 +1307,35 @@ async function main() {
     process.exit(2);
   }
 
-  const playerModel = randomPick ? 'random' : openRouterPlayerModel();
-  const playerLicence = randomPick ? 'none' : licenceFor(playerModel);
-  const testerOnly = randomPick ? false : testerOnlyForModel(playerModel);
-  if (randomPick) {
-    console.log(
-      `AI_PLAYER banner: pick=random seed=${pickSeed} — no OpenRouter player; chip-only uniform picks.`,
-    );
-  } else {
-    console.log(
-      `AI_PLAYER banner: model=${playerModel} licence=${playerLicence}`
-      + `${testerOnly ? ' testerOnly=true' : ''} — never default to Flash; Flash is not the judge.`,
-    );
-    if (!loginCheck && isFlashJudgeModel(playerModel) && process.env.AI_PLAYER_ALLOW_FLASH !== '1') {
-      console.log(JSON.stringify({
-        ok: false,
-        blocked: 'flash_is_not_the_judge',
-        message: 'Never default to Flash. Default is deepseek/deepseek-v4-pro (alt qwen/qwen3-235b-a22b-2507). Set AI_PLAYER_ALLOW_FLASH=1 only for a throwaway smoke.',
-        playerModel,
-      }, null, 2));
-      process.exit(2);
-    }
+  const playerModel = openRouterPlayerModel();
+  const playerLicence = licenceFor(playerModel);
+  const testerOnly = testerOnlyForModel(playerModel);
+  console.log(
+    `AI_PLAYER banner: model=${playerModel} licence=${playerLicence}`
+    + `${testerOnly ? ' testerOnly=true' : ''} — never default to Flash; Flash is not the judge.`,
+  );
+  if (!loginCheck && isFlashJudgeModel(playerModel) && process.env.AI_PLAYER_ALLOW_FLASH !== '1') {
+    console.log(JSON.stringify({
+      ok: false,
+      blocked: 'flash_is_not_the_judge',
+      message: 'Never default to Flash. Default is deepseek/deepseek-v4-pro (alt qwen/qwen3-235b-a22b-2507). Set AI_PLAYER_ALLOW_FLASH=1 only for a throwaway smoke.',
+      playerModel,
+    }, null, 2));
+    process.exit(2);
+  }
 
-    if (!loginCheck && !openRouterKey()) {
-      console.log(JSON.stringify({
-        ok: false,
-        blocked: 'missing_openrouter_key',
-        message: 'OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY) is missing. Add it to .env — do not invent a key.',
-      }, null, 2));
-      process.exit(2);
-    }
+  if (!loginCheck && !openRouterKey()) {
+    console.log(JSON.stringify({
+      ok: false,
+      blocked: 'missing_openrouter_key',
+      message: 'OPENROUTER_API_KEY (or VITE_OPENROUTER_API_KEY) is missing. Add it to .env — do not invent a key.',
+    }, null, 2));
+    process.exit(2);
   }
 
   let feedbackClient = null;
   let feedbackUserId = null;
-  if (!loginCheck && !randomPick) {
+  if (!loginCheck) {
     const url = (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '').replace(/\/$/, '');
     const anonKey = (
       process.env.VITE_SUPABASE_ANON_KEY
@@ -1491,9 +1385,7 @@ async function main() {
     runDir,
     saveId: runSaveId,
     persona: { id: persona.id, goal: persona.goal },
-    pick: pickMode,
-    pickSeed: randomPick ? pickSeed : undefined,
-    playerBrain: randomPick ? 'random' : 'openrouter',
+    playerBrain: 'openrouter',
     playerModel,
     playerLicence,
     testerOnly,
@@ -1519,8 +1411,6 @@ async function main() {
             feedbackClient,
             userId: feedbackUserId,
             saveId: runSaveId,
-            randomPick,
-            pickRng,
           });
           summary.results.push(result);
           if (result.stoppedRepeat) {

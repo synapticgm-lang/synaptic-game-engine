@@ -57,16 +57,8 @@ Auto Fight when the toolbar `title="Auto-resolve combat"` is live.
 
 If the on-screen GM story matches the previous beat twice in a row, or the tester / hard floor flags **loop / identical / last-resort reprint** on two consecutive beats, the run **aborts**. It writes `REVIEW.md` in that run folder, does **not** start another T10, and leaves Chrome open.
 
-## Random pick (no AI player)
-
-`--pick=random` (or `AI_PLAYER_PICK=random`) drives the same live Chrome tab with **no OpenRouter / no player-brain**. Each turn (including origin/setup) picks a uniformly random visible chip via the existing click helpers. Seed: `--seed=` / `AI_PLAYER_SEED` (logged; default is time). No typed free-text, no thumbs/feedback writes. Login, one-tab, stop-after-2-repeats, `AI_PLAYER_TURNS`, and `--bible=` stay as usual. Play log lines: option list + count, picked chip, full GM prose verbatim; setup is logged before T1.
-
-```
-node scripts/ai-player-browser/run.mjs --pick=random --bible=summoned-pact --seed=42
-```
-
 ## Env (gitignored)
 
-`AI_PLAYER_EMAIL` / `AI_PLAYER_PASSWORD` / `OPENROUTER_API_KEY` (not required for `--pick=random`)  
-`AI_PLAYER_PICK` · `AI_PLAYER_SEED` · `AI_PLAYER_HOST` · `AI_PLAYER_CDP` · `AI_PLAYER_MODEL` (default `deepseek/deepseek-v4-pro`)  
+`AI_PLAYER_EMAIL` / `AI_PLAYER_PASSWORD` / `OPENROUTER_API_KEY`  
+`AI_PLAYER_HOST` · `AI_PLAYER_CDP` · `AI_PLAYER_MODEL` (default `deepseek/deepseek-v4-pro`)  
 `VITE_SUPABASE_URL` · `VITE_SUPABASE_ANON_KEY` (feedback read-back; never service role at runtime)
