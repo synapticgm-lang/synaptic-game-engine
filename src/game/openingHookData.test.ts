@@ -9,6 +9,7 @@ import {
   type OpeningHookTypedData,
 } from '@/data/campaigns/types';
 import { summonedPact } from '@/data/campaigns/summonedPact';
+import { SUMMONED_PACT_PHASE4_HOOKS } from '@/data/campaigns/summonedPactPhase4Hooks';
 import { mintOpeningInstance, snapshotFromPickedHook } from './openingInstance';
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
@@ -101,14 +102,20 @@ describe('openingHookData (brief 01)', () => {
     expect(a.placeName !== b.placeName || a.cast[0]!.name !== b.cast[0]!.name).toBe(true);
   });
 
-  it('every local Summoned Pact openingHooks card (before phase-4 spread) carries typed hook data', () => {
-    // Phase-4 deck is migrated in a later slice of this brief; local bible cards are first.
-    const cards = (summonedPact.openingHooks ?? [])
-      .filter((c): c is OpeningBeatCard => typeof c === 'object' && c !== null)
-      .slice(0, 20);
-    expect(cards.length).toBe(20);
+  it('every Summoned Pact openingHooks card carries typed hook data', () => {
+    const cards = (summonedPact.openingHooks ?? []).filter(
+      (c): c is OpeningBeatCard => typeof c === 'object' && c !== null
+    );
+    expect(cards.length).toBeGreaterThanOrEqual(20 + SUMMONED_PACT_PHASE4_HOOKS.length);
     for (let i = 0; i < cards.length; i++) {
       assertTypedShape(cards[i]!, `summonedPact.openingHooks[${i}]`);
+    }
+  });
+
+  it('every Phase-4 Summoned Pact hook carries typed hook data', () => {
+    expect(SUMMONED_PACT_PHASE4_HOOKS.length).toBe(24);
+    for (let i = 0; i < SUMMONED_PACT_PHASE4_HOOKS.length; i++) {
+      assertTypedShape(SUMMONED_PACT_PHASE4_HOOKS[i]!, `SUMMONED_PACT_PHASE4_HOOKS[${i}]`);
     }
   });
 });

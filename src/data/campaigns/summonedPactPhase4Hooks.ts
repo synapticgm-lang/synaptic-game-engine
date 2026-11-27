@@ -7,6 +7,16 @@ import type { OpeningBeatCard } from './types';
  */
 export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
   {
+    place: { id: 'sp4-place-weighing-cup', kind: 'inn' },
+      cast: [
+        { id: 'sp4-cast-mara', role: 'innkeep', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'sp-npc-mara-vell' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-room-key', label: "room-key", carryable: true },
+          { id: 'sp4-offer-cloak', label: "traveler's cloak", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'inn-book', 'offer'],
     who: 'an Earth stranger pulled into the common room of the Weighing Cup, still in street clothes',
     pressing: 'The rite misfired into an inn, not a cathedral. They need a name before anything else moves.',
     location: 'the common room of the Weighing Cup',
@@ -26,6 +36,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the flagstones of the Weighing Cup inside a scuffed chalk ring. A blue panel hangs above a table. Mara Vell and two clerks stare at you. A cloak lies on the bar, offered if you take a room.',
   },
   {
+    place: { id: 'sp4-place-contract-board', kind: 'hall' },
+      cast: [
+        { id: 'sp4-cast-brin', role: 'clerk', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'sp-npc-brin-holt' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-chit', label: "contractor's chit", carryable: true },
+          { id: 'sp4-offer-blade', label: "short blade", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'job-board', 'offer'],
     who: 'an Earth stranger pulled into the Contract Hall notice board, still in street clothes',
     pressing: 'Someone stamped a summon onto a job-board rite. They need a name before anything else moves.',
     location: 'the Contract Hall notice board',
@@ -45,6 +65,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake against the Contract Hall notice board inside a chalk circle. A blue panel hangs over the pins. Clerk Brin Holt drops his jobs. A kit chit waits in a tray if you take the posting.',
   },
   {
+    place: { id: 'sp4-place-kitchens', kind: 'kitchen' },
+      cast: [
+        { id: 'sp4-cast-tam', role: 'brother cook', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'sp-npc-3' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-bread', label: "wrapped bread", carryable: true },
+          { id: 'sp4-offer-kitchen-knife', label: "kitchen knife", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'flour-circle', 'offer'],
     who: 'an Earth stranger pulled into the cathedral kitchens in the Close, still in street clothes',
     pressing: 'The seventh ring dumped you into bread-steam, not the vault. They need a name before anything else moves.',
     location: 'the cathedral kitchens in the Close',
@@ -64,6 +94,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the kitchen flagstones inside a flour circle. A blue panel hangs over the kneading board. Brother Tam covers the door. A loaf and a knife wait on the sideboard if you help, not if you shout.',
   },
   {
+    place: { id: 'sp4-place-ledger-stair', kind: 'stair' },
+      cast: [
+        { id: 'sp4-cast-ila', role: 'court clerk', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'sp-npc-ila-pellane' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-tabard', label: "visitor's tabard", carryable: true },
+          { id: 'sp4-offer-pass', label: "pass-token", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'blank-line', 'offer'],
     who: 'an Earth stranger pulled into the ledger stair on the Palace Approach, still in street clothes',
     pressing: 'They meant to summon a witness onto the palace stair, not a Pactborn. They need a name before anything else moves.',
     location: 'the ledger stair on the Palace Approach',
@@ -83,6 +123,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the Palace Approach ledger stair inside a brass ring. A blue panel hangs over an open book. Ila Pellane’s quill is wet. A tabard waits on the rail if you sign.',
   },
   {
+    place: { id: 'sp4-place-kitchen-saint-alley', kind: 'alley' },
+      cast: [
+        { id: 'sp4-cast-pell', role: 'sister', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'sp-npc-sister-pell' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-charity-kit', label: "charity kit", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'charity', 'offer'],
     who: 'an Earth stranger pulled into Kitchen Saint Alley behind the Close, still in street clothes',
     pressing: 'Charity-circle, not Crown brass. They need a name before anything else moves.',
     location: 'Kitchen Saint Alley behind the Close',
@@ -102,6 +151,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in Kitchen Saint Alley inside a charcoal circle. A blue panel hangs in the bakery steam. Sister Pell and a marked child stare at you. A blanket on a crate is offered if you stay.',
   },
   {
+    place: { id: 'sp4-place-mireglass', kind: 'marsh' },
+      cast: [
+        { id: 'sp4-cast-march-a', role: 'march warden', pronouns: 'they/them', durability: 'durable', catalogNpcId: 'sp-npc-5' },
+        { id: 'sp4-cast-march-b', role: 'reflection-keeper', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-6' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-reed-cloak', label: "reed cloak", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'reflection', 'offer'],
     who: 'an Earth stranger pulled into the reed water of Mireglass March, still in street clothes',
     pressing: 'A marsh circle meant to call a reflection, not an Earth soul. They need a name before anything else moves.',
     location: 'the reed water of Mireglass March',
@@ -121,6 +180,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a woven platform in Mireglass March. A blue panel hangs over the black water. Ilyra Fen and Tekk Reed stare at a reflection that is not yours. A pole on the mat waits for a token.',
   },
   {
+    place: { id: 'sp4-place-cinderwake', kind: 'trail' },
+      cast: [
+        { id: 'sp4-cast-track-a', role: 'tracker', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-9' },
+        { id: 'sp4-cast-track-b', role: 'tracker', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-10' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-trail-kit', label: "trail kit", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'prints', 'offer'],
     who: 'an Earth stranger pulled into the ash-heat of Cinderwake Trail, still in street clothes',
     pressing: 'They finished a tracking-rite on the ash road. They need a name before anything else moves.',
     location: 'the ash-heat of Cinderwake Trail',
@@ -140,6 +209,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a scorched circle on Cinderwake Trail. A blue panel hangs in the heat. Brother Oren and Kessa Cinder are already chasing something. Two packs on the ground hold two offers.',
   },
   {
+    place: { id: 'sp4-place-sump-court', kind: 'court' },
+      cast: [
+        { id: 'sp4-cast-sump-a', role: 'sump advocate', pronouns: 'they/them', durability: 'durable', catalogNpcId: 'sp-npc-13' },
+        { id: 'sp4-cast-sump-b', role: 'debt collector', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-14' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-clause', label: "illegal binding clause", carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'signature', 'offer'],
     who: 'an Earth stranger pulled into the hearing pit of the Sump Court, still in street clothes',
     pressing: 'They summoned a clause, not a hero. They need a name before anything else moves.',
     location: 'the hearing pit of the Sump Court',
@@ -159,6 +238,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in the Sump Court hearing pit under the street. A blue panel hangs over the bench. Sula Vane has a quill, and Nox Kade has a price. A token waits on the rail.',
   },
   {
+    place: { id: 'sp4-place-hollow-engine', kind: 'hall' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-machine-scrap', label: "machine scrap", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'dead-engine', 'offer'],
     who: 'an Earth stranger pulled into a dead hall of the Hollow Engine, still in street clothes',
     pressing: 'They tried to wake a machine with a Scale rite. They need a name before anything else moves.',
     location: 'a dead hall of the Hollow Engine',
@@ -177,6 +263,16 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a grate in a dead hall of the Hollow Engine. A blue panel hangs in the dark. Two engineers hold a cracked tile. A spark-lamp on a crate waits if you help reseal the hall.',
   },
   {
+    place: { id: 'sp4-place-argent-ledger', kind: 'wagon' },
+      cast: [
+        { id: 'sp4-cast-argent-a', role: 'ledger clerk', pronouns: 'they/them', durability: 'durable', catalogNpcId: 'sp-npc-22' },
+        { id: 'sp4-cast-argent-b', role: 'license officer', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-23' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-rank-stamp', label: "rank stamp", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'audit', 'offer'],
     who: 'an Earth stranger pulled into the wagon desk of the Argent Ledger, still in street clothes',
     pressing: 'A mobile license rite. They need a name before anything else moves.',
     location: 'the wagon desk of the Argent Ledger',
@@ -196,6 +292,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake inside a silver circle on the floor of the Argent Ledger wagon. A blue panel hangs over the rank book. Yara has a stamp, and Kade wants the paper void. A license plate waits in a tray.',
   },
   {
+    place: { id: 'sp4-place-reliquary', kind: 'nave' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-relic-proof', label: "relic proof", carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'proof', 'offer'],
     who: 'an Earth stranger pulled into Saint Vhal Reliquary as a doctrine test',
     pressing: 'The wardens want a kneel and a name before the relic stays locked.',
     location: "the nave of Saint Vhal's Reliquary",
@@ -214,6 +317,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the Reliquary nave stones inside a circle of white sand. A blue panel hangs under a saint’s mask. The wardens wait for you to kneel. A tabard sits on a side altar, offered and not taken.',
   },
   {
+    place: { id: 'sp4-place-integration-scar', kind: 'scar' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-seam-kit', label: "seam kit", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'seam', 'offer'],
     who: 'an Earth stranger pulled into the outdoor seam of the Integration Scar, still in street clothes',
     pressing: 'The Scar is where pacts and debts meet. They need a name before anything else moves.',
     location: 'the outdoor seam of the Integration Scar',
@@ -232,6 +342,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the humming crack of the Integration Scar in daylight. A blue panel hangs over the seam. A loadout crate and a debt slate wait beside you. Neither one is on you yet.',
   },
   {
+    place: { id: 'sp4-place-junk-stall', kind: 'stall' },
+      cast: [
+        { id: 'sp4-cast-fence', role: 'fence', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-24' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-luck-chalk', label: "stolen Scale chalk", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'watcher', 'offer'],
     who: 'an Earth stranger pulled into a Lowmarket junk stall under tarps, still in street clothes',
     pressing: 'They used a stolen Scale chalk to pull luck for a sale. They need a name before anything else moves.',
     location: 'a Lowmarket junk stall under tarps',
@@ -251,6 +370,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake under a Lowmarket tarp inside a chalk circle. A blue panel hangs over a crate of buttons. Nemi Salt swears while a watcher browses the cups. A junk-knife waits on your nod.',
   },
   {
+    place: { id: 'sp4-place-harbor-quay', kind: 'quay' },
+      cast: [
+        { id: 'sp4-cast-wren', role: 'dock hand', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-pell-wren' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-fair-wind', label: "fair-wind charm", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'tide', 'offer'],
     who: 'an Earth stranger pulled into Valespire Harbor Quay at night tide, still in street clothes',
     pressing: 'A dock-luck rite at tide-turn. They need a name before anything else moves.',
     location: 'Valespire Harbor Quay at night tide',
@@ -270,6 +398,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the wet boards of Harbor Quay at night tide, inside a washing salt circle. A blue panel hangs over the grain. Pell Wren’s lantern is in your face. Oilskins wait on a peg if you sign.',
   },
   {
+    place: { id: 'sp4-place-counting-house', kind: 'counting-house' },
+      cast: [
+        { id: 'sp4-cast-venn', role: 'Scale accountant', pronouns: 'they/them', durability: 'durable', catalogNpcId: 'sp-npc-venn-scale' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-account-book', label: "account book", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'missing-account', 'offer'],
     who: 'an Earth stranger pulled into a Scale counting-house on Ledger Row, still in street clothes',
     pressing: 'They tried to summon a missing account into the book. They need a name before anything else moves.',
     location: 'a Scale counting-house on Ledger Row',
@@ -289,6 +426,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a counting-house stool inside a circle of coins. A blue panel hangs over the ledger. Auditor Venn Scale has ruled a line. A sash waits on the desk if you sit the audit.',
   },
   {
+    place: { id: 'sp4-place-courier-loft', kind: 'loft' },
+      cast: [
+        { id: 'sp4-cast-courier', role: 'courier', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-16' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-sealed-bag', label: "sealed name bag", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'delivery', 'offer'],
     who: 'an Earth stranger pulled into a Crown courier loft above the Close, still in street clothes',
     pressing: 'A delivery-rite to move a sealed name. They need a name before anything else moves.',
     location: 'a Crown courier loft above the Close',
@@ -308,6 +454,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a courier loft inside rings of wax. A blue panel hangs over the seals. Ado Ferry stares at a burst satchel. A sash on a hook waits if you carry the remaining seals.',
   },
   {
+    place: { id: 'sp4-place-salt-pan', kind: 'camp' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-salt-proof', label: "failed-summon proof", carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'pans', 'offer'],
     who: 'an Earth stranger pulled into an Ash Court salt-pan camp at dusk, still in street clothes',
     pressing: 'They needed a body to claim a failed Crown summon. They need a name before anything else moves.',
     location: 'an Ash Court salt-pan camp at dusk',
@@ -326,6 +479,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake inside a salt-crust circle at an Ash Court camp on the white pans at dusk. A blue panel hangs over the water. A salt-burner holds a mask. A salt-cloak is offered for their story, not Pellane’s.',
   },
   {
+    place: { id: 'sp4-place-cistern', kind: 'cistern' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-water-kit', label: "water kit", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'water-circle', 'offer'],
     who: 'an Earth stranger pulled into the rain-cistern under Valespire Close, still in street clothes',
     pressing: 'A water-circle in the cistern. They need a name before anything else moves.',
     location: 'the rain-cistern under Valespire Close',
@@ -344,6 +504,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in cold water in the rain cistern under the Close. A blue panel hangs dry above the waterline. A handler shouts through the grate. A rope waits on the rim.',
   },
   {
+    place: { id: 'sp4-place-archive', kind: 'archive' },
+      cast: [
+        { id: 'sp4-cast-lene', role: 'archivist', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'sp-npc-lene-quill' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-forbidden-name', label: "forbidden name slip", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'stack', 'offer'],
     who: 'an Earth stranger pulled into a Crown archive stack behind iron mesh, still in street clothes',
     pressing: 'They tried to summon a forbidden name out of the stack. They need a name before anything else moves.',
     location: 'a Crown archive stack behind iron mesh',
@@ -363,6 +532,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a Crown archive stack inside a circle of library chalk. A blue panel hangs over the shelves. Lene Quill holds one page face down. A ribbon on the folio waits if you read it.',
   },
   {
+    place: { id: 'sp4-place-frozen-ford', kind: 'ford' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-border-mark', label: "border mark", carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'ice', 'offer'],
     who: 'an Earth stranger pulled into the frozen ford on the Cinderflow, still in street clothes',
     pressing: 'A mid-ice rite to mark a border soul. They need a name before anything else moves.',
     location: 'the frozen ford on the Cinderflow',
@@ -381,6 +557,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on the ice of the frozen Cinderflow ford. A blue panel hangs in the wind. Scouts stand on one bank, and Ash pickets stand on the other. A coat waits on each bank. You are still on the ice.',
   },
   {
+    place: { id: 'sp4-place-bell-tower', kind: 'tower' },
+      cast: [
+        { id: 'sp4-cast-orth', role: 'bell-keeper', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'sp-npc-orth' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-tower-kit', label: "tower kit", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'wrong-bells', 'offer'],
     who: 'an Earth stranger pulled into the bell-tower of Valespire Cathedral, still in street clothes',
     pressing: 'They pulled you into the tower to hide a failed vault-rite from the nave. They need a name before anything else moves.',
     location: 'the bell-tower of Valespire Cathedral',
@@ -400,6 +585,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake under a silent bronze bell in the bell-tower of Valespire Cathedral. A blue panel hangs in the belfry. Orth holds the bell rope and will not pull it. A tower-pass waits on a nail by the ladder.',
   },
   {
+    place: { id: 'sp4-place-quarry', kind: 'quarry' },
+      cast: [
+        { id: 'sp4-cast-harn', role: 'surveyor', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-harn' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-collapse-sign', label: "collapse survey sign", carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'work-rite', 'offer'],
     who: 'an Earth stranger pulled into a quarry circle outside Valespire’s east wall, still in street clothes',
     pressing: 'A work-rite to pull a strong back. They need a name before anything else moves.',
     location: 'a quarry circle outside Valespire’s east wall',
@@ -419,6 +613,13 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake in a quarry circle on cut granite outside the east wall. A blue panel hangs over a dropped mallet. Harn swears, and the surveyors have a form. A work-coat on a cart waits if you sign.',
   },
   {
+    place: { id: 'sp4-place-night-roof', kind: 'roof' },
+      cast: [],
+      offer: { items: [
+          { id: 'sp4-offer-shadow-luck', label: "shadow-luck pull", carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'horn', 'offer'],
     who: 'an Earth stranger pulled into a night-market roof over Lowmarket, still in street clothes',
     pressing: 'They wanted a shadow-luck pull for a roof job. They need a name before anything else moves.',
     location: 'a night-market roof over Lowmarket',
@@ -437,6 +638,15 @@ export const SUMMONED_PACT_PHASE4_HOOKS: OpeningBeatCard[] = [
       'You wake on a cold roof over the Lowmarket night market, inside a scraped circle. A blue panel hangs over the ridge. Three thieves freeze while a horn sounds. A dark cloak waits on the tiles if you drop with them.',
   },
   {
+    place: { id: 'sp4-place-stable-loft', kind: 'loft' },
+      cast: [
+        { id: 'sp4-cast-joss', role: 'handler', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'sp-npc-joss' },
+      ],
+      offer: { items: [
+          { id: 'sp4-offer-hay-kit', label: "hay-loft kit", carryable: true },
+        ] },
+      rite: { steps: [{ id: 'sp4-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel', 'hay', 'offer'],
     who: 'an Earth stranger pulled into the stable loft behind the Weighing Cup, still in street clothes',
     pressing: 'The inn rite dumped you into hay, not the common room. They need a name before anything else moves.',
     location: 'the stable loft behind the Weighing Cup',
