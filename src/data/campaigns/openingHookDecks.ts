@@ -8,41 +8,81 @@ import type { OpeningHookCard } from './types';
 export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'system-integration': [
     {
+    place: { id: 'system-integration-a-cracked-city-street', kind: 'street' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'A cracked city street',
       text:
         'The sky tears open over the pavement you were already walking. A voice — not human, not machine — speaks to every mind: "Integration complete." A blue panel flickers at eye level. Cars have stopped. Nobody has handed you a class yet.',
     },
     {
+    place: { id: 'system-integration-your-apartment-at-registratio', kind: 'apartment' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'your apartment at Registration',
       text:
         'You were making tea. The window goes white. A panel hangs over the sink: Registration. The kettle still sings. Down in the street, someone is screaming a Wave warning you have not heard yet.',
     },
     {
+    place: { id: 'system-integration-a-shop-or-cafe-at-registratio', kind: 'shop' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a shop or cafe at Registration',
       text:
         'Indoor lights die, then the panel. You are still in line. The clerk’s screen is a blue rectangle too. Glass in the door spiderwebs. Integration does not wait for you to pay.',
     },
     {
+    place: { id: 'system-integration-a-car-stuck-in-traffic', kind: 'car' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a car stuck in traffic',
       text:
         'Traffic is already wrong before the sky tears. Your dashboard dies. A panel hangs over the wheel. Horns. A dungeon seam opens in the shopfront beside the jam.',
     },
     {
+    place: { id: 'system-integration-a-metro-platform', kind: 'metro' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a metro platform',
       text:
         'The train does not come. The platform panel is not a timetable. Integration. People freeze with phones that no longer light. Something moves in the tunnel that the System has not named.',
     },
     {
+    place: { id: 'system-integration-your-workplace-floor', kind: 'workplace' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'your workplace floor',
       text:
         'Open-plan morning. Then every monitor is the same blue. A colleague laughs once and stops. The building’s lights are Integration now. Your class is already assigned.',
     },
     {
+    place: { id: 'system-integration-a-park-path-at-registration', kind: 'park' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a park path at Registration',
       text:
         'Ordinary path, ordinary sky — until it is not. A panel at eye level. Birds gone. A rift sits where the fountain was. You still have this morning’s clothes.',
     },
     {
+    place: { id: 'system-integration-a-stairwell-between-floors', kind: 'stairwell' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'system-integration-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a stairwell between floors',
       text:
         'You were between errands, between floors. The stairwell flickers. A panel. Someone above you is already bargaining with a class they did not pick.',
@@ -51,31 +91,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'gatebreak-ward': [
     {
+    place: { id: 'gatebreak-ward-ward-9-street-under-a-new-gate', kind: 'ward' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'gatebreak-ward-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Ward 9 street under a new gate',
       text:
         'Blue bruise-light over Ward 9. An unscheduled gate is chewing the subway stairs. Militia armbands, not guild plate. Your panel is late and cheap. Someone shouts for a headcount.',
     },
     {
+    place: { id: 'gatebreak-ward-ward-9-civilian-shelter', kind: 'ward' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'gatebreak-ward-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Ward 9 civilian shelter',
       text:
         'Shelter cots, bad coffee, a gate alarm that will not shut up. You were Unlicensed. A sergeant wants bodies at the stair, not heroes. Your panel ticks anyway.',
     },
     {
+    place: { id: 'gatebreak-ward-ward-9-night-market', kind: 'ward' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'gatebreak-ward-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Ward 9 night market',
       text:
         'Night market stalls. The gate opens in the butcher’s freezer. Civilians run. A guild recruiter is already filming. You are local. The System pays for clears.',
     },
     {
+    place: { id: 'gatebreak-ward-the-subway-mouth-under-ward-9', kind: 'subway' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'gatebreak-ward-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the subway mouth under Ward 9',
       text:
         'You were taking the last train. The tunnel is a gate throat now. Rank stamp: too low. Something E-class that does not care about ranks is already on the platform.',
     },
     {
+    place: { id: 'gatebreak-ward-a-ward-9-rooftop-lookout', kind: 'ward' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'gatebreak-ward-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Ward 9 rooftop lookout',
       text:
         'Rooftop watch. Gates bloom over richer wards like jewelry. Yours is the ugly one. A panel. A neighbor wants you to hold the stair while they get kids out.',
     },
     {
+    place: { id: 'gatebreak-ward-ward-militia-lockup', kind: 'ward' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'gatebreak-ward-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Ward militia lockup',
       text:
         'You were detained for an unlicensed scrap-clear. The lockup lights go gate-blue. The sergeant who jailed you now needs you. Your panel was never the problem.',
@@ -84,31 +154,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'dungeon-transport': [
     {
+    place: { id: 'dungeon-transport-a-stone-corridor-on-floor-1-of', kind: 'corridor' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'dungeon-transport-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'A stone corridor on Floor 1 of the Abyssal Spire',
       text:
         'The alley rift closed behind you. Stone corridor. Torches without fuel. A panel: Floor 1. Descend. There is no door back — only damp air and a sound further down.',
     },
     {
+    place: { id: 'dungeon-transport-floor-1-arrival-chamber-of-the', kind: 'spire' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'dungeon-transport-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Floor 1 arrival chamber of the Abyssal Spire',
       text:
         'You wake on arrival-stone, not in the alley. The rift is a healed scar in the air. Safe-room rumor is three floors down. Your pockets are still Earth’s.',
     },
     {
+    place: { id: 'dungeon-transport-a-flooded-floor-1-side-passage', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'dungeon-transport-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a flooded Floor 1 side-passage',
       text:
         'You stepped through into knee-water, not a dry hall. The panel still says Floor 1. Something moves under the ripples. The main corridor light is a different kind of wrong.',
     },
     {
+    place: { id: 'dungeon-transport-floor-1-stair-that-only-goes-d', kind: 'stair' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'dungeon-transport-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Floor 1 stair that only goes down',
       text:
         'The first thing you see is a stair that refuses to go up. Panel. Hunger meter you did not ask for. Footsteps — not yours — on the landing below.',
     },
     {
+    place: { id: 'dungeon-transport-a-floor-1-collapsed-chapel', kind: 'chapel' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'dungeon-transport-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Floor 1 collapsed chapel',
       text:
         'Rift into a chapel the Spire ate. Pew-wood, no sky. A panel over the altar. The exit you want is a boss gate, not a door.',
     },
     {
+    place: { id: 'dungeon-transport-floor-1-with-one-other-arrival', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'dungeon-transport-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Floor 1 with one other arrival',
       text:
         'Two of you came through. The other person is already bargaining with the panel. The Spire does not care who led. Only down.',
@@ -117,31 +217,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'void-audience': [
     {
+    place: { id: 'void-audience-the-auditor-s-desk-in-the-void', kind: 'desk' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'void-audience-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: "The Auditor's desk in the Void",
       text:
         'Soft grey. A desk that was not there. The Auditor is already waiting with a point budget. You remember dying. The Audience is not visible yet — only the sense of being watched.',
     },
     {
+    place: { id: 'void-audience-the-void-queue-before-the-desk', kind: 'desk' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'void-audience-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Void queue before the desk',
       text:
         'You are not first. Other dead wait in a line that has no floor. The Auditor calls a number that is yours. Flaws are on the clipboard before you sit.',
     },
     {
+    place: { id: 'void-audience-the-void-observation-gallery', kind: 'gallery' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'void-audience-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Void observation gallery',
       text:
         'You wake in a gallery, not at the desk. Below, someone else’s negotiation is already entertainment. The Auditor clears its throat. Your trial is next.',
     },
     {
+    place: { id: 'void-audience-the-auditor-s-desk-mid-bargain', kind: 'desk' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'void-audience-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: "the Auditor's desk — mid-bargain",
       text:
         'You arrive already mid-sentence. A Flaw is half-chosen. The Auditor does not restart. Cosmic Favor is 0. The Audience likes that.',
     },
     {
+    place: { id: 'void-audience-a-void-threshold-before-rebirth', kind: 'threshold' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'void-audience-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Void threshold before rebirth',
       text:
         'The desk is behind you. The Resonance is a door of weather. The Auditor asks if you want to add one more Flaw before you fall through.',
     },
     {
+    place: { id: 'void-audience-the-void-with-no-desk-yet', kind: 'desk' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'void-audience-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Void with no desk yet',
       text:
         'Featureless grey and your own last memory. Then the desk. Then the function that calls itself the Auditor. No gods. A form.',
@@ -150,31 +280,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'ascending-spire': [
     {
+    place: { id: 'ascending-spire-the-plaza-before-the-ascending-s', kind: 'plaza' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'ascending-spire-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the plaza before the Ascending Spire',
       text:
         'The black spire punched the sky overnight. Climbers queue for permits. Your tag is still blank. Floor 1 laws are posted in a language that rearranges.',
     },
     {
+    place: { id: 'ascending-spire-floor-1-gate-of-the-ascending-sp', kind: 'gate' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'ascending-spire-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Floor 1 gate of the Ascending Spire',
       text:
         'You are already inside the first biome. The stair behind you is a rumor. A Floor Law writes itself on the air. Someone is dying to a rule you have not read.',
     },
     {
+    place: { id: 'ascending-spire-the-ranking-board-outside-the-sp', kind: 'spire' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'ascending-spire-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Ranking Board outside the Spire',
       text:
         'Dawn at the Ranking Board. Names you do not know, floors you have not seen. A marshal stamps your tag. A rival is already one floor ahead in the rumor mill.',
     },
     {
+    place: { id: 'ascending-spire-a-climber-camp-at-the-spire-base', kind: 'camp' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'ascending-spire-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a climber camp at the Spire base',
       text:
         'Tents, ration bricks, people who came back from Floor 7 wrong. Your first ascent is unpaid. The System only loves height.',
     },
     {
+    place: { id: 'ascending-spire-floor-1-law-change-corridor', kind: 'corridor' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'ascending-spire-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Floor 1 law-change corridor',
       text:
         'The corridor you entered is not the corridor you are in. Floor Law just flipped. Silence only — or fire double. You find out by surviving.',
     },
     {
+    place: { id: 'ascending-spire-spire-gate-after-a-failed-clear', kind: 'spire' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'ascending-spire-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Spire gate after a failed clear',
       text:
         'Someone else’s clear failed. Gear on the steps. The Spire kept a name. Your permit is still valid. The marshal will not look at the pile.',
@@ -183,31 +343,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'inkbound-academy': [
     {
+    place: { id: 'inkbound-academy-an-inkbound-dorm-at-first-bell', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'inkbound-academy-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'an Inkbound dorm at first bell',
       text:
         'You wake in a dorm bed. A blank Class Codex on the nightstand. The schedule writes itself. Your roommate is already late for a midterm that can kill.',
     },
     {
+    place: { id: 'inkbound-academy-inkbound-orientation-hall', kind: 'hall' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'inkbound-academy-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Inkbound orientation hall',
       text:
         'Orientation. Living ink in the air. House colors you have not chosen. A dean with a red pen asks why your Codex is still empty.',
     },
     {
+    place: { id: 'inkbound-academy-the-inkbound-library-stacks', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'inkbound-academy-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'the Inkbound library stacks',
       text:
         'You skipped the dorm. The Restricted Stack is already rearranging. A footnote tries to live in your mouth. First bell has not rung.',
     },
     {
+    place: { id: 'inkbound-academy-inkbound-dueling-yard', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'inkbound-academy-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Inkbound dueling yard',
       text:
         'Yard dust. A house challenge you did not sign. Ink-mage students want a witness. Your Codex opens whether you wanted a class or not.',
     },
     {
+    place: { id: 'inkbound-academy-a-detention-classroom-at-inkbou', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'inkbound-academy-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a detention classroom at Inkbound',
       text:
         'Detention before enrollment. The red pen edits the chalkboard into a quest. You are already on a ledger. House points are not yours yet.',
     },
     {
+    place: { id: 'inkbound-academy-inkbound-night-corridor', kind: 'corridor' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'inkbound-academy-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'Inkbound night corridor',
       text:
         'After lights. The corridor ink glows. Someone is smuggling a living glyph. Your schedule adds a midnight class you did not pick.',
@@ -216,31 +406,61 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'hollow-core': [
     {
+    place: { id: 'hollow-core-a-half-collapsed-cave-around-a-newbo', kind: 'cave' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'hollow-core-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a half-collapsed cave around a newborn Core',
       text:
         'You awaken as a Core crystal. Menu: Expand, Spawn, Bargain. The cave is small. Footsteps — adventurers or hunters — are already in the throat of the tunnel.',
     },
     {
+    place: { id: 'hollow-core-a-core-chamber-after-a-raid', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'hollow-core-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Core chamber after a raid',
       text:
         'You wake after a raid you do not remember. Rooms are bitten. Mana is low. A dying adventurer is still in your first trap. Bargain or feed.',
     },
     {
+    place: { id: 'hollow-core-a-core-border-against-a-rival-crysta', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'hollow-core-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Core border against a rival crystal',
       text:
         'Your light meets another Core’s light through cracked stone. Territory. The System offers a theme you have not chosen. Guild picks are already on the map.',
     },
     {
+    place: { id: 'hollow-core-a-core-landlord-s-first-rented-room', kind: 'room' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'hollow-core-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Core landlord’s first rented room',
       text:
         'You are a Core that already has a tenant. They want rent in mana. The menu still says you could eat them. First choice is hospitality or hunger.',
     },
     {
+    place: { id: 'hollow-core-a-core-crystal-in-a-mined-out-hollow', kind: 'place' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'hollow-core-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Core crystal in a mined-out hollow',
       text:
         'Miners left tools. You are the new landlord of a hole. Spawn is expensive. Someone is coming back for the crystal they thought was dead.',
     },
     {
+    place: { id: 'hollow-core-a-core-dream-before-the-cave', kind: 'cave' },
+    cast: [],
+    offer: { items: [] },
+    rite: { steps: [{ id: 'hollow-core-rite-name', label: 'Give a name' }] },
+    beatOrder: ['arrive', 'panel'],
       location: 'a Core dream before the cave',
       text:
         'A last human memory, then crystal. The Auditor of dungeons is a menu. Grow or be mined. The first room is still rubble.',
@@ -1149,35 +1369,35 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     { text: 'A blank first page. Your Codex is canon. Open in the room you actually want, not a default street.' },
     { text: 'A door. Your rules. The camera is HERE once you say where HERE is.' },
   ],
-  // Authored offline gamebooks (PI2) � catalog floor only; play uses compiled pages, not AI openers.
+  // Authored offline gamebooks (PI2) � catalog floor only; play uses compiled pages, not AI openers.
   'saltglass': [
-    { location: 'the Saltglass verge', text: 'The last lamp is lit. Salt flats ahead. The glass tide is a rumor with teeth. Chip your way across � authored pages only.' },
+    { location: 'the Saltglass verge', text: 'The last lamp is lit. Salt flats ahead. The glass tide is a rumor with teeth. Chip your way across � authored pages only.' },
     { location: 'a lamp-post on the Saltglass verge', text: 'Ember-lamp in hand. The verge road forks three ways. No writer invents this book; the next page is already written.' },
     { location: 'Saltglass wind-cut shelter', text: 'Shelter first. The flats wait. Carry the lamp, or the tide of glass will not wait for you.' },
     { location: 'a salt-crust mile-marker', text: 'Mile-marker. Lamp warm. The hold of the flats is already listening for which fork you take.' },
   ],
   'vesperhold': [
-    { location: 'the Vesperhold bell-walk', text: 'Bronze tongue above. Dusk seal coming. Lower the bell before the hold locks � authored forks only.' },
+    { location: 'the Vesperhold bell-walk', text: 'Bronze tongue above. Dusk seal coming. Lower the bell before the hold locks � authored forks only.' },
     { location: 'Vesperhold stair to the bell', text: 'Stair. Rope. The hold is listening. The next page is climb, cut, or call.' },
     { location: 'the Vesperhold yard at first bell', text: 'Yard. First bell already rung. The bronze must come down before the seal. Chips, not invention.' },
     { location: 'a Vesperhold watch alcove', text: 'Alcove. Bell-walk in sight. Dusk is a countdown. The book already chose the forks.' },
   ],
   'tide-that-did-not-return': [
-    { location: 'the Gullmouth desk', text: 'Gullmouth desk. Crusted flats beyond. 2d6 will test Might, Wit, Nerve, Craft � the engine rolls, never the prose.' },
+    { location: 'the Gullmouth desk', text: 'Gullmouth desk. Crusted flats beyond. 2d6 will test Might, Wit, Nerve, Craft � the engine rolls, never the prose.' },
     { location: 'Gullmouth quay at low water', text: 'Quay. The tide that did not return left a path of checks. Stamina and luck are ledger facts.' },
-    { location: 'a Gullmouth chart-room', text: 'Chart-room. Flats marked in chalk. First page is the desk; first test is the engine�s.' },
+    { location: 'a Gullmouth chart-room', text: 'Chart-room. Flats marked in chalk. First page is the desk; first test is the engine�s.' },
     { location: 'salt steps off Gullmouth', text: 'Salt steps. Desk behind. The flats ahead. Keepakes wait on honest rolls.' },
   ],
   'cinderfall': [
-    { location: 'the Cinderfall platform', text: 'Last train. Boilers complaining. Brawn, Cunning, Composure, Mechanics � engine rolls only.' },
+    { location: 'the Cinderfall platform', text: 'Last train. Boilers complaining. Brawn, Cunning, Composure, Mechanics � engine rolls only.' },
     { location: 'Cinderfall ticket cage', text: 'Ticket cage. Steam. The line will not wait. Authored carriages; dice decide which you keep.' },
     { location: 'a Cinderfall coal chute', text: 'Coal chute. Platform above. The train is already late. First chip is board or check the gauge.' },
-    { location: 'Cinderfall caboose rail', text: 'Caboose rail. Platform receding in memory. The boilers still have a say � through the engine, not the book.' },
+    { location: 'Cinderfall caboose rail', text: 'Caboose rail. Platform receding in memory. The boilers still have a say � through the engine, not the book.' },
   ],
   'underlibrary': [
-    { location: 'the Underlibrary porter desk', text: 'Porter desk. Hundred doors below. Study, Will, Guile, Grace � 2d6 by the engine alone.' },
+    { location: 'the Underlibrary porter desk', text: 'Porter desk. Hundred doors below. Study, Will, Guile, Grace � 2d6 by the engine alone.' },
     { location: 'Underlibrary stairwell lamp', text: 'Stair lamp. Stacks breathing. One door should stay shut. The book is already written.' },
     { location: 'a reading alcove above the Underlibrary', text: 'Alcove. Desk below. The hundredth door is a rumor with a number. Chips open pages.' },
-    { location: 'Underlibrary stack aisle zero', text: 'Aisle zero. Porter�s stamp still wet. The next page is descend, ask, or test your sheet.' },
+    { location: 'Underlibrary stack aisle zero', text: 'Aisle zero. Porter�s stamp still wet. The next page is descend, ask, or test your sheet.' },
   ],
 };
