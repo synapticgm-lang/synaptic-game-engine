@@ -1,4 +1,14 @@
-import type { CampaignBible, OpeningHookCard, OpeningMode, OpeningPrompt, OpeningPromptKind, OpeningRegistrar } from '@/data/campaigns/types';
+import type {
+  CampaignBible,
+  OpeningHookCard,
+  OpeningHookOffer,
+  OpeningHookTypedData,
+  OpeningMode,
+  OpeningPrompt,
+  OpeningPromptKind,
+  OpeningRegistrar,
+} from '@/data/campaigns/types';
+import { openingHookHasTypedData } from '@/data/campaigns/types';
 import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
@@ -35,7 +45,6 @@ import { classifyRoundAction } from './tabletop/roundActionClass';
 import { pickPcDesignation, pickPcGivenName } from './pcNamePicker';
 import { openingRiteOwnChips, pinOpeningRiteChip } from './openingRite';
 import { rewriteOpeningMarkup } from './openingWriterNotes';
-import { openingLockedPersonNames } from './openingCatalogGuard';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 /**
  * Pack 12: Handle instant quick-response button clicks.
@@ -508,6 +517,12 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   where?: string;
   whoHere?: string;
   pressing?: string;
+  /** Typed hook payload (brief 01); offer/rite readers use this, not English. */
+  cast?: OpeningHookTypedData['cast'];
+  place?: OpeningHookTypedData['place'];
+  offer?: OpeningHookTypedData['offer'];
+  rite?: OpeningHookTypedData['rite'];
+  beatOrder?: OpeningHookTypedData['beatOrder'];
   /** The card compiled once (set by resolveOpeningHookPick). */
   card?: OpeningCardRecord;
 } {
@@ -547,6 +562,15 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     || card.fallback?.trim()
     || card.text?.trim()
     || (location ? `You are in ${location}.` : '');
+  const typed = openingHookHasTypedData(card)
+    ? {
+        cast: card.cast,
+        place: card.place,
+        offer: card.offer,
+        rite: card.rite,
+        beatOrder: card.beatOrder,
+      }
+    : {};
   return {
     text: lines.join('\n'),
     location,
@@ -562,6 +586,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     where,
     whoHere,
     pressing,
+    ...typed,
   };
 }
 export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCard[] {
@@ -589,9 +614,18 @@ export function resolveOpeningHookPick(
   if (!card) return undefined;
   const norm = normalizeOpeningHookCard(card);
   const compiled = compileOpeningCard(bible?.id, norm.text, norm.page1 || norm.fallback);
-  const pick = compiled ? { ...norm, card: compiled } : norm;
+  // Offer record from typed items only — never parse the openingOffer English line.
+  const typedOffer =
+    typeof card !== 'string' && openingHookHasTypedData(card)
+      ? offerRecordFromTypedData(card.offer)
+      : undefined;
+  const withOffer =
+    compiled && typedOffer
+      ? { ...compiled, offer: typedOffer }
+      : compiled;
+  const pick = withOffer ? { ...norm, card: withOffer } : norm;
   if (!pick.location) return pick;
-  const name = compiled?.place;
+  const name = withOffer?.place;
   return name && name !== pick.location ? { ...pick, location: name, locationDescription: pick.location } : pick;
 }
 /**
@@ -1697,14 +1731,12 @@ export function compileOpeningCard(
     && (capWords >= 2 || (leadWords.length === 1 && capWords === 1) || names.includes(leadWords[0] ?? ''));
   const cast = !lead ? '' : properOne ? lead : slotGroupLabel(lead, names);
   const place = location ? openingPlaceRecord(bibleId, location, blob) : undefined;
-  const offer = compileOpeningOffer(blob);
   return {
     ...(place ? { place: place.place, ...(place.parentHub ? { parentHub: place.parentHub } : {}) } : {}),
     cast,
     castNames: [...new Set(castNames.filter((n) => n.length >= 3))],
     props: cardPlacedProps(page ?? ''),
     names,
-    ...(offer ? { offer } : {}),
   };
 }
 /** A comma clause that negates or describes the player belongs to the phrase before it, not a new person. */
@@ -1747,105 +1779,41 @@ function slotParts(slot: string): string[] {
   }
   return out;
 }
-/** "… and they will kit you …" — where the consequence starts: "and" before its subject (a pronoun, "that side" or a name). */
-const OFFER_CONSEQUENCE = /\band\s+((?:they|he|she|it|that side|[A-Z][\w'’-]*)\s.+)$/;
-const OFFER_SUBJECT = /^(?:that side|they|he|she|it|[A-Z][\w'’-]*)\s+(?:will\s+|shall\s+|may\s+|can\s+)?/i;
-/** "The patrol will issue …" / "gets issued kit" — the word after the modal is the verb. */
-const OFFER_MODAL = /\b(?:will|shall|may|gets?)\s+[a-z][\w'’-]*\s+(.+)$/i;
-const OFFER_OBJECT_END = /\s+(?:if|when|once|after|unless|while|in exchange|into|from|for|at|as|they|he|she)\b|[.!?;:—–]/i;
-/** The object of an offer sentence: after its consequence's verb, else after its modal verb, else after its leading imperative. */
-function offerObject(sentence: string): string {
-  const consequence = sentence.match(OFFER_CONSEQUENCE)?.[1];
-  const afterVerb = consequence
-    ? consequence.replace(OFFER_SUBJECT, '').replace(/^[a-z][\w'’-]*\s+/i, '')
-    : sentence.match(OFFER_MODAL)?.[1] ?? sentence.replace(/^\s*[\w'’-]+\s+/, '');
-  const object = afterVerb.replace(/^(?:you\s+)?(?:with\s+)?/i, '');
-  const end = object.search(OFFER_OBJECT_END);
-  return end >= 0 ? object.slice(0, end) : object;
-}
-/** "a seat at the table" / "a bunk in the barracks": a thing fixed to a place is a standing offered, not a thing handed over. */
-function isPlaceBoundPart(sentence: string, part: string): boolean {
-  const p = part.trim();
-  if (!p) return false;
-  const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`\\b${esc}\\s+(?:at|in|on|among)\\s+(?:the|a|an|your|their|its)\\b`, 'i').test(sentence);
-}
-/** The things an offer sentence hands over: its bracketed list, else the object of the sentence. */
-function offerItems(sentence: string): string[] {
-  const bracket = sentence.match(/\(([^)]+)\)/)?.[1];
-  return (bracket ?? offerObject(sentence))
-    .split(/,|\s+and\s+|\s+or\s+/i)
-    .map((p) => p.trim().replace(/^(?:and|or)\s+/i, ''))
-    .filter((p) => !isPlaceBoundPart(sentence, p))
-    // A part that leads with a verb before its article ("issue a traveler's kit") is the article's phrase.
-    .map((p) => (/^(?:a|an|the|some|your|their)\s/i.test(p) ? p : p.replace(/^.*?\s(?=(?:a|an|some)\s)/i, '')))
-    // A definite thing outside a bracket list ("unbar the door") is already in the scene, not handed over.
-    .filter((p) => bracket != null || !/^the\s/i.test(p))
-    .map((p) => p.replace(/^(?:a|an|the|some|your|their)\s+/i, '').trim())
-    .filter((p) => p && p.split(/\s+/).length <= 4 && !/\b(?:whatever|anything|nothing|junk)\b(?!-)/i.test(p));
+/**
+ * Opening offer record from typed hook items (brief 02). Carryable flags decide inventory vs benefits —
+ * never head-noun English classes.
+ */
+export function offerRecordFromTypedData(
+  offer: OpeningHookOffer | undefined,
+  chips?: { accept?: string; refuse?: string }
+): OpeningOfferRecord | undefined {
+  const list = offer?.items ?? [];
+  if (!list.length) return undefined;
+  const items = list.filter((it) => it.carryable).map((it) => it.label);
+  const benefits = list.filter((it) => !it.carryable).map((it) => it.label);
+  return {
+    items,
+    ...(benefits.length ? { benefits } : {}),
+    accept: chips?.accept ?? 'Accept the offer',
+    refuse: chips?.refuse ?? 'Keep your own kit',
+    noun: 'offer',
+  };
 }
 /**
- * Not everything an offer hands over is carried. Judged once, structurally, by the item's head noun (the
- * last word before an "at / of / in / aboard / to / from …" tail: "seat at the table" → seat), against two short
- * principled classes — never by growing a per-item list:
- *  - a PLACE you are given to sleep or sit (bunk, berth, bed, cot, cabin, room, seat): lodging, not gear;
- *  - WORDS or STANDING you are given (story, name, word, promise, welcome, rank): known, not held.
- * Anything else is a carryable object. Non-carryables stay on the offer record as benefits.
+ * @deprecated English offer parsing is deleted (brief 02). Always returns undefined.
+ * Callers must use offerRecordFromTypedData / the save's card.offer.
  */
-const OFFER_PLACE_HEAD = /^(?:bunk|berth|bed|cot|cabin|room|seat)s?$/;
-const OFFER_ABSTRACT_HEAD = /^(?:story|stories|name|word|promise|welcome|rank)s?$/;
-function offerHeadNoun(item: string): string {
-  const core = (item ?? '').toLowerCase().split(/\s+(?:at|of|in|on|for|aboard|with|to|from)\s+/)[0] ?? '';
-  return (core.trim().split(/\s+/).pop() ?? '').replace(/['’]s$/, '');
+export function compileOpeningOffer(_blob: string | undefined): OpeningOfferRecord | undefined {
+  return undefined;
 }
-export function isCarryableOfferItem(item: string): boolean {
-  const head = offerHeadNoun(item);
-  return !!head && !OFFER_PLACE_HEAD.test(head) && !OFFER_ABSTRACT_HEAD.test(head);
-}
-/** Split what an offer hands over into carried items and non-carried benefits (a berth, a cover story). */
-export function splitOfferGrants(things: string[]): { items: string[]; benefits: string[] } {
-  const items: string[] = [];
-  const benefits: string[] = [];
-  for (const t of things) (isCarryableOfferItem(t) ? items : benefits).push(t);
-  return { items, benefits };
-}
-/** A line of the offer slot that says nothing is offered. */
-const NO_OFFER_LINE = /^(?:no one|nobody|none|nothing|no)\b/i;
-/**
- * The card's opening offer compiled once from its "Opening offer" slot: the slot's first line that is
- * not a refusal is the accept line; the items handed over, the accept line and the refuse line.
- */
-export function compileOpeningOffer(blob: string | undefined): OpeningOfferRecord | undefined {
-  const raw = offerFromPickedHookBlob(blob);
-  if (!raw || NO_OFFER_LINE.test(raw)) return undefined;
-  const sentences = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
-  const accept = sentences.find((s) => !NO_OFFER_LINE.test(s) && !/^(?:refuse|decline)\b/i.test(s));
-  if (!accept) return undefined;
-  const offered = offerItems(accept);
-  if (!offered.length) return undefined;
-  const { items, benefits } = splitOfferGrants(offered);
-  const refuse = sentences.find(
-    (s) => s !== accept && /\b(?:refuse|decline|turn (?:it|them) down|say no)\b/i.test(s)
-  ) ?? sentences[sentences.indexOf(accept) + 1] ?? '';
-  const noun = /\b(?:work|job|cots|serve|duty|labou?r|shift)\b/i.test(accept) ? 'work' : 'offer';
-  return { items, accept, refuse, noun, ...(benefits.length ? { benefits } : {}) };
-}
-/** This save's opening offer: the compiled record, else compiled from the stored card text. */
+/** This save's opening offer: the card record, healed from minted item notes when present. */
 export function openingOfferRecord(state: GameState): OpeningOfferRecord | undefined {
   const est = state.openingEstablishment;
   const rec = est?.card?.offer;
-  if (!rec) return compileOpeningOffer(est?.pickedHook);
-  // A save minted before the items fix carries chip notes as items ("Nell offers a deal", "Dunn offers
-  // Sit the audit"): accepting must still grant what the card offered, so heal from the card's own text.
-  const recItems = rec.items ?? [];
-  if (!recItems.length || recItems.some((it) => /\boffers\b/i.test(it ?? ''))) {
-    // Items AND benefits: a pre-split save must still keep its story / bunk as a benefit.
-    const healed = compileOpeningOffer(est?.pickedHook);
-    if (healed && (healed.items.length || healed.benefits?.length)) {
-      const benefits = [...new Set([...(rec.benefits ?? []), ...(healed.benefits ?? [])])];
-      return { ...rec, items: healed.items, ...(benefits.length ? { benefits } : {}) };
-    }
-  }
+  if (!rec) return undefined;
+  const notes = est?.instance?.offerItemNotes;
+  // Minted notes are the carryable grant list; prefer them over a stale or chip-note items array.
+  if (notes?.length) return { ...rec, items: notes };
   return rec;
 }
 /** The offer is open while nobody has taken or refused it and the player is still at the card's place. */
@@ -1868,99 +1836,31 @@ function leftOpeningOfferPlace(state: GameState): boolean {
   return !(d && [d.dungeonName, d.siteName].some((n) => head(n) === place));
 }
 /**
- * The chip names nothing the prose has not shown: every word left after the verb, the people and the
- * deal words ("offer", "work", "own") is in the committed prose. "Take the kit" against a page that only
- * says "a crate" is not grounded.
- */
-const OFFER_LABEL_SKIP = new Set(['of', 'for', 'the', 'a', 'an', 'some', 'your', 'own', 'my', 'their', 'his', 'her', 'with', 'to', 'and', 'out', 'up', 'on', 'in', 'offer', 'offered', 'deal', 'work', 'job', 'terms', 'what', 'is', 'earth', 'them', 'him']);
-function offerLabelGroundedInProse(label: string, prose: string, state: GameState): boolean {
-  const hay = (prose ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  if (!hay) return true;
-  const people = new Set(
-    [...openingLockedPersonNames(state), ...(state.openingEstablishment?.instance?.cast ?? []).map((c) => c.name)]
-      .flatMap((n) => (n ?? '').toLowerCase().split(/\s+/))
-      .filter(Boolean)
-  );
-  const words = (label ?? '').toLowerCase().replace(/['’]s\b/g, '').match(/[a-z][a-z-]*/g) ?? [];
-  return words
-    .slice(1)
-    .filter((w) => !OFFER_LABEL_SKIP.has(w) && !people.has(w))
-    // Stem plus a simple plural, then a boundary: "kits" grounds "kit", "kitchen" does not.
-    .every((w) => new RegExp(`\\b${w.replace(/(?:es|s)$/, '').replace(/-/g, '\\-')}(?:e?s)?\\b`, 'i').test(hay));
-}
-/**
- * ONE giver for the whole offer, so the pair names the same person: the accept chip's own "X offers …"
- * note (the card's minted giver). No single reliable giver → '' and both labels go generic.
- */
-function offerGiver(state: GameState): string {
-  const givers = new Set<string>();
-  for (const c of state.openingEstablishment?.instance?.offerChips ?? []) {
-    if (c.kind !== 'accept') continue;
-    const who = (c.note ?? '').match(/^(.+?)\s+offers\b/i)?.[1]?.trim().split(/\s+/)[0] ?? '';
-    givers.add(who);
-  }
-  // Two people offering, or an accept chip with no named giver: no single giver to name.
-  return givers.size === 1 ? [...givers][0]! : '';
-}
-/** A label that names the giver and the deal but no item: it never contradicts the prose, and it still classifies. */
-function nounFreeOfferLabel(kind: 'accept' | 'refuse', giver: string): string {
-  if (kind === 'accept') return giver ? `Accept ${giver}'s offer` : 'Accept the offer';
-  return giver ? `Turn down ${giver}'s offer` : 'Refuse the offer';
-}
-/** The label was on a pad the player already saw (an earlier page's chips or the stored pad). */
-function offerChipAlreadyShown(state: GameState, label: string): boolean {
-  const want = (label ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  if (!want) return false;
-  const same = (c?: string) => (c ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === want;
-  if ((state.choices ?? []).some(same) || (state.offeredPad?.choices ?? []).some(same)) return true;
-  return (state.log ?? []).some((e) => e.role === 'gm' && (e.offeredChoices ?? []).some(same));
-}
-function openingCommittedProse(state: GameState): string {
-  return (state.log ?? [])
-    .filter((e) => e.role === 'gm')
-    .map((e) => String(e.content ?? ''))
-    .join(' ');
-}
-/**
- * A label of the live opening offer in any of its forms (the minted chip or its noun-free pair). The
- * choice filter keeps these: they are bound to the card's offer record and resolve on click, even on a
- * pass whose prose / shown state picks the other form, or while an exclusive pad owns the engine list.
+ * A label of the live opening offer (minted chip labels from typed offer items). The choice filter
+ * keeps these: they are bound to the card's offer record and resolve on click.
  */
 export function isLiveOpeningOfferLabel(state: GameState, label: string): boolean {
   const chips = state.openingEstablishment?.instance?.offerChips ?? [];
   if (!chips.length || !openOpeningOffer(state)) return false;
   const want = (label ?? '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/[’]/g, "'");
   if (!want) return false;
-  const giver = offerGiver(state);
-  return [...chips.map((c) => c.label), nounFreeOfferLabel('accept', giver), nounFreeOfferLabel('refuse', giver)]
+  return chips
+    .map((c) => c.label)
     .some((l) => l.replace(/\s+/g, ' ').trim().toLowerCase().replace(/[’]/g, "'") === want);
 }
+/** One accept + one refuse from the minted typed-offer chips while the offer is live. */
 export function openingOfferPads(state: GameState): string[] {
   const chips = state.openingEstablishment?.instance?.offerChips;
   if (chips?.length) {
-    // Only a live offer the click can resolve: taken, refused, left the place, or no offer recorded
-    // (an old save's chips on a no-offer card) shows no chips; better no button than a dead one.
     if (!openOpeningOffer(state)) return [];
-    const accepts = chips.filter((c) => c.kind === 'accept');
+    const accept = chips.find((c) => c.kind === 'accept');
     const refuse = chips.find((c) => c.kind === 'refuse');
-    if (!accepts.length || !refuse) return [];
-    // ONE accept and ONE refuse. An old save's extra accepts collapse to the one already shown, else the first.
-    const accept = accepts.find((c) => offerChipAlreadyShown(state, c.label)) ?? accepts[0]!;
-    // The pair relabels together: if either names an item the prose has not shown, BOTH go noun-free with
-    // the same giver ("Accept Brannoc's offer" / "Turn down Brannoc's offer"). Whichever pair the player has
-    // seen stays (a shown noun-free label wins, healing an older mixed pair). Both forms resolve on the record.
-    const prose = state.openingEstablishment?.sceneWritten ? openingCommittedProse(state) : '';
-    const giver = offerGiver(state);
-    const plain = [nounFreeOfferLabel('accept', giver), nounFreeOfferLabel('refuse', giver)];
-    const concrete = [accept.label, refuse.label];
-    const seen = (pair: string[]) => pair.some((l) => offerChipAlreadyShown(state, l));
-    if (seen(plain)) return plain;
-    if (seen(concrete)) return concrete;
-    return concrete.every((l) => offerLabelGroundedInProse(l, prose, state)) ? concrete : plain;
+    if (!accept || !refuse) return [];
+    return [accept.label, refuse.label];
   }
   const offer = openOpeningOffer(state);
   if (!offer) return [];
-  return [`Accept the ${offer.noun}`, `Refuse the ${offer.noun}`];
+  return [offer.accept || `Accept the ${offer.noun}`, offer.refuse || `Refuse the ${offer.noun}`];
 }
 /** The first person or group of the card's "Who is here" slot, as printed. */
 function openingLeadSlot(state: GameState): string {

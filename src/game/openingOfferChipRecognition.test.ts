@@ -19,6 +19,20 @@ const CINDER_HOOK: OpeningHookSnapshot = {
   pressingNeed: 'The Pellane scouts want an answer.',
   howYouGotHere: 'You woke in a scorched circle on the trail.',
   faction: 'the Pellane scouts',
+  place: { id: 'test-cinder-trail', kind: 'ash trail' },
+  cast: [
+    { id: 'test-cast-oren', role: 'priest', pronouns: 'he/him', durability: 'durable' },
+    { id: 'test-cast-kessa', role: 'tracker', pronouns: 'she/her', durability: 'durable' },
+  ],
+  offer: {
+    items: [
+      { id: 'test-offer-waterskin', label: 'waterskin', carryable: true },
+      { id: 'test-offer-scarf', label: 'scarf', carryable: true },
+      { id: 'test-offer-brand-iron', label: 'brand-iron', carryable: true },
+    ],
+  },
+  rite: { steps: [{ id: 'test-rite-name', label: 'Give a name' }] },
+  beatOrder: ['arrive', 'offer'],
 };
 
 const CINDER_PROSE =
@@ -39,18 +53,28 @@ const KEEP_PROSE_DRAFT2 =
 
 function pinCast(state: GameState, place: string, landmark: string, cast: Array<{ name: string; role: string }>, bibleId: string): GameState {
   const inst = state.openingEstablishment!.instance!;
+  const est = state.openingEstablishment!;
   return {
     ...state,
     campaignBibleId: bibleId,
     currentLocation: place,
     openingEstablishment: {
-      ...state.openingEstablishment!,
+      ...est,
       instance: {
         ...inst,
         placeName: place,
         nearbyLandmark: landmark,
         cast: cast.map((c) => ({ ...c, gender: undefined })),
       },
+      // Keep the offer place in sync so openOpeningOffer stays live.
+      card: est.card
+        ? {
+            ...est.card,
+            place,
+            cast: cast.map((c) => c.name).join(' and '),
+            castNames: cast.map((c) => c.name),
+          }
+        : est.card,
       pickedHook: [
         `Where you are: ${place}`,
         `Who is here: ${cast.map((c) => c.name).join(' and ')}`,
