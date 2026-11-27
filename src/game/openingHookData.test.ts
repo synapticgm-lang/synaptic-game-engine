@@ -30,6 +30,15 @@ const DECKS_TYPED_SO_FAR = [
   'verdant-blight',
   'stillroot-veil',
   'thornferry-road',
+  'giltwood-estate-conundrum',
+  'vesper-glass-cipher',
+  'erebus-9-swarm-directive',
+  'rose-gold-ultimatum',
+  'null-parameter-protocol',
+  'resin-sonata',
+  'umbra-protocol',
+  'crimson-nocturne',
+  'onyx-blood-covenant',
 ] as const;
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
