@@ -6,6 +6,8 @@
 import { applyCharacterXpGain } from './characterXp';
 import { levelBar } from './rules/xpPace';
 import { isLockablePcName } from './pcNameAuthority';
+import { getCampaignBibleById } from '@/data/campaigns';
+import { resolveOpeningHookPick } from './openingEstablishment';
 import {
   openingRiteIsOpen,
   openingRiteRefuseWriterFact,
@@ -121,34 +123,47 @@ export function ensureOpeningRite(state: GameState): GameState {
   };
 }
 
-/** A clause that only asks for the player's name ("Give your name"). */
-function isNameAskClause(clause: string): boolean {
-  return /^(?:give|tell|say|speak|enter|confirm)\b.*\bname\b/i.test(clause.trim());
-}
-
 function lockedRiteName(state: GameState): string | null {
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   return isLockablePcName(name) && !/unknown survivor/i.test(name) ? name : null;
 }
 
+/** Typed rite steps for this save's seed-picked hook (brief 02 — no English splitter). */
+function riteStepsForState(state: GameState): Array<{ id: string; label: string }> | undefined {
+  const bibleId = state.campaignBibleId;
+  if (!bibleId) return undefined;
+  const bible = getCampaignBibleById(bibleId);
+  const pick = resolveOpeningHookPick(bible, state.seed);
+  if (!pick?.rite?.steps?.length) return undefined;
+  return pick.rite.steps;
+}
+
+/** Name-ask steps are keyed in data (id segment `name`), not by parsing the label. */
+function isNameAskStep(step: { id: string; label: string }): boolean {
+  return /(^|-)name($|-)/i.test(step.id);
+}
+
 /**
- * The rite's accept as the player should see it. Once the name is set, a name-ask clause is dropped:
- * "Give your name and register" → "Register as Jax". A chip that is only a name ask shows nothing.
+ * The rite's accept as the player should see it. Once the name is set, name-ask steps are dropped
+ * from the typed rite steps. Beat order stays on the hook's beatOrder field.
  */
 export function riteAcceptLabelForState(state: GameState, chip: string): string | null {
   const name = lockedRiteName(state);
   if (!name) return chip;
-  const clauses = chip
-    .split(/\s+(?:and\s+then|and|then)\s+/i)
-    .map((c) => c.trim().replace(/^(?:and|then)\s+/i, ''))
-    .filter(Boolean);
-  const kept = clauses.filter((c) => !isNameAskClause(c));
-  if (kept.length === clauses.length) return chip;
-  if (!kept.length) return null;
-  const rest = kept.join(' and ');
-  const label = rest.charAt(0).toUpperCase() + rest.slice(1);
-  // A bare verb left over ("register") names who it is for.
-  return /\s/.test(label) ? label : `${label} as ${name}`;
+  const steps = riteStepsForState(state);
+  if (steps?.length) {
+    const kept = steps.filter((s) => !isNameAskStep(s));
+    if (kept.length === steps.length) {
+      // No name-ask in data — keep the table chip as authored.
+      return chip;
+    }
+    if (!kept.length) return null;
+    const rest = kept.map((s) => s.label).join(' and ');
+    const label = rest.charAt(0).toUpperCase() + rest.slice(1);
+    return /\s/.test(label) ? label : `${label} as ${name}`;
+  }
+  // No typed steps: do not English-split the chip (brief 02 deleted that parser).
+  return chip;
 }
 
 export function openingRiteAcceptChip(state: GameState): string | null {

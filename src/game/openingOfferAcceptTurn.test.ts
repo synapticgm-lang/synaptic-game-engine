@@ -40,6 +40,21 @@ const LOADOUT_HOOK: OpeningHookSnapshot = {
   openingOffer:
     'Take the loadout crate and they will issue field kit. Pay the collector’s first tithe and you keep Earth clothes with a stamped debt — or refuse both.',
   pressingNeed: 'The Scar is where pacts and debts meet. They need a name before anything else moves.',
+  place: { id: 'test-scar-seam', kind: 'outdoor seam' },
+  cast: [
+    { id: 'test-cast-handler', role: 'loadout handler', pronouns: 'she/her', durability: 'durable' },
+    { id: 'test-cast-collector', role: 'debt-collector', pronouns: 'they/them', durability: 'passer' },
+  ],
+  offer: {
+    items: [{ id: 'test-offer-field-kit', label: 'field kit', carryable: true }],
+  },
+  rite: {
+    steps: [
+      { id: 'test-rite-name', label: 'Give a name' },
+      { id: 'test-rite-walk', label: 'Walk with the crew' },
+    ],
+  },
+  beatOrder: ['arrive', 'panel', 'offer'],
 };
 
 const LIVE_BROKEN_TURN2 =
@@ -119,24 +134,24 @@ function afterPage1(state: GameState): GameState {
 }
 
 describe('opening offer-accept turn (live 17:27 UK flow)', () => {
-  it('mints the catalog faction label instead of leaving "A Pact loadout crew" as a name', () => {
+  it('mints offer chips from typed field-kit data, not the English faction label', () => {
     const inst = mintOpeningInstance(LOADOUT_HOOK, 'faction-loadout|summoned-pact|opening-instance', {
       bibleId: 'summoned-pact',
       engineMode: 'litrpg',
     });
-    expect(inst.factionName ?? '').not.toMatch(/A Pact loadout crew/i);
-    expect(inst.retiredNames.join(' ')).toMatch(/A Pact loadout crew/i);
-    expect(inst.offerChips.some((c) => /kit/i.test(c.label))).toBe(true);
+    expect(inst.cast).toHaveLength(2);
+    expect(inst.cast.every((c) => !/A Pact loadout crew/i.test(c.name))).toBe(true);
+    expect(inst.offerItemNotes).toEqual(['field kit']);
+    expect(inst.offerChips.some((c) => /field kit/i.test(c.label))).toBe(true);
   });
 
-  it('does not pin a "Take the kit" chip when page 1 prose never mentions a kit', () => {
+  it('pins an accept chip that names the typed field kit', () => {
     const state = afterPage1(seeded());
-    expect(page1Prose(state)).not.toMatch(/\bkit\b/i);
     const pads = openingOfferPads(state);
-    expect(pads.some((p) => /take the kit/i.test(p))).toBe(false);
+    expect(pads.some((p) => /field kit/i.test(p))).toBe(true);
   });
 
-  it('accepting "Take the kit" is not the main quest and never opens the finish dialog', () => {
+  it('accepting the typed kit chip is not the main quest and never opens the finish dialog', () => {
     const start = afterPage1(seeded());
     expect((start.quests ?? []).some((q) => q.id === 'opening-live-journal' && q.type === 'main')).toBe(true);
     const riteBefore = (start.quests ?? []).find((q) => isOpeningRiteQuestId(q.id));
@@ -145,8 +160,9 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
     expect(riteBefore?.name ?? '').not.toMatch(/^Opening:/);
     expect(riteEntryForState(start)?.title ?? '').not.toMatch(/^Opening:/);
 
-    const offered = applyOpeningOfferChoice(start, 'Take the kit');
-    const { state, receipts } = applyOpeningRiteTurn(offered.state, 'Take the kit');
+    const accept = openingOfferPads(start)[0]!;
+    const offered = applyOpeningOfferChoice(start, accept);
+    const { state, receipts } = applyOpeningRiteTurn(offered.state, accept);
     expect(receipts.join('\n')).not.toMatch(/A Pact loadout crew/i);
     expect(offered.receipts.join('\n')).not.toMatch(/A Pact loadout crew/i);
     expect(offered.receipts.join('\n')).toMatch(/Offer accepted/i);
@@ -168,9 +184,10 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
 
   it('keeps catalog hook cast out of the accept-turn writer packet and people here', () => {
     const start = afterPage1(seeded());
-    const offered = applyOpeningOfferChoice(start, 'Take the kit');
-    const rite = applyOpeningRiteTurn(offered.state, 'Take the kit');
-    const prepared = prepareRetrospectiveWriterInput(rite.state, 'Take the kit', {
+    const accept = openingOfferPads(start)[0]!;
+    const offered = applyOpeningOfferChoice(start, accept);
+    const rite = applyOpeningRiteTurn(offered.state, accept);
+    const prepared = prepareRetrospectiveWriterInput(rite.state, accept, {
       engineResult: offered.receipts.join(' '),
     });
     const facing = formatWriterFacingEvent(prepared.packet);
@@ -187,9 +204,10 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
     const start = afterPage1(seeded());
     const inst = start.openingEstablishment!.instance!;
     const lead = inst.cast[0]!.name;
-    const offered = applyOpeningOfferChoice(start, 'Take the kit');
-    const rite = applyOpeningRiteTurn(offered.state, 'Take the kit');
-    const prepared = prepareRetrospectiveWriterInput(rite.state, 'Take the kit', {
+    const accept = openingOfferPads(start)[0]!;
+    const offered = applyOpeningOfferChoice(start, accept);
+    const rite = applyOpeningRiteTurn(offered.state, accept);
+    const prepared = prepareRetrospectiveWriterInput(rite.state, accept, {
       engineResult: offered.receipts.join(' '),
     });
 
@@ -205,8 +223,8 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
       packet: prepared.packet,
       check: {
         state: prepared.state,
-        playerInput: 'Take the kit',
-        intent: parsePlayerIntent('Take the kit', prepared.state),
+        playerInput: accept,
+        intent: parsePlayerIntent(accept, prepared.state),
         engineFact: prepared.packet.engineResult ?? offered.receipts.join(' '),
         previousGm: page1Prose(start),
       },
@@ -230,7 +248,7 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
     expect(proseHasEmptySlot(scrubbed)).toBe(false);
     expect(scrubbed).not.toMatch(/They read:\s*\./i);
 
-    const painted = lastResortStoryBody(prepared.state, prepared.packet, 'Take the kit');
+    const painted = lastResortStoryBody(prepared.state, prepared.packet, accept);
     expect(painted.prose).not.toMatch(CATALOG_CAST_LEAK_RE);
     expect(proseHasEmptySlot(painted.prose)).toBe(false);
     expect(painted.prose).not.toMatch(/A Pact loadout crew/i);

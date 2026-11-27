@@ -23,7 +23,7 @@ import { isCommonOpeningLexeme } from './openingWriterNotes';
 import { campaignCanonicalHubNames, campaignHubLabels, hubCanonicalNameForLocation, isCampaignHubToken } from './outdoorHubs';
 import { applyPresenceFacts } from './presentAuthority';
 import { isCatalogCastBlockedHere } from './openingCatalogGuard';
-import { compileOpeningOffer } from './openingEstablishment';
+import { offerRecordFromTypedData } from './openingEstablishment';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
 export interface OpeningHookSnapshot extends Partial<OpeningHookTypedData> {
@@ -90,17 +90,26 @@ function mintOpeningInstanceFromTypedData(
 
   const offer: OpeningHookOffer = hook.offer;
   const carryable = offer.items.filter((it) => it.carryable);
+  const benefits = offer.items.filter((it) => !it.carryable);
   const itemNotes = carryable.map((it) => it.label);
+  const benefitNotes = benefits.map((it) => it.label);
   const offerChips: OpeningOfferChip[] = [];
   if (offer.items.length) {
     const giver = cast[0];
     const what = itemNotes.join(', ');
+    const named = what
+      ? giver
+        ? `Take ${givenNameOf(giver.name)}'s ${what}`
+        : `Take the ${what}`
+      : giver
+        ? `Accept ${givenNameOf(giver.name)}'s offer`
+        : 'Accept the offer';
     offerChips.push({
       kind: 'accept',
-      label: giver ? `Accept ${givenNameOf(giver.name)}'s offer` : 'Accept the offer',
+      label: named,
       note: giver
-        ? `${giver.name} offers ${what || 'a deal'}`
-        : what || 'An offer is on the table.',
+        ? `${giver.name} offers ${what || benefitNotes.join(', ') || 'a deal'}`
+        : what || benefitNotes.join(', ') || 'An offer is on the table.',
     });
     offerChips.push({
       kind: 'refuse',
@@ -572,110 +581,6 @@ function sanitizeMintedRole(role: string): string {
   return t;
 }
 
-function shortItem(item: string): string {
-  return item.replace(/^(?:a|an|the)\s+/i, '').replace(/\s+/g, ' ').trim();
-}
-
-function splitOfferItems(offer: string): string[] {
-  const raw = (offer ?? '').replace(/\s+/g, ' ').trim();
-  if (!raw) return [];
-  const first = raw.split(/(?<=[.!?])\s+/).find((s) => !/^(?:no one|nobody|none|nothing|no|refuse|decline)\b/i.test(s)) ?? raw;
-  const nouns: string[] = [];
-  const seen = new Set<string>();
-  // Prefer concrete nouns: waterskin, scarf, brand-iron, bread, blanket, work, pact.
-  const hits = first.match(
-    /\b(?:waterskin|water|scarf|brand-iron|brandiron|brand iron|bread|blanket|cloak|coat|kit|pact|oath|work|job|contract|hunt|iron|skin)\b/gi
-  ) ?? [];
-  for (const h of hits) {
-    const n = shortItem(h);
-    const k = n.toLowerCase();
-    if (seen.has(k)) continue;
-    seen.add(k);
-    nouns.push(n);
-  }
-  if (nouns.length) return nouns;
-  return first
-    .split(/\s*(?:,|\/|\bor\b|\band\b)\s*/i)
-    .map((p) => p.replace(/^(?:a|an|the|some|your|their|his|her)\s+/i, '').replace(/[.,;:]+$/g, '').trim())
-    .filter(
-      (p) =>
-        p
-        && p.split(/\s+/).length <= 3
-        && !/\b(?:whatever|anything|nothing|junk|neither|both|offers?|not your gear|will|share|walk with|take)\b/i.test(p)
-        && !/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?$/.test(p) // drop bare person names as "items"
-    );
-}
-
-
-function attachItemsToCast(items: string[], cast: OpeningCastMember[], offer: string): Array<{ item: string; person?: OpeningCastMember }> {
-  const out: Array<{ item: string; person?: OpeningCastMember }> = [];
-  for (const item of items) {
-    const owner = cast.find((c) => {
-      const full = new RegExp(`\\b${escapeRe(c.name)}(?:'s)?\\b`, 'i');
-      const given = new RegExp(`\\b${escapeRe(givenNameOf(c.name))}(?:'s)?\\b`, 'i');
-      const window = offer.match(new RegExp(`.{0,40}${escapeRe(item)}.{0,40}`, 'i'))?.[0] ?? offer;
-      return full.test(window) || given.test(window);
-    });
-    out.push({ item, person: owner ?? (cast.length === 1 ? cast[0] : undefined) });
-  }
-  // If items didn't attach and we have two people + two item clusters, zip them.
-  if (out.every((o) => !o.person) && cast.length >= 2 && items.length >= 2) {
-    return items.map((item, i) => ({ item, person: cast[Math.min(i, cast.length - 1)] }));
-  }
-  if (out.some((o) => !o.person) && cast.length) {
-    let i = 0;
-    return out.map((o) => (o.person ? o : { ...o, person: cast[i++ % cast.length] }));
-  }
-  return out;
-}
-
-/** An offer "item" that is really what the player is asked to do ("Sign the blank", "Sit the audit"). */
-const ACTION_VERB = /^(?:sign|sit|kneel|read|swear|take|join|walk|work|serve|agree|enlist|copy|stay|pick|play|wear|grab|keep|cooperate|help|come|follow|hold|guard|carry|fight|stand|name|give|bow|pray|confess|vouch|testify|answer|accept)\b/i;
-function isActionClause(item: string): boolean {
-  const t = shortItem(item);
-  return ACTION_VERB.test(t) || /^[A-Z][a-z]+\s+(?:the|a|an|your|their|his|her)\b/.test(t);
-}
-/**
- * The offer's own condition as the accept action: "Sit the audit and they will issue …" → "Sit the audit
- * for Dunn"; "Keep their secret and …" → "Keep Brannoc's secret"; "Enlist and …" → "Enlist with Hale".
- * Null when the offer does not open with a short imperative.
- */
-function offerConditionLabel(offer: string, cast: OpeningCastMember[], giver?: OpeningCastMember): string | null {
-  const first = (offer ?? '').replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/)[0] ?? '';
-  const m = first.match(/^(.+?)\s+and\s+(?:they|he|she|we|that side|the \w+)\s+(?:will|may|offer|issue|share)\b/i);
-  let cond = (m?.[1] ?? '').split(/\s*[—–(,]\s*/)[0]!.trim();
-  if (!cond || !ACTION_VERB.test(cond) && !/^[A-Z][a-z]+\b/.test(cond)) return null;
-  if (/^(?:the|a|an|if|when|you|they|he|she|we|i|it|no|nobody|one|first)\b/i.test(cond)) return null;
-  const words = cond.split(/\s+/);
-  if (words.length > 6) return null;
-  const named = cast.some((c) => new RegExp(`\\b${escapeRe(givenNameOf(c.name))}\\b`, 'i').test(cond));
-  const who = giver ? givenNameOf(giver.name) : '';
-  if (who && !named && /\b(?:their|his|her)\b/i.test(cond)) {
-    cond = cond.replace(/\b(?:their|his|her)\b/i, `${who}'s`);
-  } else if (who && !named && words.length === 1) {
-    cond = `${cond} with ${who}`;
-  } else if (who && !named && words.length <= 4 && !/\b(?:they|them|us)\b/i.test(cond)) {
-    cond = `${cond} for ${who}`;
-  }
-  return cond.charAt(0).toUpperCase() + cond.slice(1);
-}
-
-function concreteAcceptLabel(item: string, person?: OpeningCastMember): string {
-  const noun = shortItem(item).replace(/^(?:offer of\s+)?/i, '');
-  if (/^walk with\b/i.test(noun) || /^take\b/i.test(noun) || /^hear \b/i.test(noun)) return noun;
-  const who = person ? givenNameOf(person.name) : '';
-  if (who && /\b(water|waterskin|skin|scarf|bread|food|drink|cloak|blanket|coat)\b/i.test(noun)) {
-    return `Walk with ${who} for ${noun}`;
-  }
-  if (who && /\b(hunt|iron|brand|brand-iron|contract|job|work|rite|pact|brandiron)\b/i.test(noun)) {
-    return `Take ${who}'s ${noun}`;
-  }
-  if (who && noun.split(/\s+/).length <= 3) return `Take ${who}'s offer of ${noun}`;
-  if (who) return `Hear ${who} out`;
-  if (noun.split(/\s+/).length <= 3) return `Take the ${noun}`;
-  return who ? `Hear ${who} out` : 'Step forward';
-}
-
 export function applyReplacements(text: string, map: Array<[string, string]>): string {
   let out = text ?? '';
   const sorted = [...map].sort((a, b) => b[0].length - a[0].length);
@@ -1024,50 +929,11 @@ export function mintOpeningInstance(
     }
   }
 
-  const offerRaw = hook.openingOffer?.trim() ?? '';
-  const offerScrubbed = offerRaw ? applyReplacements(offerRaw, replacements) : '';
-  const items = splitOfferItems(offerScrubbed).filter((it) => {
-    // Drop leftover catalog names and refuse clauses.
-    if (/^(?:refuse|decline|keep your|neither)\b/i.test(it)) return false;
-    return it.length >= 2;
-  });
-  // Offer chips only for a real offer the click can resolve: a "No one offers kit" / salvage-or-leave
-  // card has none (better no button than a dead one).
-  const compiledOffer = compileOpeningOffer(offerScrubbed ? `Opening offer: ${offerScrubbed}` : undefined);
-  const offerCompiles = !!compiledOffer;
-  const attached = offerCompiles ? attachItemsToCast(items, cast, offerScrubbed) : [];
-  // ONE accept chip and ONE refuse chip per offer. The accept names what the player does (the offer's
-  // own condition, "Sit the audit for Dunn"), else a clean item, else the giver's offer — never an
-  // action clause dressed as an item ("Take Dunn's offer of Sit the audit").
+  // Untyped hooks: no English offer parse (brief 02). Offer chips only from typed data path above.
   const offerChips: OpeningOfferChip[] = [];
-  // The giver is who the offer itself names ("Accept Yara's rank stamp and she will …"), else who the items attach to.
-  const offerFirst = offerScrubbed.split(/(?<=[.!?])\s+/)[0] ?? '';
-  const giver =
-    cast.find((c) => new RegExp(`\\b${escapeRe(givenNameOf(c.name))}\\b`, 'i').test(offerFirst))
-    ?? attached.find((r) => r.person)?.person
-    ?? (offerCompiles ? cast[0] : undefined);
-  // What accepting hands over: the offer's own compiled items ("militia armband", "short blade"), named with
-  // the minted cast. Never a chip note ("Nell offers a deal") or an action clause ("Sign the blank").
-  const itemNotes = [...new Set(compiledOffer?.items ?? [])];
-  if (offerCompiles) {
-    const cleanItems = attached.filter((r) => !isActionClause(r.item));
-    const label = offerConditionLabel(offerScrubbed, cast, giver)
-      ?? (cleanItems[0] ? concreteAcceptLabel(cleanItems[0].item, giver ?? cleanItems[0].person) : null)
-      ?? (giver ? `Accept ${givenNameOf(giver.name)}'s offer` : 'Accept the offer');
-    const what = cleanItems.map((r) => shortItem(r.item)).join(', ');
-    offerChips.push({
-      kind: 'accept',
-      label,
-      note: giver
-        ? `${giver.name} offers ${what || 'a deal'}`
-        : what || 'An offer is on the table.',
-    });
-    offerChips.push({
-      kind: 'refuse',
-      label: 'Keep your own kit',
-      note: 'Refuse whatever is being offered and keep your own kit.',
-    });
-  }
+  const offerScrubbed = hook.openingOffer?.trim()
+    ? applyReplacements(hook.openingOffer.trim(), replacements)
+    : '';
 
   const situation = applyReplacements(
     [
@@ -1088,10 +954,8 @@ export function mintOpeningInstance(
   // stay on the map; only names this opening actually replaced are banned.
   const nameMap = [...replacements].sort((a, b) => b[0].length - a[0].length);
   const offerSummary = offerScrubbed
-    ? applyReplacements(offerScrubbed, nameMap)
-    : attached.length
-      ? attached.map((a) => a.item).join(', ')
-      : undefined;
+    ? alignHookPronouns(applyReplacements(offerScrubbed, nameMap), cast)
+    : undefined;
 
   return {
     placeName,
@@ -1104,9 +968,8 @@ export function mintOpeningInstance(
     pressing: hook.pressingNeed ? alignHookPronouns(applyReplacements(hook.pressingNeed, nameMap), cast) : undefined,
     how: hook.howYouGotHere ? alignHookPronouns(applyReplacements(hook.howYouGotHere, nameMap), cast) : undefined,
     whoYouAre: hook.whoYouAre ? alignHookPronouns(applyReplacements(hook.whoYouAre, nameMap), cast) : undefined,
-    offerSummary: offerSummary ? alignHookPronouns(offerSummary, cast) : offerSummary,
+    offerSummary,
     offerChips,
-    ...(itemNotes.length ? { offerItemNotes: itemNotes } : {}),
     alone: aloneHint || (!cast.length && !whoHereImpliesPresent(hook.whoHere)),
     nearbyLandmark,
     groupLabel: groupLabelFromWhoHere(hook.whoHere),
@@ -1153,12 +1016,6 @@ function patchRoster(memories: NpcMemory[] | undefined, instance: OpeningInstanc
 /**
  * Lock the minted instance onto the save: place, pins, scrubbed hook blob, roster names.
  */
-/** The offer's non-carried benefits (a berth, a cover story), compiled from the hook's own offer line. */
-function compiledBenefits(offer: string | undefined, fallback?: string[]): { benefits?: string[] } {
-  const benefits = compileOpeningOffer(offer ? `Opening offer: ${offer}` : undefined)?.benefits ?? fallback;
-  return benefits?.length ? { benefits } : {};
-}
-
 export function attachOpeningInstance(
   state: GameState,
   hook: OpeningHookSnapshot,
@@ -1202,10 +1059,45 @@ export function attachOpeningInstance(
   const est = state.openingEstablishment;
   const pinned = instance.cast.map((c) => c.name);
   const memories = patchRoster(state.npcMemories, instance, est?.castNpcIds);
-  // The card records the offer whenever the instance carries offer chips, so every chip shown resolves on click.
-  const cardOffer = instance.offerChips.length
-    ? est?.card?.offer ?? compileOpeningOffer(hook.openingOffer ? `Opening offer: ${hook.openingOffer}` : undefined)
+  const acceptLabel = instance.offerChips.find((c) => c.kind === 'accept')?.label;
+  const refuseLabel = instance.offerChips.find((c) => c.kind === 'refuse')?.label;
+  // Offer record from typed items only (brief 02) — never parse openingOffer English.
+  const typedOffer = openingHookHasTypedData(hook)
+    ? offerRecordFromTypedData(hook.offer, { accept: acceptLabel, refuse: refuseLabel })
+    : undefined;
+  const cardOffer = typedOffer
+    ? {
+        ...typedOffer,
+        items: instance.offerItemNotes?.length ? instance.offerItemNotes : typedOffer.items,
+        accept: acceptLabel ?? typedOffer.accept,
+        refuse: refuseLabel ?? typedOffer.refuse ?? 'Keep your own kit',
+      }
     : est?.card?.offer;
+  const cardNames = [
+    instance.placeName,
+    ...pinned,
+    ...(instance.factionName ? [instance.factionName] : []),
+    ...(instance.settlementName ? [instance.settlementName] : []),
+  ];
+  const nextCard = est?.card
+    ? {
+        ...est.card,
+        place: instance.placeName,
+        cast: instance.cast.length ? instance.cast.map((c) => c.name).join(' and ') : est.card.cast,
+        castNames: pinned,
+        names: cardNames,
+        ...(cardOffer ? { offer: cardOffer } : {}),
+      }
+    : cardOffer
+      ? {
+          place: instance.placeName,
+          cast: instance.cast.map((c) => c.name).join(' and '),
+          castNames: pinned,
+          props: [] as string[],
+          names: cardNames,
+          offer: cardOffer,
+        }
+      : est?.card;
 
   const next: GameState = {
     ...state,
@@ -1223,29 +1115,7 @@ export function attachOpeningInstance(
       pickedHookFallback: undefined,
       page1: undefined,
       answers: { ...(est?.answers ?? {}), where: instance.placeName },
-      card: est?.card
-        ? {
-            ...est.card,
-            place: instance.placeName,
-            cast: instance.cast.length ? instance.cast.map((c) => c.name).join(' and ') : est.card.cast,
-            castNames: pinned,
-            names: [
-              instance.placeName,
-              ...pinned,
-              ...(instance.factionName ? [instance.factionName] : []),
-              ...(instance.settlementName ? [instance.settlementName] : []),
-            ],
-            offer: cardOffer
-              ? {
-                  ...cardOffer,
-                  items: instance.offerItemNotes?.length ? instance.offerItemNotes : cardOffer.items,
-                  ...(compiledBenefits(hook.openingOffer, cardOffer.benefits)),
-                  accept: instance.offerChips.find((c) => c.kind === 'accept')?.label ?? cardOffer.accept,
-                  refuse: instance.offerChips.find((c) => c.kind === 'refuse')?.label ?? 'Keep your own kit',
-                }
-              : cardOffer,
-          }
-        : est?.card,
+      card: nextCard,
     },
   };
   const priorPins = est?.pinnedNpcNames ?? [];
