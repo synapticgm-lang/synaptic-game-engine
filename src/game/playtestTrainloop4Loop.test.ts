@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TRAINLOOP4 A — Story RPG twin-lanterns s8113 LOOP STOP: dead Answer / Honour chips
  * with no forward Leave after director npc-act + empty speakable.
  */

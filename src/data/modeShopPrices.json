@@ -1,4 +1,4 @@
-﻿{
+{
   "litrpg": {
     "buyGp": {
       "weapon": { "Common": 25, "Uncommon": 80, "Rare": 250, "Epic": 800, "Legendary": 2500 },

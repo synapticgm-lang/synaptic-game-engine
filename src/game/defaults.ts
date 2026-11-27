@@ -87,6 +87,7 @@ export function createInitialState(
     version: CURRENT_SAVE_VERSION,
     saveId: crypto.randomUUID(),
     storyName: storyName || defaultStory,
+    storyStartedAt: now,
     engineMode,
     campaignArchetype: archetype ?? getDefaultArchetype(engineMode),
     lastUpdated: now,

@@ -14,6 +14,7 @@
     "wof:check": "tsc --noEmit -p wof/tsconfig.json && tsc -p wof/tsconfig.json && node wof/dist/selftest.js",
     "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
     "check:gm-edge": "node scripts/sync-gm-edge-shared.mjs --check",
+    "check:utf8": "node scripts/check-utf8.mjs",
     "fate-autoplay": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/run.ts --",
     "option-audit": "node scripts/option-audit.mjs",
     "replay-bank": "vitest run --config vitest.replayBank.config.ts",

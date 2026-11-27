@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 29a STATUS prompt-leak firewall — strip control tags from player chrome.
  * Debug retains raw text in turns.jsonl / debug export only.
  */

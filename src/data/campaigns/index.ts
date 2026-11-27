@@ -187,17 +187,23 @@ export function getCampaignBlurb(bible: CampaignBible): string {
   if (bible.shortDescription?.trim()) return bible.shortDescription.trim();
   if (bible.tagline?.trim()) return bible.tagline.trim();
   const first = bible.premise.split(/(?<=[.!?])\s+/)[0]?.trim() ?? bible.premise;
-  return first.length > 160 ? `${first.slice(0, 157)}â€¦` : first;
+  return first.length > 160 ? `${first.slice(0, 157)}…` : first;
 }
 
-/** Auto campaign save name: premade title + start date. */
+/** Auto campaign save name: premade title only (start date is storyStartedAt). */
 export function formatCampaignStoryName(title: string, at: Date = new Date()): string {
-  const date = at.toLocaleDateString(undefined, {
+  void at; // kept for call-site compatibility; date is not stored in the name
+  return title.trim();
+}
+
+/** Player-facing start-date label for save lists (not stored inside storyName). */
+export function formatStoryStartedLabel(at: number | Date = Date.now()): string {
+  const d = typeof at === 'number' ? new Date(at) : at;
+  return d.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
-  return `${title} â€” ${date}`;
 }
 
 /** True when this bible is adult/explicit and must stay out of Kid Mode. */
@@ -205,7 +211,7 @@ export function isNsfwCampaign(bible: Pick<CampaignBible, 'nsfw'> | undefined): 
   return bible?.nsfw === true;
 }
 
-/** Violence / mature floor â€” Kid Mode hides 16+ and 18+ as well as NSFW. */
+/** Violence / mature floor — Kid Mode hides 16+ and 18+ as well as NSFW. */
 export function isKidRestrictedCampaign(
   bible: Pick<CampaignBible, 'nsfw' | 'ageRating'> | undefined,
 ): boolean {

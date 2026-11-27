@@ -107,7 +107,7 @@ Work top to bottom, and only start a brief once its dependencies are merged. The
 - [x] **04** [Opening scene quests come from the hook's beats, not text](04-scene-quests-from-hook-data.md) — Phase 1 (opening slices, part D: scene quests)
 - [ ] **05** [Page 1 gets its own writer request; honest Try again, no hidden retry](05-page1-own-request.md) — Phase 2 (opening slices: live AI page 1) — *gated: John's yes*
 - [ ] **06** [Delete canned fallback prose; speech rendered once as a typed beat](06-remove-canned-opening-text.md) — Phase 2 (no canned text) — *gated: John's yes*
-- [ ] **07** [Campaign-name mojibake: fix the encoding at the source and stop storing the date in the save name](07-campaign-name-mojibake.md) — Small fix (Interface Q1)
+- [x] **07** [Campaign-name mojibake: fix the encoding at the source and stop storing the date in the save name](07-campaign-name-mojibake.md) — Small fix (Interface Q1)
 - [ ] **08** ['Rogue,.' display bug: find the real cause, then fix it there](08-rogue-comma-display.md) — Small fix (diagnose first)
 - [ ] **09** [Credits page lists every source, including Transformers.js](09-credits-page-complete.md) — Side track (credits)
 - [ ] **10** [Close draft PR #27 without merging](10-close-draft-pr-27.md) — Housekeeping (GitHub step, not Cursor) — *not Cursor*

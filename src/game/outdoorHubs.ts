@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Outdoor hub graph for Act-3/4/5 sandbox — named travel targets, not MMO art.
  * Full banks: Summoned Pact / Hero Awakening.
  * Densified LitRPG: System Integration, Gatebreak, Ascending Spire, Fabled Legacy.

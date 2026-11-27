@@ -1,4 +1,4 @@
-﻿/**
+/**
  * WS-4 Complete Integration Tests
  * 
  * Tests all waves (A-D+) of the Encounter Bible system:

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10G — Salt Road T3–T7 origin pad exclusive (no travel mix / dead travel);
  * Cursed Keep T3 Ask Mayor Helga Brask chip resolves like typed ask (addressee, not empty scene).
  * Fixtures mirror runs:

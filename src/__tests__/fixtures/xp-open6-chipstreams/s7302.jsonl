@@ -1,4 +1,4 @@
-﻿{"turn":2,"location":"a metro platform","offeredChoices":["Give your name and register","Ask what they want","Ask the world"],"level":2,"playerInput":"Give your name and register","xpGained":150}
+{"turn":2,"location":"a metro platform","offeredChoices":["Give your name and register","Ask what they want","Ask the world"],"level":2,"playerInput":"Give your name and register","xpGained":150}
 {"turn":3,"location":"On the road between places","offeredChoices":["Travel toward Cracked Street","+1 STR","Travel toward Convenience Store Dungeon"],"level":2,"playerInput":"Travel toward Convenience Store Dungeon","xpGained":0}
 {"turn":4,"location":"On the road between places","offeredChoices":["Walk on","Choose Mage","Choose Hunter","Turn back toward a metro platform"],"level":2,"playerInput":"Choose Mage","xpGained":0}
 {"turn":5,"location":"a metro platform","offeredChoices":["Walk on","+1 STR","+1 DEX","Turn back toward a metro platform"],"level":2,"playerInput":"Turn back toward a metro platform","xpGained":0}

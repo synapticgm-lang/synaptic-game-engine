@@ -40,6 +40,7 @@ import { isAdminSubscriptionTier, setActiveSubscriptionTier, SUBSCRIPTION_TIERS 
 import { GmFeedbackReview } from './admin/GmFeedbackReview';
 import { pickSpeechVoice, primeTts, sortSpeechVoices, speakTtsNow, stopAllSpeech } from '@/game/useVoice';
 import { displayAdventurerName } from '@/game/pcNameAuthority';
+import { formatStoryStartedLabel } from '@/data/campaigns';
 
 interface Props {
   settings: Settings;
@@ -1497,6 +1498,9 @@ function SaveSlotsManager({
                 <div className="truncate text-sm font-medium text-slate-200">
                   {slot.storyName}
                   {isCurrent && <span className="ml-1.5 text-[10px] font-normal uppercase tracking-wide text-emerald-400">current</span>}
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  {formatStoryStartedLabel(slot.startedAt ?? slot.lastUpdated)}
                 </div>
                 <div className="text-[11px] text-slate-500">
                   {slot.characterName} · Lv.{slot.level} · Turn {slot.turn}

@@ -1,4 +1,4 @@
-﻿{"turn":2,"location":"Kitchen Saint Alley","offeredChoices":["Accept the offer","Refuse the offer","Ask what they want"],"level":2,"playerInput":"Refuse the offer","xpGained":150}
+{"turn":2,"location":"Kitchen Saint Alley","offeredChoices":["Accept the offer","Refuse the offer","Ask what they want"],"level":2,"playerInput":"Refuse the offer","xpGained":150}
 {"turn":3,"location":"On the road between places","offeredChoices":["Travel toward Cathedral Close","Ask what they want","Travel toward Contract Hall"],"level":2,"playerInput":"Travel toward Contract Hall","xpGained":0}
 {"turn":4,"location":"Kitchen Saint Alley","offeredChoices":["Walk on","Hunt the wildlife nearby","Turn back toward Kitchen Saint Alley"],"level":2,"playerInput":"Turn back toward Kitchen Saint Alley","xpGained":0}
 {"turn":5,"location":"On the road between places","offeredChoices":["Travel toward Cathedral Close","Ask Ila Pellane about the gate they hold","Read Ila Pellane","Ping the System for bearings","Travel toward Contract Hall","Say somethingâ€¦","Do something elseâ€¦"],"level":2,"playerInput":"Travel toward Contract Hall","xpGained":0}

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { CREDITS_PATH } from '@/legal/credits';
 import type { SaveSlotInfo, Settings } from '@/game/types';
+import { formatStoryStartedLabel } from '@/data/campaigns';
 import {
   SHOP_CATALOG,
   SLOT_LABELS,
@@ -233,6 +234,14 @@ function PlayTab({
               ?? localSlot?.storyName
               ?? cloudSlot?.storyName
               ?? 'Unknown'}
+          </div>
+          <div className="text-xs text-slate-500">
+            {(() => {
+              const active =
+                (cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? cloudSlot : localSlot;
+              const started = active?.startedAt ?? active?.lastUpdated;
+              return started ? formatStoryStartedLabel(started) : null;
+            })()}
           </div>
           <div className="text-xs text-slate-500">
             {((cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? cloudSlot : localSlot)?.characterName

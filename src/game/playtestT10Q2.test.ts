@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10Q2 — seated NPC content ask: ledger agenda is filler unless it answers;
  * reply-vs-filler owner lands a spoken reply (quote / speech verb) so turn-ignored-action drops.
  * Evidence: rpg s9601 T169 / T211; litrpg s9711 T41 / T44 (seated). Absent NPCs = RC8.
