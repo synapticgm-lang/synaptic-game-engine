@@ -1,19 +1,10 @@
 /**
- * Later-turn opening-scene guard: catalog hook-cast must not stand in for the
- * per-game minted people, and empty inscription / quote slots must not ship.
- * Applies while the player is still at the minted opening place.
+ * Opening-scene attribution helpers.
+ * Hard-coded catalog NPC name lists are deleted (brief 03 / H8) — minted cast
+ * and retiredNames on the instance are the only name sources.
  */
 import type { GameState } from './types';
 import { isRetiredCatalogToken } from './openingWriterNotes';
-
-const CATALOG_CAST_FULL = [
-  'Captain Sera Quill',
-  'Sera Quill',
-  'High Chanter Orel Vane',
-  'Orel Vane',
-  'Brother Oren',
-  'Kessa Cinder',
-];
 
 function norm(name: string): string {
   return (name ?? '').replace(/^(?:the|a|an)\s+/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -54,7 +45,7 @@ export function openingLockedPersonNames(state: GameState): string[] {
   push(state.character?.name);
   for (const member of inst?.cast ?? []) {
     push(member.name);
-    const given = member.name.replace(/^(?:Brother|Sister|Father|Mother|Sir|Lady|Lord|Captain|Sergeant|High Chanter|Priest|Priestess)\s+/i, '').split(/\s+/)[0];
+    const given = member.name.split(/\s+/)[0];
     push(given);
   }
   push(inst?.factionName);
@@ -79,8 +70,8 @@ function isLockedPerson(state: GameState, name: string): boolean {
 }
 
 /**
- * True when `name` is a catalog hook / bible person who must not appear in this
- * opening scene (still at the minted place). False once the player has travelled.
+ * True when `name` is a retired catalog token for this opening (from mint data).
+ * No hard-coded NPC name list.
  */
 export function isCatalogCastBlockedHere(state: GameState, name: string): boolean {
   const label = (name ?? '').replace(/\s+/g, ' ').trim();
@@ -90,13 +81,6 @@ export function isCatalogCastBlockedHere(state: GameState, name: string): boolea
   if (isLockedPerson(state, label)) return false;
   const retired = state.openingEstablishment.instance.retiredNames;
   if (isRetiredCatalogToken(label, retired)) return true;
-  if (CATALOG_CAST_FULL.some((n) => namesMatch(n, label))) return true;
-  for (const mem of state.npcMemories ?? []) {
-    const memName = (mem.npcName ?? '').trim();
-    if (!memName || isLockedPerson(state, memName)) continue;
-    if (String(mem.npcId ?? '').startsWith('opening-cast-')) continue;
-    if (namesMatch(memName, label)) return true;
-  }
   return false;
 }
 
@@ -104,7 +88,7 @@ export function filterBlockedCatalogNames(state: GameState, names: string[]): st
   return names.filter((n) => !isCatalogCastBlockedHere(state, n));
 }
 
-/** Minted person or faction to attribute the opening offer to — never a raw catalog group label. */
+/** Minted person or faction to attribute the opening offer to. */
 export function openingOfferAttribution(state: GameState): string {
   const inst = state.openingEstablishment?.instance;
   const lead = inst?.cast[0]?.name?.trim();
@@ -116,7 +100,7 @@ export function openingOfferAttribution(state: GameState): string {
   return '';
 }
 
-/** Raw catalog group/faction labels must not appear as "from X" on the accept receipt. */
+/** Raw retired catalog labels must not appear as "from X" on the accept receipt. */
 export function isBannedOpeningAttribution(state: GameState, label: string): boolean {
   const text = (label ?? '').replace(/\s+/g, ' ').trim();
   if (!text) return true;
@@ -136,7 +120,7 @@ function nameInText(text: string, name: string): boolean {
   return new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(text);
 }
 
-function dropCatalogSentences(state: GameState, prose: string): string {
+function dropRetiredSentences(state: GameState, prose: string): string {
   const parts = (prose ?? '').split(/(?<=[.!?])\s+/);
   const kept: string[] = [];
   const retired = state.openingEstablishment?.instance?.retiredNames;
@@ -148,21 +132,17 @@ function dropCatalogSentences(state: GameState, prose: string): string {
       kept.push(t);
       continue;
     }
-    const catalogHit =
-      CATALOG_CAST_FULL.some((n) => nameInText(t, n) && !isLockedPerson(state, n))
-      || (retired ?? []).some((n) => n.length >= 4 && isRetiredCatalogToken(n, retired) && nameInText(t, n))
-      || (state.npcMemories ?? []).some((m) => {
-        const memName = (m.npcName ?? '').trim();
-        return memName.length >= 4 && isCatalogCastBlockedHere(state, memName) && nameInText(t, memName);
-      });
-    if (catalogHit) continue;
+    const retiredHit = (retired ?? []).some(
+      (n) => n.length >= 4 && isRetiredCatalogToken(n, retired) && nameInText(t, n)
+    );
+    if (retiredHit) continue;
     kept.push(t);
   }
   return kept.join(' ').replace(/\s+/g, ' ').trim();
 }
 
 /**
- * Drop empty inscription / quote slots and catalog-cast sentences from a later-turn beat.
+ * Drop empty inscription / quote slots and retired-name sentences from a later-turn beat.
  */
 export function scrubOpeningTurnProse(state: GameState, prose: string): string {
   let text = (prose ?? '').replace(/\s+/g, ' ').trim();
@@ -172,7 +152,7 @@ export function scrubOpeningTurnProse(state: GameState, prose: string): string {
   text = text.replace(EMPTY_QUOTE_LEAD, '"');
   text = text.replace(/\s+\./g, '.').replace(/\s{2,}/g, ' ').trim();
   if (state.openingEstablishment?.instance && stillAtOpeningPlace(state)) {
-    text = dropCatalogSentences(state, text);
+    text = dropRetiredSentences(state, text);
   }
   return text.replace(/\s+/g, ' ').trim();
 }
@@ -182,4 +162,5 @@ export function proseHasEmptySlot(prose: string): boolean {
   return /\bThey read:\s*\./i.test(t) || /said,\s*["“]\s+/i.test(t) || /["“]\s+is a rite to finish/i.test(t);
 }
 
-export const CATALOG_CAST_LEAK_RE = /Captain Sera Quill|Sera Quill|High Chanter Orel Vane|Orel Vane|Brother Oren|Kessa Cinder/i;
+/** Never matches — catalog leak regex deleted; names come from cast data (brief 03). */
+export const CATALOG_CAST_LEAK_RE = /$a/;

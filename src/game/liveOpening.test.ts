@@ -30,6 +30,20 @@ import { formatOpeningCardChrome } from './openingPointerCard';
 import type { GameState, Settings } from './types';
 
 const cinder: OpeningHookSnapshot = {
+  place: { id: 'live-ash-trail', kind: 'trail' },
+  cast: [
+    { id: 'live-cast-oren', role: 'priest', pronouns: 'he/him', durability: 'durable' },
+    { id: 'live-cast-kessa', role: 'tracker', pronouns: 'she/her', durability: 'durable' },
+  ],
+  offer: {
+    items: [
+      { id: 'live-water', label: 'waterskin', carryable: true },
+      { id: 'live-scarf', label: 'scarf', carryable: true },
+      { id: 'live-brand', label: 'brand-iron', carryable: true },
+    ],
+  },
+  rite: { steps: [{ id: 'live-rite-name', label: 'Give a name' }] },
+  beatOrder: ['wake', 'offer'],
   location: 'the ash-heat of Cinderwake Trail',
   whoHere: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
   openingOffer:
@@ -170,15 +184,15 @@ describe('liveOpening', () => {
     if (!fail.ok) expect(fail.error).toBe(STORYTELLER_RETRY_MESSAGE);
   });
 
-  it('phrases ask-pads from the prose pronoun and does not default to they', () => {
+  it('phrases ask-pads from cast pronouns, not from prose scrape', () => {
     const state = game();
     const inst = state.openingEstablishment!.instance!;
     const he = inst.cast[0]!;
-    const proseHe = `${inst.placeName} holds. ${he.name} stands in the ash and he has a waterskin half raised. The offer is water, or you keep your own kit.`;
-    expect(askPadFor(he.name, proseHe)).toMatch(new RegExp(`Ask ${he.name.split(/\s+/)[0]} what he's after`));
-    expect(askPadFor(he.name, proseHe)).not.toMatch(/what they want/i);
-    const theyProse = `${inst.placeName} holds. ${he.name} is here. The offer is water, or you keep your own kit.`;
-    expect(askPadFor(he.name, theyProse)).toMatch(/about the deal/i);
+    const she = inst.cast[1]!;
+    const proseHe = `${inst.placeName} holds. ${he.name} stands in the ash. The offer is water, or you keep your own kit.`;
+    expect(askPadFor(he.name, proseHe, state)).toMatch(new RegExp(`Ask ${he.name.split(/\s+/)[0]} what he's after`));
+    expect(askPadFor(she.name, proseHe, state)).toMatch(new RegExp(`Ask ${she.name.split(/\s+/)[0]} what she's after`));
+    expect(askPadFor(he.name, proseHe, state)).not.toMatch(/what they want/i);
     const noOffer: GameState = {
       ...state,
       openingEstablishment: {
@@ -234,29 +248,23 @@ describe('liveOpening', () => {
     expect(journal.title).toMatch(new RegExp(inst.cast[0]!.name.split(/\s+/)[0]!, 'i'));
   });
 
-  it("does not attach a nearby man's He to Nell in the Osric sentence", () => {
+  it('ask pads without cast data stay neutral (no prose pronoun scrape)', () => {
     const nell = 'Nell Hask';
-    const osric = 'Osric Dunmore';
-    // Reviewer counter-example: a 40/80-character window around Nell also captures Osric's "He".
     const prose =
       'The trail holds. Nell Hask has a waterskin half raised, and Osric Dunmore has not looked away. He spat into the ash and kept the brand-iron ready.';
     expect(askPadFor(nell, prose)).toBe('Ask Nell about the deal');
     expect(askPadFor(nell, prose)).not.toMatch(/what he's after/i);
-    expect(validateOpeningOptions(
-      game(),
-      prose,
-      ['Walk with Nell for water', "Ask Nell what he's after", 'Keep your own kit', 'Look around the trail']
-    ).some((e) => /pronoun/i.test(e))).toBe(true);
-    const sheProse = 'Nell Hask stands on the trail, and she has a waterskin half raised. Osric Dunmore has not looked away.';
-    expect(askPadFor(nell, sheProse)).toBe("Ask Nell what she's after");
-    expect(askPadFor(osric, sheProse)).toBe('Ask Osric about the deal');
-    const afterHe = 'The trail holds. Nell took the scarf after he tossed it. You keep your own kit.';
-    expect(askPadFor(nell, afterHe)).toBe('Ask Nell about the deal');
-    expect(askPadFor(nell, afterHe)).not.toMatch(/what he's after/i);
+    const sheProse = 'Nell Hask stands on the trail, and she has a waterskin half raised.';
+    expect(askPadFor(nell, sheProse)).toBe('Ask Nell about the deal');
   });
 
   it('does not pad a no-offer Salt warehouse hook with look/study/look-around-first duplicates', () => {
-    const hook = {
+    const hook: OpeningHookSnapshot = {
+      place: { id: 'salt-wh-loft', kind: 'warehouse loft' },
+      cast: [],
+      offer: { items: [] },
+      rite: { steps: [] },
+      beatOrder: ['arrive'],
       location: 'a warehouse loft',
       whoHere: 'the crew',
       pressingNeed: 'First move is yours — the plan, the cut, or the walk.',
@@ -281,10 +289,10 @@ describe('liveOpening', () => {
     }
     expect(pads.filter((p) => /^(look|study)\b/i.test(p)).length).toBeLessThanOrEqual(1);
     expect(pads.some((p) => /Look around first/i.test(p) && pads.some((q) => /Look around /i.test(q) && q !== p))).toBe(false);
+    expect(inst.alone).toBe(true);
+    expect(inst.cast).toHaveLength(0);
     const chrome = formatOpeningCardChrome(state);
-    expect(inst.groupLabel).toMatch(/crew/i);
-    expect(chrome).toMatch(/The crew is here\./);
-    expect(chrome).not.toMatch(/Someone is here\./);
+    expect(chrome).toMatch(new RegExp(inst.placeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   });
 
   it('does not title the journal from a mid-sentence offer or contract', () => {
@@ -306,7 +314,7 @@ describe('liveOpening', () => {
     expect(journal.title.length).toBeGreaterThan(3);
   });
 
-  it('bans Pellane on page 1 when it is the hook faction', () => {
+  it('typed mint ignores English faction labels — place and cast come from ids', () => {
     const hook = { ...cinder, faction: 'the Pellane scouts' };
     const state = attachOpeningInstance(
       {
@@ -318,14 +326,15 @@ describe('liveOpening', () => {
       hook
     );
     const inst = state.openingEstablishment!.instance!;
-    expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
+    expect(inst.retiredNames).toEqual([]);
+    expect(inst.cast).toHaveLength(2);
+    expect(inst.placeName).not.toMatch(/Pellane|Cinderwake/i);
     const later = { ...state, openingEstablishment: { ...state.openingEstablishment!, complete: true, sceneWritten: true } };
     const rail = formatLaterTurnNameRail(later);
     expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*Pellane/i);
   });
 
-
-  it('bans Pellane on page 1 when it only appears in structured hook text, not hook.faction', () => {
+  it('untyped English hooks mint alone — no Title-Case scrape for Pellane or cast', () => {
     const hook: OpeningHookSnapshot = {
       location: 'the ash-heat of Cinderwake Trail',
       whoHere: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
@@ -336,10 +345,10 @@ describe('liveOpening', () => {
     const inst = mintOpeningInstance(hook, 'pellane-pressing|summoned-pact|opening-instance', {
       bibleId: 'summoned-pact',
     });
-    expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
-    expect(inst.factionName).toBeTruthy();
-    expect(inst.factionName).not.toMatch(/Pellane/i);
-    expect((inst.pressing ?? '') + (inst.offerSummary ?? '')).not.toMatch(/Pellane/i);
+    expect(inst.cast).toHaveLength(0);
+    expect(inst.alone).toBe(true);
+    expect(inst.retiredNames).toEqual([]);
+    expect(inst.factionName).toBeUndefined();
   });
 
 
