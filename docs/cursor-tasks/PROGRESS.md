@@ -4,3 +4,4 @@
 - 27 Nov 14:37 03-cast-names-pronouns-as-data: STATUS: DONE https://github.com/synapticgm-lang/synaptic-game-engine/pull/60
 - 27 Nov 15:50 04-scene-quests-from-hook-data: STATUS: DONE https://github.com/synapticgm-lang/synaptic-game-engine/pull/61
 - 27 Nov 19:07 07-campaign-name-mojibake: STATUS: DONE https://github.com/synapticgm-lang/synaptic-game-engine/pull/62That verification finished cleanly: `check:utf8` passed, typecheck exited 0, and the targeted vitest runs were 13/13 green. Repo-wide lint still has the usual pre-existing failures; nothing new blocked the PR.
+- 27 Nov 19:11 08-rogue-comma-display: STATUS: STOP cause of 'Rogue,.' not found in one search pass (allowed files + Rogue rg); no builder to fix without guessing
