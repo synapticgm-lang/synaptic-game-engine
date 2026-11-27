@@ -583,6 +583,17 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               <span>{hideText ? 'Show text' : 'Hide text'}</span>
             </button>
             )}
+            {usesSystemNoticeChip(engineMode) && (
+              <CheckSystemChip
+                engineMode={engineMode}
+                unread={unreadSystemNotices}
+                onOpen={() => {
+                  setSystemNoticeOpen(true);
+                  setUnreadSystemNotices(0);
+                  onOpenSystemNotices?.();
+                }}
+              />
+            )}
             {bothChromeHidden && (
               <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-600">
                 More room for story
@@ -591,18 +602,6 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           </div>
 
           <LooseItemsBar state={state} busy={busy || !!state.pendingTurn} onPickUp={onSend} />
-
-          {usesSystemNoticeChip(engineMode) && !hideOptions && (
-            <CheckSystemChip
-              engineMode={engineMode}
-              unread={unreadSystemNotices}
-              onOpen={() => {
-                setSystemNoticeOpen(true);
-                setUnreadSystemNotices(0);
-                onOpenSystemNotices?.();
-              }}
-            />
-          )}
 
           {state.playPhase !== 'ended' && state.playPhase !== 'down' && (
           <ActionBar

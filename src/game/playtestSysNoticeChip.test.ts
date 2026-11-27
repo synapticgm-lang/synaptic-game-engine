@@ -90,13 +90,14 @@ describe('playtestSysNoticeChip — notification derivation', () => {
 });
 
 describe('playtestSysNoticeChip — chip + panel render', () => {
-  it('renders Check System chip with count', async () => {
+  it('renders Check System as chrome (not an option button) with count', async () => {
     const { CheckSystemChip } = await import('../components/CheckSystemChip');
     const html = renderToStaticMarkup(
       createElement(CheckSystemChip, { engineMode: 'litrpg', unread: 3, onOpen: () => {} }),
     );
     expect(html).toContain('Check System (3)');
     expect(html).toMatch(/data-testid="check-system-chip"/);
+    expect(html).not.toContain('sgm-choice-btn');
   });
 
   it('hides chip when unread is 0', async () => {
