@@ -8,12 +8,9 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import {
-  applyRenderFallback,
-  buildSealedManifest,
   consecutiveRecoveryExceeded,
   isBannedFallbackStub,
   markEngineRecoveryCommit,
-  renderDeterministicFallback,
 } from './sealedManifest';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
@@ -62,151 +59,7 @@ describe('playtest31iCriticBatchAB', () => {
     expect(HUD_BUILD_STAMP >= '2026-08-31i').toBe(true);
   });
 
-  describe('Batch A — never ship HUD fallback stubs', () => {
-    it('renderDeterministicFallback never emits something-shifts / closes-in / PC HP XP', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.campaignBibleId = 'summoned-pact';
-      state.turn = 10;
-      state.currentLocation = 'Lowmarket';
-      state.character.name = 'Jax';
-      state.character.xp = 75;
-      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-      const arc = runArcDirectorBeforeGm(state, 'Wait and watch');
-      const manifest = buildSealedManifest(arc.state, 'Wait and watch', arc);
-      const prose = renderDeterministicFallback(manifest, arc.state);
-      expect(isBannedFallbackStub(prose)).toBe(false);
-      expect(prose).not.toMatch(/something shifts/i);
-      expect(prose).not.toMatch(/forcing the moment forward/i);
-      expect(prose).not.toMatch(/\bPC:\s*Jax/i);
-      expect(prose).not.toMatch(/\bHP:\s*\d/);
-      expect(prose).not.toMatch(/\bXP:\s*75\b/);
-      expect(prose.length).toBeGreaterThan(30);
-    });
-
-    it('encounter recovery narrates live foe HP — never closes-in ledger counts', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.campaignBibleId = 'summoned-pact';
-      state.turn = 9;
-      state.currentLocation = 'Lowmarket';
-      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-      state.activeEncounter = stubEncounter('Void-Touched Scavenger', 12, 20);
-      const arc = runArcDirectorBeforeGm(state, 'Press the attack');
-      const manifest = buildSealedManifest(arc.state, 'Press the attack', arc);
-      const prose = renderDeterministicFallback(manifest, {
-        ...arc.state,
-        activeEncounter: state.activeEncounter,
-      });
-      expect(prose).toMatch(/Void-Touched Scavenger/i);
-      expect(prose).toMatch(/still engaged/i);
-      expect(prose).not.toMatch(/closes in/i);
-      expect(prose).not.toMatch(/ledger still counts/i);
-      expect(isBannedFallbackStub(prose)).toBe(false);
-    });
-
-    it('names a live foe and where they stand, and does not invent a blow', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.campaignBibleId = 'summoned-pact';
-      state.turn = 9;
-      state.currentLocation = 'Lowmarket';
-      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-      state.activeEncounter = stubEncounter('Void-Touched Scavenger', 12, 20);
-      const arc = runArcDirectorBeforeGm(state, 'Press the attack');
-      const manifest = buildSealedManifest(arc.state, 'Press the attack', arc);
-      const prose = renderDeterministicFallback(manifest, {
-        ...arc.state,
-        activeEncounter: state.activeEncounter,
-      });
-      expect(prose).toMatch(/At Lowmarket, Void-Touched Scavenger is still engaged\. The fight has not ended\./);
-      expect(prose).not.toMatch(/12 of 20|HP:|closes in|something shifts|you strike|damage/i);
-      expect(isBannedFallbackStub(prose)).toBe(false);
-    });
-
-    it('a parked foe stays named and out of the fight', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.campaignBibleId = 'summoned-pact';
-      state.turn = 9;
-      state.currentLocation = 'Lowmarket';
-      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-      state.activeEncounter = null;
-      state.sceneFacts = {
-        ...(state.sceneFacts ?? { crowd: 'unknown', noise: 'unknown', present: [], props: [], lastBeat: '', updatedTurn: 9 }),
-        pendingEncounter: { ...stubEncounter('Void-Touched Scavenger', 20, 20), phase: 'pending', parkedTurn: 8 },
-      };
-      const arc = runArcDirectorBeforeGm(state, 'Wait and watch');
-      const manifest = buildSealedManifest(arc.state, 'Wait and watch', arc);
-      const prose = renderDeterministicFallback(manifest, {
-        ...arc.state,
-        activeEncounter: null,
-        placeThreats: {},
-        sceneFacts: state.sceneFacts,
-      });
-      expect(prose).toMatch(/Void-Touched Scavenger is parked and not in the fight/);
-      expect(prose).toMatch(/At Lowmarket/);
-      expect(prose).not.toMatch(/closes in|still engaged|\d+ of \d+|HP:/i);
-
-      const elsewhere = renderDeterministicFallback(manifest, {
-        ...arc.state,
-        currentLocation: 'Contract Hall',
-        activeEncounter: null,
-        placeThreats: {
-          lowmarket: {
-            place: 'Lowmarket',
-            storedTurn: 8,
-            encounter: stubEncounter('Void-Touched Scavenger', 20, 20),
-          },
-        },
-        sceneFacts: { ...arc.state.sceneFacts!, pendingEncounter: undefined },
-      });
-      expect(elsewhere).toMatch(/At Contract Hall, no foe is here/);
-      expect(elsewhere).not.toMatch(/Scavenger/);
-      expect(isBannedFallbackStub(prose)).toBe(false);
-    });
-
-    it('no foe and an empty place invent nothing, and a second fallback fails closed', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.campaignBibleId = 'summoned-pact';
-      state.turn = 10;
-      state.currentLocation = 'Lowmarket';
-      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-      state.activeEncounter = null;
-      const arc = runArcDirectorBeforeGm(state, 'Wait and watch');
-      const manifest = buildSealedManifest(arc.state, 'Wait and watch', arc);
-      const prose = renderDeterministicFallback(manifest, {
-        ...arc.state,
-        activeEncounter: null,
-        placeThreats: {},
-        sceneFacts: { ...arc.state.sceneFacts!, pendingEncounter: undefined },
-      });
-      expect(prose).toMatch(/At Lowmarket, no foe is here\. Nothing else has entered\./);
-      expect(prose).not.toMatch(/Scavenger|closes in|something shifts/i);
-      const ended = renderDeterministicFallback(manifest, {
-        ...arc.state,
-        activeEncounter: { ...stubEncounter('Void-Touched Scavenger', 0, 20), phase: 'terminal' },
-        placeThreats: {},
-        sceneFacts: { ...arc.state.sceneFacts!, pendingEncounter: undefined },
-      });
-      expect(ended).toMatch(/Void-Touched Scavenger is no longer in the fight/);
-      expect(ended).not.toMatch(/still engaged|\d+ of \d+|HP:/);
-      expect(isBannedFallbackStub(prose)).toBe(false);
-      const first = applyRenderFallback(manifest, arc.state, 'empty');
-      expect(first.manifestUpdated.fallbackUsed).toBe(true);
-      expect(() => applyRenderFallback(first.manifestUpdated, arc.state, 'empty')).toThrow(/max 1 retry/);
-    });
-
-    it('applyRenderFallback keeps receipts in systemLog only', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.campaignBibleId = 'summoned-pact';
-      state.turn = 8;
-      state.currentLocation = 'Lowmarket';
-      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-      const arc = runArcDirectorBeforeGm(state, 'Look around');
-      const manifest = buildSealedManifest(arc.state, 'Look around', arc);
-      const fallback = applyRenderFallback(manifest, arc.state, 'empty');
-      expect(isBannedFallbackStub(fallback.prose)).toBe(false);
-      expect(fallback.prose).not.toMatch(/\bPC:/i);
-      expect(fallback.systemLog.join('\n')).toMatch(/ledger preserved/i);
-    });
-
+  describe('Batch A — HUD stub detect + recovery streak (deterministic fallback deleted)', () => {
     it('isBannedFallbackStub catches HUD fact bleed (banned stub bank deleted)', () => {
       expect(
         isBannedFallbackStub(

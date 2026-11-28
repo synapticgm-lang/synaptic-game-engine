@@ -134,6 +134,11 @@ import {
   hallTalkTopics,
 } from './openingEstablishment';
 import { headlessOpeningContinueTurn } from './liveDrive';
+import {
+  buildFailedStorytellerPage,
+  isStorytellerRetryChip,
+  STORYTELLER_RETRY_MESSAGE,
+} from './liveOpening';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { seedHookLockFromPickedHook } from './hookLock';
 import { enforceCameraOnProse, enforceCameraOnState, resolveNextLocation } from './travelAuthority';
@@ -212,7 +217,7 @@ import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { planSceneThreads } from './openThreads';
 import { applyHostilePresentLeave } from './npcMemory';
 import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
-import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
@@ -251,13 +256,7 @@ import {
   attachSealedManifest,
   buildSealedManifest,
   formatSealedManifestBlock,
-  applyRenderFallback,
-  canUseFallback,
-  consecutiveRecoveryExceeded,
   clearEngineRecoveryStreak,
-  isBannedFallbackStub,
-  markEngineRecoveryCommit,
-  type RenderFallbackReason,
 } from './sealedManifest';
 import { hashCanonicalState } from './replayHash';
 import { commitTurnRecord } from './stateTx';
@@ -1463,6 +1462,16 @@ export async function headlessFateTurn(
             ).pick
           ).pick;
   let playerInput = fatePick;
+  // Brief 06 — Try again after a story writer miss re-sends the same act once (click-only).
+  if (isStorytellerRetryChip(playerInput) && state.pendingWriterRetry?.act) {
+    const act = state.pendingWriterRetry.act;
+    state = {
+      ...state,
+      pendingWriterRetry: null,
+      log: (state.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE),
+    };
+    playerInput = act;
+  }
   let repairNote: string | undefined;
   const mediated = mediatePlayerInput(playerInput);
   if (mediated.action === 'block') {
@@ -2180,13 +2189,6 @@ Do NOT print dice notation or CODE ENFORCED.
       error = `GM empty/fail (${gmResult.dnsFailure ? 'network_dns' : gmResult.failKind ?? 'empty'})`;
     }
     arcState = clearEngineRecoveryStreak(arcState);
-  } else if (!gmText.trim()) {
-    // Outage only (every writer call came back empty): the spoken card line keeps the turn alive.
-    const spoken = outageSpokenLine(arcState, preparedEvent.packet?.verb, playerInput);
-    if (spoken) {
-      gmText = spoken;
-      renderFallbackUsed = true;
-    }
   }
   {
     const lastGmRow = [...(arcState.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
@@ -2195,7 +2197,6 @@ Do NOT print dice notation or CODE ENFORCED.
       if (painted.prose && !isDroughtStubProse(painted.prose) && !isLastGmReprint(painted.prose, lastGmRow)) {
         gmText = painted.prose;
         if (painted.status) gmSystemLog = [...gmSystemLog, painted.status];
-        renderFallbackUsed = true;
       }
     }
     // T10AQ — Exhaustion-6 / road death: the book page is the death sentence (roll + why), never a CAST beat.
@@ -2205,6 +2206,8 @@ Do NOT print dice notation or CODE ENFORCED.
       renderFallbackUsed = true;
     }
   }
+  // Brief 06 / H11 — writer miss → one owner Try again page (no sealed deterministic fallback).
+  // 08c Free MUD: receipt-only turns are valid — never hard-fail on empty flavor.
   if (!useMud && !gmText.trim()) {
     const failLabel = gmResult.dnsFailure
       ? 'network_dns'
@@ -2214,62 +2217,12 @@ Do NOT print dice notation or CODE ENFORCED.
           ? gmResult.failKind
           : 'empty';
     error = `GM empty/fail (${failLabel})`;
-    // 31i — never commit banned HUD stubs; one diegetic stitch max, then FAIL empty
-    const sealed = arcState.sealedManifest ?? buildSealedManifest(arcState, playerInput, arcResult);
-    if (consecutiveRecoveryExceeded(arcState) || !canUseFallback(sealed)) {
-      gmText = '';
-      gmSystemLog = [
-        ...gmSystemLog,
-        'Turn FAIL — refused second engine recovery / exhausted transport (ledger unchanged)',
-      ];
-      renderFallbackUsed = false;
-    } else {
-      const reason: RenderFallbackReason =
-        gmResult.failKind === 'timeout'
-          ? 'timeout'
-          : gmResult.failKind
-            ? 'fail'
-            : 'empty';
-      try {
-        const fallback = applyRenderFallback(sealed, arcState, reason);
-        gmText = fallback.prose;
-        if (isBannedFallbackStub(gmText)) {
-          gmText = '';
-          gmSystemLog = [...gmSystemLog, ...fallback.systemLog, 'Turn FAIL — banned stub blocked'];
-        } else {
-          gmSystemLog = [...gmSystemLog, ...fallback.systemLog];
-          arcState = markEngineRecoveryCommit(attachSealedManifest(arcState, fallback.manifestUpdated));
-          renderFallbackUsed = true;
-        }
-      } catch {
-        gmText = '';
-        gmSystemLog = [...gmSystemLog, 'Turn FAIL — manifest fallback exhausted'];
-      }
-    }
-  } else {
-    arcState = clearEngineRecoveryStreak(arcState);
-  }
-  // Hard FAIL — do not invent story; keep prior world, stamp telemetry
-  // 08c Free MUD: receipt-only turns are valid — never hard-fail on empty flavor.
-  if (!useMud && !gmText.trim() && error) {
+    const page = buildFailedStorytellerPage(state, { pendingAct: playerInput });
     const ended = Date.now();
-    const failTurn = state.turn + 1;
     return {
-      state: {
-        ...arcState,
-        turn: failTurn,
-        log: [
-          ...(arcState.log ?? state.log ?? []),
-          {
-            id: `fail-${failTurn}-${ended}`,
-            role: 'system' as const,
-            content: error,
-            timestamp: ended,
-          },
-        ],
-      },
+      state: page.state,
       telemetry: {
-        turn: failTurn,
+        turn: page.state.turn,
         startedAt,
         endedAt: new Date(ended).toISOString(),
         durationMs: ended - started,
@@ -2278,11 +2231,11 @@ Do NOT print dice notation or CODE ENFORCED.
         personalityId: meta.personalityId,
         seed: meta.seed,
         fatePick,
-        offeredChoices: offered,
-        offeredChoiceIds: offered.map((_, i) => `choice-${failTurn}-${i}`),
+        offeredChoices: page.offeredChoices,
+        offeredChoiceIds: page.offeredChoices.map((_, i) => `choice-${page.state.turn}-${i}`),
         playerInput,
-        gmText: '',
-        systemLog: gmSystemLog,
+        gmText: page.prose,
+        systemLog: [...gmSystemLog, 'Writer miss — honest Try again (no state advance)'],
         questUnlocks: [],
         itemsEquipped: [],
         itemsUsed: [],
@@ -2295,13 +2248,14 @@ Do NOT print dice notation or CODE ENFORCED.
         dnsFailure: gmResult.dnsFailure === true,
         renderFallbackUsed: false,
         responsePath: classifyResponsePath({
-          state: arcState,
+          state: page.state,
           playerInput,
           subscriptionTier: settings.subscriptionTier,
         }),
       },
     };
   }
+  arcState = clearEngineRecoveryStreak(arcState);
   const askedRepeat = playerAsksRepeat(playerInput);
   let usedPacketStitch = false;
   const tokenPath: string | undefined = writerTurn?.path;

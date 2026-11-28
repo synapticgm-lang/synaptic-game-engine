@@ -403,7 +403,7 @@ import {
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { planSceneThreads } from './openThreads';
-import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, looksLikeTokenJson, type SpokenLine } from './tokenProse';
@@ -427,11 +427,7 @@ import {
   attachSealedManifest,
   buildSealedManifest,
   formatSealedManifestBlock,
-  applyRenderFallback,
-  consecutiveRecoveryExceeded,
   clearEngineRecoveryStreak,
-  isBannedFallbackStub,
-  markEngineRecoveryCommit,
 } from './sealedManifest';
 import { playerInputGateBlock } from './choiceCompiler';
 import { equipFromInput } from './gearEquip';
@@ -3993,14 +3989,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (!storyHasBody(cleanText) && mudTurnLive) {
         cleanText = mudDisplayBody(mudTurnLive);
       }
-      if (!storyHasBody(cleanText) && !useMud) {
-        const spoken = outageSpokenLine(liveCurrent, preparedEvent.packet.verb, sanitizedInput);
-        if (spoken) cleanText = spoken;
-      }
       {
         const lastGmRow = [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
         // 28l — writer turns reach this only on a total outage (the writer turn already revised any
         // reprint / stub / unasked fight close); MUD receipt turns keep the old stub guard.
+        // Brief 06 — no outageSpokenLine / fight last-resort fill; empty reaches Try again.
         if (
           !storyHasBody(cleanText)
           || (useMud && (

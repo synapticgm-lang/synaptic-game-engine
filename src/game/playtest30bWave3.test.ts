@@ -10,7 +10,6 @@ import { createInitialState } from './defaults';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import {
   buildSealedManifest,
-  applyRenderFallback,
   canUseFallback,
   type SceneManifest,
 } from './sealedManifest';
@@ -132,53 +131,15 @@ describe('playtest30b — Wave 3 sealed manifest', () => {
       expect(manifest.fallbackUsed).toBe(false);
     });
 
-    it('fallback marks manifest as used', () => {
+    it('fallbackUsed flag still starves canUseFallback (prose painter deleted)', () => {
       const state = createInitialState(undefined, 'litrpg');
       state.turn = 5;
       state.campaignBibleId = 'summoned-pact';
       state.openingEstablishment = { complete: true };
-      
       const arc = runArcDirectorBeforeGm(state, 'Continue');
       const manifest = buildSealedManifest(arc.state, 'Continue', arc);
-      
-      const fallback = applyRenderFallback(manifest, arc.state, 'timeout');
-      
-      expect(fallback.manifestUpdated.fallbackUsed).toBe(true);
-      expect(canUseFallback(fallback.manifestUpdated)).toBe(false);
-    });
-
-    it('rejects second fallback attempt on same manifest', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.turn = 5;
-      state.campaignBibleId = 'summoned-pact';
-      state.openingEstablishment = { complete: true };
-      
-      const arc = runArcDirectorBeforeGm(state, 'Continue');
-      const manifest = buildSealedManifest(arc.state, 'Continue', arc);
-      
-      const fallback1 = applyRenderFallback(manifest, arc.state, 'timeout');
-      
-      // Second attempt should throw
-      expect(() => {
-        applyRenderFallback(fallback1.manifestUpdated, arc.state, 'empty');
-      }).toThrow(/B028.*max 1 retry/i);
-    });
-
-    it('deterministic fallback preserves receipts', () => {
-      const state = createInitialState(undefined, 'litrpg');
-      state.turn = 8;
-      state.campaignBibleId = 'summoned-pact';
-      state.openingEstablishment = { complete: true };
-      state.character.xp = 100;
-      
-      const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me');
-      const manifest = buildSealedManifest(arc.state, 'Ask who', arc);
-      
-      const fallback = applyRenderFallback(manifest, arc.state, 'fail');
-      
-      expect(fallback.prose).not.toMatch(/beat recovered/i);
-      expect(fallback.prose.length).toBeGreaterThan(30);
-      expect(fallback.systemLog[0]).toMatch(/ledger preserved/i);
+      const used = { ...manifest, fallbackUsed: true };
+      expect(canUseFallback(used)).toBe(false);
     });
   });
 

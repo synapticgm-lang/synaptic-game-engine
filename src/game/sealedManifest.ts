@@ -1,18 +1,15 @@
 /**
- * Wave 3 (B026–B028) — sealed SceneManifest + deterministic fallback prose.
- * Committed beat/effects hash is sealed before GM; GM fail uses local templates.
+ * Wave 3 (B026–B028) — sealed SceneManifest.
+ * Committed beat/effects hash is sealed before GM.
  * B026: Manifest builder and hash
- * B028: One-repair policy and deterministic fallback
+ * B028: One-repair policy (fallbackUsed). Brief 06 deleted deterministic fallback prose —
+ * writer miss uses liveOpening.buildFailedStorytellerPage instead.
  */
 
-import { scrubProseControlTags, applyStatusFirewall } from './statusFirewall';
-import { getDiegeticFallback } from './diegeticFallbacks';
-import type { ActiveEncounter, GameState } from './types';
+import type { GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
 import { contractForState } from './beatContract';
 import { hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
-import { cleanPlaceLabel, playerFacingLocation } from './locationName';
-import { shortRoomLabel } from './mapEngine';
 
 export interface SceneManifest {
   turn: number;
@@ -28,8 +25,6 @@ export interface SceneManifest {
   /** B028 — track if this was already used for a fallback (max 1 retry) */
   fallbackUsed?: boolean;
 }
-
-export type RenderFallbackReason = 'empty' | 'timeout' | 'fail' | 'malformed';
 
 /** Hash committed beat effects before GM call (B026). */
 export function hashBeatEffects(state: GameState, arc?: ArcDirectorResult): string {
@@ -202,110 +197,8 @@ export function clearEngineRecoveryStreak(state: GameState): GameState {
 }
 
 /**
- * Diegetic local stitch when GM is empty — narrative only, never HUD PC/HP/XP lines.
- * Encounter branch narrates live ledger foe; never the closes-in template.
- */
-export function renderDeterministicFallback(
-  manifest: SceneManifest,
-  state: GameState
-): string {
-  const rawPlace = cleanPlaceLabel(playerFacingLocation(state) || state.currentLocation?.trim() || 'here');
-  const loc =
-    !rawPlace || /^alone\b/i.test(rawPlace) || /,/.test(rawPlace) || rawPlace.length > 48
-      ? shortRoomLabel(rawPlace, 'this room')
-      : rawPlace;
-  const ended = state.activeEncounter;
-  if (ended?.name && ended.phase === 'terminal') {
-    return `At ${loc}, ${ended.name} is no longer in the fight.`;
-  }
-  const enc = liveFallbackFoe(state);
-  const parked = enc ? null : parkedFallbackFoe(state);
-  const action = (manifest.playerAction ?? '').toLowerCase();
-  const inspectish = /\b(inspect|examine|search|look|panel)\b/i.test(action);
-
-  if (enc?.name) {
-    return `At ${loc}, ${enc.name} is still engaged. The fight has not ended.`;
-  }
-  if (parked?.name) {
-    return `At ${loc}, ${parked.name} is parked and not in the fight.`;
-  }
-  if (manifest.beatId?.includes('crisis') || manifest.beatId?.includes('branch')) {
-    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you. Delay will cost.`;
-  }
-  if (inspectish) {
-    return getDiegeticFallback(state, 'inspect exhaust');
-  }
-  if (/quest stage|arc xp|encounter:/i.test(manifest.requiredFacts.join(' '))) {
-    return `At ${loc}, what the ledger already committed still stands.`;
-  }
-  return `At ${loc}, no foe is here. Nothing else has entered.`;
-}
-
-function liveFallbackFoe(state: GameState): ActiveEncounter | null {
-  const enc = state.activeEncounter;
-  if (!enc?.name || enc.phase === 'pending' || enc.phase === 'terminal' || enc.parkedTurn != null) return null;
-  return enc;
-}
-
-function parkedFallbackFoe(state: GameState): ActiveEncounter | null {
-  const enc = state.activeEncounter;
-  if (enc?.name && (enc.phase === 'pending' || enc.parkedTurn != null)) return enc;
-  const pending = state.sceneFacts?.pendingEncounter;
-  if (pending?.name) return pending;
-  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  for (const threat of Object.values(state.placeThreats ?? {})) {
-    const place = (threat?.place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-    if (threat?.encounter?.name && place && place === here) return threat.encounter;
-  }
-  return null;
-}
-
-/** 
- * B028 — One-repair policy terminal: fallback preserves receipts in systemLog only.
- * Max 1 fallback per manifest; subsequent failures must use a new manifest.
- * 31i — never emit banned HUD stubs; prose is diegetic stitch only.
- */
-export function applyRenderFallback(
-  manifest: SceneManifest,
-  state: GameState,
-  reason: RenderFallbackReason
-): { prose: string; systemLog: string[]; manifestUpdated: SceneManifest } {
-  // Check if fallback already used
-  if (manifest.fallbackUsed) {
-    throw new Error(
-      `Wave 3 B028 violation: manifest hash=${manifest.beatEffectsHash} already used fallback; max 1 retry exceeded`
-    );
-  }
-  
-  let prose = scrubProseControlTags(renderDeterministicFallback(manifest, state));
-  // Belt-and-braces: strip any accidental HUD fact bleed
-  prose = prose
-    .replace(/\bPC:\s*[^.]*\.?/gi, '')
-    .replace(/\bHP:\s*\d+\s*\/\s*\d+\.?/gi, '')
-    .replace(/\bXP:\s*\d+\.?/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-  if (isBannedFallbackStub(prose)) {
-    prose = getDiegeticFallback(state, 'inspect exhaust');
-  }
-  const manifestUpdated: SceneManifest = {
-    ...manifest,
-    fallbackUsed: true,
-  };
-  
-  // 29c — no player-facing "(beat recovered; fail)" chrome
-  // Ledger receipts stay in systemLog — never append PC/HP/XP into narration
-  return {
-    prose,
-    systemLog: applyStatusFirewall([
-      `Deterministic fallback applied (${reason}) — ledger preserved`,
-    ]).lines,
-    manifestUpdated,
-  };
-}
-
-/**
  * B028 — Check if manifest can still be used for fallback (max 1 retry policy).
+ * Brief 06: deterministic fallback prose deleted; flag remains for legacy saves.
  */
 export function canUseFallback(manifest: SceneManifest): boolean {
   return !manifest.fallbackUsed;

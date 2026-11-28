@@ -14,7 +14,6 @@ import { emptySceneFacts } from './sceneFacts';
 import {
   bookBodyAfterWriterMiss,
   buildCompletedEventPacket,
-  lastResortStoryBody,
 } from './completedEventPacket';
 import {
   buildFailedStorytellerPage,
@@ -64,7 +63,6 @@ describe('playtest18b — last-resort retired (brief 06)', () => {
     const packet = buildCompletedEventPacket(state, 'Ask what they want');
     const painted = bookBodyAfterWriterMiss(state, packet, 'Ask what they want', '');
     expect(painted.prose).toBe('');
-    expect(lastResortStoryBody(state, packet, 'Look around').prose).toBe('');
   });
 
   it('honest Try again page owns the miss', () => {
@@ -75,11 +73,15 @@ describe('playtest18b — last-resort retired (brief 06)', () => {
     expect(page.state.pendingWriterRetry?.act).toBe('Ask what they want');
   });
 
-  it('live sendAction routes miss to Try again owner', () => {
+  it('all three turn drivers route miss to Try again owner', () => {
     const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
     const fate = readFileSync(resolve(__dirname, 'fateAutoplay.ts'), 'utf8');
+    const liveDrive = readFileSync(resolve(__dirname, 'liveDrive.ts'), 'utf8');
     expect(useGame).toContain('buildFailedStorytellerPage');
-    expect(useGame).toContain('bookBodyAfterWriterMiss');
-    expect(fate).toContain('bookBodyAfterWriterMiss');
+    expect(fate).toContain('buildFailedStorytellerPage');
+    expect(liveDrive).toContain('buildFailedStorytellerPage');
+    expect(fate).not.toMatch(/\bapplyRenderFallback\s*\(/);
+    expect(fate).not.toMatch(/\boutageSpokenLine\s*\(/);
+    expect(useGame).not.toMatch(/\boutageSpokenLine\s*\(/);
   });
 });

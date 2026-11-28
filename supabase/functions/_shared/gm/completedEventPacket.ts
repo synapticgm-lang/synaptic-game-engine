@@ -29,7 +29,6 @@ import {
 import { nearbyPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway, isRoadLabel, isTripHere, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney.ts';
 import { hasWriterCueChrome } from './writerCueLines.ts';
-import { spokenTalkFallback } from './talkEnvelope.ts';
 import { peopleHere } from './scenePresence.ts';
 import { isBookForbiddenLedgerLine } from './ledgerToProse.ts';
 import { TALK_VERB } from './intentParser.ts';
@@ -54,7 +53,7 @@ import {
   type SystemHousingId,
 } from './systemHousing.ts';
 import { isNeverCastTitle } from './neverCast.ts';
-import { terminalFightBeat, terminalFightOutcome } from './engineResult.ts';
+import { terminalFightOutcome } from './engineResult.ts';
 import { kitRefDisplay, turnUsesKit } from './inventory.ts';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector.ts';
 import {
@@ -1747,32 +1746,6 @@ export function isLastGmReprint(prose: string, lastGm: string): boolean {
   return false;
 }
 /**
- * Brief 06 slice 3 — no canned miss painters.
- * Settled fight may still paint from the engine result; every other miss is empty
- * so callers show the honest Try again page.
- */
-export function lastResortStoryBody(
-  state: GameState,
-  packet?: CompletedEventPacket,
-  _playerInput?: string
-): { prose: string; status: string } {
-  const fight = terminalFightOutcome(packet?.engineResult ?? state.completedEvent?.engineResult);
-  if (fight) {
-    const pov = pcPov(packet?.pc ?? state.character);
-    const third = narratesPcInThirdPerson(pov);
-    return {
-      prose: terminalFightBeat(
-        fight,
-        playerFacingLocation(state),
-        { who: pcStorySubject(pov), him: third ? pov.him : 'you' },
-        isJourneyUnderway(state)
-      ),
-      status: 'Writer left the settled fight out — painted from the engine result',
-    };
-  }
-  return { prose: '', status: 'Writer miss — honest Try again' };
-}
-/**
  * Page when the clause check withheld a verdict: never canned miss prose (brief 06).
  */
 export function pageWhenClauseWithheld(
@@ -1783,19 +1756,13 @@ export function pageWhenClauseWithheld(
   return '';
 }
 
-export function outageSpokenLine(state: GameState, verb: CompletedEventPacket['verb'] | undefined, playerInput: string): string {
-  if (verb !== 'spoke' && verb !== 'parleyed') return '';
-  const spoken = spokenTalkFallback(state, playerInput).replace(/\s+/g, ' ').trim();
-  if (!spoken || isDroughtStubProse(spoken)) return '';
-  if (/^Nobody here answered|Silence held the question|No one listed on the ledger answered/i.test(spoken)) return '';
-  return spoken;
-}
 /**
  * Writer timeout / empty / reprint: keep usable writer text; otherwise empty (Try again upstream).
+ * No fight / spoken / last-resort painters — empty miss is honest Try again (brief 06).
  */
 export function bookBodyAfterWriterMiss(
   state: GameState,
-  packet: CompletedEventPacket | undefined,
+  _packet: CompletedEventPacket | undefined,
   playerInput: string,
   writerText = ''
 ): { prose: string; status?: string } {
@@ -1813,7 +1780,7 @@ export function bookBodyAfterWriterMiss(
   ) {
     return { prose: raw };
   }
-  return lastResortStoryBody(state, packet, playerInput);
+  return { prose: '', status: 'Writer miss — honest Try again' };
 }
 export function isPacketStitchProse(text: string): boolean {
   const body = (text ?? '').trim();

@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
-import { buildCompletedEventPacket, lastResortStoryBody } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, buildCompletedEventPacket } from './completedEventPacket';
 import { emptySceneFacts } from './sceneFacts';
 import type { GameState } from './types';
 
@@ -40,7 +40,7 @@ describe('playtest17i — last-resort topic advance deleted (brief 06)', () => {
   it('who/want/look miss prose is empty', () => {
     const state = hallState();
     const packet = buildCompletedEventPacket(state, 'Ask what they want');
-    expect(lastResortStoryBody(state, packet, 'Ask what they want').prose).toBe('');
-    expect(lastResortStoryBody(state, packet, 'Look around').prose).toBe('');
+    expect(bookBodyAfterWriterMiss(state, packet, 'Ask what they want', '').prose).toBe('');
+    expect(bookBodyAfterWriterMiss(state, packet, 'Look around', '').prose).toBe('');
   });
 });

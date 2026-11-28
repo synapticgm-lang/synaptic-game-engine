@@ -18,7 +18,6 @@ import { initEncounterTerminal } from './encounterTerminalFsm';
 import { compileGraphChoiceLabels } from './graphChoices';
 import { compileChoices, namedPropPadsFromBeat } from './choiceCompiler';
 import { resolveOfferedChoices } from './playTranscript';
-import { lastResortStoryBody } from './completedEventPacket';
 import { stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
 import {
   coverContinuePads,
@@ -134,10 +133,8 @@ describe('playtest17f — site-wide opening / pad locks', () => {
     const state = litrpgNamed();
     const page = stitchOpeningScene(state);
     const cont = stitchOpeningContinue(state, 'Look around');
-    const resort = lastResortStoryBody(state);
     expect(page).not.toMatch(/What do you enter|The panel waits on a name|What name/i);
     expect(cont).not.toMatch(/What do you enter|The panel waits on a name|They still want a name/i);
-    expect(resort.prose).not.toMatch(/What do you enter|The panel waits on a name/i);
     const leftover = {
       ...state,
       openingEstablishment: {

@@ -26,7 +26,7 @@ import { selectCatalogEncounter } from './encounterBible';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { seedBibleNpcRoster } from './npcMemory';
 import { pickAuthoredTopicLine } from './manusTopicBanks';
-import { legalAddresseeFact, spokenTalkFallback } from './talkEnvelope';
+import { legalAddresseeFact } from './talkEnvelope';
 import { SUMMONED_PACT_HUBS, CURSED_KEEP_HUBS, SALT_ROAD_HUBS } from './outdoorHubs';
 import { revealQuestsFromBanks, seedLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
 import type { GameState } from './types';
@@ -129,9 +129,6 @@ describe('playtest17c — Manus honest leftover', () => {
     });
     const fact = legalAddresseeFact(state, 'Ask about this place');
     expect(fact.length).toBeGreaterThan(8);
-    const spoken = spokenTalkFallback(state, 'Who are you');
-    expect(spoken).toMatch(/Wren|charter|mill/i);
-    expect(spoken).not.toMatch(/Greyhollow/i);
   });
 
   it('side quests seed hidden and hubs link leftover ids', () => {

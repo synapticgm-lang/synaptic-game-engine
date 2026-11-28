@@ -20,7 +20,7 @@ import {
   compileNounAllowlist,
   compileRefEnum,
   formatWriterFacingEvent,
-  lastResortStoryBody,
+  bookBodyAfterWriterMiss,
   prepareRetrospectiveWriterInput,
 } from './completedEventPacket';
 import { runWriterTurnWithFightRetry } from './writerTurn';
@@ -244,8 +244,7 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
     expect(proseHasEmptySlot(scrubbed)).toBe(false);
     expect(scrubbed).not.toMatch(/They read:\s*\./i);
 
-    const painted = lastResortStoryBody(prepared.state, prepared.packet, accept);
-    expect(proseHasEmptySlot(painted.prose)).toBe(false);
-    expect(painted.prose).not.toMatch(/A Pact loadout crew/i);
+    const miss = bookBodyAfterWriterMiss(prepared.state, prepared.packet, accept, '');
+    expect(miss.prose).toBe('');
   });
 });

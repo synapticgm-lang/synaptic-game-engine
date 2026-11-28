@@ -5,20 +5,13 @@
 import type { GameState, NarrativePerspective } from './types';
 import { sealedCastNames } from './beatContract';
 import { formatWriterFacingEvent, type CompletedEventPacket } from './completedEventPacket';
-import { matchesLastKillName } from './combatAuthority';
 import { hasMetBefore } from './npcMemory';
-import { openingCastRecords } from './npcRecords';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
 import {
   hallTalkAsksRefuse,
   hallTalkAsksWant,
   hallTalkAsksWho,
-  openingCastLabel,
   openingCastNames,
   openingSpokenIdentityQuote,
-  openingWhoAskLineFromLabel,
-  openingSpokenRefuse,
-  openingSpokenWant,
   shortCardCost,
   shortCardOffer,
   shortCardWant,
@@ -151,13 +144,6 @@ export function buildTalkEnvelope(
   ].join('\n');
 }
 
-function openingCastIsHere(state: GameState, present: string[]): boolean {
-  const here = new Set(present.map((p) => p.trim().toLowerCase()));
-  return openingCastRecords(state).some((r) =>
-    [r.npcName, ...(r.aliases ?? [])].some((n) => here.has(n.trim().toLowerCase()))
-  );
-}
-
 function priorGmBodies(state: GameState): Set<string> {
   return new Set(
     (state.log ?? [])
@@ -168,60 +154,6 @@ function priorGmBodies(state: GameState): Set<string> {
 
 function priorGmHay(state: GameState): string {
   return [...priorGmBodies(state)].join(' ');
-}
-
-/** E talk: addressee header + existing packet. Other verbs keep the packet only. */
-/** E fail / empty GM: same spoken card pool as hall talk. Never Silence-held when CAST lives. */
-export function spokenTalkFallback(state: GameState, playerInput: string): string {
-  const where = (state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
-  const present = livingCast(state);
-  const place = matchHub(hubsForBibleId(state.campaignBibleId), where)?.name ?? where;
-  const who = addressedCastName(state, playerInput);
-  if (!who || /\bpanel\b/i.test(who)) return 'Nobody here answered.';
-  const out = spokenTalkFallbackInner(state, playerInput, who).replace(/\s+/g, ' ').trim();
-  const openingLine = openingSpokenWant(state).replace(/\s+/g, ' ').trim();
-  const openingBlocked =
-    (state.turn ?? 0) > 3 || (present.length > 0 && !openingCastIsHere(state, present));
-  const isOpening = !!openingLine && out.includes(openingLine);
-  if (out && !priorGmBodies(state).has(out.toLowerCase()) && !(isOpening && openingBlocked)) return out;
-  return `${who} heard you out at ${place} and did not repeat themselves. They waited for something new.`;
-}
-
-function spokenTalkFallbackInner(state: GameState, playerInput: string, who: string): string {
-  const kill = state.sceneFacts?.lastKill;
-  const where = (state.currentLocation || 'this room').replace(/\s+/g, ' ').trim();
-  if (kill?.name && kill.remains && kill.outcome === 'victory' && matchesLastKillName(who, kill)) {
-    return `${kill.name} stayed down at ${where}. They were a corpse, not a speaker. Leave, or search what they left.`;
-  }
-  const met = hasMetBefore(state, who);
-  // 27i — opening-card lines belong to the opener only; never another NPC's want, never a reprint.
-  const opener = openingCastLabel(state).trim().toLowerCase();
-  const low = who.trim().toLowerCase();
-  const isOpener =
-    (!!opener && (low === opener || opener.includes(low) || low.includes(opener)))
-    || openingCastRecords(state).some((r) =>
-      [r.npcName, ...(r.aliases ?? [])].some((n) => n.trim().toLowerCase() === low)
-    );
-  const place = matchHub(hubsForBibleId(state.campaignBibleId), where)?.name ?? where;
-  const head = who.charAt(0).toUpperCase() + who.slice(1);
-  const plain = `${head} listened at ${place} and kept the answer short.`;
-  const idOpts = {
-    location: state.currentLocation,
-    engineMode: state.engineMode,
-    hay: identityHay(state),
-    stamp: resolveLitRpgFolkStamp(state),
-    state,
-  };
-  if (hallTalkAsksWho(playerInput)) {
-    if (met) return `${head} had already told you who they are.`;
-    return openingSpokenIdentityQuote(who, idOpts) ? openingWhoAskLineFromLabel(who, idOpts) : plain;
-  }
-  if (hallTalkAsksRefuse(playerInput)) {
-    return isOpener && !met ? openingSpokenRefuse(state) || plain : plain;
-  }
-  const topic = authoredTopicForState(state, who, playerInput);
-  if (isOpener && !met) return openingSpokenWant(state) || topic || plain;
-  return topic || plain;
 }
 
 export function formatTalkWriterFacing(
