@@ -3,7 +3,7 @@ import { visibleActionChips } from '../../game/fourSlotPads';
 import type { EngineMode, GameState } from '@/game/types';
 import { isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 import { resolveOfferedChoices } from '@/game/playTranscript';
-import { fatePickPool, pickFateChoice } from '@/game/fatePick';
+import { actionBarSceneActions, fatePickPool, pickFateChoice } from '@/game/fatePick';
 import { classOfferPad } from '@/game/rules/characterClass';
 import { systemPromptPad } from '@/game/rules/abilityPoints';
 import { partyHeading, recruitPad } from '@/game/rules/companions';
@@ -73,11 +73,13 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   for (const c of [...systemChips, ...originChips, ...creationRow, ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
     promptSet.add(c.trim().toLowerCase());
   }
-  // Session-zero creation: only the inn-book chips (no scene row beside them).
-  const mainActions: string[] = [];
-  if (!creating) {
-    for (const c of actions) if (!promptSet.has(c.trim().toLowerCase())) mainActions.push(c);
-  }
+  // Session-zero creation / LitRPG System prompt: that row owns the step (no scene row beside it).
+  const mainActions = actionBarSceneActions(
+    actions,
+    systemPrompt?.chips,
+    creating,
+    promptSet
+  );
 
   const handleFatesPick = () => {
     onAction(pickFateChoice(fatePickPool(actions, systemPrompt?.chips ?? (creationRow.length ? creationRow : null))));
