@@ -3,10 +3,11 @@
  * shape concrete offer chips, never fall back to authored page 1.
  * Fail only on throw / empty / unparseable / leaked JSON structure — no prose quality gates.
  */
-import type { GameState, Quest, Settings } from './types';
+import type { GameState, LogEntry, Quest, Settings } from './types';
 import { openingInstanceOf, givenNameOf, escapeRe } from './openingInstance';
 import { isCampaignHubToken } from './outdoorHubs';
 import { tagOpeningOfferPads } from './openingOfferRecognize';
+import { beginTabletopCreation } from './tabletop/creationFlow';
 import {
   formatOpeningWriterNotes,
   openingChoiceCount,
@@ -21,6 +22,10 @@ import {
 export { openingProseLeaksStructuredJson };
 
 export { formatOpeningWriterNotes, openingChoiceCount, STORYTELLER_RETRY_CHIP, STORYTELLER_RETRY_MESSAGE };
+
+function retryLogId(): string {
+  return Math.random().toString(36).slice(2, 11);
+}
 
 /** Sentinel only — page-1 content lives in openingRequest via buildContextPrompt (brief 05). */
 const OPENING_PLAYER_INPUT = '(opening)';
@@ -621,7 +626,74 @@ export function applyFailedLiveOpening(state: GameState): GameState {
         kind: 'opening-retry',
       })),
     },
+    pendingWriterRetry: null,
   };
+}
+
+export type FailedStorytellerPage = {
+  state: GameState;
+  prose: string;
+  offeredChoices: string[];
+};
+
+/**
+ * One owner for the honest Try again page (briefs 05 + 06).
+ * Opening miss: sceneWritten stays false; pendingGeneratedOpening true.
+ * Story miss: pass prior state + pendingAct — no turn/XP advance; Try again re-sends the act.
+ */
+export function buildFailedStorytellerPage(
+  state: GameState,
+  opts?: { pendingAct?: string }
+): FailedStorytellerPage {
+  const pendingAct = (opts?.pendingAct ?? '').replace(/\s+/g, ' ').trim();
+  const storyMiss = !!pendingAct && state.openingEstablishment?.sceneWritten === true;
+  const turn = state.turn ?? 0;
+  const pads = [...failedOpeningPads];
+  const base: GameState = storyMiss
+    ? {
+        ...state,
+        choices: pads,
+        offeredPad: {
+          turn,
+          choices: pads,
+          chips: pads.map((label) => ({
+            label,
+            actionId: 'story:try-again',
+            kind: 'story-retry',
+          })),
+        },
+        pendingWriterRetry: { act: pendingAct },
+        pendingGeneratedOpening: false,
+      }
+    : {
+        ...applyFailedLiveOpening(state),
+        pendingGeneratedOpening: true,
+      };
+  const gm: LogEntry = {
+    id: retryLogId(),
+    turn: base.turn,
+    role: 'gm',
+    content: STORYTELLER_RETRY_MESSAGE,
+    timestamp: Date.now(),
+    systemLog: [],
+  };
+  const prior = (base.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
+  const stamped: GameState = {
+    ...base,
+    log: [...prior, gm],
+    choices: pads,
+    lastUpdated: Date.now(),
+  };
+  return {
+    state: storyMiss ? stamped : beginTabletopCreation(stamped),
+    prose: STORYTELLER_RETRY_MESSAGE,
+    offeredChoices: pads,
+  };
+}
+
+/** True when the player tapped the one honest Try again chip. */
+export function isStorytellerRetryChip(input: string): boolean {
+  return (input ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === STORYTELLER_RETRY_CHIP.toLowerCase();
 }
 
 export function applySuccessfulLiveOpening(

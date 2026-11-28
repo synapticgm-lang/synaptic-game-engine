@@ -26,12 +26,11 @@ import { enforcePerspective } from './perspectiveWarden';
 import { stripChoiceList } from './parser';
 import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import {
-  applyFailedLiveOpening,
   applySuccessfulLiveOpening,
+  buildFailedStorytellerPage,
   isBlankOpeningProse,
   openingProseLeaksStructuredJson,
   writeLiveOpening,
-  STORYTELLER_RETRY_CHIP,
   STORYTELLER_RETRY_MESSAGE,
   type LiveOpeningWriter,
 } from './liveOpening';
@@ -356,24 +355,8 @@ export function criticLiveDriveTurn(input: {
 }
 
 function failedHeadlessOpening(state: GameState): { state: GameState; gmText: string; offeredChoices: string[] } {
-  const failed = applyFailedLiveOpening(state);
-  const gm: LogEntry = {
-    id: uid(),
-    turn: failed.turn,
-    role: 'gm',
-    content: STORYTELLER_RETRY_MESSAGE,
-    timestamp: Date.now(),
-    systemLog: [],
-  };
-  const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
-  const next: GameState = {
-    ...failed,
-    log: [...prior, gm],
-    choices: [STORYTELLER_RETRY_CHIP],
-    pendingGeneratedOpening: true,
-    lastUpdated: Date.now(),
-  };
-  return { state: next, gmText: STORYTELLER_RETRY_MESSAGE, offeredChoices: [STORYTELLER_RETRY_CHIP] };
+  const page = buildFailedStorytellerPage(state);
+  return { state: page.state, gmText: page.prose, offeredChoices: page.offeredChoices };
 }
 
 export async function headlessOpeningContinueTurn(

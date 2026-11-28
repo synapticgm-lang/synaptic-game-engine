@@ -1479,11 +1479,12 @@ export function acceptTokenOrLedgerStory(
       usedLastResort: obeyed.usedLastResort,
     };
   }
+  // Brief 06 — empty miss; callers show honest Try again (no canned last-resort).
   const resort = lastResortStoryBody(state, packet);
   return {
     prose: resort.prose,
     path: 'last-resort',
-    notes: ['last-resort'],
+    notes: ['last-resort-empty'],
     usedLastResort: true,
   };
 }

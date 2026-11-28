@@ -2154,9 +2154,10 @@ Do NOT print dice notation or CODE ENFORCED.
         });
         if (gate.objectNotes.length) arcState = fileKeptRoomProps(arcState, gate.objectNotes);
         if (gate.withheld) {
+          // Brief 06 — clause withhold is empty (no canned page); miss stays empty for honest fail.
           gmText = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
           clauseCheckRecords = [];
-          renderFallbackUsed = true;
+          renderFallbackUsed = !!gmText.trim();
         } else {
           gmText = sealPostWriterProse(arcState, gate.prose, playerInput).prose;
           clauseCheckRecords = [];

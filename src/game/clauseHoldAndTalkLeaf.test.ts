@@ -144,11 +144,11 @@ describe('clause check fail-closed', () => {
     const state = baseState();
     const packet = buildCompletedEventPacket(state, 'hello Mira');
     const before = { hp: state.character.hp, xp: state.character.xp, gold: state.gold, inv: state.inventory?.length };
+    // Brief 06 — clause withhold / writer miss are empty (honest Try again upstream).
     const page = pageWhenClauseWithheld(state, packet, 'hello Mira');
     const again = pageWhenClauseWithheld(state, packet, 'hello Mira');
     expect(again).toBe(page);
-    expect(page).not.toContain('DRAFT_MARKER_9f3c');
-    expect(page.trim().length).toBeGreaterThan(0);
+    expect(page).toBe('');
     expect(state.character.hp).toBe(before.hp);
     expect(state.character.xp).toBe(before.xp);
     expect(state.gold).toBe(before.gold);
@@ -162,7 +162,7 @@ describe('clause check fail-closed', () => {
     expect(published.text).toBe(page);
     expect(published.text).not.toContain('DRAFT_MARKER_9f3c');
     const missed = bookBodyAfterWriterMiss(state, packet, 'hello Mira', '');
-    expect(missed.prose).not.toContain('DRAFT_MARKER_9f3c');
+    expect(missed.prose).toBe('');
   });
 
   it('a flagged fact is not published when the repair returns nothing', async () => {
@@ -403,7 +403,8 @@ describe('clause check fail-closed', () => {
     expect(published.withheld).toBe(true);
     expect(published.text).toBe(enginePage);
     expect(again.text).toBe(enginePage);
-    expect(published.text.split(enginePage).length - 1).toBe(1);
+    // Brief 06 — withheld page is empty (honest Try again upstream), never draft or canned.
+    expect(published.text).toBe('');
     expect(published.text).not.toMatch(/last box/i);
     expect(state.character.hp).toBe(before.hp);
     expect(state.character.xp).toBe(before.xp);

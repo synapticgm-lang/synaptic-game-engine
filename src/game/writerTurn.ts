@@ -556,6 +556,7 @@ export async function runWriterTurnWithFightRetry(opts: {
   // The fact gate owns the page. A hard miss keeps the writer draft; the engine page
   // is used only when that gate leaves nothing, or the writer draft itself is empty.
   if (!done.prose.trim()) {
+    // Brief 06 — empty miss (fight-only lastResort may still paint from engine result).
     const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
     return {
       ...done,
@@ -564,7 +565,7 @@ export async function runWriterTurnWithFightRetry(opts: {
       refs: undefined,
       speech: undefined,
       remaining: writerDraftProblems(painted.prose, opts.check),
-      problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
+      problems: [...new Set([...done.problems, 'blocking draft — no canned miss page'])],
       draftRetry: 'painted',
       fightDraft,
     };

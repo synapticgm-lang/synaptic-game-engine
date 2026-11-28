@@ -34,13 +34,12 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
 
   it('New Game does not fall back to authored stitch when the live opening write fails', () => {
     expect(useGame).toContain("logger.error('new-game', 'Opening write failed'");
-    expect(useGame).toContain('applyFailedLiveOpening');
+    expect(useGame).toContain('buildFailedStorytellerPage');
     expect(useGame).not.toContain('Opening stitch failed');
     const fail = useGame.indexOf("logger.error('new-game', 'Opening write failed'");
     expect(fail).toBeGreaterThan(-1);
     const failBlock = useGame.slice(fail, fail + 2500);
-    expect(failBlock).toContain('applyFailedLiveOpening');
-    expect(failBlock).toContain('STORYTELLER_RETRY_MESSAGE');
+    expect(failBlock).toContain('buildFailedStorytellerPage');
     // Authored stitch is only in the PYOA / umbra catch branch, never the default non-PYOA path.
     expect(failBlock).toContain('if (umbraBookNew)');
   });

@@ -172,10 +172,11 @@ export function acceptObeyedStoryBody(
   if (body && !isDroughtStubProse(body) && body.length >= 24) {
     return { prose: body, notes: obeyed.notes, usedLastResort: false };
   }
+  // Brief 06 — empty miss; callers show honest Try again (no canned last-resort).
   const resort = lastResortStoryBody(state, packet);
   return {
     prose: resort.prose,
-    notes: [...obeyed.notes, 'last-resort'],
+    notes: [...obeyed.notes, 'last-resort-empty'],
     usedLastResort: true,
   };
 }

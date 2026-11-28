@@ -50,9 +50,9 @@ describe('replay bank multi lap 35', () => {
       .find(({ R, n }) => R.after(n).completedEvent?.outcome === 'set out' && R.after(n).journey?.to);
     expect(setOut, 'a replayed turn sets out').toBeTruthy();
     const st = setOut!.R.after(setOut!.n);
+    // Brief 06 — lastResort no longer paints canned travel miss prose.
     const resort = lastResortStoryBody(st, st.completedEvent!, 'Walk on');
-    expect(resort.prose).toContain(st.journey!.to);
-    expect(resort.prose).not.toMatch(/\bWalk\b|You reached|You came into/);
+    expect(resort.prose).toBe('');
   });
 
   it('[m35 long-open s79 #19 + fl150 T11 | lap 35 plural foe] the fight receipt says a group of thugs "are down"', () => {
