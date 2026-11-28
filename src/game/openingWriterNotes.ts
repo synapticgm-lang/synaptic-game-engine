@@ -127,7 +127,11 @@ export function formatOpeningPage1Rail(state: GameState): string {
     .join('\n');
 }
 
-/** Full player-input packet for the opening GM call (client builds this). */
+/**
+ * Legacy notes helper for callers that still import this name.
+ * Page-1 user leaf is `openingRequest.openingWriterFacing` (brief 05) via buildContextPrompt.
+ * Keep this as the same locked-name rail + extras so older tests and pointer-card input stay coherent.
+ */
 export function formatOpeningWriterNotes(state: GameState): string {
   const rail = formatOpeningPage1Rail(state);
   const inst = state.openingEstablishment?.instance;

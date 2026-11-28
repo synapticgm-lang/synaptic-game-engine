@@ -461,11 +461,13 @@ export async function callGmDirect(
 ): Promise<GmResult> {
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
   const prompt = buildContextPrompt(state, playerInput, activeLoreCards, settings.perspective);
-  const tokenSchema = isUnwrittenLiveOpening(state) ? OPENING_PAGE_JSON_SCHEMA : tokenBeatSchemaFor(state);
+  const openingPage = isUnwrittenLiveOpening(state);
+  const tokenSchema = openingPage ? OPENING_PAGE_JSON_SCHEMA : tokenBeatSchemaFor(state);
   const facts = engineFactsFromState(state);
   const run = async (): Promise<GmResult> => {
     let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, tokenSchema));
-    if (!text) {
+    // Brief 05 / H6 — page 1 never gets a hidden same-model re-ask; live UI shows honest Try again.
+    if (!text && !openingPage) {
       // 28l — same model, one re-ask with a no-reasoning hint (never a model switch).
       noteWriterRawIssue('empty');
       text = stripReasoningBlocks(

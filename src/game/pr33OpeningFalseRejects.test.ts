@@ -12,6 +12,7 @@ import {
   snapshotFromPickedHook,
 } from './openingInstance';
 import {
+  deriveOpeningJournal,
   fallbackOpeningPads,
   mentionsPlaceName,
   optionPronounErrors,
@@ -246,7 +247,8 @@ describe('Opening false rejects (typed / locked instance)', () => {
     if (result.ok) {
       expect(result.retried).toBe(false);
       expect(result.prose).toBe(NOLLshawDraft1Prose);
-      expect(result.journal.title).toBe('What Answered at Nollshaw Well');
+      // Brief 04 — journal title comes from typed beats / minted names, not the writer string.
+      expect(result.journal.title).toBe(deriveOpeningJournal(state).title);
       expect(result.pads).toEqual(nollshawDraft1Options);
     }
   });
