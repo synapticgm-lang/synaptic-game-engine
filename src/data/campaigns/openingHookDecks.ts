@@ -469,11 +469,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'cursed-keep': [
     {
-    place: { id: 'cursed-keep-greyhollow-at-the-inn', kind: 'inn' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached Greyhollow, at the inn',
       pressing: 'A name in the inn book before they will talk about the keep. the innkeep will not let the next hour pass unanswered.',
       location: 'Greyhollow, at the inn',
@@ -486,11 +481,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Last coach. Autumn rain already on the road behind you. The inn book is open. Greyhollow will not talk about the keep on the hill. Something in it already knows you are here.',
     },
     {
-    place: { id: 'cursed-keep-greyhollow-mill-lane-at-dusk', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached Greyhollow mill lane at dusk',
       pressing: 'The notice wants the missing child found. exhausted faces on the porch will not let the next hour pass unanswered.',
       location: 'Greyhollow mill lane at dusk',
@@ -503,13 +493,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You arrive on foot, not by coach. The mill wheel turns with no water. A child is missing three nights. The inn light is the only honest one.',
     },
     {
-    place: { id: 'cursed-keep-greyhollow-churchyard', kind: 'place' },
-    cast: [
-      { id: 'cursed-keep-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'ck-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached Greyhollow churchyard',
       pressing: 'Father Aldous wants to know if you are the face from his dream. Father Aldous will not let the next hour pass unanswered.',
       location: 'Greyhollow churchyard',
@@ -523,11 +506,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You are dropped at the church, not the inn. Fresh graves opened from the inside. Father Aldous has not slept. He looks at you as if you were in his dream.',
     },
     {
-    place: { id: 'cursed-keep-the-washed-out-road-into-greyhollow', kind: 'road' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached the washed-out road into Greyhollow',
       pressing: 'The sentries want a name and a reason you waded in. two sentries will not let the next hour pass unanswered.',
       location: 'the washed-out road into Greyhollow',
@@ -540,11 +518,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'The road is already gone. You wade the last mile. Livestock drained. The keep is a silhouette that does not match the stories.',
     },
     {
-    place: { id: 'cursed-keep-greyhollow-tavern-common-room', kind: 'room' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached Greyhollow tavern common room',
       pressing: 'The woodcutter wants help for the missing child. the woodcutter and the innkeep will not let the next hour pass unanswered.',
       location: 'Greyhollow tavern common room',
@@ -557,11 +530,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You are already in the common room when the mayor denies everything. The woodcutter will not sit. A priest’s hands shake around a cup.',
     },
     {
-    place: { id: 'cursed-keep-greyhollow-gate-after-dark', kind: 'gate' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached Greyhollow gate after dark',
       pressing: 'The militia want you inside the bar, not back in the woods. two militia will not let the next hour pass unanswered.',
       location: 'Greyhollow gate after dark',
@@ -574,13 +542,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'The gate is barred. They still let you in because the rain left you no choice. Someone on the wall watches the keep, not you.',
     },
     {
-    place: { id: 'cursed-keep-greyhollow-well-at-midnight', kind: 'place' },
-    cast: [
-      { id: 'cursed-keep-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'ck-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached Greyhollow well at midnight',
       pressing: 'Aldous wants to know what answered from the shaft. Father Aldous will not let the next hour pass unanswered.',
       location: 'Greyhollow well at midnight',
@@ -594,11 +555,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You start at the well, not the inn. The rope is cut. Aldous dreamed you would come here first.',
     },
     {
-    place: { id: 'cursed-keep-the-keep-gate-above-greyhollow', kind: 'keep' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a traveler who has just reached the keep gate above Greyhollow',
       pressing: 'The steward wants to know who sent you before the bar moves. a steward behind the oak will not let the next hour pass unanswered.',
       location: 'the keep gate above Greyhollow',
@@ -614,61 +570,31 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'shattered-coast': [
     {
-    place: { id: 'shattered-coast-the-harborside-streets-of-saltma', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'shattered-coast-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'The harborside streets of Saltmar',
       text:
         'Saltmar’s lower ward stinks of fish and lift-oil. You are a newcomer with a guild letter or a lie. The Compact is holding by habit. Something in the deep sea is not a rumor.',
     },
     {
-    place: { id: 'shattered-coast-saltmar-great-lift-landing', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'shattered-coast-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Saltmar Great Lift landing',
       text:
         'You arrive on the Great Lift, not the harbor stairs. Upper Ward faces look down. A Scribe wants your name before a Mariner does.',
     },
     {
-    place: { id: 'shattered-coast-a-saltmar-middle-ward-market', kind: 'ward' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'shattered-coast-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a Saltmar Middle Ward market',
       text:
         'Market noise, rope bridges, a job that is not the one you were hired for. Five guilds. One of them already knows you are here.',
     },
     {
-    place: { id: 'shattered-coast-saltmar-undercity-sea-caves', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'shattered-coast-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Saltmar undercity sea-caves',
       text:
         'You were smuggled in through the undercity. The Compact does not cover this door. A dragon the histories killed is a line in a wet book.',
     },
     {
-    place: { id: 'shattered-coast-a-saltmar-dock-night-shift', kind: 'dock' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'shattered-coast-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a Saltmar dock night shift',
       text:
         'Night on the Mariners’ dock. Something came up in a net that should not swim. You are paid to ask why. The Sentinels will want a cut of the answer.',
     },
     {
-    place: { id: 'shattered-coast-saltmar-athenaeum-steps', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'shattered-coast-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Saltmar Athenaeum steps',
       text:
         'You start on the Scribes’ steps with a translation job. The text mentions a dragon. The other four guilds would prefer you had not read it.',
@@ -677,61 +603,31 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'fabled-legacy': [
     {
-    place: { id: 'fabled-legacy-the-village-of-mossford', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'fabled-legacy-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'The village of Mossford',
       text:
         'Dawn in Mossford. A stranger is already bleeding in Fen’s bakery doorway. The wound will not close. Brennan looks at you as if you were in an old story.',
     },
     {
-    place: { id: 'fabled-legacy-mossford-green-at-first-light', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'fabled-legacy-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Mossford green at first light',
       text:
         'You walk onto the green as Corvin collapses. A map with a missing piece. Marta wants physics. Brennan wants the cairn left shut.',
     },
     {
-    place: { id: 'fabled-legacy-the-road-into-mossford', kind: 'road' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'fabled-legacy-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the road into Mossford',
       text:
         'Last hill before the village. You hear the bakers before you see them. A wounded courier is the most exciting thing Mossford has had in years.',
     },
     {
-    place: { id: 'fabled-legacy-mossford-church-stoop', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'fabled-legacy-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Mossford church stoop',
       text:
         'You arrive at the stoop, not the inn. Old Faith marks on the wood. The Hollow Cairn is a name nobody wanted you to learn on day one.',
     },
     {
-    place: { id: 'fabled-legacy-mossford-mill-pond', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'fabled-legacy-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Mossford mill pond',
       text:
         'Kids at the pond. Then the stranger. Then a geas-cut that will not clot. Sable wants to come. Fen does not.',
     },
     {
-    place: { id: 'fabled-legacy-mossford-elder-s-porch', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'fabled-legacy-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Mossford elder’s porch',
       text:
         'Brennan’s porch first. He already knows the wound. He will beg you not to open the cairn. He is hiding why.',
@@ -740,61 +636,31 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'millstone-road': [
     {
-    place: { id: 'millstone-road-the-muddy-road-toward-millstone-f', kind: 'road' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'millstone-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the muddy road toward Millstone Ford',
       text:
         'Three wagons. Merchant Lessa. The last escort vanished near the old mill. The crates tick at night. Bandits are the easy rumor.',
     },
     {
-    place: { id: 'millstone-road-a-roadside-tavern-before-millston', kind: 'ford' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'millstone-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a roadside tavern before Millstone Ford',
       text:
         'You take the job in a tavern, not on the road yet. The mill’s wheel turns with no water. Lessa will not open the crates.',
     },
     {
-    place: { id: 'millstone-road-the-old-mill-on-millstone-road', kind: 'road' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'millstone-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the old mill on Millstone Road',
       text:
         'You catch up at the mill, not the hire. Wheel turning dry. Missing escort gear in the weeds. The cargo is still sealed.',
     },
     {
-    place: { id: 'millstone-road-a-ford-camp-at-dusk', kind: 'ford' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'millstone-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a ford camp at dusk',
       text:
         'Camp before the flood-ford. Rain. The crates tick louder. Someone on the far bank has a lantern that is not a lantern.',
     },
     {
-    place: { id: 'millstone-road-millstone-ford-gate', kind: 'ford' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'millstone-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Millstone Ford gate',
       text:
         'You arrive as the wagons do. Gossip is flour-priced. The sealed crest on the crates is a problem the town already has.',
     },
     {
-    place: { id: 'millstone-road-a-hill-watch-above-the-caravan', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'millstone-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a hill watch above the caravan',
       text:
         'You were hired as eyes, not blades. From the hill the mill wheel is wrong. The road is a ribbon with too few people on it.',
@@ -803,61 +669,31 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'broken-crown-keep': [
     {
-    place: { id: 'broken-crown-keep-the-quiet-upper-floors-of-erno', kind: 'keep' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'broken-crown-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the quiet upper floors of Ernost Keep',
       text:
         'Upper floors are quiet. Undercroft is not. Two warbands want a dwarf hostage with a vault cipher. Clans will pay silver. The keep does not care who you are.',
     },
     {
-    place: { id: 'broken-crown-keep-the-undercroft-stair-of-ernost', kind: 'stair' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'broken-crown-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the undercroft stair of Ernost Keep',
       text:
         'You enter by the cellar stair, not the gate. Orc and troll argument-noise. A prisoner’s cough. Your call is rescue, side, or walk.',
     },
     {
-    place: { id: 'broken-crown-keep-a-camp-outside-ernost-keep', kind: 'camp' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'broken-crown-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a camp outside Ernost Keep',
       text:
         'Clan tents in the ruin’s shadow. They want the hostage alive. The keep’s upper hall is a lie of peace.',
     },
     {
-    place: { id: 'broken-crown-keep-ernost-gatehouse-at-dusk', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'broken-crown-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Ernost gatehouse at dusk',
       text:
         'Gatehouse first. No guards who still work for a crown. A note: the cipher is downstairs. So is everyone who wants it.',
     },
     {
-    place: { id: 'broken-crown-keep-a-collapsed-chapel-in-ernost', kind: 'chapel' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'broken-crown-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a collapsed chapel in Ernost',
       text:
         'You come in through the chapel hole. Below, warbands. Above, pigeons. The prisoner knows a number you do not.',
     },
     {
-    place: { id: 'broken-crown-keep-ernost-hostage-pit-you-are-not', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'broken-crown-keep-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Ernost hostage pit (you are not the hostage)',
       text:
         'You find the pit before the politics. The dwarf is alive. Both warbands are one corridor away. First page is who you tell.',
@@ -866,61 +702,31 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'verdant-blight': [
     {
-    place: { id: 'verdant-blight-the-blight-edge-village', kind: 'blight' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'verdant-blight-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the blight-edge village',
       text:
         'Green that is the wrong green. Crops that move. The village hired you because the last ranger did not come back. Something in the wood wants names.',
     },
     {
-    place: { id: 'verdant-blight-a-blighted-farm-lane', kind: 'farm' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'verdant-blight-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a blighted farm lane',
       text:
         'You arrive at a lane that was a field last season. The blight has a pulse. A child says the trees learned to walk.',
     },
     {
-    place: { id: 'verdant-blight-the-ranger-station-at-the-veil', kind: 'station' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'verdant-blight-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the ranger station at the veil',
       text:
         'Empty station. Maps with new ink. Your job is the wood. The wood is already in the station.',
     },
     {
-    place: { id: 'verdant-blight-a-shrine-swallowed-by-blight', kind: 'shrine' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'verdant-blight-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a shrine swallowed by blight',
       text:
         'Stone saints under vine. The priest is gone. The blight is listening. First choice is cut, burn, or talk.',
     },
     {
-    place: { id: 'verdant-blight-a-river-ford-turning-green', kind: 'ford' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'verdant-blight-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a river ford turning green',
       text:
         'Ford water is syrup-green. Wagons will not cross. Something downstream is blooming on purpose.',
     },
     {
-    place: { id: 'verdant-blight-the-village-moot-about-the-blight', kind: 'blight' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'verdant-blight-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the village moot about the blight',
       text:
         'Moot first. They will not agree. You are the outsider they will blame if the wood wins. The blight does not wait for votes.',
@@ -929,61 +735,31 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'stillroot-veil': [
     {
-    place: { id: 'stillroot-veil-the-peat-path-into-stillroot', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'stillroot-veil-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the peat-path into Stillroot',
       text:
         'Lantern of peat-oil. Shadows that point at moving corpses. The veil is a wet wood that remembers. You were asked to walk in. Coming out is extra.',
     },
     {
-    place: { id: 'stillroot-veil-stillroot-village-palisade', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'stillroot-veil-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Stillroot village palisade',
       text:
         'Palisade first. They bar the gate at dusk because the dead walk toward light. Your lantern might be a mistake.',
     },
     {
-    place: { id: 'stillroot-veil-a-stillroot-funeral-that-will-not', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'stillroot-veil-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a Stillroot funeral that will not stay down',
       text:
         'You arrive for a burial. The buried do not agree. Stillroot’s rule is quiet and cruel. The veil wants a second name.',
     },
     {
-    place: { id: 'stillroot-veil-peat-cutters-camp', kind: 'camp' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'stillroot-veil-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'peat-cutters’ camp',
       text:
         'Camp on the cuts. Something in the peat sits up. The cutters want you to be the one who checks.',
     },
     {
-    place: { id: 'stillroot-veil-a-drowned-chapel-in-the-veil', kind: 'chapel' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'stillroot-veil-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a drowned chapel in the veil',
       text:
         'Chapel floor is water. Saints look the wrong way. A corpse in the pew is not at rest. Your lantern’s shadow argues.',
     },
     {
-    place: { id: 'stillroot-veil-stillroot-inn-after-a-failed-watc', kind: 'inn' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'stillroot-veil-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Stillroot inn after a failed watch',
       text:
         'The watch failed. The inn is full of people who will not say what they saw. You still have a bed if you take the next watch.',
@@ -992,13 +768,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'thornferry-road': [
     {
-    place: { id: 'thornferry-road-the-mill-landing-at-thornferry', kind: 'place' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the mill landing at Thornferry',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1'],
@@ -1010,14 +779,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Dawn on the mill landing. Ferry rope wet. Wren Holt waits with a sealed charter: walk the road together, or walk it alone. The next page is that answer.',
     },
     {
-    place: { id: 'thornferry-road-the-ferry-inn-at-thornferry', kind: 'ferry' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-      { id: 'thornferry-road-cast-2', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-3' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the ferry inn at Thornferry',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1', 'tf-npc-3'],
@@ -1029,13 +790,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Inn first, landing second. Wren is already arguing with Pell’s coin. The charter is on the table. You can still walk away.',
     },
     {
-    place: { id: 'thornferry-road-the-ford-below-thornferry', kind: 'ford' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the ford below Thornferry',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1'],
@@ -1047,13 +801,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You meet the crisis at the ford, not the mill. Wet rope, a charter, a companion who might be a problem. The magistrate’s man is on the far bank.',
     },
     {
-    place: { id: 'thornferry-road-thornferry-chapel-stoop', kind: 'chapel' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Thornferry chapel stoop',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1'],
@@ -1065,14 +812,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Chapel first. Bless or refuse. Wren finds you with the charter anyway. The road does not care about hymns.',
     },
     {
-    place: { id: 'thornferry-road-a-side-path-off-thornferry-road', kind: 'road' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-      { id: 'thornferry-road-cast-2', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-3' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'a side-path off Thornferry Road',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1', 'tf-npc-3'],
@@ -1084,13 +823,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You start on a side job. The mill landing is a rumor behind you. Wren still has the question. Pell still has coin.',
     },
     {
-    place: { id: 'thornferry-road-thornferry-mill-at-last-light', kind: 'place' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'Thornferry mill at last light',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1'],
@@ -1102,13 +834,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Dusk, not dawn. The ferry is already late. Wren’s question is sharper. The charter is heavier.',
     },
     {
-    place: { id: 'thornferry-road-the-magistrate-s-porch-at-thornf', kind: 'place' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the magistrate’s porch at Thornferry',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1'],
@@ -1120,13 +845,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Magistrate’s porch. The mill is a rumor. Wren still has the charter. The clerk wants a name for the writ.',
     },
     {
-    place: { id: 'thornferry-road-the-mill-loft-before-wren-finds-', kind: 'loft' },
-    cast: [
-      { id: 'thornferry-road-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'tf-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'thornferry-road-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       location: 'the mill loft before Wren finds you',
       faction: 'Wren Holt',
       castNpcIds: ['tf-npc-1'],

@@ -22,14 +22,6 @@ const DECKS_TYPED_SO_FAR = [
   'ascending-spire',
   'inkbound-academy',
   'hollow-core',
-  'cursed-keep',
-  'shattered-coast',
-  'fabled-legacy',
-  'millstone-road',
-  'broken-crown-keep',
-  'verdant-blight',
-  'stillroot-veil',
-  'thornferry-road',
 ] as const;
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
