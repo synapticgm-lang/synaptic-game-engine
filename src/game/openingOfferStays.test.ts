@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { commitOfferedPad } from './playTranscript';
-import { keepOpeningOfferInSlots } from './fourSlotPads';
+import { assembleFourSlotPads } from './fourSlotPads';
 import { openingOfferPads } from './openingEstablishment';
 import { applyOpeningOfferChoice } from './openingOffer';
 import { isFreeInputChip } from './sceneAffordances';
@@ -92,7 +92,7 @@ describe('opening offer chips stay until the player decides', () => {
       ...s,
       activeEncounter: { id: 'e1', name: 'Test Foe', hp: 5, maxHp: 5, phase: 'active' } as unknown as GameState['activeEncounter'],
     } as GameState;
-    const pads = engine(keepOpeningOfferInSlots(fight, ['Attack', 'Defend', 'Use something', 'Disengage']));
+    const pads = engine(assembleFourSlotPads(fight, ['Attack', 'Defend', 'Use something', 'Disengage']));
     expect(pads).not.toContain(ACCEPT);
     expect(pads).not.toContain(REFUSE);
   });

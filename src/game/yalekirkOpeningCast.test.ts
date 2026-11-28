@@ -1,10 +1,11 @@
 /**
  * PR35 — Yalekirk / Ash Court opening: mint occupancy, no bible catalog pins,
- * no forced rite completion, no invented clash.
+ * no forced rite completion, no invented clash, no Check System scene pad.
  */
 import { describe, expect, it } from 'vitest';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import { createInitialState } from './defaults';
+import { assembleFourSlotPads } from './fourSlotPads';
 import { deriveOpeningJournal } from './liveOpening';
 import { ensureXpNarration } from './narrativeSanitize';
 import {
@@ -135,4 +136,16 @@ describe('PR35 Yalekirk Ash Court opening', () => {
     expect(fight).toMatch(/The clash leaves you wiser — you gain 25 XP/);
   });
 
+  it('keeps Check System out of the four scene pads', () => {
+    const state = { ...attachAsh(), turn: 1, openingEstablishment: { ...attachAsh().openingEstablishment!, sceneWritten: true } };
+    const pads = assembleFourSlotPads(state, [
+      'Check System',
+      'Look around',
+      'Wait and listen',
+      'Travel toward Lowmarket',
+    ]);
+    expect(pads.some((c) => /^Check System/i.test(c))).toBe(false);
+    const scene = pads.filter((c) => !/^(?:Say something|Do something else)/i.test(c));
+    expect(scene).toHaveLength(4);
+  });
 });

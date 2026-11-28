@@ -8,19 +8,6 @@ export type Rng = () => number;
 /** Mulberry32 — deterministic [0,1) from a 32-bit seed. */
 export { mulberry32 } from './seededRng';
 
-/**
- * Labels Fate / autoplay may pick from. Pass {@link systemPromptPad} chips when a
- * System setup step is open — same source ActionBar uses — without merging them
- * into the scene pad. Empty / absent system chips → scene actions.
- */
-export function fatePickPool(
-  sceneActions: string[],
-  systemChips?: readonly string[] | null
-): string[] {
-  if (systemChips?.length) return [...systemChips];
-  return sceneActions;
-}
-
 /** Pick one of `actions` (ActionBar Fate's Pick). Empty → fallback. */
 export function pickFateChoice(
   actions: string[],

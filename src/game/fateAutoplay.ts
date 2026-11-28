@@ -90,9 +90,7 @@ import {
   transportRetryBackoffMs,
 } from './errorRepairWarden';
 import { applyFactLocks } from './factLocks';
-import { fatePickPool, mulberry32, pickWeightedChoice, type Rng } from './fatePick';
-import { systemPromptPad } from './rules/abilityPoints';
-import { classOfferPad } from './rules/characterClass';
+import { mulberry32, pickWeightedChoice, type Rng } from './fatePick';
 import { formatTabletopSheet, seedNumber } from './tabletop/characterBuild';
 import { autoTabletopCreation, creationRecord } from './tabletop/creationFlow';
 import { seedWorldLedgerFactions } from './factionStandings';
@@ -1436,12 +1434,10 @@ export async function headlessFateTurn(
   // q45-OCD3: record the pad the player saw this turn (not the post-commit next pad).
   const offeredPadAtStart = state.offeredPad;
   const offeredChipsAtStart = offeredPadAtStart?.chips;
-  const sceneOffered = shapeLiveTurnPad(
+  const offered = shapeLiveTurnPad(
     state,
     offeredPadAtStart?.choices?.length ? offeredPadAtStart.choices : resolveOfferedChoices(state),
   );
-  // Setup chips stay on the System row (not the scene pad); pick from systemPromptPad when open.
-  const offered = fatePickPool(sceneOffered, systemPromptPad(state, classOfferPad(state))?.chips);
   const fatePick =
     meta.playerInputOverride?.trim()
       ? meta.playerInputOverride.trim()
