@@ -1708,11 +1708,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
 
   'salt-road-heist': [
     {
-    place: { id: 'salt-road-heist-a-warehouse-loft', kind: 'loft' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at a warehouse loft',
       pressing: 'First move is yours — the plan, the cut, or the walk. the crew is waiting on your move.',
       location: 'a warehouse loft',
@@ -1725,11 +1720,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Crew. Map. Salt-tax ledger on a Consul caravan. Heat is still zero. Trust is not. First page is the plan, the cut, or the walk.',
     },
     {
-    place: { id: 'salt-road-heist-a-salt-road-waystation', kind: 'road' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at a Salt Road waystation',
       pressing: 'The enforcer wants to hear why you are late. an enforcer is waiting on your move.',
       location: 'a Salt Road waystation',
@@ -1742,11 +1732,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You join the crew at a waystation, not a loft. The caravan is a day out. Someone already sold a name.',
     },
     {
-    place: { id: 'salt-road-heist-the-consul-caravan-s-night-camp', kind: 'camp' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at the Consul caravan’s night camp',
       pressing: 'The thief wants your move on the lockbox. the thief beside you is waiting on your move.',
       location: 'the Consul caravan’s night camp',
@@ -1759,13 +1744,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'You start on the job, not the planning. The ledger is in a locked wagon. Heat will rise if you go loud.',
     },
     {
-    place: { id: 'salt-road-heist-a-salt-road-tavern-hire', kind: 'road' },
-    cast: [
-      { id: 'salt-road-heist-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'salt-road-heist-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at a Salt Road tavern hire',
       pressing: 'Vessa wants a cutter and a name she can use. Vessa is waiting on your move.',
       location: 'a Salt Road tavern hire',
@@ -1779,11 +1757,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Tavern. Vessa wants a cutter. The score is politics wearing a padlock. Rivals want your names before you have one.',
     },
     {
-    place: { id: 'salt-road-heist-a-cliff-path-above-the-caravan-r', kind: 'road' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at a cliff path above the caravan road',
       pressing: 'The scout wants who leads — wait, strike, or abort. the scout is waiting on your move.',
       location: 'a cliff path above the caravan road',
@@ -1796,11 +1769,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Eyes on the road. The crew is late. The ledger is a rumor with guards. First choice is wait, steal early, or abort.',
     },
     {
-    place: { id: 'salt-road-heist-a-safehouse-after-a-rehearsal-go', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at a safehouse after a rehearsal gone loud',
       pressing: 'The muscle wants a name to give if the watch kicks the door. the muscle is waiting on your move.',
       location: 'a safehouse after a rehearsal gone loud',
@@ -1813,13 +1781,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Rehearsal already made Heat. The real score is worse. Someone wants out. The Consul does not know — yet.',
     },
     {
-    place: { id: 'salt-road-heist-a-salt-pan-camp-at-dawn', kind: 'camp' },
-    cast: [
-      { id: 'salt-road-heist-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'salt-road-heist-npc-1' },
-    ],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at a salt-pan camp at dawn',
       pressing: 'The cutter wants to hear if you lead, cut, or walk. Vessa is waiting on your move.',
       location: 'a salt-pan camp at dawn',
@@ -1833,11 +1794,6 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
         'Salt pans at dawn. The loft is a rumor. The caravan is two ridges over. First move is still yours.',
     },
     {
-    place: { id: 'salt-road-heist-the-consul-counting-house-back-d', kind: 'place' },
-    cast: [],
-    offer: { items: [] },
-    rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
-    beatOrder: ['arrive', 'panel'],
       who: 'a cutter on the Salt Road crew, starting at the Consul counting-house back door',
       pressing: 'The lockpick wants your word before the grate. a hired lockpick is waiting on your move.',
       location: 'the Consul counting-house back door',
