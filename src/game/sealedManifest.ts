@@ -162,13 +162,12 @@ export function formatSealedManifestBlock(manifest: SceneManifest): string {
 const HUD_FACT_BLEED = /\bPC:\s*\S+.*\bHP:\s*\d|\bXP:\s*\d{1,4}\b(?!\s*(?:Gained|from|for))/i;
 
 /**
- * Detect HUD fact bleed / engine chrome in prose.
- * Brief 06: BANNED_FALLBACK_STUB phrase bank deleted — do not reintroduce canned-stub regexes.
+ * Detect HUD fact bleed in prose (PC/HP/XP chrome).
+ * Brief 06: BANNED_FALLBACK_STUB and leftover stub-phrase regexes deleted — do not reintroduce them.
  */
 export function isBannedFallbackStub(text: string | undefined): boolean {
   if (!text?.trim()) return false;
-  return HUD_FACT_BLEED.test(text)
-    || /\bthe beat does not freeze\b|\bis still engaged\s*[—–-]/i.test(text);
+  return HUD_FACT_BLEED.test(text);
 }
 
 /** Hard stop after one recovery commit — next empty GM must FAIL (Class A). */
