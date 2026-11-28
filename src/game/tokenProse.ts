@@ -55,7 +55,10 @@ const UNBOUND_ANIMATE = new RegExp(
   `\\b(?:(?:a|an|the)\\s+${ROLE_DESC}(?:${ROLE_NOUNS.join('|')})|(?:two|three|four|five|six|both|several)\\s+${ROLE_DESC}(?:${ROLE_NOUNS.join('|')})(?:e?s)?)\\b`,
   'i'
 );
+/** Ledger tokens: `@tN` (preferred) or bare `tN` if the writer dropped the `@`. */
 const TOK_RE = /@t(\d+)\b/g;
+/** Fresh each call — global regexes keep lastIndex across matchAll/replace. */
+const tokPaintRe = () => /(?:@t(\d+)\b|\bt(\d+)\b)/gi;
 function tidy(text: string): string {
   return (text ?? '')
     .replace(/\s{2,}/g, ' ')
@@ -544,10 +547,15 @@ export function lineHasUnboundAnimate(text: string, handedRoles: readonly string
 }
 function toksInText(text: string): string[] {
   const found: string[] = [];
-  const re = new RegExp(TOK_RE.source, 'g');
+  const seen = new Set<string>();
+  // Prefer `@tN`; also count bare `tN` so unresolved digits never reach the book as holes.
+  const re = /@t(\d+)\b|\b(?<!@)t(\d+)\b/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text ?? ''))) {
-    found.push(`t${m[1]}`);
+    const id = `t${m[1] ?? m[2]}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    found.push(id);
   }
   return found;
 }
@@ -1071,10 +1079,21 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
     const said = line.written ?? (line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text);
     const once = dropTypedNameAfterToken(said, (tok) => byTok.get(tok)?.display);
     let next = once.replace(
-      /(\b(?:the|a|an)\s+)?@t(\d+)\b(['’]s\b)?/gi,
-      (_m, art: string | undefined, n: string, poss: string | undefined, offset: number, src: string) => {
+      /(\b(?:the|a|an)\s+)?(?:@t(\d+)\b|\bt(\d+)\b)(['’]s\b)?/gi,
+      (
+        _m,
+        art: string | undefined,
+        atN: string | undefined,
+        bareN: string | undefined,
+        poss: string | undefined,
+        offset: number,
+        src: string,
+      ) => {
+        const n = atN ?? bareN ?? '';
         const row = byTok.get(`t${n}`);
-        if (!row?.display) return art ?? '';
+        // Missing display: never blank the slot mid-sentence (that made "The was long" / "map,.").
+        // Line filter already drops unresolved toks; keep the raw token only as a last resort.
+        if (!row?.display) return _m;
         painted.add(row.display);
         const paint = paintDisplay(row, src, offset + (art?.length ?? 0), possessive);
         // A display that brings its own determiner ("one frightened priest") takes no second article.
@@ -1301,8 +1320,17 @@ export function salvageTokenJsonProse(raw: string, enumRefs: LedgerRef[]): strin
 }
 export function paintTokensOrDrop(text: string, display: (tok: string) => string | undefined): string {
   const sentences = splitProseSentences(dropTypedNameAfterToken(text ?? '', display));
-  const kept = sentences.filter((s) => [...s.matchAll(/@t(\d+)\b/gi)].every((t) => display(`t${t[1]}`.toLowerCase())));
-  return tidy(kept.map((s) => s.replace(/@t(\d+)\b/gi, (_m, n: string) => display(`t${n}`.toLowerCase()) ?? '')).join(' '));
+  // Unresolved `@tN` / bare `tN`: drop the sentence — never blank the slot (holes like "toward the,").
+  const tokId = (m: RegExpMatchArray) => `t${(m[1] ?? m[2] ?? '').toLowerCase()}`;
+  const kept = sentences.filter((s) => [...s.matchAll(tokPaintRe())].every((t) => display(tokId(t))));
+  return tidy(
+    kept
+      .map((s) => s.replace(tokPaintRe(), (_m, atN: string | undefined, bareN: string | undefined) => {
+        const painted = display(`t${(atN ?? bareN ?? '').toLowerCase()}`);
+        return painted ?? _m;
+      }))
+      .join(' ')
+  );
 }
 /** The accepted speech lines of a beat: the declared speaker's ledger row and the words, tokens painted. */
 export function spokenLinesOf(beat: TokenBeat, enumRefs: LedgerRef[]): SpokenLine[] {

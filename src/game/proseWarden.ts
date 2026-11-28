@@ -894,18 +894,12 @@ export function scrubPronounSubjectSlips(text: string): string {
   return next;
 }
 /**
- * T10AH — bare internal ref ids (`inside t1`, `toward t3`) never belong in the book.
- * Token paint owns `@tN`; a leaked digit-id without `@` is dropped to the surrounding noun.
+ * Retired (2026-11-28): deleting bare `tN` mid-sentence left book holes
+ * ("The was long", "toward the,", "map,."). Token paint owns `@tN` / bare `tN`
+ * (paint or drop the sentence). Never strip words out of a kept sentence.
  */
 export function scrubInternalRefIds(text: string): string {
-  if (!text || !/\bt\d+\b/i.test(text)) return text;
-  return text
-    .replace(/\binside\s+t\d+\b/gi, 'inside')
-    .replace(/\b(?:toward|towards|at|to|from|near|by|on|in)\s+t\d+\b/gi, (m) => m.replace(/\s+t\d+\b/i, ''))
-    .replace(/(^|[^\w@])t(\d+)\b/g, '$1')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/\s+([.,;:!?])/g, '$1')
-    .trim();
+  return text ?? '';
 }
 
 /**
@@ -1462,7 +1456,6 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     const r = String(role || '').trim();
     return r ? `the ${r.charAt(0).toLowerCase()}${r.slice(1)}` : 'the mentor';
   });
-  next = scrubInternalRefIds(next);
   next = scrubLongPlacePossessive(next);
   if (ctx?.ledgerState) {
     next = obeyLedgerNouns(next, ctx.ledgerState, undefined, ctx.isThisTurnsEvent).prose;
