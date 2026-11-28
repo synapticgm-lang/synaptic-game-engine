@@ -27,6 +27,7 @@
  *   AI_PLAYER_HOST=http://127.0.0.1:5173
  *   AI_PLAYER_CDP=http://127.0.0.1:9222
  *   AI_PLAYER_MODEL=deepseek/deepseek-v4-pro
+ *   AI_PLAYER_WRITER_MISS_TURN=<n>  (opt-in: force one story turn's gm-turn to empty miss)
  */
 import fs from 'fs';
 import path from 'path';
@@ -112,6 +113,10 @@ import {
   pickDriverOption,
   resolvePickSeed,
 } from './randomPick.mjs';
+import {
+  createWriterMissController,
+  parseWriterMissTurn,
+} from './writerMiss.mjs';
 
 loadProjectEnv();
 
@@ -132,6 +137,8 @@ const pickMode = parsePickMode(args);
 const randomPick = pickMode === 'random';
 const pickSeed = resolvePickSeed(args);
 const pickRng = createPickRng(pickSeed);
+const writerMissTurn = parseWriterMissTurn();
+const writerMiss = createWriterMissController(writerMissTurn);
 const personaArgs = parsePersonaArgs(args);
 const persona = loadPersona(personaArgs);
 const personaBlock = buildPersonaPromptBlock(persona);
@@ -991,6 +998,13 @@ async function playBible(gamePage, bibleId, opts = {}) {
     let typeOverlay = null;
     let kind = decision.action_kind || (decision.kind === 'free' ? 'type' : 'chip');
     if (chipsOnly) kind = 'chip';
+    // Opt-in: arm one gm-turn intercept for this upcoming story turn only.
+    if (!setup && writerMiss.enabled) {
+      const upcoming = storyTurnNo + 1;
+      if (writerMiss.armForStoryTurn(upcoming)) {
+        console.log(`[ai-player] armed forced writer miss for story T${upcoming}`);
+      }
+    }
     const fightLive = afterThumb.autoFightReady || snap.autoFightReady
       || afterThumb.combatChips || snap.combatChips;
     let submitStamp = null;
@@ -1368,6 +1382,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
       }));
       if (setup && acted) setupPickCount += 1;
     } else {
+      if (!setup) storyTurnNo += 1;
       appendPlayLog(playLogPath, formatPlayLogLine({
         turn,
         wanted: persona.goal || decision.note || 'progress the scene',
@@ -1376,6 +1391,10 @@ async function playBible(gamePage, bibleId, opts = {}) {
         thumb: finalThumb,
         reason: finalReason,
       }));
+    }
+    if (!setup) {
+      const missNote = writerMiss.playLogNote(storyTurnNo);
+      if (missNote) appendPlayLog(playLogPath, missNote);
     }
     lastPlayer = acted;
     recentActions.push(acted);
@@ -1519,6 +1538,7 @@ async function main() {
     persona: { id: persona.id, goal: persona.goal },
     pick: pickMode,
     pickSeed: randomPick ? pickSeed : undefined,
+    writerMissTurn: writerMiss.enabled ? writerMiss.missTurn : undefined,
     playerBrain: randomPick ? 'random' : 'openrouter',
     playerModel,
     playerLicence,
@@ -1532,6 +1552,10 @@ async function main() {
 
   try {
     const gamePage = await attachGameTab(browser);
+    await writerMiss.install(gamePage);
+    if (writerMiss.enabled) {
+      console.log(`[ai-player] AI_PLAYER_WRITER_MISS_TURN=${writerMiss.missTurn} (opt-in forced miss on that story turn)`);
+    }
     if (loginCheck) {
       await showGameMenu(gamePage);
       const login = await loginFounderEmail(gamePage, email, password);

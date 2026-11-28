@@ -69,4 +69,5 @@ node scripts/ai-player-browser/run.mjs --pick=random --bible=summoned-pact --see
 
 `AI_PLAYER_EMAIL` / `AI_PLAYER_PASSWORD` / `OPENROUTER_API_KEY` (not required for `--pick=random`)  
 `AI_PLAYER_PICK` · `AI_PLAYER_SEED` · `AI_PLAYER_HOST` · `AI_PLAYER_CDP` · `AI_PLAYER_MODEL` (default `deepseek/deepseek-v4-pro`)  
+`AI_PLAYER_WRITER_MISS_TURN=<n>` (opt-in) — on story turn **n** only, intercept the browser’s `POST …/functions/v1/gm-turn` with `mode:"turn"` and fulfil it as the live empty-writer shape (`502` + `rawIssue:"empty"`). The client then paints honest Try again (`STORYTELLER_RETRY_MESSAGE` + one Try again chip). Other turns are untouched. `play-log.md` marks that turn as a forced miss. Unset or `0` = off.  
 `VITE_SUPABASE_URL` · `VITE_SUPABASE_ANON_KEY` (feedback read-back; never service role at runtime)
