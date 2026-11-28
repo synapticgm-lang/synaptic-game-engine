@@ -276,7 +276,7 @@ export function establishmentChoices(
   const current = pending[0];
   if (!current) return [];
   // A question on screen gets answers to that question (typed text answers it too), as many as the mode's pad.
-  const cap = state?.engineMode === 'dnd' ? 3 : 4; // residual D5 — live pad uses finalOptions
+  const cap = state?.engineMode === 'dnd' ? 3 : 4;
   // Pack 12: Use seed-varied quick-response buttons for kit/appearance/location
   if (openingFastSetupChipsEnabled(settings) && state && supportsQuickResponseButtons(current.kind)) {
     const quickButtons = pickQuickResponseButtons(state, current.kind);

@@ -62,9 +62,10 @@ describe('finalOptions — exact 4/4/3 scene pad, setup excluded', () => {
     for (const label of scene) {
       expect(isSetupOption(state, label), label).toBe(false);
     }
-    expect(
-      scene.some((c) => /walk on/i.test(c) || /turn back/i.test(c) || /look around|wait and listen|search the area/i.test(c))
-    ).toBe(true);
+
+    // Membership: scene pad comes from the non-setup candidates (order preserved), not phrase matching.
+    const sceneCandidates = mixed.filter((c) => !isSetupOption(state, c));
+    expect(scene).toEqual(sceneCandidates.slice(0, n));
 
     const setup = setupOptionLabels(state);
     for (const label of setupish) {
