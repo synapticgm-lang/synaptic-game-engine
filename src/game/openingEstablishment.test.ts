@@ -6,6 +6,7 @@ import { pickPcGivenName } from './pcNamePicker';
 import {
   applyHarvestedOpeningCovers,
   applyOpeningAnswer,
+  coverContinuePads,
   extractGivenName,
   establishmentChoices,
   harvestEarthOriginFromProse,
@@ -306,5 +307,52 @@ describe('opening kit vs clothes', () => {
     const chest = inv.find((i) => i.slot === 'Chest' || i.slot === 'Body');
     expect(chest?.name ?? '').not.toMatch(/bag/i);
     expect(inv.some((i) => /bag/i.test(i.name))).toBe(true);
+  });
+});
+
+describe('name cover — refuse / give chip / no canned book page', () => {
+  function nameOnlyBeforeLive(): GameState {
+    const base = summonedNameCover();
+    return {
+      ...base,
+      log: [],
+      choices: establishmentChoices([{ id: 'name', kind: 'name', question: 'What name?' }], base),
+      openingEstablishment: {
+        ...base.openingEstablishment!,
+        pending: [{ id: 'name', kind: 'name', question: 'What name?' }],
+        sceneWritten: false,
+        complete: false,
+      },
+    };
+  }
+
+  it('refusing the name completes the step and proceeds to the live opening with no re-ask', async () => {
+    const before = nameOnlyBeforeLive();
+    expect(before.log.filter((e) => e.role === 'gm')).toHaveLength(0);
+
+    const result = await applyOpeningAnswer(before, 'Refuse to give a name');
+    expect(result.generateOpening).toBe(true);
+    expect(result.state.openingEstablishment?.complete).toBe(true);
+    expect(result.state.openingEstablishment?.pending).toEqual([]);
+    expect(result.state.openingEstablishment?.declinedFields).toContain('name');
+    expect(result.state.character.name).toBe('Unknown Survivor');
+
+    const gmBodies = result.state.log.filter((e) => e.role === 'gm').map((e) => e.content);
+    expect(gmBodies).toEqual([]);
+    expect(gmBodies.join('\n')).not.toMatch(/still waiting for a name/i);
+    expect(gmBodies.join('\n')).not.toMatch(/What name/i);
+
+    const pads = coverContinuePads(result.state).join(' | ');
+    expect(pads).not.toMatch(/Give your name/i);
+    expect(pads).not.toMatch(/Refuse to give a name/i);
+  });
+
+  it('Give your name with no typed text posts no GM line and keeps the name cover', async () => {
+    const before = nameOnlyBeforeLive();
+    const result = await applyOpeningAnswer(before, 'Give your name');
+    expect(result.generateOpening).toBe(false);
+    expect(result.state.openingEstablishment?.pending[0]?.kind).toBe('name');
+    expect(result.state.log.filter((e) => e.role === 'gm')).toHaveLength(0);
+    expect(result.state.log).toEqual(before.log);
   });
 });

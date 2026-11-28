@@ -779,11 +779,3 @@ export async function writeLiveOpening(
   };
 }
 
-export function originOnlyOpeningText(state: GameState): string {
-  const q = state.openingEstablishment?.pending?.[0]?.question?.trim();
-  const start = state.openingEstablishment?.registrar?.startLine?.trim();
-  if (q && start) return `${start} ${q}`.replace(/\s+/g, ' ').trim();
-  if (q) return q;
-  if (start) return start;
-  return 'Before the first page, the story needs a name. What do you enter?';
-}

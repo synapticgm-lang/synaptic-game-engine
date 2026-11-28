@@ -2396,6 +2396,13 @@ export function coverContinuePads(state: GameState, opts: { pinRite?: boolean } 
       ? liveCoverPads(state, ['Who are you', ...coverLookPads(state)])
       : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)])));
   }
+  // Name given, refused, or randomised already — never re-offer the name cover.
+  if (
+    state.openingEstablishment?.complete === true
+    || (state.openingEstablishment?.declinedFields ?? []).includes('name')
+  ) {
+    return finish(withOfferPads(state, liveCoverPads(state, coverLookPads(state))));
+  }
   return finish(['Give your name', 'Refuse to give a name']);
 }
 /** The open card offer's accept / refuse chips lead; the cover pads fill the rest, three in all. */
@@ -3309,6 +3316,15 @@ export async function applyOpeningAnswer(
   }
   const answer = stripChoicePrefix(rawInput);
   if (!answer) return { state, generateOpening: false };
+  const currentCoverKind = est.pending[0]?.kind;
+  // "Give your name" only focuses the existing name input — no GM re-ask line.
+  if (
+    currentCoverKind === 'name'
+    && isNameCoverChip(answer)
+    && /^give\b/i.test(answer)
+  ) {
+    return { state, generateOpening: false };
+  }
   const harvest = harvestUtterance(answer);
   if (harvest.appearance && (isJunkSetupValue(harvest.appearance) || !extractAppearance(answer))) {
     harvest.appearance = null;
@@ -3533,6 +3549,12 @@ export async function applyOpeningAnswer(
       }
     }
     if (prompt.kind === 'name' && !value) {
+      // Refuse is a valid name-step answer: keep unnamed designation and drop the cover.
+      if (isCurrent && isNameRefusalUtterance(answer)) {
+        if (!declined.includes('name')) declined.push('name');
+        markCoverResolved(prompt, '');
+        continue;
+      }
       stillPending.push(prompt);
       continue;
     }
@@ -3600,17 +3622,31 @@ export async function applyOpeningAnswer(
     const extra = [aside, cheatLine].filter(Boolean).join('\n');
     const lookAroundNotCover =
       isLookAroundAction(answer) && !playerEngagesOpeningCover(answer);
-    const demandNotCover = isPlayDemand(answer) && !playerGivesOrRefusesName(answer);
-    const parseFail =
-      est.pending[0]?.kind === 'name' && !harvest.name && !lookAroundNotCover && !demandNotCover
-        ? 'They are still waiting for a name you will own.'
-        : '';
     const coverChoices = lookAroundNotCover ? [] : establishmentChoices(stillPending, nextState);
+    const withPlayer = {
+      ...nextState,
+      openingEstablishment: {
+        ...est,
+        pending: stillPending,
+        answers,
+        complete: false,
+        registrar,
+        declinedFields: declined,
+        sceneWritten: est.sceneWritten,
+      },
+      choices: coverChoices,
+      log: appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
+      lastUpdated: Date.now(),
+    };
+    // Name cover stays on chips / input only — never write the name question into the book.
+    if (next.kind === 'name') {
+      return { generateOpening: false, state: withPlayer };
+    }
     const gmEntry = {
       id: crypto.randomUUID(),
       turn: nextState.turn,
       role: 'gm' as const,
-      content: formatRegistrarLine(registrar, parseFail || next.question, {
+      content: formatRegistrarLine(registrar, next.question, {
         extra: extra || undefined,
         style: next.style ?? 'inworld',
       }),
@@ -3620,22 +3656,8 @@ export async function applyOpeningAnswer(
     return {
       generateOpening: false,
       state: {
-        ...nextState,
-        openingEstablishment: {
-          ...est,
-          pending: stillPending,
-          answers,
-          complete: false,
-          registrar,
-          declinedFields: declined,
-          sceneWritten: est.sceneWritten,
-        },
-        choices: coverChoices,
-        log: [
-          ...appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
-          gmEntry,
-        ],
-        lastUpdated: Date.now(),
+        ...withPlayer,
+        log: [...withPlayer.log, gmEntry],
       },
     };
   }

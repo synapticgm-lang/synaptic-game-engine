@@ -25,9 +25,11 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
 
   it('origin covers stay local; non-PYOA page 1 is a live opening write', () => {
     expect(useGame).toContain('paintLiveOpeningPage');
-    expect(useGame).toContain('originOnlyOpeningText');
+    expect(useGame).not.toContain('originOnlyOpeningText');
     expect(useGame).toContain('STORYTELLER_RETRY_MESSAGE');
     expect(useGame).toContain('wantsLivePage');
+    // Name/origin covers commit chips only — empty book log until writeLiveOpening.
+    expect(useGame).toMatch(/log:\s*\[\s*\]/);
   });
 
   it('New Game does not fall back to authored stitch when the live opening write fails', () => {

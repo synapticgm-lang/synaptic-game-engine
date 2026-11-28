@@ -174,7 +174,6 @@ import {
   applyFailedLiveOpening,
   isBlankOpeningProse,
   openingProseLeaksStructuredJson,
-  originOnlyOpeningText,
   STORYTELLER_RETRY_MESSAGE,
   STORYTELLER_RETRY_CHIP,
 } from './liveOpening';
@@ -5747,23 +5746,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (!umbraBookNew) {
         const pendingNow = newState.openingEstablishment?.pending ?? [];
         if (pendingNow.length && newState.openingEstablishment?.complete !== true) {
-          const originText = originOnlyOpeningText(newState);
+          // Name / origin covers are chips only — no canned startLine+question GM page.
+          // First book story entry is the live AI opening after covers complete.
           const originChoices = establishmentChoices(pendingNow, newState);
-          const originGm = withLitrpgSystemWindow(
-            {
-              id: uid(),
-              turn: newState.turn,
-              role: 'gm',
-              content: originText,
-              timestamp: Date.now(),
-              systemLog: litrpgOpeningSystemPing(newState),
-            },
-            newState
-          );
           const committed = beginTabletopCreation({
             ...newState,
             turn: (newState.turn ?? 0) + 1,
-            log: [originGm],
+            log: [],
             choices: originChoices,
             pendingGeneratedOpening: true,
             openingEstablishment: {
