@@ -116,11 +116,11 @@ describe('T10AH fight-end coded fallback narrates the kill', () => {
 });
 
 describe('T10AH internal id + long place possessive', () => {
-  it('bare t1 / gone\'s visitor scrub', () => {
-    expect(scrubInternalRefIds('down on the floor inside t1 and could not fight on')).toMatch(
-      /inside and could not fight on/i,
+  it('bare t1 is not deleted mid-sentence; gone\'s visitor still rewrites', () => {
+    // scrubInternalRefIds used to blank t1 into "inside and could not…" holes — retired.
+    expect(scrubInternalRefIds('down on the floor inside t1 and could not fight on')).toBe(
+      'down on the floor inside t1 and could not fight on',
     );
-    expect(scrubInternalRefIds('down on the floor inside t1 and could not fight on')).not.toMatch(/\bt1\b/);
     expect(
       scrubLongPlacePossessive(
         'stone outline of a building that is gone\'s other visitor',

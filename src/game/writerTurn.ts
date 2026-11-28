@@ -19,6 +19,7 @@ import {
 } from './beatCommitGate';
 import { terminalFightOutcome, terminalOutcomeSentence } from './engineResult';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
+import { isLockablePcName } from './pcNameAuthority';
 import { dropsFightRoll } from './engineFactGate';
 import { escRe } from './engineFactPatterns';
 import { splitProseSentences } from './proseSentences';
@@ -629,7 +630,9 @@ export function withMoveDestination(state: GameState, prose: string): string {
   const roomLeaf = leafParts.length >= 2 ? (leafParts[leafParts.length - 1] ?? '').trim() : '';
   const paintTo = roomLeaf || dest;
   if (paintTo.length > 2 && low.includes(paintTo.toLowerCase())) return prose;
-  const pc = (state.character?.name ?? '').trim() || 'They';
+  // Placeholder sheet names ("Adventurer") are not a locked PC name — never stamp them into the book.
+  const rawName = (state.character?.name ?? '').trim();
+  const pc = isLockablePcName(rawName) ? rawName : 'They';
   // T10Q — streets terrain is town travel; do not paste the journey "back streets" leg label as a sentence.
   const line = underway
     ? j!.terrain === 'streets'
