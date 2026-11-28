@@ -106,7 +106,7 @@ Work top to bottom, and only start a brief once its dependencies are merged. The
 - [x] **03** [Per-game names and pronouns from cast data; delete the renamer and name guards](03-cast-names-pronouns-as-data.md) — Phase 1 (opening slices, part C: per-game names)
 - [x] **04** [Opening scene quests come from the hook's beats, not text](04-scene-quests-from-hook-data.md) — Phase 1 (opening slices, part D: scene quests)
 - [x] **05** [Page 1 gets its own writer request; honest Try again, no hidden retry](05-page1-own-request.md) — Phase 2 (opening slices: live AI page 1) — *gated: John's yes*
-- [x] **06** [Delete canned fallback prose; speech rendered once as a typed beat](06-remove-canned-opening-text.md) — Phase 2 (no canned text) — *gated: John's yes* — *slice 1 open; speech/BANNED_FALLBACK in -s2*
+- [x] **06** [Delete canned fallback prose; speech rendered once as a typed beat](06-remove-canned-opening-text.md) — Phase 2 (no canned text) — *gated: John's yes* — *slices 1–2 open*
 - [x] **07** [Campaign-name mojibake: fix the encoding at the source and stop storing the date in the save name](07-campaign-name-mojibake.md) — Small fix (Interface Q1)
 - [ ] **08** ['Rogue,.' display bug: find the real cause, then fix it there](08-rogue-comma-display.md) — Small fix (diagnose first)
 - [ ] **09** [Credits page lists every source, including Transformers.js](09-credits-page-complete.md) — Side track (credits)

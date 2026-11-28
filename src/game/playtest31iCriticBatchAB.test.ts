@@ -207,15 +207,10 @@ describe('playtest31iCriticBatchAB', () => {
       expect(fallback.systemLog.join('\n')).toMatch(/ledger preserved/i);
     });
 
-    it('isBannedFallbackStub catches legacy critic quotes', () => {
+    it('isBannedFallbackStub catches HUD fact bleed (banned stub bank deleted)', () => {
       expect(
         isBannedFallbackStub(
           'At Lowmarket, something shifts — a footstep, a call, a door — forcing the moment forward. PC: Jax L2. HP: 26/26. XP: 75.'
-        )
-      ).toBe(true);
-      expect(
-        isBannedFallbackStub(
-          'At Lowmarket, Void-Touched Scavenger closes in — steel and breath and no time for rehearsal. You act while the ledger still counts.'
         )
       ).toBe(true);
     });

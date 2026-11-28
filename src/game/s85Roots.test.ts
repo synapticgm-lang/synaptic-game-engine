@@ -149,6 +149,7 @@ describe('s85 Root C — the speaker is a person here', () => {
 
     const asPerson = run(beat(person!.tok, 'speaker', '"The gate shuts at dusk."'));
     expect(asPerson.speech?.[0]?.speakerId).toBe(person!.id);
-    expect(asPerson.prose).toMatch(/said, "The gate shuts at dusk\."/);
+    expect(asPerson.prose).toMatch(/The gate shuts at dusk/);
+    expect(asPerson.prose).not.toMatch(/said,/);
   });
 });

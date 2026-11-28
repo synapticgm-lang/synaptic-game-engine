@@ -70,13 +70,13 @@ describe('s73 — speech line shape', () => {
     ]);
   });
 
-  it('the painter owns the tag and the quote marks: no backslash, one quote pair per line, tag outside', () => {
+  it('speech paints once as the typed words — no code-added said-tag', () => {
     const out = acceptTokenOrLedgerStory(T12_RAW, base(), packet);
     expect(out.path).toBe('json');
     expect(out.prose).not.toContain('\\');
-    expect(out.prose).toContain(`Osric Coyne said, "${BACK}"`);
-    expect(out.prose).toContain(`Osric Coyne said, "${WANT}"`);
-    expect((out.prose.match(/"/g) ?? []).length).toBe(4);
+    expect(out.prose).toContain(BACK);
+    expect(out.prose).toContain(WANT);
+    expect(out.prose).not.toMatch(/Osric Coyne said,/);
     expect(out.speech).toEqual([
       { speakerId: 'extra:osric-coyne', speaker: 'Osric Coyne', words: BACK },
       { speakerId: 'extra:osric-coyne', speaker: 'Osric Coyne', words: WANT },
