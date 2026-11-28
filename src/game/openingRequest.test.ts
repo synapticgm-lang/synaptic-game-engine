@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { attachOpeningInstance, type OpeningHookSnapshot } from './openingInstance';
 import { buildOpeningRequest, formatOpeningRequest } from './openingRequest';
-import { buildContextPrompt } from './masterPrompt';
+import { buildContextPrompt, buildFactLeafSystemPrompt } from './masterPrompt';
 import { isUnwrittenLiveOpening } from './openingWriterNotes';
-import type { GameState } from './types';
+import type { GameState, Settings } from './types';
 
 const hook: OpeningHookSnapshot = {
   place: { id: 'req-ash-trail', kind: 'trail' },
@@ -88,6 +88,14 @@ describe('openingRequest (brief 05)', () => {
     expect(text).not.toMatch(/COMPLETED EVENT:/i);
     expect(text).toContain(state.character.name);
     expect(text).toContain(state.openingEstablishment!.instance!.placeName);
+  });
+
+  it('system prompt does not duplicate the page-1 packet while the user leaf owns it', () => {
+    const state = unwrittenOpening('Sam');
+    const system = buildFactLeafSystemPrompt(state, { perspective: 'second-person' } as Settings);
+    const user = buildContextPrompt(state, '(opening)', [], 'second-person');
+    expect(user).toMatch(/OPENING PAGE 1/i);
+    expect(system).not.toMatch(/OPENING PAGE 1/i);
   });
 
   it('after sceneWritten, buildContextPrompt uses the ordinary completed-event path again', () => {

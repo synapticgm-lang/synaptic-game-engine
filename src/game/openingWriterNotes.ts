@@ -78,10 +78,15 @@ export function formatEstablishedOpeningScene(state: GameState): string {
   ].filter(Boolean).join('\n');
 }
 
-/** Short private rail + locked names. Safe to embed in the system prompt. */
+/**
+ * Short private rail + locked names for the system prompt.
+ * Brief 05 — while page 1 is unwritten, the user leaf is `openingRequest.openingWriterFacing`
+ * via buildContextPrompt; do not also dump a near-copy of that packet here (one source).
+ */
 export function formatOpeningPage1Rail(state: GameState): string {
   const est = state.openingEstablishment;
   if (!est || est.sceneWritten) return '';
+  if (isUnwrittenLiveOpening(state)) return '';
   const inst = est.instance;
   if (!inst) return '';
   const n = openingChoiceCount(state);
