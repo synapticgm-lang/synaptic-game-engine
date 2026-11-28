@@ -58,17 +58,15 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const romance = romancePad(state, romanceAllowed(loadSettings()));
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
-  // RC-HF1: heading rows paint chips from the same offered list (not a parallel source).
+  // Setup / System / origin rows own their chips. Scene row is resolveOfferedChoices only (finalOptions).
+  const systemChips = [...(systemPrompt?.chips ?? [])];
+  const originChips = [...(origins ?? [])];
   const offeredSet = new Set<string>();
   for (const c of actions) offeredSet.add(c.trim().toLowerCase());
-  const systemChips: string[] = [];
-  for (const c of systemPrompt?.chips ?? []) if (offeredSet.has(c.trim().toLowerCase())) systemChips.push(c);
-  const originChips: string[] = [];
-  for (const c of origins ?? []) if (offeredSet.has(c.trim().toLowerCase())) originChips.push(c);
   const contacts: string[] = [];
   for (const c of contactPad ?? []) if (offeredSet.has(c.trim().toLowerCase())) contacts.push(c);
   const promptSet = new Set<string>();
-  for (const c of [...(systemPrompt?.chips ?? []), ...(origins ?? []), ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
+  for (const c of [...systemChips, ...originChips, ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
     promptSet.add(c.trim().toLowerCase());
   }
   const mainActions: string[] = [];

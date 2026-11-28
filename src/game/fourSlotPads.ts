@@ -9,7 +9,8 @@
  *   3. own    — character's class / skills / kit / trade (fight: class trick; town: shop/train)
  *   4. back   — step back (flee / rest / leave / travel elsewhere)
  */
-import type { GameState } from './types';
+import type { EngineMode, GameState } from './types';
+import { sceneOptionCount } from './finalOptions';
 import {
   computeOptionSceneKey,
   FREE_INPUT_DO,
@@ -1224,9 +1225,9 @@ export function visibleActionChips(actions: string[]): string[] {
   return actions.filter((c) => !isFreeInputChip(c));
 }
 
-/** The four engine slots only (no free-input). */
-export function fourSlotEngineLabels(pads: string[]): string[] {
-  return pads.filter((c) => !isFreeInputChip(c)).slice(0, 4);
+/** Scene engine labels only (no free-input); count owned by finalOptions. */
+export function fourSlotEngineLabels(pads: string[], mode?: EngineMode): string[] {
+  return pads.filter((c) => !isFreeInputChip(c)).slice(0, sceneOptionCount(mode));
 }
 
 export function fourSlotAssignments(

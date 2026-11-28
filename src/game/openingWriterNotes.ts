@@ -11,6 +11,7 @@ import { openingRiteWriterOffer } from './openingRiteFacts';
 export const STORYTELLER_RETRY_MESSAGE = "The storyteller didn't answer — Try again";
 export const STORYTELLER_RETRY_CHIP = 'Try again';
 
+/** Residual D5 copy — live scene pad uses finalOptions.sceneOptionCount; brief 13/41 collapses this. */
 export function openingChoiceCountOf(engineMode: GameState['engineMode'] | undefined): number {
   return engineMode === 'dnd' ? 3 : 4;
 }
