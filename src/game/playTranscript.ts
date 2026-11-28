@@ -19,7 +19,8 @@ import {
   type AffordanceSlotKind,
   type OptionCooldownChip,
 } from './sceneAffordances';
-import { assembleFourSlotPads, fourSlotEngineLabels, shouldSkipFourSlot } from './fourSlotPads';
+import { fourSlotEngineLabels, shouldSkipFourSlot } from './fourSlotPads';
+import { finalSceneOptions, sceneOptionCount } from './finalOptions';
 import {
   coverContinuePads,
   healAnsweredCovers,
@@ -34,9 +35,8 @@ import {
   shouldStarveCombatPadsOnCover,
 } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
-import { classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
-import { systemPromptPad } from './rules/abilityPoints';
+import { creationChips, tabletopCreationPending } from './tabletop/creationFlow';
 import { isLookAroundAction } from './sandboxXp';
 import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
 import { BUILD_STAMP } from './runManifest';
@@ -133,26 +133,11 @@ export function resolveOfferedChoices(state: GameState): string[] {
   // T10W — origin setup owns the pad until recorded (session-zero; no scene mix).
   const origin = originPad(state);
   if (origin?.length) return origin;
+  // Tabletop inn-book creation is session-zero (same as origin): creation chips only, no scene refill.
+  if (tabletopCreationPending(state)) return creationChips(state);
+  // Setup (class / stats / reward box) stays on the System row in ActionBar — never merge into the scene pad.
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
-  const prompt = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
-  if (!prompt.length) return chips;
-  // T10AG — onward journey chip (Walk on) stays ahead of class/stat/box System chips so the
-  // story-moving pad is never crowded out (s9701 T21–T22 Choose Warrior/Berserker/Sorcerer).
-  const movers: string[] = [];
-  const rest: string[] = [];
-  for (const c of chips) {
-    if (isJourneyUnderway(state) && isJourneyOnwardLine(c)) movers.push(c);
-    else rest.push(c);
-  }
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const c of [...movers, ...prompt, ...rest]) {
-    const low = c.trim().toLowerCase();
-    if (!low || seen.has(low)) continue;
-    seen.add(low);
-    out.push(c);
-  }
-  return out;
+  return finalSceneOptions(state, chips);
 }
 
 function compileOfferedChoices(rawState: GameState): string[] {
@@ -298,7 +283,7 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
   if (!shouldSkipFourSlot(state)) {
     const cooledLabels = cooled.map((row) => row.label);
     // The open rite's accept / refuse stay on the committed pad (the four-slot owner does not know them).
-    const four = pinOpenRiteChips(state, assembleFourSlotPads(state, cooledLabels));
+    const four = pinOpenRiteChips(state, finalSceneOptions(state, cooledLabels));
     const byLow = new Map(cooled.map((row) => [row.label.trim().toLowerCase(), row]));
     const reshaped: typeof cooled = [];
     const seen = new Set<string>();
@@ -325,7 +310,7 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
         ...(travelMove ? { slotCategory: 'move' as const } : {}),
       });
     }
-    if (fourSlotEngineLabels(reshaped.map((row) => row.label)).length >= 4 || reshaped.length) {
+    if (fourSlotEngineLabels(reshaped.map((row) => row.label)).length >= sceneOptionCount(state.engineMode) || reshaped.length) {
       cooledFinal = reshaped;
     }
   }
