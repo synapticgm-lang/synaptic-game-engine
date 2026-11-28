@@ -10,13 +10,6 @@ import type {
   OpeningInstance,
   OpeningOfferChip,
 } from './types';
-import type {
-  OpeningHookOffer,
-  OpeningHookPronouns,
-  OpeningHookRite,
-  OpeningHookTypedData,
-} from '@/data/campaigns/types';
-import { openingHookHasTypedData } from '@/data/campaigns/types';
 import { hashSeed, keyedRng, type Rng } from './seededRng';
 import { genderForPersonName, NAME_HONORIFIC, nameWords, pickPersonName, type PersonGender } from './personNames';
 import { isCommonOpeningLexeme } from './openingWriterNotes';
@@ -26,7 +19,7 @@ import { isCatalogCastBlockedHere } from './openingCatalogGuard';
 import { compileOpeningOffer } from './openingEstablishment';
 
 /** A hook snapshot the instance mint can read without importing the hook-deck tree. */
-export interface OpeningHookSnapshot extends Partial<OpeningHookTypedData> {
+export interface OpeningHookSnapshot {
   location?: string;
   text?: string;
   page1?: string;
@@ -43,103 +36,6 @@ export interface OpeningHookSnapshot extends Partial<OpeningHookTypedData> {
   /** Catalog NPC names already resolved from the hook's castNpcIds. */
   catalogNpcNames?: string[];
   castNpcIds?: string[];
-}
-
-function genderFromPronouns(pronouns: OpeningHookPronouns): PersonGender | undefined {
-  if (pronouns === 'she/her') return 'female';
-  if (pronouns === 'he/him') return 'male';
-  return undefined;
-}
-
-function placeKindFromData(kind: string): string {
-  const k = kind.replace(/\s+/g, ' ').trim();
-  if (!k) return 'a named place';
-  if (/^(?:a|an|the)\s+/i.test(k)) return k;
-  return /^[aeiou]/i.test(k) ? `an ${k}` : `a ${k}`;
-}
-
-/**
- * Mint from authored typed hook data only — no Title-Case scrape, no offer-string
- * split, no search-and-replace over card English (HISTORY H7 / H8).
- */
-function mintOpeningInstanceFromTypedData(
-  hook: OpeningHookTypedData & OpeningHookSnapshot,
-  seedKey: string,
-  opts?: { bibleId?: string; engineMode?: string }
-): OpeningInstance {
-  const rng = keyedRng(seedKey);
-  const genre = inferGenre(hook, opts?.bibleId, opts?.engineMode);
-  const taken = nameWords(CATALOG_NAME_BLOCKLIST);
-  for (const lab of campaignHubLabels(opts?.bibleId)) {
-    for (const w of lab.split(/\s+/)) {
-      if (w.length >= 3 && !isCommonOpeningLexeme(w)) taken.add(w.toLowerCase());
-    }
-  }
-  const placeKind = placeKindFromData(hook.place.kind);
-  const placeName = mintPlaceName(rng, placeKind, taken, seedKey);
-  const nearbyLandmark = pickNearbyLandmark(opts?.bibleId, undefined, placeName, [], seedKey);
-
-  const cast: OpeningCastMember[] = hook.cast.map((member) => {
-    const minted = mintPerson(rng, taken, genre);
-    return {
-      name: minted.name,
-      role: member.role.replace(/\s+/g, ' ').trim(),
-      gender: genderFromPronouns(member.pronouns) ?? minted.gender,
-    };
-  });
-
-  const offer: OpeningHookOffer = hook.offer;
-  const carryable = offer.items.filter((it) => it.carryable);
-  const itemNotes = carryable.map((it) => it.label);
-  const offerChips: OpeningOfferChip[] = [];
-  if (offer.items.length) {
-    const giver = cast[0];
-    const what = itemNotes.join(', ');
-    offerChips.push({
-      kind: 'accept',
-      label: giver ? `Accept ${givenNameOf(giver.name)}'s offer` : 'Accept the offer',
-      note: giver
-        ? `${giver.name} offers ${what || 'a deal'}`
-        : what || 'An offer is on the table.',
-    });
-    offerChips.push({
-      kind: 'refuse',
-      label: 'Keep your own kit',
-      note: 'Refuse whatever is being offered and keep your own kit.',
-    });
-  }
-
-  const rite: OpeningHookRite = hook.rite;
-  const situation = [
-    hook.whoYouAre,
-    hook.howYouGotHere,
-    hook.pressingNeed,
-    placeKind,
-    cast.map((c) => c.role).filter(Boolean).join(', '),
-    rite.steps.map((s) => s.label).filter(Boolean).join('; '),
-    hook.beatOrder.join(' → '),
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim() || `${placeKind} — the scene is already in motion.`;
-
-  return {
-    placeName,
-    placeKind,
-    cast,
-    situation,
-    pressing: hook.pressingNeed?.replace(/\s+/g, ' ').trim() || undefined,
-    how: hook.howYouGotHere?.replace(/\s+/g, ' ').trim() || undefined,
-    whoYouAre: hook.whoYouAre?.replace(/\s+/g, ' ').trim() || undefined,
-    offerSummary: itemNotes.length ? itemNotes.join(', ') : undefined,
-    offerChips,
-    ...(itemNotes.length ? { offerItemNotes: itemNotes } : {}),
-    alone: cast.length === 0,
-    nearbyLandmark,
-    retiredNames: [],
-    nameMap: [],
-  };
 }
 
 const HONORIFIC = NAME_HONORIFIC;
@@ -817,9 +713,6 @@ export function mintOpeningInstance(
   seedKey: string,
   opts?: { bibleId?: string; engineMode?: string }
 ): OpeningInstance {
-  if (openingHookHasTypedData(hook)) {
-    return mintOpeningInstanceFromTypedData(hook, seedKey, opts);
-  }
   const rng = keyedRng(seedKey);
   const genre = inferGenre(hook, opts?.bibleId, opts?.engineMode);
   const taken = nameWords(CATALOG_NAME_BLOCKLIST);
@@ -1268,30 +1161,19 @@ export function openingInstanceOf(state: GameState): OpeningInstance | undefined
 
 
 export function snapshotFromPickedHook(
-  picked?: (Omit<OpeningHookSnapshot, 'writerNotes' | 'cast'> & {
+  picked?: (OpeningHookSnapshot & {
     who?: string;
     how?: string;
     summonIntent?: string;
     pressing?: string;
     where?: string;
-    writerNotes?: string | string[];
+    writerNotes?: string;
     beats?: string[];
     faction?: string;
     castNpcIds?: string[];
-    cast?: OpeningHookTypedData['cast'];
-    place?: OpeningHookTypedData['place'];
-    offer?: OpeningHookTypedData['offer'];
-    rite?: OpeningHookTypedData['rite'];
-    beatOrder?: OpeningHookTypedData['beatOrder'];
   }) | null
 ): OpeningHookSnapshot {
   if (!picked) return {};
-  const castNpcIds = picked.castNpcIds?.length
-    ? picked.castNpcIds
-    : picked.cast?.map((c) => c.catalogNpcId).filter((id): id is string => !!id);
-  const writerNotes = Array.isArray(picked.writerNotes)
-    ? picked.writerNotes.join('\n')
-    : picked.writerNotes;
   return {
     location: picked.location ?? picked.where,
     text: picked.text,
@@ -1304,17 +1186,8 @@ export function snapshotFromPickedHook(
     summonIntent: picked.summonIntent,
     whoYouAre: picked.whoYouAre ?? picked.who,
     beats: picked.beats,
-    writerNotes,
+    writerNotes: picked.writerNotes,
     faction: picked.faction,
-    castNpcIds,
-    ...(openingHookHasTypedData(picked)
-      ? {
-          cast: picked.cast,
-          place: picked.place,
-          offer: picked.offer,
-          rite: picked.rite,
-          beatOrder: picked.beatOrder,
-        }
-      : {}),
+    castNpcIds: picked.castNpcIds,
   };
 }

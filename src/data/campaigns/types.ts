@@ -50,79 +50,8 @@ export type OpeningAskStyle = 'inworld' | 'system';
 /** scene = generate the first page from the bible; weave = same, then cover remaining facts in-world. */
 export type OpeningMode = 'scene' | 'weave';
 
-/** Pronoun set for one opening cast slot. Authored; minting does not guess from English. */
-export type OpeningHookPronouns = 'he/him' | 'she/her' | 'they/them';
-
-/** Whether this person stays on the save after the opening scene. */
-export type OpeningHookDurability = 'durable' | 'passer';
-
-/** One person on the hook, keyed by id. Briefs 02–04 read these fields; they do not parse card prose. */
-export interface OpeningHookCastMember {
-  id: string;
-  role: string;
-  pronouns: OpeningHookPronouns;
-  durability: OpeningHookDurability;
-  /** Optional bible keyNPC id this slot fills when the campaign has one. */
-  catalogNpcId?: string;
-}
-
-/** HERE for this opener. `kind` feeds place minting; `id` is stable across renames. */
-export interface OpeningHookPlace {
-  id: string;
-  kind: string;
-}
-
-/** One item (or non-carried benefit) named in the opening offer. */
-export interface OpeningHookOfferItem {
-  id: string;
-  label: string;
-  carryable: boolean;
-}
-
-export interface OpeningHookOffer {
-  items: OpeningHookOfferItem[];
-}
-
-/** One authored rite step. Brief 02 deletes the English rite splitter. */
-export interface OpeningHookRiteStep {
-  id: string;
-  label: string;
-}
-
-export interface OpeningHookRite {
-  steps: OpeningHookRiteStep[];
-}
-
-/**
- * Typed opening-hook payload. Every object card carries this so code never
- * reads meaning out of English. Legacy string fields below stay until briefs 02–04
- * delete their readers — not a second shape (`_v2`).
- */
-export interface OpeningHookTypedData {
-  cast: OpeningHookCastMember[];
-  place: OpeningHookPlace;
-  offer: OpeningHookOffer;
-  rite: OpeningHookRite;
-  beatOrder: string[];
-}
-
-/** True when a card carries the full typed hook payload. */
-export function openingHookHasTypedData(
-  card: Partial<OpeningHookTypedData> | null | undefined
-): card is OpeningHookTypedData {
-  if (!card) return false;
-  return (
-    !!card.place?.id
-    && !!card.place?.kind
-    && Array.isArray(card.cast)
-    && Array.isArray(card.offer?.items)
-    && Array.isArray(card.rite?.steps)
-    && Array.isArray(card.beatOrder)
-  );
-}
-
 /** Pointers the writer expands into a unique first page. Not a script to reprint. */
-export interface OpeningBeatCard extends Partial<OpeningHookTypedData> {
+export interface OpeningBeatCard {
   /** C6 — who you are (PC role on this opener). Authored; never invent at runtime. */
   who?: string;
   /** C6 — how you got here. Prefer over summonIntent when both exist. */
