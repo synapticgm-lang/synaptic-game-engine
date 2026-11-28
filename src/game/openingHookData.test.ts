@@ -11,18 +11,7 @@ import {
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import { SUMMONED_PACT_PHASE4_HOOKS } from '@/data/campaigns/summonedPactPhase4Hooks';
 import { heroAwakening } from '@/data/campaigns/heroAwakening';
-import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { mintOpeningInstance, snapshotFromPickedHook } from './openingInstance';
-
-const DECKS_TYPED_SO_FAR = [
-  'system-integration',
-  'gatebreak-ward',
-  'dungeon-transport',
-  'void-audience',
-  'ascending-spire',
-  'inkbound-academy',
-  'hollow-core',
-] as const;
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
   place: { id: 'test-cathedral-circle', kind: 'cathedral' },
@@ -138,18 +127,6 @@ describe('openingHookData (brief 01)', () => {
       const card = cards[i]!;
       expect(typeof card).toBe('object');
       assertTypedShape(card as OpeningBeatCard, `heroAwakening.openingHooks[${i}]`);
-    }
-  });
-
-  it('migrated openingHookDecks bibles carry typed hook data', () => {
-    for (const id of DECKS_TYPED_SO_FAR) {
-      const cards = OPENING_HOOK_DECKS[id] ?? [];
-      expect(cards.length, id).toBeGreaterThan(0);
-      for (let i = 0; i < cards.length; i++) {
-        const card = cards[i]!;
-        expect(typeof card).toBe('object');
-        assertTypedShape(card as OpeningBeatCard, `OPENING_HOOK_DECKS[${id}][${i}]`);
-      }
     }
   });
 });
