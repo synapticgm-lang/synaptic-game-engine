@@ -3,7 +3,7 @@ import { visibleActionChips } from '../../game/fourSlotPads';
 import type { EngineMode, GameState } from '@/game/types';
 import { isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 import { resolveOfferedChoices } from '@/game/playTranscript';
-import { pickFateChoice } from '@/game/fatePick';
+import { fatePickPool, pickFateChoice } from '@/game/fatePick';
 import { classOfferPad } from '@/game/rules/characterClass';
 import { systemPromptPad } from '@/game/rules/abilityPoints';
 import { partyHeading, recruitPad } from '@/game/rules/companions';
@@ -73,7 +73,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   for (const c of actions) if (!promptSet.has(c.trim().toLowerCase())) mainActions.push(c);
 
   const handleFatesPick = () => {
-    onAction(pickFateChoice(actions));
+    onAction(pickFateChoice(fatePickPool(actions, systemPrompt?.chips)));
   };
 
   if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !contacts.length && !romance)) return null;

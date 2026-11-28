@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { finalSceneOptions, isSetupOption, sceneOptionCount, setupOptionLabels } from './finalOptions';
+import { excludedPadFamilies, isLeaveFamilyPad, isTravelPad } from './padUniverse';
+import { emptySceneFacts } from './sceneFacts';
 import { CLASS_QUICK_START_CHIP, classChip } from './rules/characterClass';
 import { STAT_SYSTEM_CHOICE_CHIP, statChip } from './rules/abilityPoints';
 import type { AttributeKey, EngineMode, GameState } from './types';
@@ -73,5 +75,32 @@ describe('finalOptions — exact 4/4/3 scene pad, setup excluded', () => {
         expect(scene.map((c) => c.toLowerCase())).not.toContain(label.toLowerCase());
       }
     }
+  });
+
+  it('short-pad refill never reintroduces an excluded family (Travel/Leave)', () => {
+    const state = createInitialState(undefined, 'litrpg');
+    Object.assign(state, {
+      openingEstablishment: { pending: [], answers: {}, complete: true, aloneArrival: false },
+      currentLocation: 'West Wall',
+      campaignBibleId: 'summoned-pact',
+      turn: 43,
+      log: [
+        { id: 'a', role: 'player', content: 'Travel toward Lowmarket', timestamp: 1 },
+        { id: 'b', role: 'gm', content: 'You reach Lowmarket.', timestamp: 2 },
+        { id: 'c', role: 'player', content: 'Talk to Lowmarket Fence', timestamp: 3 },
+        { id: 'd', role: 'gm', content: 'The fence waits.', timestamp: 4 },
+        { id: 'e', role: 'player', content: 'Travel toward West Wall', timestamp: 5 },
+        { id: 'f', role: 'gm', content: 'You reach West Wall.', timestamp: 6 },
+      ],
+      sceneFacts: { ...emptySceneFacts(43), present: ['Wall Sergeant'] },
+      discoveredLocations: ['sp-hub-lowmarket', 'sp-hub-west-wall'],
+    });
+    expect(excludedPadFamilies(state).has('travel')).toBe(true);
+
+    // Short sealed candidates force refill from journey/affordances.
+    const scene = finalSceneOptions(state, ['Ask about the rain']);
+    expect(scene.length).toBeGreaterThan(0);
+    expect(scene.some((c) => isTravelPad(c))).toBe(false);
+    expect(scene.some((c) => isLeaveFamilyPad(c))).toBe(false);
   });
 });

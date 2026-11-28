@@ -4,6 +4,7 @@
  * Setup chips (class / stats / reward box / origin / tabletop creation) never enter this list.
  */
 import type { AttributeKey, EngineMode, GameState } from './types';
+import { isFourSlotLegal } from './fourSlotPads';
 import { allocateAffordanceSlots, collectSceneAffordances, isFreeInputChip } from './sceneAffordances';
 import { rewardBoxPad } from './rules/achievements';
 import { STAT_SYSTEM_CHOICE_CHIP, statChip, statPointPad } from './rules/abilityPoints';
@@ -59,7 +60,9 @@ export function isSetupOption(state: GameState, label: string): boolean {
 /**
  * Final scene options shown to the player for this turn.
  * Draws only from the candidate list plus actions the engine already knows
- * (journey pads, then compileChoices) — no filler-label pool, streak cap, or cooldown.
+ * (journey pads, then affordances). Refill candidates must pass {@link isFourSlotLegal}
+ * (same excludedPadFamilies gate as seal — never re-birth Travel/Leave after starve).
+ * No filler-label pool, streak cap, or cooldown.
  */
 export function finalSceneOptions(state: GameState, candidates: string[]): string[] {
   const n = sceneOptionCount(state.engineMode);
@@ -67,25 +70,26 @@ export function finalSceneOptions(state: GameState, candidates: string[]): strin
   const seen = new Set<string>();
   const out: string[] = [];
 
-  const push = (raw: string | null | undefined) => {
+  const push = (raw: string | null | undefined, requireLegal: boolean) => {
     if (out.length >= n) return;
     const label = (raw ?? '').replace(/\s+/g, ' ').trim();
     if (!label || isFreeInputChip(label)) return;
     const low = label.toLowerCase();
     if (setup.has(low) || seen.has(low)) return;
+    if (requireLegal && !isFourSlotLegal(state, label)) return;
     seen.add(low);
     out.push(label);
   };
 
-  for (const c of candidates) push(c);
+  for (const c of candidates) push(c, false);
 
   if (out.length < n && isJourneyUnderway(state)) {
-    for (const c of journeyPads(state)) push(c);
+    for (const c of journeyPads(state)) push(c, true);
   }
 
   if (out.length < n) {
     for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
-      push(a.label);
+      push(a.label, true);
       if (out.length >= n) break;
     }
   }
