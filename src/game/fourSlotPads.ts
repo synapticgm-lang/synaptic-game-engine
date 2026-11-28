@@ -20,8 +20,6 @@ import {
   isHuntChip,
   isGatherChip,
   isSeekFightChip,
-  isFillerNoProgressChip,
-  fillerOfferExhausted,
 } from './choiceRanking';
 import { barePlaceKey, isTravelDestHere } from './placeRegistry';
 import { travelChipTarget } from './questPlay';
@@ -390,23 +388,9 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
     if (!hasFood) return false;
   }
 
-  // OPEN6–9 filler family cap — LitRPG / Story RPG only.
-  // Tabletop keeps REPEAT_COOLDOWN_TURNS.dnd === 0 (q44-OCD2 08:41); do not starve inspect/search there.
-  if (
-    (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
-    && isFillerNoProgressChip(raw)
-    && fillerOfferExhausted(state, raw)
-  ) {
-    return false;
-  }
-
-  // FOURSLOT5 — after FILLER_STREAK_CAP Look/Wait/Read picks, starve filler so slot 1 must be a
-  // real lead (all modes, including tabletop tavern loiter). Assemble last-resort may still
-  // plant one Look/Wait when no other legal chip can reach four (FOURSLOT6 only-legal-option).
-  if (isFillerFamilyChip(raw) && consecutiveFillerFamilyPicks(state) >= FILLER_STREAK_CAP) {
-    return false;
-  }
-
+  // H3 / John 27 Nov: repeats stay on the pad (ranked lower in pickFromFourSlots). Never starve
+  // Search/Inspect/Look via offer-cap or streak — that left LitRPG/RPG short after Search while
+  // tabletop (no exhaust gate) stayed exact. finalSceneOptions refill needs these chips legal.
   return true;
 }
 

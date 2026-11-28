@@ -282,8 +282,8 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
   let cooledFinal = cooled;
   if (!shouldSkipFourSlot(state)) {
     const cooledLabels = cooled.map((row) => row.label);
-    // The open rite's accept / refuse stay on the committed pad (the four-slot owner does not know them).
-    const four = pinOpenRiteChips(state, finalSceneOptions(state, cooledLabels));
+    // Pin rite accept/refuse into candidates first; finalSceneOptions is the last count owner.
+    const four = finalSceneOptions(state, pinOpenRiteChips(state, cooledLabels));
     const byLow = new Map(cooled.map((row) => [row.label.trim().toLowerCase(), row]));
     const reshaped: typeof cooled = [];
     const seen = new Set<string>();

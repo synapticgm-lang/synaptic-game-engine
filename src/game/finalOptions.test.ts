@@ -1,14 +1,30 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
+import { creditFillerOffers } from './choiceRanking';
 import { finalSceneOptions, isSetupOption, sceneOptionCount, setupOptionLabels } from './finalOptions';
-import { excludedPadFamilies, isLeaveFamilyPad, isTravelPad } from './padUniverse';
+import { closedUniverseFallbacks, excludedPadFamilies, isLeaveFamilyPad, isTravelPad } from './padUniverse';
 import { emptySceneFacts } from './sceneFacts';
 import { CLASS_QUICK_START_CHIP, classChip } from './rules/characterClass';
 import { STAT_SYSTEM_CHOICE_CHIP, statChip } from './rules/abilityPoints';
 import { beginTabletopCreation, creationChips, tabletopCreationPending } from './tabletop/creationFlow';
-import { resolveOfferedChoices } from './playTranscript';
+import { commitOfferedPad, resolveOfferedChoices } from './playTranscript';
+import { allocateAffordanceSlots, collectSceneAffordances } from './sceneAffordances';
 import { normalizeSearchTarget } from './searchContinuity';
+import { journeyPads } from './travelJourney';
 import type { AttributeKey, EngineMode, GameState } from './types';
+
+/** Labels finalSceneOptions may legally draw from for membership checks (no phrase matching). */
+function refillMembership(state: GameState, candidates: string[]): Set<string> {
+  const out = new Set(candidates.map((c) => c.toLowerCase()));
+  for (const c of journeyPads(state)) out.add(c.toLowerCase());
+  for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
+    out.add(a.label.toLowerCase());
+  }
+  for (const c of closedUniverseFallbacks(state, excludedPadFamilies(state))) {
+    out.add(c.toLowerCase());
+  }
+  return out;
+}
 
 function base(mode: EngineMode): GameState {
   const s = createInitialState('Pad count check', mode);
@@ -174,5 +190,104 @@ describe('finalOptions — exact 4/4/3 scene pad, setup excluded', () => {
     // Membership: every offered scene label is either a non-setup candidate or a closed-universe refill.
     const sceneCandidates = new Set(shortScene.map((c) => c.toLowerCase()));
     expect(offered.filter((c) => sceneCandidates.has(c.toLowerCase())).length).toBeGreaterThan(0);
+  });
+
+  it('LitRPG after Search exhausted (live summoned-pact T7 shape): exactly 4 by count and membership', () => {
+    // Play-log 2026-11-28T05-17-41: T6 Search the area → T7 only Travel + Leave (2).
+    let state = base('litrpg');
+    state.character = { ...state.character, name: 'Jax', level: 1 };
+    state.currentLocation = 'Idraridge Hollow';
+    state.turn = 7;
+    state.discoveredLocations = ['sp-hub-west-wall', 'sp-hub-lowmarket'];
+    const place = state.currentLocation!;
+    const searchKey = normalizeSearchTarget('Search the area', place);
+    state.sceneFacts = { ...emptySceneFacts(7), present: [], searchedEmpty: [searchKey] };
+    state = creditFillerOffers(state, [
+      'Travel toward West Wall',
+      'Search the area',
+      'Leave the scene',
+      'Inspect the immediate surroundings',
+    ]);
+    state = creditFillerOffers(state, [
+      'Search the area',
+      'Inspect the immediate surroundings',
+      'Look around',
+    ]);
+    const short = ['Travel toward West Wall', 'Leave the scene'];
+    const scene = finalSceneOptions(state, short);
+    expect(scene).toHaveLength(4);
+    const allowed = refillMembership(state, short);
+    for (const label of scene) {
+      expect(isSetupOption(state, label), label).toBe(false);
+      expect(allowed.has(label.toLowerCase()) || isTravelPad(label) || isLeaveFamilyPad(label), label).toBe(true);
+    }
+    const committed = commitOfferedPad({ ...state, choices: short, offeredPad: null });
+    expect(committed.choices ?? committed.offeredPad?.choices ?? []).toHaveLength(4);
+  });
+
+  it('RPG after Search (live salt-road-heist T7 shape): exactly 4 by count and membership', () => {
+    // Play-log 2026-11-28T05-19-22: T6 Search → T7 three chips, Search gone, nothing refilled.
+    let state = base('rpg');
+    state.character = { ...state.character, name: 'Jax', origin: 'soldier' };
+    state.currentLocation = 'Bar in Nesscroft Camp';
+    state.turn = 7;
+    state.discoveredLocations = ['sr-hub-nesscroft', 'sr-hub-waystation'];
+    const searchKey = normalizeSearchTarget('Search the area', state.currentLocation!);
+    state.sceneFacts = { ...emptySceneFacts(7), present: [], searchedEmpty: [searchKey] };
+    state = creditFillerOffers(state, [
+      'Travel toward Salt Road Waystation',
+      'Search the area',
+      'Pursue Nesscroft Camp at First Light',
+      'Get your bearings in Nesscroft Camp',
+    ]);
+    state = creditFillerOffers(state, ['Search the area', 'Inspect the immediate surroundings']);
+    // Live T7 after Search: three remaining scene chips (Search removed).
+    const short = [
+      'Travel toward Salt Road Waystation',
+      'Pursue Nesscroft Camp at First Light',
+      'Get your bearings in Nesscroft Camp',
+    ];
+    const scene = finalSceneOptions(state, short);
+    expect(scene).toHaveLength(4);
+    const allowed = refillMembership(state, short);
+    for (const label of scene) {
+      expect(isSetupOption(state, label), label).toBe(false);
+      expect(allowed.has(label.toLowerCase()) || isTravelPad(label) || isLeaveFamilyPad(label), label).toBe(true);
+    }
+    // commitOfferedPad recompiles; unbound quest labels drop — use travel/leave survivors like live post-filter.
+    const committed = commitOfferedPad({
+      ...state,
+      choices: ['Travel toward Salt Road Waystation', 'Leave the scene'],
+      offeredPad: null,
+    });
+    expect(committed.choices ?? []).toHaveLength(4);
+  });
+
+  it.each<[EngineMode, number]>([
+    ['litrpg', 4],
+    ['rpg', 4],
+    ['dnd', 3],
+  ])('%s road/journey short pad (Walk on | Turn back): exactly %i', (mode, n) => {
+    const state = base(mode);
+    if (mode === 'rpg') state.character = { ...state.character, origin: 'soldier' };
+    state.currentLocation = 'On the road between Greyhollow Inn and Millstone Ford';
+    state.sceneFacts = emptySceneFacts(state.turn ?? 5);
+    state.journey = {
+      from: 'Greyhollow Inn',
+      to: 'Millstone Ford',
+      startedTurn: (state.turn ?? 5) - 2,
+      legsTotal: 3,
+      legsDone: 1,
+    } as GameState['journey'];
+    const short = ['Walk on', 'Turn back toward Greyhollow Inn'];
+    const scene = finalSceneOptions(state, short);
+    expect(scene).toHaveLength(n);
+    const allowed = refillMembership(state, short);
+    for (const label of scene) {
+      expect(isSetupOption(state, label), label).toBe(false);
+      expect(allowed.has(label.toLowerCase()) || isTravelPad(label) || isLeaveFamilyPad(label), label).toBe(true);
+    }
+    const committed = commitOfferedPad({ ...state, choices: short, offeredPad: null });
+    expect(committed.choices ?? []).toHaveLength(n);
   });
 });
