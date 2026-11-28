@@ -64,8 +64,40 @@ describe('townsfolk', () => {
     expect(townsfolkWriterLines(back, compileRefEnum(back))).toHaveLength(people.length);
   });
 
-  it('the same place and campaign always makes the same people', () => {
-    expect(atInn().npcMemories).toEqual(atInn().npcMemories);
+  it('the same place, campaign, and seed always makes the same people', () => {
+    const a = atInn();
+    const b = atInn();
+    expect(a.npcMemories).toEqual(b.npcMemories);
+  });
+
+  it('different game seeds mint different townsfolk at the same place', () => {
+    const openA = seedTownsfolkHere(state({ seed: 'town-seed-a' }));
+    const openB = seedTownsfolkHere(state({ seed: 'town-seed-b' }));
+    const a = seedTownsfolkHere({
+      ...openA,
+      seed: 'town-seed-a',
+      turn: 5,
+      currentLocation: 'Greyhollow Inn',
+    });
+    const b = seedTownsfolkHere({
+      ...openB,
+      seed: 'town-seed-b',
+      turn: 5,
+      currentLocation: 'Greyhollow Inn',
+    });
+    const namesA = a
+      .npcMemories!.filter((m) => m.sheet)
+      .map((m) => m.npcName)
+      .sort()
+      .join('|');
+    const namesB = b
+      .npcMemories!.filter((m) => m.sheet)
+      .map((m) => m.npcName)
+      .sort()
+      .join('|');
+    expect(namesA.length).toBeGreaterThan(0);
+    expect(namesB.length).toBeGreaterThan(0);
+    expect(namesA).not.toBe(namesB);
   });
 
   it('townsfolk are in the REF ENUM as people', () => {

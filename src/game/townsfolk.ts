@@ -69,7 +69,13 @@ export function seedTownsfolkHere(state: GameState): GameState {
   if (j && j.legsDone < j.legsTotal) return state;
 
   const place = sheetPlaceFor(here);
-  const rng = createHashRng('townsfolk', state.campaignBibleId ?? '', key);
+  // Game seed first: the same hub must not mint the same people on every New Game (H8 / D16).
+  const rng = createHashRng(
+    'townsfolk',
+    state.seed ?? state.saveId ?? '',
+    state.campaignBibleId ?? '',
+    key
+  );
   const count = populationFor(place, rng);
   // A dungeon's rooms hold its foes and loot, not townsfolk. An empty roll adds nobody.
   if (state.activeDungeon || count === 0) return { ...state, townsfolkPlaces: [...done, key] };

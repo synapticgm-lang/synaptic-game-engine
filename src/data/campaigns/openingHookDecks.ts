@@ -470,7 +470,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'cursed-keep': [
     {
     place: { id: 'cursed-keep-greyhollow-at-the-inn', kind: 'inn' },
-    cast: [],
+    cast: [
+      { id: 'cursed-keep-cast-innkeep', role: 'innkeep', pronouns: 'they/them', durability: 'durable' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -487,7 +489,10 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'cursed-keep-greyhollow-mill-lane-at-dusk', kind: 'place' },
-    cast: [],
+    cast: [
+      { id: 'cursed-keep-cast-porch-1', role: 'villager', pronouns: 'they/them', durability: 'passer' },
+      { id: 'cursed-keep-cast-porch-2', role: 'villager', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -505,7 +510,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
     place: { id: 'cursed-keep-greyhollow-churchyard', kind: 'place' },
     cast: [
-      { id: 'cursed-keep-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'ck-npc-1' },
+      { id: 'cursed-keep-cast-1', role: 'town priest', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'ck-npc-1' },
     ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
@@ -524,7 +529,10 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'cursed-keep-the-washed-out-road-into-greyhollow', kind: 'road' },
-    cast: [],
+    cast: [
+      { id: 'cursed-keep-cast-sentry-1', role: 'sentry', pronouns: 'they/them', durability: 'passer' },
+      { id: 'cursed-keep-cast-sentry-2', role: 'sentry', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -541,7 +549,10 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'cursed-keep-greyhollow-tavern-common-room', kind: 'room' },
-    cast: [],
+    cast: [
+      { id: 'cursed-keep-cast-woodcutter', role: 'woodcutter', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'ck-npc-2' },
+      { id: 'cursed-keep-cast-innkeep-2', role: 'innkeep', pronouns: 'they/them', durability: 'durable' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -549,6 +560,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
       pressing: 'The woodcutter wants help for the missing child. the woodcutter and the innkeep will not let the next hour pass unanswered.',
       location: 'Greyhollow tavern common room',
       faction: 'the woodcutter and the innkeep',
+      castNpcIds: ['ck-npc-2'],
       summonIntent: 'The woodcutter wants help for the missing child. The mayor wants the keep unnamed.',
       openingCost: 'Greyhollow will not help you if you name the keep.',
       page1:
@@ -558,7 +570,10 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'cursed-keep-greyhollow-gate-after-dark', kind: 'gate' },
-    cast: [],
+    cast: [
+      { id: 'cursed-keep-cast-militia-1', role: 'militia', pronouns: 'they/them', durability: 'passer' },
+      { id: 'cursed-keep-cast-militia-2', role: 'militia', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -576,7 +591,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
     place: { id: 'cursed-keep-greyhollow-well-at-midnight', kind: 'place' },
     cast: [
-      { id: 'cursed-keep-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'ck-npc-1' },
+      { id: 'cursed-keep-cast-1', role: 'town priest', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'ck-npc-1' },
     ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
@@ -595,7 +610,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'cursed-keep-the-keep-gate-above-greyhollow', kind: 'keep' },
-    cast: [],
+    cast: [
+      { id: 'cursed-keep-cast-steward', role: 'steward', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -1709,7 +1726,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'salt-road-heist': [
     {
     place: { id: 'salt-road-heist-a-warehouse-loft', kind: 'loft' },
-    cast: [],
+    cast: [
+      { id: 'salt-road-heist-cast-muscle', role: 'muscle', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -1726,7 +1745,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'salt-road-heist-a-salt-road-waystation', kind: 'road' },
-    cast: [],
+    cast: [
+      { id: 'salt-road-heist-cast-enforcer', role: 'enforcer', pronouns: 'he/him', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -1743,7 +1764,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'salt-road-heist-the-consul-caravan-s-night-camp', kind: 'camp' },
-    cast: [],
+    cast: [
+      { id: 'salt-road-heist-cast-thief', role: 'thief', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -1761,7 +1784,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
     place: { id: 'salt-road-heist-a-salt-road-tavern-hire', kind: 'road' },
     cast: [
-      { id: 'salt-road-heist-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'salt-road-heist-npc-1' },
+      { id: 'salt-road-heist-cast-1', role: 'crew fixer', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'salt-road-heist-npc-1' },
     ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
@@ -1780,7 +1803,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'salt-road-heist-a-cliff-path-above-the-caravan-r', kind: 'road' },
-    cast: [],
+    cast: [
+      { id: 'salt-road-heist-cast-scout', role: 'scout', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -1797,7 +1822,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'salt-road-heist-a-safehouse-after-a-rehearsal-go', kind: 'place' },
-    cast: [],
+    cast: [
+      { id: 'salt-road-heist-cast-muscle-2', role: 'muscle', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
@@ -1815,7 +1842,7 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     {
     place: { id: 'salt-road-heist-a-salt-pan-camp-at-dawn', kind: 'camp' },
     cast: [
-      { id: 'salt-road-heist-cast-1', role: 'opening cast', pronouns: 'they/them', durability: 'passer', catalogNpcId: 'salt-road-heist-npc-1' },
+      { id: 'salt-road-heist-cast-1', role: 'crew fixer', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'salt-road-heist-npc-1' },
     ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
@@ -1834,7 +1861,9 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     },
     {
     place: { id: 'salt-road-heist-the-consul-counting-house-back-d', kind: 'place' },
-    cast: [],
+    cast: [
+      { id: 'salt-road-heist-cast-lockpick', role: 'lockpick', pronouns: 'they/them', durability: 'passer' },
+    ],
     offer: { items: [] },
     rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
     beatOrder: ['arrive', 'panel'],
