@@ -4,6 +4,7 @@ import type { EngineMode, GameState } from '@/game/types';
 import { isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 import { resolveOfferedChoices } from '@/game/playTranscript';
 import { actionBarSceneActions, fatePickPool, pickFateChoice } from '@/game/fatePick';
+import { isStorytellerRetryPage } from '@/game/openingWriterNotes';
 import { classOfferPad } from '@/game/rules/characterClass';
 import { systemPromptPad } from '@/game/rules/abilityPoints';
 import { partyHeading, recruitPad } from '@/game/rules/companions';
@@ -49,16 +50,18 @@ interface ActionBarProps {
 export function ActionBar({ state, busy, onAction, engineMode, hidden = false }: ActionBarProps) {
   // Free typing has its own box: no "Say something… / Do something else…" buttons.
   const actions = visibleActionChips(resolveOfferedChoices(state));
-  const systemPrompt = systemPromptPad(state, classOfferPad(state));
-  const party = partyHeading(state);
-  const recruits = recruitPad(state) ?? [];
-  const endingChip = rpgEndingChip(state);
-  const origins = originPad(state);
-  const creating = tabletopCreationPending(state);
+  // Miss page owns the bar alone (same idea as LitRPG System / #74) — no scene mix.
+  const pageOwnsAlone = isStorytellerRetryPage(state);
+  const systemPrompt = pageOwnsAlone ? null : systemPromptPad(state, classOfferPad(state));
+  const party = pageOwnsAlone ? null : partyHeading(state);
+  const recruits = pageOwnsAlone ? [] : (recruitPad(state) ?? []);
+  const endingChip = pageOwnsAlone ? null : rpgEndingChip(state);
+  const origins = pageOwnsAlone ? null : originPad(state);
+  const creating = !pageOwnsAlone && tabletopCreationPending(state);
   const creation = creating ? creationChips(state) : [];
   // q42-OPT1m: contact favour chips come from sceneAffordances (engine offered list), not a parallel builder.
-  const contactPad = storyRpgContactPad(state);
-  const romance = romancePad(state, romanceAllowed(loadSettings()));
+  const contactPad = pageOwnsAlone ? null : storyRpgContactPad(state);
+  const romance = pageOwnsAlone ? null : romancePad(state, romanceAllowed(loadSettings()));
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
   // Setup / System / origin / creation rows own their chips. Scene row is resolveOfferedChoices only (finalOptions).
@@ -73,16 +76,21 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   for (const c of [...systemChips, ...originChips, ...creationRow, ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
     promptSet.add(c.trim().toLowerCase());
   }
-  // Session-zero creation / LitRPG System prompt: that row owns the step (no scene row beside it).
+  // Session-zero creation / LitRPG System / miss page: that step owns the bar (no padded scene beside it).
   const mainActions = actionBarSceneActions(
     actions,
     systemPrompt?.chips,
     creating,
-    promptSet
+    promptSet,
+    pageOwnsAlone
   );
 
   const handleFatesPick = () => {
-    onAction(pickFateChoice(fatePickPool(actions, systemPrompt?.chips ?? (creationRow.length ? creationRow : null))));
+    onAction(pickFateChoice(fatePickPool(
+      actions,
+      systemPrompt?.chips ?? (creationRow.length ? creationRow : null),
+      pageOwnsAlone
+    )));
   };
 
   if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !creationRow.length && !contacts.length && !romance)) return null;

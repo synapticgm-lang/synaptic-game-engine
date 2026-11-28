@@ -21,6 +21,7 @@ import {
 } from './sceneAffordances';
 import { fourSlotEngineLabels, shouldSkipFourSlot } from './fourSlotPads';
 import { finalSceneOptions, sceneOptionCount } from './finalOptions';
+import { failedOpeningPads, isStorytellerRetryPage } from './openingWriterNotes';
 import {
   coverContinuePads,
   healAnsweredCovers,
@@ -130,6 +131,8 @@ export function resolveOfferedChoices(state: GameState): string[] {
     }
     return out;
   }
+  // Writer-miss page owns the bar — exactly Try again, never scene/origin mix (H1 / #82 live fault).
+  if (isStorytellerRetryPage(state)) return [...failedOpeningPads];
   // T10W — origin setup owns the pad until recorded (session-zero; no scene mix).
   const origin = originPad(state);
   if (origin?.length) return origin;

@@ -13,6 +13,7 @@ import { originPad } from './rules/rpgOrigin';
 import { creationChips, tabletopCreationPending } from './tabletop/creationFlow';
 import { closedUniverseFallbacks, excludedPadFamilies } from './padUniverse';
 import { isJourneyUnderway, journeyPads } from './travelJourney';
+import { failedOpeningPads, isStorytellerRetryPage } from './openingWriterNotes';
 
 const LITRPG_STAT_KEYS: AttributeKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
@@ -66,6 +67,9 @@ export function isSetupOption(state: GameState, label: string): boolean {
  * No filler-label pool, streak cap, or cooldown.
  */
 export function finalSceneOptions(state: GameState, candidates: string[]): string[] {
+  // Miss page owns the bar — never refill Try again to 4/4/3 (live fault after #82).
+  if (isStorytellerRetryPage(state)) return [...failedOpeningPads];
+
   const n = sceneOptionCount(state.engineMode);
   const setup = setupOptionLabels(state);
   const seen = new Set<string>();

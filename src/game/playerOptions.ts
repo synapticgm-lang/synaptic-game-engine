@@ -15,6 +15,7 @@ import { canSkipAheadTo } from './fastForward';
 import { originPad } from './rules/rpgOrigin';
 import { tabletopCreationPending } from './tabletop/creationFlow';
 import { finalSceneOptions } from './finalOptions';
+import { isStorytellerRetryPage } from './openingWriterNotes';
 
 function displayChip(state: GameState, label: string): string | null {
   const m = label.match(/^(Travel toward|Skip ahead to|Head toward|Go to)\s+(.+)$/i);
@@ -90,6 +91,8 @@ export function isLivePadExempt(state: GameState): boolean {
   if (state.engineMode === 'pyoa') return true;
   if (originPad(state)?.length) return true;
   if (tabletopCreationPending(state)) return true;
+  // Miss page owns its pad — do not reshape / refill beside Try again.
+  if (isStorytellerRetryPage(state)) return true;
   return false;
 }
 
