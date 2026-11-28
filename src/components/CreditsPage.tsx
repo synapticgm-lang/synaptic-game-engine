@@ -34,10 +34,12 @@ export function CreditsPage() {
         <h1 className="mt-2 font-serif text-3xl font-bold text-slate-50">Credits</h1>
         <p className="mt-2 text-sm text-slate-500">Last updated: {CREDITS_LAST_UPDATED}</p>
         <p className="mt-4 text-sm leading-relaxed text-slate-400">
-          Free typefaces, icons, and other third-party materials the live game uses — who made them,
-          where they come from, and what we use them for. The tabletop rules come from the SRD 5.2.1
-          under CC BY 4.0; original SynapticGM stories and tables are listed too. This is not a claim
-          that every file in the repo is public domain.
+          Free typefaces, icons, runtime libraries (including Transformers.js), bundled theme and map
+          textures, and other third-party materials the live game uses — who made them, where they
+          come from, and what we use them for. The tabletop rules come from the SRD 5.2.1 under
+          CC BY 4.0; original SynapticGM stories and tables are listed too. Anything whose licence
+          is not confirmed is held for review and is not guessed here. This is not a claim that
+          every file in the repo is public domain.
         </p>
 
         <div className="mt-10 space-y-10">
