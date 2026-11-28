@@ -30,7 +30,6 @@ import { nearbyPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway, isRoadLabel, isTripHere, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney.ts';
 import { hasWriterCueChrome } from './writerCueLines.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
-import { ensureSpokenAnswer } from './spokenAnswer.ts';
 import { peopleHere } from './scenePresence.ts';
 import { isBookForbiddenLedgerLine } from './ledgerToProse.ts';
 import { TALK_VERB } from './intentParser.ts';
@@ -75,7 +74,6 @@ import {
   isOpeningNameGiveLine,
   lockedOpeningPcName,
   openingNameLockSpokenBeat,
-  castSpeakVerb,
   lineNamesOtherNpc,
   openingCastLabel,
   openingCastNames,
@@ -1640,7 +1638,7 @@ export function formatWriterFacingEvent(
   const answerLine = panelRead
     ? `{"fn":"react","text":"<sentence: what that change meant to ${who} now, as plain words — ${housingClause}>"}`
     : talkedTo && actorTok
-      ? `{"fn":"speech","speaker_tok":"${actorTok}","text":"<only the words @${actorTok} says now, no quote marks and no said-tag (code adds both) — not a report of what they said>"}`
+      ? `{"fn":"speech","speaker_tok":"${actorTok}","text":"<one full spoken sentence for @${actorTok} said now — include attribution yourself; code does not add quote marks or said-tags — not a report of what they said>"}`
       : `{"fn":"react","text":"<sentence: how ${actorTok ? `@${actorTok} or ` : ''}the room answered>"}`;
   const refsShape = [
     ...(placeTok ? [`{"tok":"${placeTok}","use":"place"}`] : []),
@@ -1806,469 +1804,9 @@ export function proseViolatesEventPacket(
   if (wrongHereOnPacket(body, packet)) return true;
   return false;
 }
-type StitchSlots = {
-  where: string;
-  who: string;
-  corpse: string;
-  focus: string;
-  descriptor?: string;
-  exits?: string[];
-};
-/** Look-around focus never names the System panel; first word capitalised. */
-function lookFocus(s: StitchSlots): string {
-  return s.focus && !/\bpanel\b/i.test(s.focus) ? capFirst(s.focus) : '';
-}
-function lookTail(s: StitchSlots): string {
-  const desc = descriptorSentence(s.descriptor);
-  return desc || NO_DESCRIPTION_LOOK_LINE;
-}
-/** 28b — plain line when the place has no description (never claims you knew it). */
+/** Brief 06: canned packet stitch banks deleted — live AI prose or honest empty only. */
 const NO_DESCRIPTION_LOOK_LINE = 'You saw nothing that called for a closer look.';
-/** 28b — "was" / "were" for a named person or group ("West Wall Levy was", "Guards were"). */
-function beVerbFor(who: string): 'was' | 'were' {
-  const w = (who ?? '').trim();
-  return /\band\b/i.test(w) || /[^s]s$/i.test(w) ? 'were' : 'was';
-}
-type StitchTemplate = {
-  id: string;
-  fingerprint: string;
-  render: (s: StitchSlots) => string;
-};
-const STITCH_BANKS: Record<string, StitchTemplate[]> = {
-  'attack-kill': [
-    {
-      id: 'ak1',
-      fingerprint: 'went down and stayed down',
-      render: (s) =>
-        `The last strike killed them at ${s.where}. ${s.corpse} went down and stayed down.`,
-    },
-    {
-      id: 'ak2',
-      fingerprint: 'lay still on the stones',
-      render: (s) =>
-        `You finished the fight at ${s.where}. The body of ${s.corpse} lay still on the stones.`,
-    },
-    {
-      id: 'ak3',
-      fingerprint: 'Nothing in them answered after that',
-      render: (s) =>
-        `${s.corpse} dropped at ${s.where}. Nothing in them answered after that.`,
-    },
-  ],
-  'attack-hit': [
-    {
-      id: 'ah1',
-      fingerprint: 'still held their ground',
-      render: (s) =>
-        `Steel rang at ${s.where}. The strike found ${s.who || 'the foe'}. They still held their ground.`,
-    },
-    {
-      id: 'ah2',
-      fingerprint: 'kept the lane',
-      render: (s) =>
-        `You closed at ${s.where}. ${s.who || 'The foe'} took the hit and kept the lane.`,
-    },
-    {
-      id: 'ah3',
-      fingerprint: 'They were still standing after',
-      render: (s) =>
-        `Dust kicked up at ${s.where}. Your hit met ${s.who || 'them'}. They were still standing after.`,
-    },
-  ],
-  'attack-miss': [
-    {
-      id: 'am1',
-      fingerprint: 'slipped the blow',
-      render: (s) => `You swung at ${s.where}. ${s.who || 'They'} slipped the blow.`,
-    },
-    {
-      id: 'am2',
-      fingerprint: 'cut only air',
-      render: (s) => `The cut found only air at ${s.where}. ${s.who || 'The foe'} was still in reach.`,
-    },
-    {
-      id: 'am3',
-      fingerprint: 'the strike went wide',
-      render: (s) => `You committed at ${s.where}, and the strike went wide.`,
-    },
-  ],
-  'inspect-1': [
-    {
-      id: 'in1a',
-      fingerprint: 'You took in',
-      render: (s) =>
-        lookFocus(s)
-          ? `You took in ${s.where}. ${lookTail(s)} ${lookFocus(s)} sat where you had last seen it.`
-          : s.who
-            ? `You took in ${s.where}. ${lookTail(s)} ${s.who} was still there.`
-            : `You took in ${s.where}. ${lookTail(s)} Nobody new had arrived.`,
-    },
-    {
-      id: 'in1c',
-      fingerprint: 'You studied',
-      render: (s) =>
-        lookFocus(s)
-          ? `You studied ${s.where}. ${lookTail(s)} ${lookFocus(s)} was unchanged. The next move was still yours.`
-          : s.who
-            ? `You studied ${s.where}. ${lookTail(s)} ${s.who} had not left.`
-            : `You studied ${s.where}. ${lookTail(s)} The next move was still yours.`,
-    },
-    {
-      id: 'in1d',
-      fingerprint: 'eyes went over',
-      render: (s) =>
-        lookFocus(s)
-          ? `Your eyes went over ${s.where} again. ${lookTail(s)} ${lookFocus(s)} was the only named thing worth the look.`
-          : s.who
-            ? `Your eyes went over ${s.where} again. ${lookTail(s)} ${s.who} was still here.`
-            : `Your eyes went over ${s.where} again. ${lookTail(s)} Nothing new had appeared.`,
-    },
-  ],
-  'inspect-2': [
-    {
-      id: 'in2a',
-      fingerprint: 'had not moved',
-      render: (s) =>
-        s.focus
-          ? `You looked again at ${s.where}. ${s.focus} had not moved. A second look did not invent a new thing.`
-          : s.who
-            ? `You looked again at ${s.where}. ${s.who} was still in place. The walls you already had had not moved.`
-            : `You looked again at ${s.where}. The walls you already had were still in place.`,
-    },
-    {
-      id: 'in2b',
-      fingerprint: 'same named things',
-      render: (s) =>
-        s.focus
-          ? `A second look at ${s.where} found ${s.focus} where you left it. ${s.focus} had not moved.`
-          : `A second look at ${s.where} found the same named things. The walls you already had had not moved.`,
-    },
-  ],
-  'inspect-3': [
-    {
-      id: 'in3a',
-      fingerprint: 'nothing else to glean',
-      render: (s) =>
-        s.focus
-          ? `${s.focus} at ${s.where} had already given what it had. There is nothing else to glean.`
-          : `There is nothing else to glean from ${s.where}. A third look did not add a name.`,
-    },
-  ],
-  'inspect-corpse': [
-    {
-      id: 'ic1',
-      fingerprint: 'still on the floor',
-      render: (s) =>
-        `You looked at ${s.where}. The body of ${s.corpse} was still on the floor. Leave it, or search what they left.`,
-    },
-    {
-      id: 'ic2',
-      fingerprint: 'stayed down',
-      render: (s) =>
-        `${s.corpse} stayed down at ${s.where}. A look did not make them stand. The next move was loot or leave.`,
-    },
-    {
-      id: 'ic3',
-      fingerprint: 'was a corpse, not a speaker',
-      render: (s) =>
-        `The fight was already over at ${s.where}. ${s.corpse} was a corpse, not a speaker.`,
-    },
-  ],
-  'inspect-fight': [
-    {
-      id: 'if1',
-      fingerprint: 'kept your eyes on the fight',
-      render: (s) =>
-        `You kept your eyes on the fight at ${s.where}. ${s.who || 'The foe'} was still in reach.`,
-    },
-    {
-      id: 'if2',
-      fingerprint: 'watched the lane without swinging',
-      render: (s) => `You watched the lane without swinging at ${s.where}. The fight had not moved on.`,
-    },
-    {
-      id: 'if3',
-      fingerprint: 'reading the fight instead of striking',
-      render: (s) => `You spent the beat reading the fight instead of striking at ${s.where}.`,
-    },
-  ],
-  talk: [
-    {
-      id: 'tk1',
-      fingerprint: 'Their answer stayed short',
-      render: (s) => `${s.who} heard you at ${s.where}. Their answer stayed short.`,
-    },
-    {
-      id: 'tk2',
-      fingerprint: 'spoke from where they stood',
-      render: (s) => `You spoke at ${s.where}. ${s.who} spoke from where they stood.`,
-    },
-    {
-      id: 'tk3',
-      fingerprint: 'did not look away',
-      render: (s) => `Words passed at ${s.where}. ${s.who} did not look away.`,
-    },
-  ],
-  'talk-empty': [
-    {
-      id: 'te2',
-      fingerprint: 'The room did not invent a speaker',
-      render: (s) => `Your question hung at ${s.where}. The room did not invent a speaker.`,
-    },
-    {
-      id: 'te4',
-      fingerprint: 'empty ledger stayed empty',
-      render: (s) => `You asked at ${s.where}. The empty ledger stayed empty.`,
-    },
-    {
-      id: 'te5',
-      fingerprint: 'No living name took it',
-      render: (s) => `You spoke at ${s.where}. No living name took it.`,
-    },
-  ],
-  'talk-corpse': [
-    {
-      id: 'tc1',
-      fingerprint: 'body did not speak',
-      render: (s) =>
-        `You spoke at ${s.where}. Only the body of ${s.corpse} was left. The body did not speak.`,
-    },
-    {
-      id: 'tc2',
-      fingerprint: 'was a corpse, not a speaker',
-      render: (s) =>
-        `${s.corpse} stayed down at ${s.where}. They were a corpse, not a speaker. Leave, or search what they left.`,
-    },
-    {
-      id: 'tc3',
-      fingerprint: 'fight was already over',
-      render: (s) =>
-        `The fight was already over at ${s.where}. ${s.corpse} could not take a question.`,
-    },
-  ],
-  travel: [
-    {
-      id: 'tr1',
-      fingerprint: 'The road behind you thinned',
-      render: (s) => `You reached ${s.where}. The road behind you thinned.`,
-    },
-    {
-      id: 'tr2',
-      fingerprint: 'arrival already done',
-      render: (s) => `The walk ended at ${s.where}. The arrival already done, you were through.`,
-    },
-    {
-      id: 'tr3',
-      fingerprint: 'threshold opened onto',
-      render: (s) => `The threshold opened onto ${s.where}. You were through.`,
-    },
-  ],
-  leave: [
-    {
-      id: 'lv1',
-      fingerprint: 'behind. The',
-      render: (s) => `You left ${s.where} behind. ${exitsSentence(s.where, s.exits)}`,
-    },
-    {
-      id: 'lv2',
-      fingerprint: 'fell behind without a speech',
-      render: (s) => `The place at your back fell behind without a speech.`,
-    },
-    {
-      id: 'lv3',
-      fingerprint: 'You put ',
-      render: (s) => `You put ${s.where} at your back. ${exitsSentence(s.where, s.exits)}`,
-    },
-  ],
-  'wait-1': [
-    {
-      id: 'wt1b',
-      fingerprint: 'You held still at',
-      render: (s) =>
-        s.focus
-          ? `You held still at ${s.where}. ${s.focus} did not offer a new beat. The pause did not invent a speaker.`
-          : s.who
-            ? `You held still at ${s.where}. ${s.who} did not fill the pause. Nothing listed moved.`
-            : `You held still at ${s.where}. Nothing listed moved. The pause did not invent a speaker.`,
-    },
-    {
-      id: 'wt1c',
-      fingerprint: 'let a beat pass',
-      render: (s) =>
-        s.focus
-          ? `You let a beat pass at ${s.where}. ${s.focus} stayed put. The room stayed the way you already had it.`
-          : s.who
-            ? `You let a beat pass at ${s.where}. ${s.who} stayed where they stood. The room stayed the way you already had it.`
-            : `You let a beat pass at ${s.where}. The room stayed the way you already had it.`,
-    },
-    {
-      id: 'wt1d',
-      fingerprint: 'gave the room a pause',
-      render: (s) =>
-        s.focus
-          ? `You gave ${s.where} a pause. ${s.focus} was still the named thing. No new name arrived.`
-          : `You gave ${s.where} a pause. No new name arrived. What you already had stayed put.`,
-    },
-  ],
-  'wait-2': [
-    {
-      id: 'wt2a',
-      fingerprint: 'still the way it sat',
-      render: (s) =>
-        s.focus
-          ? `You held still at ${s.where}. ${s.focus} was still the way it sat. A second wait added nothing.`
-          : `You held still at ${s.where}. Nothing listed had moved.`,
-    },
-    {
-      id: 'wt2b',
-      fingerprint: 'second pause found the same',
-      render: (s) =>
-        s.focus
-          ? `A second pause at ${s.where} found ${s.focus} unchanged. The ledger had not grown.`
-          : `A second pause at ${s.where} found the same named things. The ledger had not grown.`,
-    },
-  ],
-  'wait-3': [
-    {
-      id: 'wt3a',
-      fingerprint: 'Waiting showed nothing new',
-      render: (s) => `Waiting at ${s.where} showed nothing new. The pause had already done its work.`,
-    },
-  ],
-  'wait-corpse': [
-    {
-      id: 'wc1',
-      fingerprint: 'did not get up',
-      render: (s) =>
-        `You held still at ${s.where}. ${s.corpse} did not get up. Leave the body, or search what they left.`,
-    },
-    {
-      id: 'wc2',
-      fingerprint: 'stayed down through the pause',
-      render: (s) =>
-        `A pause at ${s.where} changed nothing. ${s.corpse} stayed down. The next move was loot or leave.`,
-    },
-  ],
-  loot: [
-    {
-      id: 'lt1',
-      fingerprint: 'The ledger already knew what was there',
-      render: (s) =>
-        `You searched the body of ${s.corpse} at ${s.where}. The ledger already knew what was there.`,
-    },
-    {
-      id: 'lt2',
-      fingerprint: 'search did not invent a new prize',
-      render: (s) => `Hands went through what ${s.corpse} left at ${s.where}. The search did not invent a new prize.`,
-    },
-    {
-      id: 'lt3',
-      fingerprint: 'hands found only what was already listed',
-      render: (s) => `You checked the remains at ${s.where}. Your hands found only what was already listed.`,
-    },
-  ],
-  flee: [
-    {
-      id: 'fl1',
-      fingerprint: 'You broke contact',
-      render: (s) => `You broke contact at ${s.where}. The fight thinned behind you.`,
-    },
-    {
-      id: 'fl2',
-      fingerprint: 'put distance on the fight',
-      render: (s) => `You put distance on the fight at ${s.where}.`,
-    },
-    {
-      id: 'fl3',
-      fingerprint: 'The lane opened behind you',
-      render: (s) => `The lane opened behind you at ${s.where}. You were out of the clinch.`,
-    },
-  ],
-  'flee-caught': [
-    {
-      id: 'fc1',
-      fingerprint: 'The flee failed',
-      render: (s) => `The flee failed at ${s.where}. ${s.who ? `${capFirst(s.who)} ${beVerbFor(s.who)}` : 'They were'} still on you.`,
-    },
-    {
-      id: 'fc2',
-      fingerprint: 'caught before the exit',
-      render: (s) => `You were caught before the exit at ${s.where}.`,
-    },
-    {
-      id: 'fc3',
-      fingerprint: 'still in reach after the run',
-      render: (s) => `${s.who ? `${capFirst(s.who)} ${beVerbFor(s.who)}` : 'The foe was'} still in reach after the run at ${s.where}.`,
-    },
-  ],
-  use: [
-    {
-      id: 'us1',
-      fingerprint: 'used what you already carried',
-      render: (s) => `You used what you already carried at ${s.where}.`,
-    },
-    {
-      id: 'us2',
-      fingerprint: 'kit did the work it was packed for',
-      render: (s) => `At ${s.where} the kit did the work it was packed for.`,
-    },
-    {
-      id: 'us3',
-      fingerprint: 'No new tool appeared in your hands',
-      render: (s) => `You worked with what you had at ${s.where}. No new tool appeared in your hands.`,
-    },
-  ],
-  spawn: [
-    {
-      id: 'sp1',
-      fingerprint: 'was in the lane now',
-      render: (s) =>
-        `Trouble stepped in at ${s.where}. ${s.who || 'A threat'} was in the lane now.`,
-    },
-    {
-      id: 'sp2',
-      fingerprint: 'stepped into the open',
-      render: (s) => `${s.who || 'A threat'} stepped into the open at ${s.where}.`,
-    },
-    {
-      id: 'sp3',
-      fingerprint: 'The fight had a body in it',
-      render: (s) => `The fight had a body in it at ${s.where}. ${s.who || 'They'} had arrived.`,
-    },
-  ],
-  settle: [
-    {
-      id: 'st2',
-      fingerprint: 'the room held its place',
-      render: (s) =>
-        s.who
-          ? `The room at ${s.where} held its place. ${s.who} was still here. The next move was still yours.`
-          : `The room at ${s.where} held its place. The next move was still yours.`,
-    },
-    {
-      id: 'st3',
-      fingerprint: 'Nothing listed had moved on',
-      render: (s) => `You finished the beat at ${s.where}. Nothing listed had moved on.`,
-    },
-  ],
-  'settle-corpse': [
-    {
-      id: 'sc1',
-      fingerprint: 'body still on the floor',
-      render: (s) =>
-        `The beat closed at ${s.where}. The body of ${s.corpse} was still on the floor. Leave, or search what they left.`,
-    },
-    {
-      id: 'sc2',
-      fingerprint: 'was a corpse, not a speaker',
-      render: (s) =>
-        `${s.corpse} stayed down at ${s.where}. They were a corpse, not a speaker.`,
-    },
-  ],
-};
-export const PACKET_STITCH_FINGERPRINTS: readonly string[] = Object.values(STITCH_BANKS)
-  .flat()
-  .map((t) => t.fingerprint);
+export const PACKET_STITCH_FINGERPRINTS: readonly string[] = [];
 const OLD_LANDING_STUB =
   /You acted at landing|That beat closed\.|The next move was yours\.|The blow landed/i;
 /** 13a/13b — retired 1–2 line droughts. Never commit these as the story body. */
@@ -2288,15 +1826,6 @@ function lastGoodGmBody(state: GameState): string {
     if (isAtmosphereOnlyBeat(body)) continue;
     if (isPacketStitchProse(body) && body.length < 160) continue;
     return body.length > 720 ? `${body.slice(0, 719).trim()}…` : body;
-  }
-  return '';
-}
-function cardPageParagraph(state: GameState): string {
-  const card = String(state.openingEstablishment?.pickedHookFallback ?? '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (card.length >= 40 && !isDroughtStubProse(card)) {
-    return applyOpeningHousingLine(card, state.systemHousing?.housing);
   }
   return '';
 }
@@ -2519,12 +2048,6 @@ function topicAdvancePool(
     `${pv.S} said yes at ${here}. ${spokenWant || 'The deal stood.'} The offered kit was in reach.`,
   ];
   let pool = look;
-  const fightVerb = packet?.verb === 'attacked' || packet?.verb === 'fled' || packet?.verb === 'parleyed';
-  if (packet && fightVerb && state.activeEncounter) {
-    // A move inside a live fight is answered inside the fight, never by a look-around or hall talk.
-    const fight = assemblePacketStitch(packet, recent);
-    if (fight && !isDroughtStubProse(fight)) return [fight.replace(/\s+/g, ' ').trim()];
-  }
   if (lineNamesOtherNpc(state, act) && !wantsMove) {
     // 27i — a line naming another known NPC is answered by that NPC, never the opener's card.
     const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
@@ -2659,30 +2182,19 @@ export function lastResortStoryBody(
   const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
   const finish = (prose: string, status: string): { prose: string; status: string } => {
     const cleaned = sanitizeLockedNameBeat(state, prose.replace(/\s+/g, ' ').trim());
-    // T10AJ — exchange beat from the ledger (motive / absence), never leave stock "said nothing".
-    const spoken = ensureSpokenAnswer(cleaned, state, act || 'Look around');
-    const sealed = scrubOpeningTurnProse(state, spoken.prose.replace(/\s+/g, ' ').trim());
+    // Brief 06: do not append canned speech — typed speech beat is rendered once upstream.
+    const sealed = scrubOpeningTurnProse(state, cleaned.replace(/\s+/g, ' ').trim());
     return { prose: sealed, status };
   };
   const record = lastResortUsable(state, writerEngineResult(recordSource, pcName), lastGm);
   if (record) return finish(record, 'Writer page blocked — painted from the turn record');
-  const recent = (state.log ?? [])
-    .filter((e) => e.role === 'gm')
-    .slice(-10)
-    .map((e) => String(e.content ?? ''));
   const pkt = packet
     ? (act && !(packet.playerAction ?? '').trim() ? { ...packet, playerAction: act } : packet)
     : undefined;
   const candidates: string[] = [
     ...topicAdvancePool(state, pkt ?? packet, act || 'Look around'),
   ];
-  if (named && pkt) {
-    const stitch = assemblePacketStitch(pkt, recent);
-    if (stitch && !/Nothing listed had moved on|The moment at .+ settled|You still had the next move/i.test(stitch)) {
-      candidates.push(stitch);
-    }
-  }
-  if (!named) candidates.push(lastGoodGmBody(state), cardPageParagraph(state));
+  if (!named) candidates.push(lastGoodGmBody(state));
   for (const raw of candidates) {
     const body = lastResortUsable(state, raw, lastGm);
     if (body) {
@@ -2767,199 +2279,14 @@ export function isPacketStitchProse(text: string): boolean {
   if (OLD_LANDING_STUB.test(body) || RETIRED_DROUGHT_STUB.test(body)) return true;
   return PACKET_STITCH_FINGERPRINTS.some((fp) => body.includes(fp));
 }
-function corpseRemains(packet: CompletedEventPacket): boolean {
-  const kill = packet.lastKill;
-  return !!(kill?.name && kill.remains && kill.outcome === 'victory' && !packet.combatLive);
-}
-function stitchBankKey(packet: CompletedEventPacket): string {
-  const verb = packet.verb;
-  const outcome = packet.outcome;
-  const corpse = corpseRemains(packet);
-  if (verb === 'attacked' && (outcome === 'killed' || packet.justKilled)) return 'attack-kill';
-  if (verb === 'attacked' && outcome === 'missed') return 'attack-miss';
-  if (verb === 'attacked') return 'attack-hit';
-  if (verb === 'inspected') {
-    if (packet.combatLive) return 'inspect-fight';
-    if (corpse) return 'inspect-corpse';
-    const n = packet.inspectStreak ?? 1;
-    if (n >= 3) return 'inspect-3';
-    if (n === 2) return 'inspect-2';
-    return 'inspect-1';
-  }
-  if (verb === 'spoke' || verb === 'parleyed') {
-    if (corpse) return 'talk-corpse';
-    return packet.witnesses.length > 0 && packet.outcome === 'spoke' ? 'talk' : 'talk-empty';
-  }
-  if (verb === 'traveled' || outcome === 'arrived' || outcome === 'set out') return 'travel';
-  if (verb === 'left' || outcome === 'left') return 'leave';
-  if (verb === 'waited') {
-    if (corpse) return 'wait-corpse';
-    const n = packet.waitStreak ?? 1;
-    if (n >= 3) return 'wait-3';
-    if (n === 2) return 'wait-2';
-    return 'wait-1';
-  }
-  if (verb === 'looted' || outcome === 'looted') return 'loot';
-  if (verb === 'fled') return outcome === 'caught' ? 'flee-caught' : 'flee';
-  if (verb === 'used') return 'use';
-  if (outcome === 'spawned') return 'spawn';
-  if (corpse) return 'settle-corpse';
-  return 'settle';
-}
-function ledgerStitchSlots(packet: CompletedEventPacket): StitchSlots {
-  const where = packet.location || 'this room';
-  const kill = packet.lastKill;
-  const corpse =
-    kill?.name && (packet.justKilled || packet.outcome === 'killed' || packet.outcome === 'looted' || packet.verb === 'looted')
-      ? kill.name
-      : 'the fallen';
-  const living = packet.witnesses.filter((n) => !matchesLastKillName(n, kill));
-  let who = '';
-  const target = packet.target && !isIntentRemainderNoun(packet.target) ? packet.target : '';
-  if (target && !(kill?.name && matchesLastKillName(target, kill) && packet.verb === 'spoke')) {
-    if (kill?.name && matchesLastKillName(target, kill)) {
-      who = '';
-    } else {
-      who = target;
-    }
-  } else if (living[0]) {
-    who = living[0]!;
-  } else if (packet.combatLive && packet.allowlist[1]) {
-    const enc = packet.allowlist.find((n) => n !== packet.location && !matchesLastKillName(n, kill));
-    who = enc && !isIntentRemainderNoun(enc) ? enc : '';
-  }
-  if (packet.verb === 'spoke' && kill?.name && matchesLastKillName(who, kill)) who = '';
-  if (packet.outcome === 'spawned' && kill?.name && matchesLastKillName(who, kill)) who = '';
-  return {
-    where,
-    who,
-    corpse,
-    focus: packet.focusNoun?.trim() ?? '',
-    descriptor: packet.placeDescriptor,
-    exits: packet.exitNames,
-  };
-}
-function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: number): StitchTemplate {
-  const free = bank.filter((t) => !recent.some((b) => b.includes(t.fingerprint)));
-  if (free.length) return free[Math.abs(salt) % free.length]!;
-  // 28b — every line was used recently: take the one seen longest ago, never repeat the last one.
-  const lastSeen = (t: StitchTemplate): number => {
-    for (let i = recent.length - 1; i >= 0; i--) if ((recent[i] ?? '').includes(t.fingerprint)) return i;
-    return -1;
-  };
-  return [...bank].sort((a, b) => lastSeen(a) - lastSeen(b))[0]!;
-}
 /**
- * Authored past-tense stitch from ledger slots only.
- * Never interpolates pad/intent remainder. Outcome follows verb.
+ * Former packet-stitch writer: banks removed (brief 06). Callers get empty — never canned prose.
  */
-function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots): string | null {
-  const act = packet.playerAction ?? '';
-  if (!isHallTalkPlayerLine(act)) return null;
-  const who = (packet.answerWho || slots.who || '').trim();
-  if (!who) return null;
-  const want = (packet.answerWant ?? '').trim();
-  const asksWhere = hallTalkAsksWhere(act);
-  const asksWho = hallTalkAsksWho(act);
-  const asksPanel = hallTalkAsksPanel(act);
-  const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
-  const asksRefuse = hallTalkAsksRefuse(act);
-  const asksStayLeave = hallTalkAsksStayLeave(act);
-  const bits: string[] = [];
-  if (asksWhere) bits.push(`You were at ${slots.where}.`);
-  if (asksWho) {
-    bits.push(
-      openingWhoAskLineFromLabel(who, {
-        location: packet.location,
-        engineMode: packet.engineMode,
-        quote: packet.answerWhoQuote,
-      })
-    );
-  }
-  if (asksPanel && packet.ledgerRead) {
-    bits.push(ledgerReadStitch(housingFromSystemBlock(packet.systemBlock), packet.ledgerChanges));
-  }
-  if (asksWant) {
-    bits.push(
-      want
-        ? `${who.charAt(0).toUpperCase() + who.slice(1)} ${castSpeakVerb(who)} you. "${want}"`
-        : `${capFirst(who)} had not said what they wanted yet.`
-    );
-  }
-  if (asksRefuse) {
-    bits.push(`${capFirst(who)} had not said what happens if you refuse.`);
-  }
-  if (asksStayLeave) {
-    const stay = (packet.answerStayLeave ?? '').trim();
-    bits.push(stay || `${capFirst(who)} had not said whether you must stay or may leave.`);
-  }
-  if (!bits.length) bits.push(`You spoke at ${slots.where}. ${capFirst(who)} ${beVerbFor(who)} still close enough to hear.`);
-  return bits.join(' ').replace(/\s+/g, ' ').trim();
-}
-function clipSpoken(raw: string, max = 180): string {
-  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
-  if (!t) return '';
-  return t.length > max ? `${t.slice(0, max - 1).trim()}…` : t;
-}
-/** E-talk / Silent spoke: CAST + card want, never Silence-held when someone is listed. */
-function renderSpokenTalkFallback(packet: CompletedEventPacket, slots: StitchSlots): string | null {
-  if (packet.verb !== 'spoke' && packet.verb !== 'parleyed') return null;
-  if (corpseRemains(packet)) return null;
-  const who = (packet.answerWho || slots.who || '').trim();
-  if (!who || /\bpanel\b/i.test(who)) return null;
-  const rawWant = (packet.answerWant ?? '').replace(/\s+/g, ' ').trim();
-  const want = /they have not said what they want yet/i.test(rawWant) ? '' : clipSpoken(rawWant);
-  const head = who.charAt(0).toUpperCase() + who.slice(1);
-  const heard =
-    !!want
-    && (packet.recentBeats ?? []).some((b) => b.includes(want.slice(0, Math.min(24, want.length))));
-  if (want) {
-    return heard
-      ? `${head} had already told you what they wanted.`
-      : `${head} ${castSpeakVerb(who)} you. "${want}"`;
-  }
-  return `${head} heard you at ${slots.where}. Their answer stayed short.`;
-}
 export function assemblePacketStitch(
-  packet: CompletedEventPacket,
-  recentGm: string[] = packet.recentBeats ?? []
+  _packet: CompletedEventPacket,
+  _recentGm: string[] = []
 ): string {
-  const slots = ledgerStitchSlots(packet);
-  const hall = renderHallTalkAnswer(packet, slots);
-  if (hall && !isDroughtStubProse(hall)) {
-    if (/^You (?:are|were) (?:at|in)\b/i.test(hall)) return hall;
-    return `You were at ${slots.where}. ${hall}`.replace(/\s+/g, ' ').trim();
-  }
-  if (isOpeningCardActLine(packet.playerAction ?? '')) {
-    const offer = (packet.answerOffer || packet.answerWant || '').replace(/\s+/g, ' ').trim();
-    const who = (packet.answerWho || slots.who || 'They').trim();
-    const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
-    const card = offer
-      ? `${head} turns the allowed page. ${offer} The witness does not add a second page.`
-      : `${head} still has the page at ${slots.where}. They have not said more than the card already gave you.`;
-    if (!isDroughtStubProse(card)) return card.replace(/\s+/g, ' ').trim();
-  }
-  const spoken = renderSpokenTalkFallback(packet, slots);
-  if (spoken && !isDroughtStubProse(spoken)) return spoken;
-  const key = stitchBankKey(packet);
-  const bank = STITCH_BANKS[key] ?? STITCH_BANKS.settle!;
-  const picked = pickStitchTemplate(bank, recentGm, packet.turn);
-  let text = picked.render(slots).replace(/\s+/g, ' ').trim();
-  if (
-    OLD_LANDING_STUB.test(text)
-    || RETIRED_DROUGHT_STUB.test(text)
-    || /what is going on|a direct question|with what you are holding/i.test(text)
-  ) {
-    const alt = bank.find((t) => t.id !== picked.id && !RETIRED_DROUGHT_STUB.test(t.render(slots)))
-      ?? STITCH_BANKS.settle![0]!;
-    text = alt.render(slots).replace(/\s+/g, ' ').trim();
-  }
-  if (RETIRED_DROUGHT_STUB.test(text)) {
-    return slots.who
-      ? `${slots.who} was still at ${slots.where}. The next move was still yours.`
-      : `The room at ${slots.where} held its place. The next move was still yours.`;
-  }
-  return text;
+  return '';
 }
 /**
  * After mechanics commit: attach packet, then the writer string.

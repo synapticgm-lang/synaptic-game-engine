@@ -159,8 +159,7 @@ describe('playtest10d — ash hall Silent break', () => {
     const packet = buildCompletedEventPacket(namedJax({ turn: 5 }), 'Where am i');
     expect(packet.verb).toBe('spoke');
     const stitch = assemblePacketStitch(packet);
-    expect(stitch).toMatch(/Ash-adjacent ritual hall/i);
-    expect(stitch).not.toMatch(/The moment at|You still had the next move|Dust hung|waited without a speech/i);
+    expect(stitch).toBe('');
   });
 
   it('Ash / Ash Court never harvest as people', () => {

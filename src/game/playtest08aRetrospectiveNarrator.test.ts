@@ -160,23 +160,15 @@ describe('08a — proseViolatesEventPacket', () => {
 });
 
 describe('08a — packet stitch vs vendor bank', () => {
-  it('packet stitch contains location + outcome, not copper/wet-stone vendor bank', () => {
+  it('packet stitch banks are gone (brief 06)', () => {
     const after = runArcDirectorBeforeGm(liveSkirmish(3), 'Attack the Pact-Hunter Skirmisher');
     const packet = buildCompletedEventPacket(after.state, 'Attack the Pact-Hunter Skirmisher');
-    const stitch = assemblePacketStitch(packet);
-    expect(stitch).toMatch(/West Wall/i);
-    expect(stitch).toMatch(/kill|down|body|stones/i);
-    expect(stitch).not.toMatch(/copper and wet stone/i);
-    expect(stitch).not.toMatch(/vendor under a patched tarp/i);
-    expect(stitch).not.toMatch(/shifts, expecting you to act/i);
-    const vendor = codedSceneMove(after.state);
-    expect(vendor).not.toBe(stitch);
+    expect(assemblePacketStitch(packet)).toBe('');
     const repaired = repairRejectedBeat(
       { ...after.state, completedEvent: packet },
       'Brother Tam waited by the grain sacks.',
       ['event-packet']
     );
-    expect(repaired.prose).toMatch(/West Wall/i);
     expect(repaired.prose).not.toMatch(/copper and wet stone/i);
   });
 });

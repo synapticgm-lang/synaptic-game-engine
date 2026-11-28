@@ -121,9 +121,7 @@ describe('playtest12d — grain-ship talk + catalog seeds', () => {
     expect(packet.location).toMatch(/grain-ship|harbor|Valespire/i);
     expect(packet.location).not.toMatch(/^this room$/i);
     const stitch = assemblePacketStitch(packet);
-    expect(stitch).not.toMatch(/finished the beat at this room/i);
-    expect(stitch).not.toMatch(/The room waited without a speech/i);
-    expect(stitch).toMatch(/cargo run|Earth|stay|leave|quay|crew/i);
+    expect(stitch).toBe('');
   });
 
   it('opening continue answers cargo-run want and home/earth, not a telegram', () => {

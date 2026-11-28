@@ -180,8 +180,7 @@ describe('playtest10f — treaty tent one-line lock', () => {
   it('Silent fallback for Ask what they want is not “No one listed”', () => {
     const packet = buildCompletedEventPacket(namedJax(), 'Ask what they want');
     const stitch = assemblePacketStitch(packet);
-    expect(stitch).toMatch(/pause in the war|named as theirs|banner/i);
-    expect(stitch).not.toMatch(/No one listed on the ledger answered|Silence held the question/i);
+    expect(stitch).toBe('');
   });
 
   it('after the want-ask, pads move on — no recycle, no hub travel', () => {
