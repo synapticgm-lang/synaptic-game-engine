@@ -69,11 +69,12 @@ describe('rite-granted kit reaches the writer only after the rite', () => {
 });
 
 describe('an ungendered player name gets they/them or the name, never a guessed he/she', () => {
-  it('no gender given: the system prompt and the packet both say so', () => {
+  it('no gender given: the page-1 opening request says so (one leaf; not also the system rail)', () => {
     const text = pageOnePrompt(siPageOne('Sam'));
     const rule = /Sam's gender is not given: call Sam by name or they\/them\/their\. Never he\/him or she\/her for Sam\./;
-    expect(buildFactLeafSystemPrompt(siPageOne('Sam'), settings)).toMatch(rule);
+    // Brief 05 — voice/pronoun rails live on openingRequest via buildContextPrompt only.
     expect(buildContextPrompt(siPageOne('Sam'), '(opening)')).toMatch(rule);
+    expect(buildFactLeafSystemPrompt(siPageOne('Sam'), settings)).not.toMatch(/OPENING PAGE 1/i);
     expect(text).toMatch(rule);
   });
 

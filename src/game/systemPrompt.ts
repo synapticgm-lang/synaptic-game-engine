@@ -4,6 +4,7 @@ import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierR
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules';
 import { campaignIsNsfw } from './campaignNsfw';
 import { formatWriterFacingPacket } from './beatContract';
+import { openingWriterFacing } from './openingRequest';
 import { formatMaturityRules } from './maturity';
 import { formatPerspectiveRule, pcPov } from './narrativePov';
 import {
@@ -506,5 +507,8 @@ export function buildContextPrompt(
   // M1 — one FactSheet leaf via the completed-event packet. No second info-layer dump.
   // activeLoreCards kept in the signature for callers; lore cards stay off the writer leaf (C2 display names only on the sheet).
   void activeLoreCards;
+  // Brief 05 — page 1 is its own request; never buildCompletedEventPacket / "player already acted".
+  const opening = openingWriterFacing(state, perspective);
+  if (opening) return opening;
   return formatWriterFacingPacket(state, playerInput, perspective);
 }

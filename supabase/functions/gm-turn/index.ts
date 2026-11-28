@@ -345,8 +345,11 @@ Deno.serve(async (req) => {
     systemPrompt = CLAUSE_CHECK_SYS;
     userPrompt = renderCheckRequest(payload);
   } else {
+    // Brief 05 — unwritten live opening uses openingRequest via buildContextPrompt (never completedEvent).
     // deno-lint-ignore no-explicit-any
-    if (!(body.state as any).completedEvent) {
+    const openingPage = isUnwrittenLiveOpening(body.state as any);
+    // deno-lint-ignore no-explicit-any
+    if (!openingPage && !(body.state as any).completedEvent) {
       console.warn(
         '[gm-turn] state.completedEvent missing on a turn call — packet rebuilt on the edge'
       );
@@ -355,7 +358,7 @@ Deno.serve(async (req) => {
     userPrompt = buildContextPrompt(
       // deno-lint-ignore no-explicit-any
       body.state as any,
-      playerInput,
+      openingPage ? '(opening)' : playerInput,
       // deno-lint-ignore no-explicit-any
       loreCards as any,
       // deno-lint-ignore no-explicit-any
@@ -487,11 +490,13 @@ Deno.serve(async (req) => {
       }
     };
 
-    // 28l — empty / reasoning-only / cut-off is a normal case: re-ask the SAME model once with a larger
-    // output allowance and a no-reasoning hint. Never switch model.
+    // 28l — empty / reasoning-only / cut-off: re-ask the SAME model once (never switch model).
+    // Brief 05 / H6 — page 1 never gets that hidden re-ask; the client shows honest Try again.
+    // deno-lint-ignore no-explicit-any
+    const openingPageNoRetry = isUnwrittenLiveOpening(body.state as any);
     const first = await tryCall(systemPrompt, AI_MAX_OUTPUT_TOKENS);
     let best = first;
-    if (first.issue) {
+    if (first.issue && !openingPageNoRetry) {
       const again = await tryCall(`${systemPrompt}\n\n${NO_REASONING_HINT}`, WRITER_REASK_MAX_TOKENS);
       const complete = (r: ChatCompletionRead) => !!r.text && r.issue !== 'cut-off';
       if (complete(again) || (!complete(first) && again.text.length > first.text.length)) best = again;

@@ -22,6 +22,9 @@ export { openingProseLeaksStructuredJson };
 
 export { formatOpeningWriterNotes, openingChoiceCount, STORYTELLER_RETRY_CHIP, STORYTELLER_RETRY_MESSAGE };
 
+/** Sentinel only — page-1 content lives in openingRequest via buildContextPrompt (brief 05). */
+const OPENING_PLAYER_INPUT = '(opening)';
+
 export type LiveOpeningWriter = (state: GameState, playerInput: string, settings: Settings) => Promise<string>;
 
 export interface LiveOpeningSuccess {
@@ -156,26 +159,25 @@ export function mockLiveOpeningProse(state: GameState): string {
     .join(' ');
 }
 
-const PAD_ITEM_NOUNS = /^(?:kit|crates?|loft|scarf|waterskin|skin|brand-?iron|iron|hunt|cloak|coat|bread|blanket|water|pact|contract|work|job|dock)$/i;
-const PAD_STOP_WORDS = /^(?:with|from|your|their|this|that|keep|take|walk|hear|offer|own|the|and|for|you|a|an)$/i;
-
-/** Item nouns named by an accept chip (kit, crate, scarf, …) that the page-1 prose must mention. */
-function acceptChipItemNouns(label: string): string[] {
-  return (label ?? '')
-    .split(/\s+/)
-    .map((w) => w.replace(/['’]s$/i, '').replace(/[^A-Za-z-]/g, ''))
-    .filter((w) => PAD_ITEM_NOUNS.test(w));
-}
-
-function chipFollowsProse(label: string, prose: string, kind?: 'accept' | 'refuse' | 'alt'): boolean {
+/**
+ * Accept chips follow prose when every offer-item label from typed data that the chip names
+ * also appears in the prose (brief 05 — refs/ids, not PAD_ITEM_NOUNS word lists).
+ * With no typed offer items, accept chips are not preferred from English alone.
+ */
+function chipFollowsProse(
+  state: GameState,
+  label: string,
+  prose: string,
+  kind?: 'accept' | 'refuse' | 'alt'
+): boolean {
   if (kind === 'refuse') return true;
-  const missingItem = acceptChipItemNouns(label).some(
-    (w) => !new RegExp(`\\b${escapeRe(w)}s?\\b`, 'i').test(prose)
-  );
-  if (missingItem) return false;
-  const words = label.split(/\s+/).filter((w) => w.length >= 4 && !PAD_STOP_WORDS.test(w));
-  if (!words.length) return acceptChipItemNouns(label).length === 0 || !missingItem;
-  return words.some((w) => new RegExp(`\\b${escapeRe(w.replace(/'s$/, ''))}\\b`, 'i').test(prose));
+  const notes = (openingInstanceOf(state)?.offerItemNotes ?? [])
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  if (!notes.length) return false;
+  const named = notes.filter((note) => new RegExp(`\\b${escapeRe(note)}\\b`, 'i').test(label));
+  if (!named.length) return true;
+  return named.every((note) => new RegExp(`\\b${escapeRe(note)}\\b`, 'i').test(prose));
 }
 
 const OPTION_STOP = new Set([
@@ -360,8 +362,6 @@ export function validateOpeningJournalTitle(state: GameState, title: string): st
   return errors;
 }
 
-const TITLE_FUNCTION_WORDS = /^(?:the|a|an|and|or|of|to|for|from|with|on|at|in|into|by|as|after|before|their|them|his|her|its|dark|light|over|under|upon|what|who|when|how|why)$/i;
-
 function isLockedTitlePart(state: GameState, part: string): boolean {
   const inst = openingInstanceOf(state);
   if (!inst) return false;
@@ -372,21 +372,13 @@ function isLockedTitlePart(state: GameState, part: string): boolean {
   return (inst.cast ?? []).some((c) => mentionsName(part, c.name));
 }
 
-function isBareProperListItem(part: string): boolean {
-  const words = part.split(/\s+/).filter(Boolean);
-  if (words.length < 1 || words.length > 2) return false;
-  if (words.some((w) => TITLE_FUNCTION_WORDS.test(w))) return false;
-  return words.every((w) => /^[A-Z][A-Za-z'’-]*$/.test(w));
-}
-
-/** Reject only real name/place lists, not scene titles such as "The Gate, After Dark". */
+/** Reject only locked name/place id lists (brief 05 — no Title-Case / function-word scrapers). */
 function isCommaSeparatedProperNounList(title: string, state: GameState): boolean {
   const commaParts = title.split(',').map((s) => s.trim()).filter(Boolean);
   if (commaParts.length < 2) return false;
   const parts = commaParts.flatMap((p) => p.split(/\s+and\s+/i).map((s) => s.trim()).filter(Boolean));
   if (parts.length < 2) return false;
-  if (parts.every((p) => isLockedTitlePart(state, p))) return true;
-  return parts.every((p) => isBareProperListItem(p) || isLockedTitlePart(state, p)) && parts.some((p) => isBareProperListItem(p) || isLockedTitlePart(state, p));
+  return parts.every((p) => isLockedTitlePart(state, p));
 }
 
 
@@ -408,7 +400,7 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
   };
   const chips = inst?.offerChips ?? [];
   const refuse = chips.filter((c) => c.kind === 'refuse');
-  const acceptFollow = chips.filter((c) => c.kind !== 'refuse' && chipFollowsProse(c.label, prose, c.kind));
+  const acceptFollow = chips.filter((c) => c.kind !== 'refuse' && chipFollowsProse(state, c.label, prose, c.kind));
   for (const c of refuse) {
     if (labels.length >= n) break;
     push(c.label);
@@ -691,8 +683,9 @@ async function runWriter(
   state: GameState,
   settings: Settings
 ): Promise<OpeningDraft> {
-  const input = formatOpeningWriterNotes(state) || '(opening)';
-  const raw = await writer(state, input, settings);
+  // Brief 05 — do not stuff opening notes into playerInput (that framed page 1 as a completed act).
+  // The opening request is the buildContextPrompt leaf; callGm only needs the sentinel.
+  const raw = await writer(state, OPENING_PLAYER_INPUT, settings);
   const parsed = draftFromWriterRaw(raw);
   // parse → rewrite markup → structure leak gate
   return { ...parsed, prose: rewriteOpeningMarkup(parsed.prose, state.engineMode).trim() };
