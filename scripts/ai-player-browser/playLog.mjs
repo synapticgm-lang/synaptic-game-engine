@@ -37,19 +37,21 @@ export function formatRandomPlayLogEntry({
   options,
   picked,
   gmProse,
+  pickMode,
 } = {}) {
   const opts = Array.isArray(options) ? options.map((c) => String(c ?? '')) : [];
   const label = step === 'setup' || step === 'origin' ? 'Setup' : `T${Number(step) || 0}`;
   const list = opts.length ? opts.join(' | ') : '(none)';
   const pick = picked == null || picked === '' ? '(none)' : String(picked);
+  const mode = pickMode === 'forward' || pickMode === 'random' ? ` (${pickMode})` : '';
   const gm = gmProse == null ? '' : String(gmProse);
-  return `${label}: options (${opts.length}): ${list} → picked: ${pick}\nGM: ${gm}`;
+  return `${label}: options (${opts.length}): ${list} → picked: ${pick}${mode}\nGM: ${gm}`;
 }
 
 export function ensurePlayLog(filePath, headerLines = [], { randomPick = false } = {}) {
   if (fs.existsSync(filePath)) return;
   const formatLine = randomPick
-    ? 'Format: Setup|T{n}: options (N): … → picked: … / GM: <full prose verbatim>'
+    ? 'Format: Setup|T{n}: options (N): … → picked: … (random|forward) / GM: <full prose verbatim>'
     : 'Format: T{n}: You wanted …. You did …. Then …. Thumb: up|down — reason';
   const head = [
     '# Play log',

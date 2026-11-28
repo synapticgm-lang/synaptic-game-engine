@@ -109,7 +109,7 @@ import {
 import {
   createPickRng,
   parsePickMode,
-  pickRandomOption,
+  pickDriverOption,
   resolvePickSeed,
 } from './randomPick.mjs';
 
@@ -637,6 +637,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
 
   let gmReplies = 0;
   let setupClicks = 0;
+  /** Setup screens already answered this run (random only on the first). */
+  let setupPickCount = 0;
   let playedSlots = 0;
   const slotTarget = smoke ? SMOKE_GM_REPLIES : Math.max(0, turns - startTurn + 1);
   const stopSetup = (reason, exitCode) => ({
@@ -694,7 +696,13 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const chipsOnly = useRandomPick || spec.chipsOnly || !snap.inputPresent;
     let decision;
     if (useRandomPick) {
-      const picked = pickRandomOption(visibleOptions, rng);
+      const chosen = pickDriverOption({
+        options: visibleOptions,
+        rng,
+        setup,
+        setupPickCount,
+      });
+      const picked = chosen.pick;
       if (!picked) {
         harnessErrors += 1;
         console.log(`AI_PLAYER fail ${bibleId}: random pick found no visible chips at T${turn}`);
@@ -720,7 +728,8 @@ async function playBible(gamePage, bibleId, opts = {}) {
         thumb: null,
         reason: '',
         comment: '',
-        note: 'random',
+        note: chosen.mode,
+        pickMode: chosen.mode,
         model: 'random',
       };
       consecutiveHarnessErrors = 0;
@@ -899,6 +908,7 @@ async function playBible(gamePage, bibleId, opts = {}) {
           options: visibleOptions,
           picked: '(not acted — repeat abort)',
           gmProse: snap?.lastGm ?? gmStory ?? '',
+          pickMode: decision?.pickMode || (setup ? undefined : 'random'),
         }));
       } else {
         appendPlayLog(playLogPath, formatPlayLogLine({
@@ -1036,9 +1046,22 @@ async function playBible(gamePage, bibleId, opts = {}) {
       noteOverlay(turn);
     }
     if (!acted && kind === 'chip') {
-      const safe = useRandomPick
-        ? pickRandomOption(visibleOptions.filter((c) => c !== decision.action), rng) || visibleOptions[0] || ''
-        : pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      let safe = '';
+      if (useRandomPick) {
+        const fallback = pickDriverOption({
+          options: visibleOptions.filter((c) => c !== decision.action),
+          rng,
+          setup,
+          setupPickCount,
+        });
+        safe = fallback.pick || visibleOptions[0] || '';
+        if (safe) {
+          decision.pickMode = fallback.mode;
+          decision.note = fallback.mode;
+        }
+      } else {
+        safe = pickNonHallChip(snap.chips, hallAnswered, recentActions);
+      }
       if (safe && (useRandomPick || !shouldForceTypedHumanMove([safe], recentActions, chipsOnly))) {
         submitStamp = startTurnClock();
         acted = await clickChip(gamePage, safe);
@@ -1335,12 +1358,15 @@ async function playBible(gamePage, bibleId, opts = {}) {
     const gmProseForLog = next?.lastGm ?? nextStory ?? snap?.lastGm ?? gmStory ?? '';
     if (useRandomPick) {
       const logStep = setup ? 'setup' : (++storyTurnNo);
+      const pickMode = decision?.pickMode || (setup && setupPickCount > 0 ? 'forward' : 'random');
       appendPlayLog(playLogPath, formatRandomPlayLogEntry({
         step: logStep,
         options: visibleOptions,
         picked: acted,
         gmProse: gmProseForLog,
+        pickMode,
       }));
+      if (setup && acted) setupPickCount += 1;
     } else {
       appendPlayLog(playLogPath, formatPlayLogLine({
         turn,
