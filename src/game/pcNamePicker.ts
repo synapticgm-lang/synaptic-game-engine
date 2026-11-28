@@ -77,7 +77,8 @@ export function pickPcGivenName(state?: GameState, salt = 'button', skip?: Set<s
 /** "Random designation": a seeded given name plus a surname or clan name from the same bank. */
 export function pickPcDesignation(state?: GameState): string {
   const bank = RACE_NAME_BANKS[pcNameRaceKey(state)];
-  const given = pickPcGivenName(state, 'button');
+  // Own seed salt — must not reuse the name-chip `button` salt or both pick the same given name.
+  const given = pickPcGivenName(state, 'designation');
   const taken = campaignNameWords(state);
   const s = start(state, 'designation|surname', bank.surnames.length);
   for (let i = 0; i < bank.surnames.length; i++) {

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { attachOpeningInstance, mintOpeningInstance, type OpeningHookSnapshot } from './openingInstance';
 import {
+  applyFailedLiveOpening,
   applySuccessfulLiveOpening,
   deriveOpeningJournal,
   askPadFor,
@@ -9,7 +10,6 @@ import {
   mockLiveOpeningProse,
   optionsAreNearDuplicates,
   shapeOpeningPads,
-  validateLiveOpeningProse,
   mockLiveOpeningStructuredReply,
   validateOpeningOptions,
   writeLiveOpening,
@@ -80,28 +80,53 @@ function expectCleanProseOrRetry(result: LiveOpeningResult, expected?: string) {
 }
 
 describe('liveOpening', () => {
-  it('rejects vague salad, missing locked names, and authored reprints', () => {
+  it('commits structured prose that old length/salad/person gates would have rejected, on the first writer call', async () => {
     const state = game();
-    expect(validateLiveOpeningProse(state, 'Someone here looks at you. A figure waits.')).toEqual(
-      expect.arrayContaining([expect.stringMatching(/salad|missing/i)])
-    );
-    const inst = state.openingEstablishment!.instance!;
-    expect(
-      validateLiveOpeningProse(
-        state,
-        `${inst.placeName} is already under you, named and ordinary, not a blur. ${inst.cast[0]!.name} is waiting with a waterskin half raised. The offer is water and a scarf, or a brand-iron, or you keep your own kit and walk on.`
-      )
-    ).toEqual([]);
-    expect(validateLiveOpeningProse(state, cinder.page1 ?? '')).not.toEqual([]);
+    // Short, vague, no locked cast name — previously failed validateLiveOpeningProse.
+    const prose = 'Someone here looks at you. A figure waits in the heat.';
+    expect(prose.length).toBeLessThan(180);
+    let calls = 0;
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => {
+        calls += 1;
+        return JSON.stringify({
+          prose,
+          options: ['Look around', 'Wait', 'Keep your own kit', 'Ask what they want'],
+          journalTitle: 'Arrival',
+        });
+      },
+    });
+    expect(calls).toBe(1);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.retried).toBe(false);
+      expect(result.prose).toBe(prose);
+    }
   });
 
-  it('mock prose passes validation and pads follow the offer with exact counts', () => {
+  it('thrown writer leaves exactly [Try again] as choices and offeredPad', async () => {
+    const state = game();
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => {
+        throw new Error('network');
+      },
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
+      expect(result.pads).toEqual([STORYTELLER_RETRY_CHIP]);
+    }
+    const next = applyFailedLiveOpening(state);
+    expect(next.choices).toEqual([STORYTELLER_RETRY_CHIP]);
+    expect(next.offeredPad?.choices).toEqual([STORYTELLER_RETRY_CHIP]);
+    expect(next.openingEstablishment?.sceneWritten).not.toBe(true);
+  });
+
+  it('mock prose pads follow the offer with exact counts', () => {
     const litrpg = game('litrpg');
     const tabletop = game('dnd');
     const proseL = mockLiveOpeningProse(litrpg);
     const proseT = mockLiveOpeningProse(tabletop);
-    expect(validateLiveOpeningProse(litrpg, proseL)).toEqual([]);
-    expect(validateLiveOpeningProse(tabletop, proseT)).toEqual([]);
     const padsL = shapeOpeningPads(litrpg, proseL);
     const padsT = shapeOpeningPads(tabletop, proseT);
     expect(padsL).toHaveLength(4);
@@ -131,84 +156,18 @@ describe('liveOpening', () => {
     expect(committed.quests?.some((q) => q.revealed && /Hear why Pellane wanted you/i.test(q.name))).toBe(false);
   });
 
-  it('retries once on a failed draft, then surfaces a retry state instead of authored prose', async () => {
+  it('free (non-JSON) writer prose fails once with Try again — no automatic retry', async () => {
     const state = game();
     let calls = 0;
-    const result = await writeLiveOpening(state, settings, {
+    const fail = await writeLiveOpening(state, settings, {
       writer: async () => {
         calls += 1;
-        if (calls === 1) return 'Someone here looks over. A figure waits in the heat.';
-        return mockLiveOpeningStructuredReply(state);
+        return 'Someone here looks over. A figure waits in the heat.';
       },
     });
-    expect(calls).toBe(2);
-    expect(result.ok).toBe(true);
-    if (result.ok) expect(result.retried).toBe(true);
-
-    const fail = await writeLiveOpening(state, settings, {
-      writer: async () => 'Someone here looks over. A figure waits in the heat.',
-    });
+    expect(calls).toBe(1);
     expect(fail.ok).toBe(false);
     if (!fail.ok) expect(fail.error).toBe(STORYTELLER_RETRY_MESSAGE);
-  });
-
-  it('does not treat shared setting words or pronouns as a validation fail', () => {
-    const state = game();
-    const inst = state.openingEstablishment!.instance!;
-    const prose = [
-      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
-      'They have not put a blade in your hand.',
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
-      'Heat rises off the ash, but the sentences are newly written for this run.',
-    ].join(' ');
-    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
-  });
-
-  it('does not fail validation on a common word from a multi-word retired place', () => {
-    const state = game();
-    const inst = state.openingEstablishment!.instance!;
-    const retired = inst.retiredNames.join(' ');
-    expect(retired).toMatch(/Oren/i);
-    expect(retired).toMatch(/Cinderwake/i);
-    const prose = [
-      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
-      'They walk the trail. The salt wind and the heat are ordinary weather, not a catalog place.',
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
-    ].join(' ');
-    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
-    const leak = `${prose} Brother Oren is still standing on the old trail.`;
-    expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
-    const placeLeak = `${prose} Cinderwake Trail still burns behind you.`;
-    expect(validateLiveOpeningProse(state, placeLeak).some((e) => /retired name/i.test(e))).toBe(true);
-  });
-
-  it('does not treat the honorific "brother" as a retired-name leak', () => {
-    const state = game();
-    const inst = state.openingEstablishment!.instance!;
-    expect(inst.retiredNames.join(' ')).toMatch(/Oren/i);
-    const prose = [
-      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
-      'His brother is not in this scene, and no catalog chanter is named.',
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
-    ].join(' ');
-    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
-    const leak = `${prose} Brother Oren is still standing on the old trail.`;
-    expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
-  });
-
-  it('does not fail validation on the common word cinder', () => {
-    const state = game();
-    const inst = state.openingEstablishment!.instance!;
-    const prose = [
-      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
-      'A cinder stuck to his shoe, ordinary ash, not a catalog surname.',
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
-    ].join(' ');
-    expect(validateLiveOpeningProse(state, prose)).toEqual([]);
   });
 
   it('phrases ask-pads from the prose pronoun and does not default to they', () => {
@@ -360,13 +319,6 @@ describe('liveOpening', () => {
     );
     const inst = state.openingEstablishment!.instance!;
     expect(inst.retiredNames.join(' ')).toMatch(/Pellane/i);
-    const prose = [
-      `${inst.placeName} is already under you, named and ordinary, not a blur.`,
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away.`,
-      'The Pellane scouts want an answer.',
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit.',
-    ].join(' ');
-    expect(validateLiveOpeningProse(state, prose).some((e) => /retired name/i.test(e))).toBe(true);
     const later = { ...state, openingEstablishment: { ...state.openingEstablishment!, complete: true, sceneWritten: true } };
     const rail = formatLaterTurnNameRail(later);
     expect(rail).not.toMatch(/Do not use retired catalog names:[^\n]*Pellane/i);
@@ -433,12 +385,12 @@ describe('liveOpening', () => {
         return raw;
       },
     });
-    expect(calls).toBe(2);
+    expect(calls).toBe(1);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
   });
 
-  it('does not accept free prose from the opening call and retries once before Try again', async () => {
+  it('does not accept free prose from the opening call — one call, then Try again', async () => {
     const state = game();
     const prose = mockLiveOpeningProse(state);
     let calls = 0;
@@ -448,12 +400,12 @@ describe('liveOpening', () => {
         return prose;
       },
     });
-    expect(calls).toBe(2);
+    expect(calls).toBe(1);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
   });
 
-  it('keeps a good first prose draft when the options are bad and the retry is worse', async () => {
+  it('keeps a good first prose draft when the options are bad — fallback pads, no second writer call', async () => {
     const state = game();
     const inst = state.openingEstablishment!.instance!;
     const prose = mockLiveOpeningProse(state);
@@ -464,14 +416,13 @@ describe('liveOpening', () => {
     const result = await writeLiveOpening(state, settings, {
       writer: async () => {
         calls += 1;
-        if (calls === 1) return first;
-        return '{"prose":';
+        return first;
       },
     });
-    expect(calls).toBe(2);
+    expect(calls).toBe(1);
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.retried).toBe(true);
+      expect(result.retried).toBe(false);
       expect(result.prose).toBe(prose);
       assertNoKeyText(result.prose);
       expect(result.pads).toHaveLength(4);
@@ -561,8 +512,10 @@ describe('liveOpening', () => {
     expect(next.openingEstablishment?.sceneWritten).not.toBe(true);
     expect(next.openingEstablishment?.sceneWriteError).toBe(STORYTELLER_RETRY_MESSAGE);
     expect(next.choices).toEqual([STORYTELLER_RETRY_CHIP]);
+    expect(next.offeredPad?.choices).toEqual([STORYTELLER_RETRY_CHIP]);
     const good = applySuccessfulLiveOpening(state, mockLiveOpeningProse(state));
     expect(good.openingEstablishment?.sceneWritten).toBe(true);
+    expect(good.offeredPad).toBeNull();
   });
 
   it('fails closed on unquoted values, unquoted keys, typographic tails, arrays, and alternate keys', async () => {
@@ -612,7 +565,7 @@ describe('liveOpening', () => {
           return raw;
         },
       });
-      expect(calls, name).toBe(2);
+      expect(calls, name).toBe(1);
       expect(result.ok, name).toBe(false);
       if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
       expectCleanProseOrRetry(result);
@@ -644,6 +597,7 @@ describe('liveOpening', () => {
     expect(next.openingEstablishment?.sceneWritten).not.toBe(true);
     expect(next.openingEstablishment?.sceneWriteError).toBe(STORYTELLER_RETRY_MESSAGE);
     expect(next.choices).toEqual([STORYTELLER_RETRY_CHIP]);
+    expect(next.offeredPad?.choices).toEqual([STORYTELLER_RETRY_CHIP]);
 
     const punct = `${prose}\n}, { "journalTitle": "Arrival" }`;
     expect(openingProseLeaksStructuredJson(punct)).toBe(true);

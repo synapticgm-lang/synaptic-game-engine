@@ -9,7 +9,6 @@ import {
   type OpeningHookSnapshot,
 } from './openingInstance';
 import { formatOpeningCardChrome } from './openingPointerCard';
-import { validateLiveOpeningProse } from './liveOpening';
 
 const cinder: OpeningHookSnapshot = {
   location: 'the ash-heat of Cinderwake Trail',
@@ -200,15 +199,8 @@ describe('openingInstance', () => {
 
     const state = attachOpeningInstance(seededState('hollow-verb-seed'), hook, hook.page1);
     const attached = state.openingEstablishment!.instance!;
-    const okProse = [
-      `${attached.placeName} sits under a chalk eve, named and ordinary.`,
-      `${attached.cast[0]!.name} has a waterskin half raised, and ${attached.cast[1]!.name} has not looked away.`,
-      'A cinder stuck to his shoe. The salt wind pulls at the canvas.',
-      'Walk with them for water, or stay and watch the road. You keep your own kit if you refuse.',
-    ].join(' ');
-    expect(validateLiveOpeningProse(state, okProse)).toEqual([]);
-    const leak = `${okProse} You can still see Hollowmere Track from here.`;
-    expect(validateLiveOpeningProse(state, leak).some((e) => /retired name/i.test(e))).toBe(true);
+    expect(attached.placeName).not.toMatch(/Hollowmere/i);
+    expect(attached.retiredNames.join(' ')).toMatch(/Hollowmere/i);
   });
 
   it('bans the hook catalog faction Pellane on page 1', () => {

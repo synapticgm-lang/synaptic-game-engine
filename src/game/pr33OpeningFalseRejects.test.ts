@@ -10,7 +10,6 @@ import {
   fallbackOpeningPads,
   mentionsPlaceName,
   optionPronounErrors,
-  validateLiveOpeningProse,
   validateOpeningJournalTitle,
   validateOpeningOptions,
   writeLiveOpening,
@@ -91,22 +90,16 @@ const nollshawDraft2Prose =
   'The newcomer stood at the lip of Nollshaw Well. The stones were worn smooth, older than anything around them. Tilde Barrow waited at their side, a woman with the stoop of a father who had carried too many years past harvest. She did not fill the quiet. When she finally spoke, her voice was low and even, as though she had asked this question a hundred times and never once liked the answer.\n\n"What answered from the shaft?"';
 
 describe('PR33 opening false rejects', () => {
-  it('accepts Nollshaw Well draft 1 when the title names the well and the prose says "the well"', () => {
+  it('accepts Nollshaw Well draft 1 options when the prose is committed without place-name prose gates', () => {
     const state = withInstance('dnd', nollshawInst, 'pr31-live-dnd-keep');
     expect(mentionsPlaceName(NOLLshawDraft1Prose, 'Nollshaw Well')).toBe(false);
-    expect(validateLiveOpeningProse(state, NOLLshawDraft1Prose).some((e) => /missing place Nollshaw Well/i.test(e))).toBe(true);
-    expect(validateLiveOpeningProse(state, NOLLshawDraft1Prose, 'What Answered at Nollshaw Well')).toEqual([]);
     expect(validateOpeningOptions(state, NOLLshawDraft1Prose, nollshawDraft1Options)).toEqual([]);
   });
 
-  it('still rejects a bare generic trail or road with no coined stem in the title or prose', () => {
-    const state = withInstance('litrpg', merrowInst);
-    const trailOnly =
-      'They walk the trail, named and ordinary, not a blur. Wenna Merrow has a waterskin half raised, and Ysolde Marl has not looked away. The offer is water and a scarf, or a brand-iron, or you keep your own kit. Heat rises off the ash, but the sentences are newly written for this run.';
-    expect(validateLiveOpeningProse(state, trailOnly, 'Along the Trail').some((e) => /missing place Merrowbury Trail/i.test(e))).toBe(true);
-    expect(validateLiveOpeningProse(state, trailOnly, 'The Road, After Dark').some((e) => /missing place Merrowbury Trail/i.test(e))).toBe(true);
+  it('mentionsPlaceName still requires a coined stem, not a bare trail or road', () => {
     expect(mentionsPlaceName('They walked the trail until the heat broke.', 'Merrowbury Trail')).toBe(false);
     expect(mentionsPlaceName('They crossed the road, then the hollow.', 'Merrowbury Trail')).toBe(false);
+    expect(mentionsPlaceName('Merrowbury was already under them.', 'Merrowbury Trail')).toBe(true);
   });
 
   it('does not treat "Keep Earth kit" as a coined name, but still flags a locked person missing from the prose', () => {
@@ -114,14 +107,24 @@ describe('PR33 opening false rejects', () => {
     const errors = validateOpeningOptions(state, merrowDraft1Prose, merrowDraft1Options);
     expect(errors.some((e) => /Keep Earth/i.test(e))).toBe(false);
     expect(errors.some((e) => /option names Ysolde/i.test(e))).toBe(true);
-    expect(validateLiveOpeningProse(state, merrowDraft1Prose, 'A Name on the Ash Road')).toEqual([]);
   });
 
-  it('still rejects a real missing named person', () => {
+  it('commits structured prose that names only one cast member (old missing-person gate deleted)', async () => {
     const state = withInstance('litrpg', merrowInst);
-    expect(validateLiveOpeningProse(state, merrowDraft2Prose, 'Merrowbury Trail, In Their Prints')).toEqual(
-      expect.arrayContaining([expect.stringMatching(/missing named person/i)])
-    );
+    let calls = 0;
+    const result = await writeLiveOpening(state, settings, {
+      writer: async () => {
+        calls += 1;
+        return JSON.stringify({
+          prose: merrowDraft2Prose,
+          options: ['Look around', 'Wait', 'Keep your own kit', 'Ask what they want'],
+          journalTitle: 'Merrowbury Trail, In Their Prints',
+        });
+      },
+    });
+    expect(calls).toBe(1);
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.prose).toBe(merrowDraft2Prose);
   });
 
   it('accepts scene titles with a comma and still rejects a real name/place list', () => {
@@ -150,7 +153,6 @@ describe('PR33 opening false rejects', () => {
       'Say you heard nothing from the well',
       label,
     ])).toEqual([]);
-    expect(validateLiveOpeningProse(state, nollshawDraft2Prose, 'At Nollshaw Well')).toEqual([]);
   });
 
   it('never uses Father, Mother, Brother, or Sister as a minted person role, and aligns offer pronouns', () => {

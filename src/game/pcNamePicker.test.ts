@@ -109,6 +109,18 @@ describe('per-race PC name bank', () => {
     expect(RACE_NAME_BANKS.modern.given).toContain(chips[3]);
   });
 
+  it('Random designation uses its own seed salt, not the name-chip button salt', () => {
+    let differed = false;
+    for (let i = 0; i < 40; i++) {
+      const state = cover('system-integration', `si-desig-salt-${i}`);
+      const button = pickPcGivenName(state, 'button');
+      const designationGiven = pickPcGivenName(state, 'designation');
+      expect(pickPcDesignation(state).split(' ')[0]).toBe(designationGiven);
+      if (button !== designationGiven) differed = true;
+    }
+    expect(differed).toBe(true);
+  });
+
   it('Random designation sets a full name from the bank; a typed name is never replaced', async () => {
     const state = cover('system-integration', 'si-9');
     const want = pickPcDesignation(state);

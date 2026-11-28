@@ -9,8 +9,6 @@ import {
   mockLiveOpeningProse,
   shapeOpeningPads,
   STORYTELLER_RETRY_MESSAGE,
-  validateLiveOpeningProse,
-  validateOpeningCastVoice,
   validateOpeningJournalTitle,
   validateOpeningOptions,
   writeLiveOpening,
@@ -113,7 +111,6 @@ describe('PR31 live-opening follow-ups', () => {
       'Keep your own kit and refuse both offers',
       `Look around ${inst.placeName}`,
     ];
-    expect(validateLiveOpeningProse(state, rewritten)).toEqual([]);
     expect(validateOpeningOptions(state, rewritten, options)).toEqual([]);
     let calls = 0;
     const result = await writeLiveOpening(state, settings, {
@@ -163,7 +160,7 @@ describe('PR31 live-opening follow-ups', () => {
         return asJson(state, leftover);
       },
     });
-    expect(calls).toBe(2);
+    expect(calls).toBe(1);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toBe(STORYTELLER_RETRY_MESSAGE);
   });
@@ -204,7 +201,7 @@ describe('PR31 live-opening follow-ups', () => {
     expect(parsed?.journalTitle).toBe('Title');
   });
 
-  it('rejects a self-introduction and pronouns that disagree with minted gender, and puts gender in the prompt', () => {
+  it('puts minted cast gender in the opening prompt rail', () => {
     const state = (() => {
       for (const seed of ['pr30-live-cinder-b', 'pr31-gender', 'pr31-gender-2', 'pr31-gender-3', 'pr31-gender-4']) {
         const s = game('litrpg', seed);
@@ -224,53 +221,6 @@ describe('PR31 live-opening follow-ups', () => {
       expect(rail).toMatch(new RegExp(`${member.name} — ${member.gender === 'female' ? 'woman' : 'man'}`));
       expect(genderForPersonName(member.name)).toBe(member.gender);
     }
-
-    const woman = inst.cast.find((c) => c.gender === 'female') ?? inst.cast[0]!;
-    const man = inst.cast.find((c) => c.gender === 'male') ?? inst.cast[1] ?? inst.cast[0]!;
-    // Cinderwake B: a woman introduces herself with the man's name.
-    const swapped =
-      `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `A woman knelt at the edge of the marks. She looked up. "${man.name}. I track." ` +
-      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
-    expect(validateOpeningCastVoice(state, swapped).some((e) => /self-introduction gender mismatch/i.test(e))).toBe(true);
-    expect(validateLiveOpeningProse(state, swapped).length).toBeGreaterThan(0);
-
-    // Next-sentence He/She and "sat with his brother" are not high-precision enough to reject.
-    const nellCrouched =
-      `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `${woman.name} crouched by the dead fire. He watched from the other side of the prints. ` +
-      `${man.name} has not looked away. You keep your own kit if you refuse. ` +
-      'Heat rises off the ash, but the sentences are newly written for this run.';
-    expect(validateOpeningCastVoice(state, nellCrouched)).toEqual([]);
-    expect(validateLiveOpeningProse(state, nellCrouched)).toEqual([]);
-
-    const withBrother =
-      `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `${woman.name} sat with his brother near the dead fire. ` +
-      `${man.name} has not looked away. You keep your own kit if you refuse. ` +
-      'Heat rises off the ash, but the sentences are newly written for this run.';
-    expect(validateOpeningCastVoice(state, withBrother)).toEqual([]);
-    expect(validateLiveOpeningProse(state, withBrother)).toEqual([]);
-
-    // Explicit appositive / descriptor next to the name still fails when it conflicts.
-    const appositive =
-      `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `The woman, ${man.name}, knelt at the edge of the marks. ` +
-      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
-    expect(validateOpeningCastVoice(state, appositive).some((e) => /descriptor does not match minted gender/i.test(e))).toBe(true);
-
-    const appositiveAfter =
-      `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `${man.name}, a woman, knelt at the edge of the marks. ` +
-      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
-    expect(validateOpeningCastVoice(state, appositiveAfter).some((e) => /descriptor does not match minted gender/i.test(e))).toBe(true);
-
-    const matchingDescriptor =
-      `${inst.placeName} is already named and ordinary, not a blur. ` +
-      `The man, ${man.name}, knelt at the edge of the marks. ` +
-      `${woman.name} has not looked away. You keep your own kit if you refuse.`;
-    expect(validateOpeningCastVoice(state, matchingDescriptor)).toEqual([]);
-
     expect(formatOpeningPage1Rail(state)).toMatch(/he\/him\/his/i);
   });
 
@@ -291,20 +241,6 @@ describe('PR31 live-opening follow-ups', () => {
     expect(mentionsPlaceName('They crossed the road, then the hollow, then a crossing.', place)).toBe(false);
     expect(mentionsPlaceName('Vossleigh was already under them.', 'Vossleigh Crossing')).toBe(true);
     expect(mentionsPlaceName('They waited at the crossing.', 'Vossleigh Crossing')).toBe(false);
-
-    const trailOnly =
-      `They walk the trail, named and ordinary, not a blur. ` +
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away. ` +
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit. ' +
-      'Heat rises off the ash, but the sentences are newly written for this run.';
-    expect(validateLiveOpeningProse(state, trailOnly).some((e) => new RegExp(`missing place ${place}`, 'i').test(e))).toBe(true);
-
-    const distinctiveOnly =
-      `${distinctive} is already under you, named and ordinary, not a blur. ` +
-      `${inst.cast[0]!.name} has a waterskin half raised, and ${inst.cast[1]!.name} has not looked away. ` +
-      'The offer is water and a scarf, or a brand-iron, or you keep your own kit. ' +
-      'Heat rises off the ash, but the sentences are newly written for this run.';
-    expect(validateLiveOpeningProse(state, distinctiveOnly)).toEqual([]);
 
     // Person names still match by first or last name.
     const first = inst.cast[0]!.name.split(/\s+/)[0]!;
@@ -364,7 +300,7 @@ describe('PR31 live-opening follow-ups', () => {
     expect(rail).toMatch(/still on the map/i);
   });
 
-  it('prefers a fully valid second draft over first prose plus generic fallback pads', async () => {
+  it('commits the first structured draft with fallback pads when options are bad — no second writer call', async () => {
     const state = game('litrpg', 'pr31-retry');
     const inst = state.openingEstablishment!.instance!;
     const firstProse =
@@ -372,41 +308,25 @@ describe('PR31 live-opening follow-ups', () => {
       `${inst.cast[0]!.name} is already in motion and has not looked away. ` +
       'Heat rises off the ash, but the sentences are newly written for this run. ' +
       'You keep your own kit if you refuse.';
-    // Options name the second person, who is not in the first prose — this is why live C retried and fell back.
     const badOptions = [
       `Walk with ${inst.cast[1]!.name} for water and the pilgrim scarf`,
       `Stay for ${inst.cast[0]!.name} and take the hunt for the brand-iron`,
       'Keep your own kit and refuse both offers',
       `Ask ${inst.cast[1]!.name.split(/\s+/)[0]} about the prints`,
     ];
-    const secondProse =
-      `${inst.placeName} is already under you, named and ordinary, not a blur. ` +
-      `${inst.cast[0]!.name} is already in motion, and ${inst.cast[1]!.name} has not looked away. ` +
-      'The waterskin and the brand-iron are both on offer. You keep your own kit if you refuse.';
-    const goodOptions = [
-      `Walk with ${inst.cast[0]!.name} for the waterskin`,
-      `Stay for ${inst.cast[1]!.name} and take the hunt`,
-      'Keep your own kit and refuse both offers',
-      `Look around ${inst.placeName}`,
-    ];
-    expect(validateLiveOpeningProse(state, firstProse)).toEqual([]);
-    expect(validateOpeningOptions(state, secondProse, goodOptions)).toEqual([]);
     let calls = 0;
     const result = await writeLiveOpening(state, settings, {
       writer: async () => {
         calls += 1;
-        if (calls === 1) {
-          return asJson(state, firstProse, { options: badOptions, journalTitle: `Arrival at ${inst.placeName}` });
-        }
-        return asJson(state, secondProse, { options: goodOptions, journalTitle: `The waterskin at ${inst.placeName}` });
+        return asJson(state, firstProse, { options: badOptions, journalTitle: `Arrival at ${inst.placeName}` });
       },
     });
-    expect(calls).toBe(2);
+    expect(calls).toBe(1);
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.retried).toBe(true);
-      expect(result.prose).toBe(secondProse);
-      expect(result.pads).toEqual(goodOptions);
+      expect(result.retried).toBe(false);
+      expect(result.prose).toBe(firstProse);
+      expect(result.pads).toHaveLength(4);
       expect(result.pads.join(' ')).not.toMatch(/Wait and listen|Stand your ground/i);
     }
   });
