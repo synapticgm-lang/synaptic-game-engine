@@ -34,6 +34,21 @@ const summonedPactBase: CampaignBible = {
   /** Code picks one per New Game (seed). Pointers, not a script — writer builds the page. */
   openingHooks: [
     {
+      place: { id: 'sp-place-sevenfold-cathedral', kind: 'cathedral' },
+      cast: [
+        { id: 'sp-cast-chanter', role: 'high chanter', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'sp-npc-1' },
+      ],
+      offer: { items: [
+          { id: 'sp-offer-field-blade', label: 'field blade', carryable: true },
+          { id: 'sp-offer-cloak', label: 'cloak', carryable: true },
+          { id: 'sp-offer-papers', label: 'papers', carryable: true },
+          { id: 'sp-offer-coin', label: 'a little coin', carryable: true },
+        ] },
+      rite: { steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+          { id: 'sp-rite-swear-pact', label: 'Swear the Pact' },
+        ] },
+      beatOrder: ['arrive', 'panel', 'mark-wrong', 'offer'],
       who: 'an Earth stranger pulled as Pactborn, still in street clothes',
       pressing: 'They need a name before they will say what the wrong Mark means.',
       location: 'The Sevenfold Circle under Valespire Cathedral',
@@ -53,6 +68,20 @@ const summonedPactBase: CampaignBible = {
         'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Your Earth clothes are still on you.',
     },
     {
+      place: { id: 'sp-place-war-camp', kind: 'war camp' },
+      cast: [
+        { id: 'sp-cast-captain', role: 'camp captain', pronouns: 'she/her', durability: 'durable', catalogNpcId: 'sp-npc-2' },
+      ],
+      offer: { items: [
+          { id: 'sp-offer-service-blade', label: 'service blade', carryable: true },
+          { id: 'sp-offer-coat', label: 'coat', carryable: true },
+          { id: 'sp-offer-ration-chit', label: 'ration chit', carryable: true },
+        ] },
+      rite: { steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+          { id: 'sp-rite-enlist', label: 'Enlist' },
+        ] },
+      beatOrder: ['arrive', 'panel', 'line-argument', 'offer'],
       who: 'an Earth stranger scraped into a war-camp circle as a body for the line',
       pressing: 'The captain is already deciding whether to kit you or send you forward without a weapon.',
       location: 'Pellane war camp beyond Valespire walls',
@@ -72,6 +101,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then mud and banner-smoke. You are on your back in a war-camp circle scraped into dirt outside Valespire’s walls. Armored handlers shout over horn-calls. A blue panel hangs at eye level. Someone wanted a hero yesterday. The Mark on you is already an argument.',
     },
     {
+      place: { id: 'sp-place-undercroft-cell', kind: 'cell' },
+      cast: [{ id: 'sp-cast-cell-handler', role: 'handler beyond the grate', pronouns: 'they/them', durability: 'passer' }],
+      offer: { items: [{ id: 'sp-offer-traveler-kit', label: "traveler's kit", carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-oath', label: 'Give an oath' }] },
+      beatOrder: ['arrive', 'panel', 'bait', 'offer'],
       who: 'an Earth stranger summoned as bait behind iron bars',
       pressing: 'The handler wants a name and an oath before the grate opens.',
       location: 'a barred undercroft cell beneath Valespire Cathedral',
@@ -90,6 +124,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then iron bars. You are on a stone bench in a cell under the cathedral, not a welcome hall. A blue panel hangs in the dark. A handler on the other side of the grate calls you bait. Your Earth clothes are still on you.',
     },
     {
+      place: { id: 'sp-place-arena', kind: 'arena' },
+      cast: [{ id: 'sp-cast-arena-master', role: 'arena master', pronouns: 'they/them', durability: 'durable' }],
+      offer: { items: [{ id: 'sp-offer-rack-weapon', label: 'a weapon from the rack', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name for the slate' }, { id: 'sp-rite-take-sand', label: 'Take the sand' }] },
+      beatOrder: ['arrive', 'panel', 'crowd', 'offer'],
       who: 'an Earth stranger summoned as arena sport for a betting crowd',
       pressing: 'The masters want a name for the slate before the first bout is called.',
       location: 'the blood-sand arena of Valespire',
@@ -108,6 +147,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then sand and noise. You are on your back in an arena circle while a crowd already bets. Robes at the rail. A blue panel hangs private. Nobody asked if you wanted to be entertainment.',
     },
     {
+      place: { id: 'sp-place-cellar-shrine', kind: 'shrine' },
+      cast: [{ id: 'sp-cast-cult-lead', role: 'cult lead', pronouns: 'they/them', durability: 'passer' }],
+      offer: { items: [{ id: 'sp-offer-relic-knife', label: 'relic-knife', carryable: true }, { id: 'sp-offer-stained-cloak', label: 'stained cloak', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-small-pact', label: 'Join their small pact' }] },
+      beatOrder: ['arrive', 'panel', 'wrong-gods', 'offer'],
       who: 'an Earth stranger pulled by a denied-god cult the Crown will not admit',
       pressing: 'The cult wants a miracle named before someone upstairs calls this Pellane’s summon.',
       location: 'a Lowmarket cellar shrine under Valespire',
@@ -126,6 +170,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then candle-smoke in a cellar. Wrong gods, wrong chant. You are on your back in a cult circle the Crown will deny. A blue panel hangs. Someone upstairs will still call this Pellane’s summon anyway.',
     },
     {
+      place: { id: 'sp-place-bombarded-circle', kind: 'cathedral' },
+      cast: [{ id: 'sp-cast-young-handler', role: 'panicked handler', pronouns: 'they/them', durability: 'passer' }],
+      offer: { items: [{ id: 'sp-offer-fallen-kit', label: "fallen soldier's kit", carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-hold-vault', label: 'Help hold the vault' }] },
+      beatOrder: ['arrive', 'panel', 'ceiling', 'offer'],
       who: 'an Earth stranger pulled while the cathedral is under fire',
       pressing: 'The ceiling is cracking; the handler needs a name before the next hit lands.',
       location: 'The Sevenfold Circle under bombardment',
@@ -144,6 +193,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then a vault under fire. You are on your back in the seven-ring circle while dust and ash fall through the chant. A blue panel hangs. The Mark is wrong and the ceiling is already cracking.',
     },
     {
+      place: { id: 'sp-place-festival-square', kind: 'square' },
+      cast: [{ id: 'sp-cast-festival-handler', role: 'panicked handler', pronouns: 'they/them', durability: 'passer' }],
+      offer: { items: [{ id: 'sp-offer-cloak', label: 'cloak', carryable: true }, { id: 'sp-offer-pass', label: 'pass', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-play-along', label: 'Play along as summoned guest' }] },
+      beatOrder: ['arrive', 'panel', 'wrong-catch', 'offer'],
       who: 'an Earth stranger pulled into a festival you were not named for',
       pressing: 'Panicked handlers need a name before the crowd decides what you are.',
       location: 'Valespire peace-festival square',
@@ -162,6 +216,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then festival noise. You hit public stones; the street you were walking is gone. Handlers freeze. A blue panel hangs. One whisper: “Wrong catch.”',
     },
     {
+      place: { id: 'sp-place-wayside-shrine', kind: 'shrine' },
+      cast: [{ id: 'sp-cast-frightened-priest', role: 'frightened priest', pronouns: 'he/him', durability: 'durable' }],
+      offer: { items: [{ id: 'sp-offer-pilgrim-staff', label: "traveler's staff", carryable: true }, { id: 'sp-offer-pilgrim-cloak', label: 'pilgrim cloak', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-walk-road', label: 'Walk with them to the capital' }] },
+      beatOrder: ['arrive', 'panel', 'rural-mistake', 'offer'],
       who: 'an Earth stranger pulled far from the capital by a rural mistake',
       pressing: 'One frightened priest needs a name before he decides to hide you or run.',
       location: 'a wayside shrine on the Valespire road',
@@ -180,6 +239,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then quiet rural stone. One priest, one mistake, no capital audience. You are on your back in a roadside shrine circle. A blue panel hangs. The road to Valespire is still miles of dust.',
     },
     {
+      place: { id: 'sp-place-ash-ritual-hall', kind: 'ritual hall' },
+      cast: [{ id: 'sp-cast-ash-priest', role: 'Ash Court priest', pronouns: 'they/them', durability: 'durable' }],
+      offer: { items: [{ id: 'sp-offer-ember-ward-kit', label: 'ember-ward kit', carryable: true }, { id: 'sp-offer-citizenship-papers', label: 'citizenship papers', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-wear-mark', label: 'Wear the Mark openly' }] },
+      beatOrder: ['arrive', 'panel', 'proof', 'offer'],
       who: 'an Earth stranger pulled by Ash Court priests as Calamity proof',
       pressing: 'They want the Mark read aloud as evidence against Pellane before you can leave.',
       location: 'an Ash-adjacent ritual hall',
@@ -198,6 +262,11 @@ const summonedPactBase: CampaignBible = {
         'Burnt iron and a jagged circle. Ash Court priests stand over you. A blue panel hangs. A wrapped ember-blade is a deal, not yours yet.',
     },
     {
+      place: { id: 'sp-place-mass-summon', kind: 'cathedral' },
+      cast: [{ id: 'sp-cast-ritual-staff', role: 'Crown ritual staff', pronouns: 'they/them', durability: 'passer' }],
+      offer: { items: [{ id: 'sp-offer-issued-kit', label: 'issued kit', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-first-swear', label: 'Swear first for kit' }] },
+      beatOrder: ['arrive', 'panel', 'mass-argument', 'offer'],
       who: 'an Earth stranger among four bodies in a mass summon',
       pressing: 'Staff are arguing who is Pactborn, who is Marked, and who was extra — starting with your name.',
       location: 'The Sevenfold Circle — four rings occupied',
@@ -216,6 +285,14 @@ const summonedPactBase: CampaignBible = {
         'Light, then three other people on neighboring rings. A mass summon. The room is already arguing who is Pactborn, who is Marked, and who was extra. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you.',
     },
     {
+      place: { id: 'sp-place-treaty-tent', kind: 'tent' },
+      cast: [
+        { id: 'sp-cast-pellane-envoy', role: 'Pellane envoy', pronouns: 'they/them', durability: 'durable' },
+        { id: 'sp-cast-ash-envoy', role: 'Ash Court envoy', pronouns: 'they/them', durability: 'durable' },
+      ],
+      offer: { items: [{ id: 'sp-offer-banner-kit', label: 'banner kit', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-pick-banner', label: 'Pick a banner' }] },
+      beatOrder: ['arrive', 'panel', 'two-seals', 'offer'],
       who: 'an Earth stranger summoned as a living treaty token',
       pressing: 'Both envoys want you named as theirs before the pause can be signed.',
       location: 'a treaty tent on the Cinderflow road',
@@ -234,6 +311,15 @@ const summonedPactBase: CampaignBible = {
         'Light, then canvas and lamp-smoke. You are on your back in a treaty tent on the Cinderflow road. Two sets of seals wait on one table. A blue panel hangs at eye level. Both sides already want your name on a banner.',
     },
     {
+      place: { id: 'sp-place-grain-ship-hold', kind: 'ship hold' },
+      cast: [{ id: 'sp-cast-smuggler', role: 'smuggler', pronouns: 'they/them', durability: 'passer' }],
+      offer: { items: [
+          { id: 'sp-offer-crew-knife', label: 'knife', carryable: true },
+          { id: 'sp-offer-oilskin', label: 'oilskin', carryable: true },
+          { id: 'sp-offer-bunk', label: 'a bunk', carryable: false },
+        ] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-keep-secret', label: 'Keep their secret' }] },
+      beatOrder: ['arrive', 'panel', 'stolen-rite', 'offer'],
       who: 'an Earth stranger pulled by smugglers who stole a Scale rite',
       pressing: 'They need a name and a story before the Crown hears the circle worked.',
       location: 'a harbor circle in the hold of a Valespire grain-ship',
@@ -252,6 +338,14 @@ const summonedPactBase: CampaignBible = {
         'Light, then timber and tar. You are on your back in a chalk circle in the hold of a grain-ship leaving Valespire. A blue panel hangs at eye level. The people here were not supposed to make this work.',
     },
     {
+      place: { id: 'sp-place-west-wall-circle', kind: 'ruin' },
+      cast: [
+        { id: 'sp-cast-militia', role: 'militia', pronouns: 'they/them', durability: 'passer' },
+        { id: 'sp-cast-scavenger', role: 'scavenger', pronouns: 'they/them', durability: 'passer' },
+      ],
+      offer: { items: [{ id: 'sp-offer-militia-armband', label: 'militia armband', carryable: true }, { id: 'sp-offer-short-blade', label: 'short blade', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-come-quietly', label: 'Come quietly with the patrol' }] },
+      beatOrder: ['arrive', 'panel', 'leftover', 'offer'],
       who: 'an Earth stranger left over from a failed west-wall rite',
       pressing: 'Scavengers and late militia want to know whose leftover you are.',
       location: 'a ruined empty circle outside the west wall',
@@ -270,6 +364,11 @@ const summonedPactBase: CampaignBible = {
         'Light, then open sky. You are on cracked brass rings outside Valespire’s west wall. The circle is empty of priests. A blue panel hangs at eye level. Footsteps are already coming — scavengers, or the watch.',
     },
     {
+      place: { id: 'sp-place-infirmary', kind: 'infirmary' },
+      cast: [{ id: 'sp-cast-chirurgeon', role: 'field chirurgeon', pronouns: 'they/them', durability: 'durable' }],
+      offer: { items: [{ id: 'sp-offer-wraps', label: 'wraps', carryable: true }, { id: 'sp-offer-chirurgeon-knife', label: 'knife', carryable: true }, { id: 'sp-offer-tabard', label: 'tabard', carryable: true }] },
+      rite: { steps: [{ id: 'sp-rite-name', label: 'Give a name' }, { id: 'sp-rite-work-cots', label: 'Agree to work their cots' }] },
+      beatOrder: ['arrive', 'panel', 'wrong-order', 'offer'],
       who: 'an Earth stranger summoned when the court ordered a healer-hero',
       pressing: 'Chirurgeons need a name while they argue that your Mark does not match the order.',
       location: 'the cathedral infirmary',
@@ -288,6 +387,15 @@ const summonedPactBase: CampaignBible = {
         'Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes.',
     },
     {
+      place: { id: 'sp-place-alone-barn', kind: 'barn' },
+      cast: [],
+      offer: { items: [] },
+      rite: {
+        steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+        ],
+      },
+      beatOrder: ['arrive', 'panel', 'alone'],
       who: 'an Earth stranger left alone at alone in an abandoned barn in Pellane country',
       pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in an abandoned barn in Pellane country',
@@ -311,6 +419,15 @@ const summonedPactBase: CampaignBible = {
         'Light, then quiet. You are alone on the floor of an abandoned barn — four walls, most of a roof, stained plaster stalls. A blue panel hangs at eye level — private, yours. Nobody is here.',
     },
     {
+      place: { id: 'sp-place-alone-bathhouse', kind: 'bathhouse' },
+      cast: [],
+      offer: { items: [] },
+      rite: {
+        steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+        ],
+      },
+      beatOrder: ['arrive', 'panel', 'alone'],
       who: 'an Earth stranger left alone at alone in a ruined bathhouse off the Valespire roads',
       pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a ruined bathhouse off the Valespire roads',
@@ -334,6 +451,15 @@ const summonedPactBase: CampaignBible = {
         'Rain through a cracked dome. You are alone on ceramic tiles in a ruined bathhouse. A blue panel hangs in the draft. Nobody came to greet you.',
     },
     {
+      place: { id: 'sp-place-alone-watchtower', kind: 'watchtower' },
+      cast: [],
+      offer: { items: [] },
+      rite: {
+        steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+        ],
+      },
+      beatOrder: ['arrive', 'panel', 'alone'],
       who: 'an Earth stranger left alone at alone in a half-collapsed watchtower on the edge of wild country',
       pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a half-collapsed watchtower on the edge of wild country',
@@ -357,6 +483,15 @@ const summonedPactBase: CampaignBible = {
         'Wind over wild-country ash. You are alone in the stump of a watchtower; half the roof is gone. A blue panel hangs in the cold. Your Earth clothes are still on you.',
     },
     {
+      place: { id: 'sp-place-alone-market-hall', kind: 'market hall' },
+      cast: [],
+      offer: { items: [] },
+      rite: {
+        steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+        ],
+      },
+      beatOrder: ['arrive', 'panel', 'alone'],
       who: 'an Earth stranger left alone at alone in a gutted market hall with no roof',
       pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a gutted market hall with no roof',
@@ -380,6 +515,15 @@ const summonedPactBase: CampaignBible = {
         'Open sky inside a gutted market hall. The roof is gone; four stone walls stand in grass. A blue panel hangs in daylight. You are alone.',
     },
     {
+      place: { id: 'sp-place-alone-foundation', kind: 'foundation' },
+      cast: [],
+      offer: { items: [] },
+      rite: {
+        steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+        ],
+      },
+      beatOrder: ['arrive', 'panel', 'alone'],
       who: 'an Earth stranger left alone at alone on the stone outline of a building that is gone',
       pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone on the stone outline of a building that is gone',
@@ -403,6 +547,15 @@ const summonedPactBase: CampaignBible = {
         'Light, then grass and cold foundation stones. You are alone on the outline of a building that is gone — a rectangle in the turf, no walls left. A blue panel hangs at eye level. Your Earth clothes are still on you. The horizon is empty of people.',
     },
     {
+      place: { id: 'sp-place-alone-waystation', kind: 'waystation' },
+      cast: [],
+      offer: { items: [] },
+      rite: {
+        steps: [
+          { id: 'sp-rite-name', label: 'Give a name' },
+        ],
+      },
+      beatOrder: ['arrive', 'panel', 'alone'],
       who: 'an Earth stranger left alone at alone in a burnt roadside waystation',
       pressing: 'The blue panel waits on a name; nobody else is here to ask.',
       location: 'alone in a burnt roadside waystation',
