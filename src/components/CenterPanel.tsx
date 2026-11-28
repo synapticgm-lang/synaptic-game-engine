@@ -22,6 +22,7 @@ import { logger } from '@/game/logger';
 import { ComicGrid } from './comic/ComicGrid';
 import { NarrativeView } from './NarrativeView';
 import { ActionBar } from './qol/ActionBar';
+import { isGiveNameCoverChip } from '@/game/openingEstablishment';
 import { LooseItemsBar } from './qol/LooseItemsBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
@@ -607,7 +608,17 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           <ActionBar
             state={state}
             busy={busy || !!state.pendingTurn}
-            onAction={onSend}
+            onAction={(action) => {
+              // Name-cover Give focuses the existing free-text box (same ref as STT); no send / GM line.
+              if (
+                state.openingEstablishment?.pending?.[0]?.kind === 'name'
+                && isGiveNameCoverChip(action)
+              ) {
+                actionInputRef.current?.focus();
+                return;
+              }
+              onSend(action);
+            }}
             engineMode={engineMode}
             hidden={hideOptions}
           />

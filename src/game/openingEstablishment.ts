@@ -2356,6 +2356,10 @@ export function playerAskedWhyPulled(raw: string): boolean {
 export function isNameCoverChip(label: string): boolean {
   return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
 }
+/** Name-cover Give chip only (not Refuse). Reuses cover + refusal helpers — no new label regex. */
+export function isGiveNameCoverChip(label: string): boolean {
+  return isNameCoverChip(label) && !isNameRefusalUtterance(label);
+}
 /**
  * Keep the open rite's accept / refuse on a pad. A card with its own open Accept/Refuse offer
  * already carries the rite's answer, so its pad is left as the offer pair made it.
@@ -2395,6 +2399,13 @@ export function coverContinuePads(state: GameState, opts: { pinRite?: boolean } 
     return finish(withOfferPads(state, hallTopicAlreadyAnswered(state, 'want')
       ? liveCoverPads(state, ['Who are you', ...coverLookPads(state)])
       : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)])));
+  }
+  // Name given, refused, or randomised already — never re-offer the name cover.
+  if (
+    state.openingEstablishment?.complete === true
+    || (state.openingEstablishment?.declinedFields ?? []).includes('name')
+  ) {
+    return finish(withOfferPads(state, liveCoverPads(state, coverLookPads(state))));
   }
   return finish(['Give your name', 'Refuse to give a name']);
 }
@@ -3309,6 +3320,11 @@ export async function applyOpeningAnswer(
   }
   const answer = stripChoicePrefix(rawInput);
   if (!answer) return { state, generateOpening: false };
+  const currentCoverKind = est.pending[0]?.kind;
+  // Give-your-name chip is focus-only in the UI; if it still reaches here, no GM re-ask.
+  if (currentCoverKind === 'name' && isGiveNameCoverChip(answer)) {
+    return { state, generateOpening: false };
+  }
   const harvest = harvestUtterance(answer);
   if (harvest.appearance && (isJunkSetupValue(harvest.appearance) || !extractAppearance(answer))) {
     harvest.appearance = null;
@@ -3533,6 +3549,12 @@ export async function applyOpeningAnswer(
       }
     }
     if (prompt.kind === 'name' && !value) {
+      // Refuse is a valid name-step answer: keep unnamed designation and drop the cover.
+      if (isCurrent && isNameRefusalUtterance(answer)) {
+        if (!declined.includes('name')) declined.push('name');
+        markCoverResolved(prompt, '');
+        continue;
+      }
       stillPending.push(prompt);
       continue;
     }
@@ -3600,17 +3622,31 @@ export async function applyOpeningAnswer(
     const extra = [aside, cheatLine].filter(Boolean).join('\n');
     const lookAroundNotCover =
       isLookAroundAction(answer) && !playerEngagesOpeningCover(answer);
-    const demandNotCover = isPlayDemand(answer) && !playerGivesOrRefusesName(answer);
-    const parseFail =
-      est.pending[0]?.kind === 'name' && !harvest.name && !lookAroundNotCover && !demandNotCover
-        ? 'They are still waiting for a name you will own.'
-        : '';
     const coverChoices = lookAroundNotCover ? [] : establishmentChoices(stillPending, nextState);
+    const withPlayer = {
+      ...nextState,
+      openingEstablishment: {
+        ...est,
+        pending: stillPending,
+        answers,
+        complete: false,
+        registrar,
+        declinedFields: declined,
+        sceneWritten: est.sceneWritten,
+      },
+      choices: coverChoices,
+      log: appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
+      lastUpdated: Date.now(),
+    };
+    // Name cover stays on chips / input only — never write the name question into the book.
+    if (next.kind === 'name') {
+      return { generateOpening: false, state: withPlayer };
+    }
     const gmEntry = {
       id: crypto.randomUUID(),
       turn: nextState.turn,
       role: 'gm' as const,
-      content: formatRegistrarLine(registrar, parseFail || next.question, {
+      content: formatRegistrarLine(registrar, next.question, {
         extra: extra || undefined,
         style: next.style ?? 'inworld',
       }),
@@ -3620,22 +3656,8 @@ export async function applyOpeningAnswer(
     return {
       generateOpening: false,
       state: {
-        ...nextState,
-        openingEstablishment: {
-          ...est,
-          pending: stillPending,
-          answers,
-          complete: false,
-          registrar,
-          declinedFields: declined,
-          sceneWritten: est.sceneWritten,
-        },
-        choices: coverChoices,
-        log: [
-          ...appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
-          gmEntry,
-        ],
-        lastUpdated: Date.now(),
+        ...withPlayer,
+        log: [...withPlayer.log, gmEntry],
       },
     };
   }
