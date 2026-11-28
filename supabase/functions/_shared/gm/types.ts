@@ -895,6 +895,8 @@ export interface OpeningInstance {
   offerChips: OpeningOfferChip[];
   /** What accepting hands over: the offer's compiled item names (the card's offer record items). */
   offerItemNotes?: string[];
+  /** Typed opening beat ids from the hook (brief 04); scene journal builds from these, not prose. */
+  beatOrder?: string[];
   alone: boolean;
   /** A still-on-the-map hub the minted opening may sit near, not the locked place name. */
   nearbyLandmark?: string;

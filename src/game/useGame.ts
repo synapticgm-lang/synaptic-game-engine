@@ -704,7 +704,8 @@ async function paintLiveOpeningPage(
   if (isBlankOpeningProse(prose) || openingProseLeaksStructuredJson(prose)) {
     return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
   }
-  const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads, journalTitle: result.journal.title });
+  // Scene quest is built from typed beats inside applySuccessfulLiveOpening — do not pass writer titles.
+  const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads });
   const turn = (state.turn ?? 0) + 1;
   const unlocks = newlyRevealedQuests(state.quests ?? [], applied.quests ?? []);
   const gmBase: LogEntry = {
