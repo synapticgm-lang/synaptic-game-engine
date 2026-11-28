@@ -21,6 +21,38 @@ export function fatePickPool(
   return sceneActions;
 }
 
+/**
+ * Whether a setup step owns the ActionBar (no scene row beside it).
+ * Same rule as tabletop creation: System chips from {@link systemPromptPad} make
+ * the System row the only step until a chip resolves.
+ */
+export function setupOwnsActionBar(
+  systemChips?: readonly string[] | null,
+  creating = false
+): boolean {
+  return creating || !!(systemChips && systemChips.length > 0);
+}
+
+/**
+ * Scene labels ActionBar may paint. Empty while {@link setupOwnsActionBar} —
+ * mirrors tabletop creation hiding the scene row while that step is pending.
+ * When the scene row is allowed, `excludeLowers` drops labels already on setup rows.
+ */
+export function actionBarSceneActions(
+  sceneActions: readonly string[],
+  systemChips?: readonly string[] | null,
+  creating = false,
+  excludeLowers?: ReadonlySet<string>
+): string[] {
+  if (setupOwnsActionBar(systemChips, creating)) return [];
+  if (!excludeLowers?.size) return [...sceneActions];
+  const out: string[] = [];
+  for (const c of sceneActions) {
+    if (!excludeLowers.has(c.trim().toLowerCase())) out.push(c);
+  }
+  return out;
+}
+
 /** Pick one of `actions` (ActionBar Fate's Pick). Empty → fallback. */
 export function pickFateChoice(
   actions: string[],
