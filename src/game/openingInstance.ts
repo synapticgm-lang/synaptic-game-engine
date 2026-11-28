@@ -207,10 +207,22 @@ function takenFromHubs(bibleId?: string): Set<string> {
  * Mint from authored typed hook data only — no Title-Case scrape, no search-and-replace
  * over card English (HISTORY H7 / H8).
  */
+function markNameTaken(taken: Set<string>, name: string): void {
+  for (const w of name.split(/\s+/)) {
+    if (w.length >= 2) taken.add(w.toLowerCase());
+  }
+  taken.add(name.toLowerCase());
+}
+
 function mintOpeningInstanceFromTypedData(
   hook: OpeningHookTypedData & OpeningHookSnapshot,
   seedKey: string,
-  opts?: { bibleId?: string; engineMode?: string }
+  opts?: {
+    bibleId?: string;
+    engineMode?: string;
+    /** Bible roster display names keyed by catalogNpcId — left fixed (Father Aldous, Vessa, …). */
+    catalogById?: Record<string, string>;
+  }
 ): OpeningInstance {
   const rng = keyedRng(seedKey);
   const genre = inferGenre(opts?.bibleId, opts?.engineMode);
@@ -220,10 +232,24 @@ function mintOpeningInstanceFromTypedData(
   const nearbyLandmark = pickNearbyLandmark(opts?.bibleId, placeName, seedKey);
 
   const cast: OpeningCastMember[] = hook.cast.map((member) => {
+    const role = member.role.replace(/\s+/g, ' ').trim();
+    const catalogName = member.catalogNpcId
+      ? (opts?.catalogById?.[member.catalogNpcId] ?? '').replace(/\s+/g, ' ').trim()
+      : '';
+    if (catalogName) {
+      markNameTaken(taken, catalogName);
+      return {
+        name: catalogName,
+        role,
+        gender: genderFromPronouns(member.pronouns) ?? genderForPersonName(catalogName),
+        durability: member.durability,
+        pronouns: member.pronouns,
+      };
+    }
     const minted = mintPerson(rng, taken, genre);
     return {
       name: minted.name,
-      role: member.role.replace(/\s+/g, ' ').trim(),
+      role,
       gender: genderFromPronouns(member.pronouns) ?? minted.gender,
       durability: member.durability,
       pronouns: member.pronouns,
@@ -319,7 +345,11 @@ function mintAlonePlace(
 export function mintOpeningInstance(
   hook: OpeningHookSnapshot,
   seedKey: string,
-  opts?: { bibleId?: string; engineMode?: string }
+  opts?: {
+    bibleId?: string;
+    engineMode?: string;
+    catalogById?: Record<string, string>;
+  }
 ): OpeningInstance {
   if (openingHookHasTypedData(hook)) {
     return mintOpeningInstanceFromTypedData(hook, seedKey, opts);
@@ -371,9 +401,13 @@ export function attachOpeningInstance(
   blob?: string
 ): GameState {
   const existing = state.openingEstablishment?.instance;
+  const catalogById: Record<string, string> = {};
+  for (const m of state.npcMemories ?? []) {
+    if (m.npcId && m.npcName?.trim()) catalogById[m.npcId] = m.npcName.trim();
+  }
   const catalogNpcNames = [
     ...(hook.catalogNpcNames ?? []),
-    ...(hook.castNpcIds ?? []).map((id) => (state.npcMemories ?? []).find((m) => m.npcId === id)?.npcName ?? ''),
+    ...(hook.castNpcIds ?? []).map((id) => catalogById[id!] ?? ''),
   ].filter(Boolean);
   const instance = existing ?? mintOpeningInstance(
     { ...hook, catalogNpcNames },
@@ -381,6 +415,7 @@ export function attachOpeningInstance(
     {
       bibleId: state.campaignBibleId ?? undefined,
       engineMode: state.engineMode,
+      catalogById,
     }
   );
   const est = state.openingEstablishment;

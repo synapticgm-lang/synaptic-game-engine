@@ -115,4 +115,57 @@ describe('openingInstance (brief 03 typed mint)', () => {
     }
     expect(names.size).toBeGreaterThanOrEqual(36);
   });
+
+  it('two game seeds mint different NPC names for the same bible cast slot; same seed is stable', () => {
+    const snap = snapshotFromPickedHook(TYPED_CINDER);
+    const keyA = 'game-seed-alpha|summoned-pact|opening-instance';
+    const keyB = 'game-seed-beta|summoned-pact|opening-instance';
+    const a1 = mintOpeningInstance(snap, keyA, { bibleId: 'summoned-pact' });
+    const a2 = mintOpeningInstance(snap, keyA, { bibleId: 'summoned-pact' });
+    const b = mintOpeningInstance(snap, keyB, { bibleId: 'summoned-pact' });
+    expect(a1.cast.map((c) => c.name)).toEqual(a2.cast.map((c) => c.name));
+    expect(a1.cast[0]!.name).not.toBe(b.cast[0]!.name);
+  });
+
+  it('salt-road-heist opening NPC gets a proper minted name (not role-only)', () => {
+    const enforcerHook: OpeningHookTypedData & OpeningBeatCard = {
+      place: { id: 'salt-road-heist-a-salt-road-waystation', kind: 'road' },
+      cast: [
+        { id: 'salt-road-heist-cast-enforcer', role: 'enforcer', pronouns: 'he/him', durability: 'passer' },
+      ],
+      offer: { items: [] },
+      rite: { steps: [{ id: 'salt-road-heist-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel'],
+      location: 'a Salt Road waystation',
+      faction: 'an enforcer',
+    };
+    const inst = mintOpeningInstance(snapshotFromPickedHook(enforcerHook), 'salt-a|salt-road-heist|opening-instance', {
+      bibleId: 'salt-road-heist',
+      engineMode: 'rpg',
+    });
+    expect(inst.cast).toHaveLength(1);
+    expect(inst.cast[0]!.role).toBe('enforcer');
+    expect(inst.cast[0]!.name).toMatch(/^[A-Z][a-z]+ [A-Z][a-z]+$/);
+    expect(inst.cast[0]!.name.toLowerCase()).not.toMatch(/\benforcer\b|\bscout\b|\bthief\b/);
+  });
+
+  it('keeps bible canon names when catalogNpcId resolves (Father Aldous / Vessa)', () => {
+    const snap = snapshotFromPickedHook({
+      place: { id: 'cursed-keep-greyhollow-churchyard', kind: 'place' },
+      cast: [
+        { id: 'cursed-keep-cast-1', role: 'town priest', pronouns: 'he/him', durability: 'durable', catalogNpcId: 'ck-npc-1' },
+      ],
+      offer: { items: [] },
+      rite: { steps: [{ id: 'cursed-keep-rite-name', label: 'Give a name' }] },
+      beatOrder: ['arrive', 'panel'],
+      location: 'Greyhollow churchyard',
+      castNpcIds: ['ck-npc-1'],
+    } as OpeningHookTypedData & OpeningBeatCard);
+    const inst = mintOpeningInstance(snap, 'canon|cursed-keep|opening-instance', {
+      bibleId: 'cursed-keep',
+      engineMode: 'dnd',
+      catalogById: { 'ck-npc-1': 'Father Aldous' },
+    });
+    expect(inst.cast[0]!.name).toBe('Father Aldous');
+  });
 });
