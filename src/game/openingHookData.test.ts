@@ -14,43 +14,6 @@ import { heroAwakening } from '@/data/campaigns/heroAwakening';
 import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { mintOpeningInstance, snapshotFromPickedHook } from './openingInstance';
 
-const DECKS_TYPED_SO_FAR = [
-  'system-integration',
-  'gatebreak-ward',
-  'dungeon-transport',
-  'void-audience',
-  'ascending-spire',
-  'inkbound-academy',
-  'hollow-core',
-  'cursed-keep',
-  'shattered-coast',
-  'fabled-legacy',
-  'millstone-road',
-  'broken-crown-keep',
-  'verdant-blight',
-  'stillroot-veil',
-  'thornferry-road',
-  'giltwood-estate-conundrum',
-  'vesper-glass-cipher',
-  'erebus-9-swarm-directive',
-  'rose-gold-ultimatum',
-  'null-parameter-protocol',
-  'resin-sonata',
-  'umbra-protocol',
-  'crimson-nocturne',
-  'onyx-blood-covenant',
-  'salt-road-heist',
-  'glass-harbor-letters',
-  'embercourt-oath',
-  'rainglass-case',
-  'static-house',
-  'driftwake-crew',
-  'ashline-convoy',
-  'twin-lanterns',
-  'redmesa-claim',
-  'cape-district-vigil',
-  'wayfarers-map',
-] as const;
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
   place: { id: 'test-cathedral-circle', kind: 'cathedral' },
@@ -169,13 +132,15 @@ describe('openingHookData (brief 01)', () => {
     }
   });
 
-  it('migrated openingHookDecks bibles carry typed hook data', () => {
-    for (const id of DECKS_TYPED_SO_FAR) {
+  it('every openingHookDecks card carries typed hook data', () => {
+    const ids = Object.keys(OPENING_HOOK_DECKS);
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) {
       const cards = OPENING_HOOK_DECKS[id] ?? [];
       expect(cards.length, id).toBeGreaterThan(0);
       for (let i = 0; i < cards.length; i++) {
         const card = cards[i]!;
-        expect(typeof card).toBe('object');
+        expect(typeof card, `${id}[${i}]`).toBe('object');
         assertTypedShape(card as OpeningBeatCard, `OPENING_HOOK_DECKS[${id}][${i}]`);
       }
     }
