@@ -11,7 +11,7 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
-import { lastResortStoryBody } from './completedEventPacket';
+import { bookBodyAfterWriterMiss } from './completedEventPacket';
 import {
   countSameHallTopicRepeats,
   shouldStitchOpeningContinue,
@@ -115,11 +115,9 @@ describe('playtest17h — optimistic hall count + last-resort advance', () => {
         { id: 'g1', turn: 3, role: 'gm', content: last, timestamp: 4 },
       ],
     });
-    const resort = lastResortStoryBody(state);
-    expect(resort.prose).not.toMatch(DROUGHT);
-    expect(resort.prose).not.toMatch(/What do you enter|The panel waits on a name|What name/i);
-    expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(last);
-    // 18b: last-resort is a HERE beat, never the name telegram.
-    expect(resort.prose).not.toMatch(/The name Jax already stood|They have the name/i);
+    const miss = bookBodyAfterWriterMiss(state, undefined, 'Ask what they want', '');
+    expect(miss.prose).toBe('');
+    expect(miss.prose).not.toMatch(DROUGHT);
+    expect(miss.prose).not.toBe(last);
   });
 });

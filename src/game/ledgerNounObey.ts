@@ -8,7 +8,6 @@ import { isDeadFoeReopenedAsLiving } from './combatAuthority';
 import {
   compileNounAllowlist,
   isDroughtStubProse,
-  lastResortStoryBody,
   mentionAllowlistHas,
   type CompletedEventPacket,
 } from './completedEventPacket';
@@ -172,10 +171,10 @@ export function acceptObeyedStoryBody(
   if (body && !isDroughtStubProse(body) && body.length >= 24) {
     return { prose: body, notes: obeyed.notes, usedLastResort: false };
   }
-  const resort = lastResortStoryBody(state, packet);
+  // Brief 06 — empty miss; callers show honest Try again (no canned last-resort).
   return {
-    prose: resort.prose,
-    notes: [...obeyed.notes, 'last-resort'],
+    prose: '',
+    notes: [...obeyed.notes, 'last-resort-empty'],
     usedLastResort: true,
   };
 }

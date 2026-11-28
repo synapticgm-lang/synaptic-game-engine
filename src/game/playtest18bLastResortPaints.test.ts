@@ -1,7 +1,6 @@
 /**
- * 2026-09-28j — Live timeout paints a NEW GM row. Last-resort is not
- * a reprint of the previous book. Who/Want starve after the handler spoke.
- * Mid writer OFF. No SNAPSHOT/CRAFT.
+ * Brief 06 slice 3 — last-resort painters deleted; writer miss is empty / honest Try again.
+ * (Was: live timeout paints a NEW GM row from topicAdvance.)
  */
 import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { readFileSync } from 'node:fs';
@@ -12,21 +11,15 @@ import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
-import { compileChoices } from './choiceCompiler';
 import {
   bookBodyAfterWriterMiss,
   buildCompletedEventPacket,
-  isLastGmReprint,
-  lastResortStoryBody,
 } from './completedEventPacket';
 import {
-  coverContinuePads,
-  hallTopicAlreadyAnswered,
-  isNameTelegramProse,
-  openingNameLockSpokenBeat,
-  shouldStarveHallTopicPad,
-} from './openingEstablishment';
-import { hasRealGmStory, storyHasBody } from './turnAsk';
+  buildFailedStorytellerPage,
+  STORYTELLER_RETRY_CHIP,
+  STORYTELLER_RETRY_MESSAGE,
+} from './liveOpening';
 import type { GameState } from './types';
 
 const PAGE1 =
@@ -47,99 +40,48 @@ function namedWatchtower(over: Partial<GameState> = {}): GameState {
       complete: true,
       sceneWritten: true,
       mode: 'weave',
-      aloneArrival: false,
-      pickedHook:
-        'Location: Valespire\nWho is here / who summoned: the handler\nWhy this happened: they need a Pactborn against the Ash Court.',
-      pickedHookFallback: PAGE1,
     },
     sceneFacts: emptySceneFacts(2),
-    log: [
-      { id: 'g0', turn: 0, role: 'gm', content: PAGE1, timestamp: 0 },
-    ],
+    log: [{ id: 'g0', turn: 0, role: 'gm', content: PAGE1, timestamp: 0 }],
     ...over,
   };
 }
 
-function afterNameLock(): { state: GameState; lock: string } {
-  const lock = openingNameLockSpokenBeat(namedWatchtower());
-  const state = namedWatchtower({
-    log: [
-      { id: 'g0', turn: 0, role: 'gm', content: PAGE1, timestamp: 0 },
-      { id: 'p1', turn: 1, role: 'player', content: 'Jax', timestamp: 1 },
-      { id: 'g1', turn: 1, role: 'gm', content: lock, timestamp: 2 },
-    ],
-  });
-  return { state, lock };
-}
-
-describe('playtest18b — live timeout paints a new book beat', () => {
-  it('HUD/BUILD are 18b, Mid writer OFF', () => {
+describe('playtest18b — last-resort retired (brief 06)', () => {
+  it('HUD/BUILD stamps hold, Mid writer OFF', () => {
     expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
     expect(publicStampIdentityHolds()).toBe(true);
     expect(readPublicStampIdentity()).toMatchObject({
       hud: HUD_BUILD_STAMP,
       build: BUILD_STAMP,
-      htmlComment: BUILD_STAMP,
-      htmlMeta: BUILD_STAMP,
-      versionHud: BUILD_STAMP,
-      versionBuild: BUILD_STAMP,
     });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('live timeout / empty writer paints a new GM row, not a reprint', () => {
-    const { state, lock } = afterNameLock();
+  it('writer miss paints no canned book body', () => {
+    const state = namedWatchtower();
     const packet = buildCompletedEventPacket(state, 'Ask what they want');
     const painted = bookBodyAfterWriterMiss(state, packet, 'Ask what they want', '');
-    expect(storyHasBody(painted.prose)).toBe(true);
-    expect(
-      hasRealGmStory({
-        id: 't2',
-        turn: 2,
-        role: 'gm',
-        content: painted.prose,
-        timestamp: 3,
-      })
-    ).toBe(true);
-    expect(painted.prose.replace(/\s+/g, ' ').trim()).not.toBe(lock.replace(/\s+/g, ' ').trim());
-    expect(isLastGmReprint(painted.prose, lock)).toBe(false);
-    expect(isNameTelegramProse(painted.prose)).toBe(false);
-    expect(painted.prose).not.toBe('They have the name Jax.');
-    expect(painted.prose).not.toMatch(/The name \S+ already stood|The room waited on what you did next/i);
-    const sentences = painted.prose.split(/(?<=[.!?])\s+/).filter(Boolean);
-    expect(sentences.length).toBeGreaterThanOrEqual(3);
-    expect(sentences.length).toBeLessThanOrEqual(7);
+    expect(painted.prose).toBe('');
   });
 
-  it('last-resort Look / Wait after the lock is not the previous GM', () => {
-    const { state, lock } = afterNameLock();
-    for (const line of ['Look around', 'Wait']) {
-      const resort = lastResortStoryBody(
-        state,
-        buildCompletedEventPacket(state, line),
-        line
-      );
-      expect(isLastGmReprint(resort.prose, lock)).toBe(false);
-      expect(storyHasBody(resort.prose)).toBe(true);
-      expect(isNameTelegramProse(resort.prose)).toBe(false);
-    }
+  it('honest Try again page owns the miss', () => {
+    const state = namedWatchtower();
+    const page = buildFailedStorytellerPage(state, { pendingAct: 'Ask what they want' });
+    expect(page.prose).toBe(STORYTELLER_RETRY_MESSAGE);
+    expect(page.offeredChoices).toEqual([STORYTELLER_RETRY_CHIP]);
+    expect(page.state.pendingWriterRetry?.act).toBe('Ask what they want');
   });
 
-  it('Want pad starves after the handler already spoke the want', () => {
-    const { state } = afterNameLock();
-    expect(hallTopicAlreadyAnswered(state, 'want')).toBe(true);
-    expect(shouldStarveHallTopicPad(state, 'Ask what they want')).toBe(true);
-    expect(coverContinuePads(state).join(' ')).not.toMatch(/Ask what they want/i);
-    expect(compileChoices(state, ['Ask what they want', 'Who are you', 'Look around']).choices)
-      .not.toContain('Ask what they want');
-  });
-
-  it('live sendAction last-resorts on exhausted timeout instead of throwing', () => {
+  it('all three turn drivers route miss to Try again owner', () => {
     const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
     const fate = readFileSync(resolve(__dirname, 'fateAutoplay.ts'), 'utf8');
-    expect(useGame).toContain('bookBodyAfterWriterMiss');
-    expect(useGame).toContain('GM transport exhausted — last-resort will write the book');
-    expect(useGame).toContain('GM transport threw — last-resort will write the book');
-    expect(fate).toContain('bookBodyAfterWriterMiss');
+    const liveDrive = readFileSync(resolve(__dirname, 'liveDrive.ts'), 'utf8');
+    expect(useGame).toContain('buildFailedStorytellerPage');
+    expect(fate).toContain('buildFailedStorytellerPage');
+    expect(liveDrive).toContain('buildFailedStorytellerPage');
+    expect(fate).not.toMatch(/\bapplyRenderFallback\s*\(/);
+    expect(fate).not.toMatch(/\boutageSpokenLine\s*\(/);
+    expect(useGame).not.toMatch(/\boutageSpokenLine\s*\(/);
   });
 });

@@ -9,11 +9,11 @@ import { droughtSkirmishTable, runArcDirectorBeforeGm } from './arcDirector';
 import { countLoiterFamilyStreak } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
 import { exhaustDelayPads, isPyoaBranchLocked, recordPyoaBranchChoice } from './pyoaBranchLedger';
-import { applyRenderFallback, buildSealedManifest } from './sealedManifest';
 import { ensureOpeningNpcPinned, extractNamesFromHookText } from './openingPin';
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { hasStatusLeak } from './statusFirewall';
+import { buildFailedStorytellerPage, STORYTELLER_RETRY_MESSAGE } from './liveOpening';
 
 describe('playtest29c — kit scrub kill + Free-hook recovery', () => {
   it('stamp is 2026-08-29c and Mid writer stays OFF', () => {
@@ -167,16 +167,17 @@ describe('playtest29c — kit scrub kill + Free-hook recovery', () => {
     expect(state.sceneFacts?.present?.some((p) => /Silas/i.test(p))).toBe(true);
   });
 
-  it('empty-GM fallback has no beat-recovered chrome leak', () => {
+  it('empty-GM uses Try again owner — no deterministic fallback prose', () => {
     const state = createInitialState(undefined, 'rpg');
     state.campaignBibleId = 'salt-road-heist';
     state.turn = 10;
-    state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
-    const arc = runArcDirectorBeforeGm(state, 'Ask Vessa about the score');
-    const manifest = buildSealedManifest(arc.state, 'Ask Vessa', arc);
-    const fallback = applyRenderFallback(manifest, arc.state, 'fail');
-    expect(fallback.prose).not.toMatch(/beat recovered/i);
-    expect(hasStatusLeak(fallback.prose)).toBe(false);
-    expect(fallback.systemLog.join('\n')).not.toMatch(/GM_VOICE|RenderFallbackUsed/i);
+    state.openingEstablishment = {
+      ...state.openingEstablishment!,
+      complete: true,
+      sceneWritten: true,
+    };
+    const page = buildFailedStorytellerPage(state, { pendingAct: 'Ask Vessa about the score' });
+    expect(page.prose).toBe(STORYTELLER_RETRY_MESSAGE);
+    expect(hasStatusLeak(page.prose)).toBe(false);
   });
 });

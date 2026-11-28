@@ -15,7 +15,7 @@ import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import { compileChoices } from './choiceCompiler';
-import { buildCompletedEventPacket, lastResortStoryBody } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, buildCompletedEventPacket } from './completedEventPacket';
 import { stitchOpeningContinue } from './openingStitch';
 import {
   coverContinuePads,
@@ -155,22 +155,19 @@ describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
     expect(coverContinuePads(afterWho).join(' ')).not.toMatch(/Who are you/i);
   });
 
-  it('third Who/Want does not reprint the identical already-told paragraph', () => {
+  it('third Who/Want leaves stitch (writer owns the beat; miss is empty Try again)', () => {
     const third = saltFenReed();
     expect(shouldStitchOpeningContinue(third, 'Ask what they want')).toBe(false);
-    const already = openingAlreadyToldLine(third, 'want');
-    const lastGm = [...(third.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
-    const resort = lastResortStoryBody(
+    const miss = bookBodyAfterWriterMiss(
       third,
       buildCompletedEventPacket(third, 'Ask what they want'),
-      'Ask what they want'
+      'Ask what they want',
+      ''
     );
-    expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(already.replace(/\s+/g, ' ').trim());
-    expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(lastGm.replace(/\s+/g, ' ').trim());
-    expect(isNameTelegramProse(resort.prose)).toBe(false);
+    expect(miss.prose).toBe('');
   });
 
-  it('first want after the name-lock beat is callGm; last-resort still paints a new book row', () => {
+  it('first want after the name-lock beat is callGm; miss paints no fixed book row', () => {
     const lock = openingNameLockSpokenBeat(namedWatchtower());
     const afterLock = namedWatchtower({
       log: [
@@ -180,32 +177,19 @@ describe('playtest18a — Gemini tester verdict + simple prose floor', () => {
       ],
     });
     expect(shouldStitchOpeningContinue(afterLock, 'Ask what they want')).toBe(false);
-    const resort = lastResortStoryBody(
+    const miss = bookBodyAfterWriterMiss(
       afterLock,
       buildCompletedEventPacket(afterLock, 'Ask what they want'),
-      'Ask what they want'
+      'Ask what they want',
+      ''
     );
-    expect(resort.prose.replace(/\s+/g, ' ').trim()).not.toBe(lock.replace(/\s+/g, ' ').trim());
-    expect(isNameTelegramProse(resort.prose)).toBe(false);
-    expect(
-      hasRealGmStory({
-        id: 'resort',
-        turn: 2,
-        role: 'gm',
-        content: resort.prose,
-        timestamp: 3,
-      })
-    ).toBe(true);
+    expect(miss.prose).toBe('');
   });
 
-  it('live sendAction last-resorts when GM transport is exhausted (Fate already did)', () => {
+  it('live sendAction routes exhausted writer to Try again owner', () => {
     const useGame = readFileSync(resolve(__dirname, 'useGame.ts'), 'utf8');
-    expect(useGame).toContain('GM transport exhausted — last-resort will write the book');
+    expect(useGame).toContain('buildFailedStorytellerPage');
     expect(useGame).toContain('bookBodyAfterWriterMiss');
-    expect(useGame).toContain('GM transport threw — last-resort will write the book');
-    expect(useGame).not.toMatch(
-      /if \(!shouldAutoRetryTurn\(kind\) \|\| attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES\) \{\s*throw err;/
-    );
   });
 
   it('name telegram and STATUS-only chrome are not a successful story beat', () => {

@@ -4,7 +4,6 @@ import {
   compileNounAllowlist,
   handedWriterText,
   isDroughtStubProse,
-  lastResortStoryBody,
   tokenUseMatchesClass,
   type CompletedEventPacket,
   type LedgerRef,
@@ -1479,11 +1478,11 @@ export function acceptTokenOrLedgerStory(
       usedLastResort: obeyed.usedLastResort,
     };
   }
-  const resort = lastResortStoryBody(state, packet);
+  // Brief 06 — empty miss; callers show honest Try again (no canned last-resort).
   return {
-    prose: resort.prose,
+    prose: '',
     path: 'last-resort',
-    notes: ['last-resort'],
+    notes: ['last-resort-empty'],
     usedLastResort: true,
   };
 }

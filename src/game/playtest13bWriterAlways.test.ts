@@ -14,9 +14,9 @@ import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import {
   assemblePacketStitch,
+  bookBodyAfterWriterMiss,
   buildCompletedEventPacket,
   isDroughtStubProse,
-  lastResortStoryBody,
 } from './completedEventPacket';
 import {
   shouldStitchOpeningContinue,
@@ -116,16 +116,13 @@ describe('playtest13b — writer owns the book after page 1', () => {
     expect(callGm).toHaveBeenCalledWith('Who are you');
   });
 
-  it('last-resort after empty GM is page 1 / last good beat, not Dust hung', () => {
+  it('writer miss after empty GM is empty (honest Try again upstream), not Dust hung', () => {
     const drought =
       'Dust hung at a Crown archive stack behind iron mesh. Whatever you tried had already happened.';
     expect(isDroughtStubProse(drought)).toBe(true);
-    const resort = lastResortStoryBody(crown(), buildCompletedEventPacket(crown(), SIGN_READ));
-    expect(resort.prose).not.toMatch(DROUGHT);
-    expect(isDroughtStubProse(resort.prose)).toBe(false);
-    expect(resort.prose).toMatch(/archive floor|Lene Quill|reader’s ribbon|iron mesh/i);
-    expect(resort.status).toMatch(/Writer empty after retries/i);
-    expect(resort.prose.length).toBeGreaterThan(80);
+    const miss = bookBodyAfterWriterMiss(crown(), buildCompletedEventPacket(crown(), SIGN_READ), SIGN_READ, '');
+    expect(miss.prose).toBe('');
+    expect(miss.prose).not.toMatch(DROUGHT);
   });
 
   it('live and Fate skip premade continue after sceneWritten', () => {
@@ -134,7 +131,7 @@ describe('playtest13b — writer owns the book after page 1', () => {
     expect(live).toContain('openingSceneWritten');
     expect(live).toContain('bookBodyAfterWriterMiss');
     expect(live).toContain('await callGm(');
-    expect(fate).toContain('bookBodyAfterWriterMiss');
+    expect(fate).toContain('buildFailedStorytellerPage');
     expect(fate).toContain('already-told who/want/refuse still stitches');
     expect(fate).toContain('applyOpeningAnswer');
   });

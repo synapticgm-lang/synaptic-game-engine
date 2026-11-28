@@ -27,7 +27,6 @@ import {
   shortCardWant,
 } from './openingEstablishment';
 import { stitchOpeningContinue } from './openingStitch';
-import { spokenTalkFallback } from './talkEnvelope';
 import { compileChoices } from './choiceCompiler';
 import { compileGraphChoiceLabels, enumerateLegalEdges } from './graphChoices';
 import { hasMetBefore } from './npcMemory';
@@ -225,32 +224,10 @@ describe('playtest12g — natural prose receipts', () => {
     expect(compiled.choices.some((c) => /Ask .*Skirmisher/i.test(c))).toBe(false);
   });
 
-  it('E fallback with living CAST uses the spoken card pool, not Silence held', () => {
+  it('packet stitch is empty on miss (spokenTalkFallback deleted — brief 06)', () => {
     const state = greyTavern();
-    const spoken = spokenTalkFallback(state, 'Tell them I need a night before I sign.');
-    expect(spoken).toMatch(/woodcutter|missing child|innkeep|answers you|already/i);
-    expect(spoken).not.toMatch(/Silence held the question|No one listed on the ledger answered/i);
-
     const packet = buildCompletedEventPacket(state, 'Tell them I need a night before I sign.');
-    const stitch = assemblePacketStitch(packet);
-    expect(stitch).toBe('');
-
-    const emptyRoom = ruin({
-      sceneFacts: { ...emptySceneFacts(8), present: [], props: ['crate'] },
-      openingEstablishment: {
-        pending: [],
-        answers: { where: 'half-collapsed loft' },
-        complete: true,
-        sceneWritten: true,
-        mode: 'weave',
-        aloneArrival: true,
-        pickedHook: 'Location: half-collapsed loft\nWho is here: (none)',
-      },
-    });
-    const hollow = spokenTalkFallback(emptyRoom, 'Hello?');
-    // 27c sentinel — the plain empty-room line, not writer-voice wording.
-    expect(hollow).toBe('Nobody here answered.');
-    expect(hollow).not.toMatch(/Silence held the question|No one listed on the ledger answered/i);
+    expect(assemblePacketStitch(packet)).toBe('');
   });
 
   it('Ashrise story face is a book stack, not Playfair or Cinzel Decorative', () => {

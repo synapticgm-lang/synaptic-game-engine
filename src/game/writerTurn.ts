@@ -4,7 +4,7 @@ import { openingCastFacts } from './npcSheet';
 import type { GameState } from './types';
 import { givePcTheirQuote, stripUnauthorizedNpcSpeech, type PlayerIntent } from './intentParser';
 import type { CompletedEventPacket, TokenUseRef } from './completedEventPacket';
-import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, lastResortStoryBody, TABLETOP_BEAT_WORDS, tokenUseMatchesClass, type LedgerRef } from './completedEventPacket';
+import { classifyVerb, isLastGmReprint, isUnaskedCombatClose, TABLETOP_BEAT_WORDS, tokenUseMatchesClass, type LedgerRef } from './completedEventPacket';
 import { acceptTokenOrLedgerStory, alreadySaidLines, plainLineFactProblem, refEnumOf, repeatsSaid, storySentences, type DroppedLine, type SpokenLine, type TokenAcceptPath } from './tokenProse';
 import { polishMentions } from './mentionVariety';
 import { isTalkTurn, unresolvedActionReason } from './actionResolution';
@@ -556,15 +556,15 @@ export async function runWriterTurnWithFightRetry(opts: {
   // The fact gate owns the page. A hard miss keeps the writer draft; the engine page
   // is used only when that gate leaves nothing, or the writer draft itself is empty.
   if (!done.prose.trim()) {
-    const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+    // Brief 06 — empty miss; upstream drivers show honest Try again (no fight painter).
     return {
       ...done,
-      prose: painted.prose,
+      prose: '',
       path: 'last-resort',
       refs: undefined,
       speech: undefined,
-      remaining: writerDraftProblems(painted.prose, opts.check),
-      problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
+      remaining: writerDraftProblems('', opts.check),
+      problems: [...new Set([...done.problems, 'blocking draft — no canned miss page'])],
       draftRetry: 'painted',
       fightDraft,
     };
@@ -999,12 +999,11 @@ async function runWriterTurnFightOnly(opts: {
     && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
   const base = rewriteBetter ? second : first;
   if (base.prose.trim()) return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
-  // T10AL — lastResortStoryBody paints from the engine record (no canned speech append).
-  const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+  // Brief 06 — empty miss; upstream drivers show honest Try again (no fight painter).
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
-    ...first, prose: painted.prose, path: 'last-resort', refs: undefined, speech: undefined,
-    remaining: writerDraftProblems(painted.prose, opts.check), fightRetry: 'painted', fightDraft,
+    ...first, prose: '', path: 'last-resort', refs: undefined, speech: undefined,
+    remaining: writerDraftProblems('', opts.check), fightRetry: 'painted', fightDraft,
     ...(fight ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) } : {}),
   };
 }

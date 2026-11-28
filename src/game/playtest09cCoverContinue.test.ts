@@ -11,12 +11,10 @@ import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { isWriterMonologueLeak } from './beatCommitGate';
 import { classifyOpeningContinue } from './openingPointerCard';
 import { stitchOpeningContinue } from './openingStitch';
-import { renderDeterministicFallback, buildSealedManifest } from './sealedManifest';
-import { composeFreeMudTurn, mudDisplayBody } from './freeMudPresentation';
+import { composeFreeMudTurn } from './freeMudPresentation';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { createInitialState } from './defaults';
 import { systemHousingWriterSentence } from './systemHousing';
-import { runArcDirectorBeforeGm } from './arcDirector';
 import type { GameState } from './types';
 
 const useGame = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
@@ -156,27 +154,7 @@ describe('playtest09c — cover-continue + Silent receipts', () => {
     expect(isWriterMonologueLeak('The moth brushed the panel and you stood up.')).toBe(false);
   });
 
-  it('renderDeterministicFallback never prints lastBeat chips or At alone in…', () => {
-    const state = aloneRuin({
-      openingEstablishment: {
-        ...aloneRuin().openingEstablishment!,
-        complete: true,
-        pending: [],
-      },
-      turn: 4,
-    });
-    const arc = runArcDirectorBeforeGm(state, 'Inspect the panel');
-    const manifest = buildSealedManifest(arc.state, 'Inspect the panel', arc);
-    const prose = renderDeterministicFallback(manifest, {
-      ...arc.state,
-      sceneFacts: state.sceneFacts,
-      currentLocation: state.currentLocation,
-    });
-    expect(prose).not.toMatch(/street empty|it is quiet; System panel is visible/i);
-    expect(prose).not.toMatch(/At alone in/i);
-  });
-
-  it('Silent Engine display body is the stitch, not empty then chips', () => {
+  it('Silent Engine keeps receipts; content is not lastBeat chip dump', () => {
     const state = aloneRuin({
       openingEstablishment: {
         ...aloneRuin().openingEstablishment!,
@@ -190,12 +168,9 @@ describe('playtest09c — cover-continue + Silent receipts', () => {
       flavorRaw: 'Should never land.',
       silent: true,
     });
-    expect(turn.content.trim().length).toBeGreaterThan(20);
-    expect(turn.content).not.toMatch(/^HERE:/m);
-    const body = mudDisplayBody(turn);
-    expect(body).toBe(turn.content.trim());
-    expect(body).not.toMatch(/street empty/i);
-    expect(body).not.toMatch(/At alone in/i);
+    // Brief 06 — packet stitch banks deleted; silent content may be empty.
+    expect(turn.content).not.toMatch(/street empty|it is quiet; System panel is visible/i);
+    expect(turn.content).not.toMatch(/At alone in/i);
     expect(turn.receiptLines.some((l) => /^HERE:/i.test(l))).toBe(true);
   });
 });

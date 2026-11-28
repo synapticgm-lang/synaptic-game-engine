@@ -171,11 +171,11 @@ import { attachOpeningInstance, snapshotFromPickedHook } from './openingInstance
 import {
   writeLiveOpening,
   applySuccessfulLiveOpening,
-  applyFailedLiveOpening,
+  buildFailedStorytellerPage,
   isBlankOpeningProse,
+  isStorytellerRetryChip,
   openingProseLeaksStructuredJson,
   STORYTELLER_RETRY_MESSAGE,
-  STORYTELLER_RETRY_CHIP,
 } from './liveOpening';
 import {
   classifyOpeningContinue,
@@ -403,7 +403,7 @@ import {
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { planSceneThreads } from './openThreads';
-import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, looksLikeTokenJson, type SpokenLine } from './tokenProse';
@@ -427,11 +427,7 @@ import {
   attachSealedManifest,
   buildSealedManifest,
   formatSealedManifestBlock,
-  applyRenderFallback,
-  consecutiveRecoveryExceeded,
   clearEngineRecoveryStreak,
-  isBannedFallbackStub,
-  markEngineRecoveryCommit,
 } from './sealedManifest';
 import { playerInputGateBlock } from './choiceCompiler';
 import { equipFromInput } from './gearEquip';
@@ -669,32 +665,14 @@ export function extractChoicesFromText(text: string, state?: GameState, storyPro
   }
   return validatedChoices;
 }
-function failedLiveOpeningPageState(state: GameState): GameState {
-  const failed = applyFailedLiveOpening(state);
-  const gm: LogEntry = {
-    id: uid(),
-    turn: failed.turn,
-    role: 'gm',
-    content: STORYTELLER_RETRY_MESSAGE,
-    timestamp: Date.now(),
-  };
-  const prior = (failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE);
-  return beginTabletopCreation({
-    ...failed,
-    log: [...prior, gm],
-    choices: [STORYTELLER_RETRY_CHIP],
-    pendingGeneratedOpening: true,
-    lastUpdated: Date.now(),
-  });
-}
-
 async function paintLiveOpeningPage(
   state: GameState,
   settings: Settings
 ): Promise<{ state: GameState; prose: string; failed: boolean; unlocks: Quest[] }> {
   const result = await writeLiveOpening(state, settings);
   if (!result.ok) {
-    return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+    const page = buildFailedStorytellerPage(state);
+    return { state: page.state, prose: page.prose, failed: true, unlocks: [] };
   }
   let prose = stripChoiceList(result.prose);
   // parse (writeLiveOpening) → rewrite markup → leak gate
@@ -702,7 +680,8 @@ async function paintLiveOpeningPage(
   prose = enforcePerspective(prose, settings, state.character.name);
   if (settings.contentMode === 'kid') prose = filterKidModeText(prose);
   if (isBlankOpeningProse(prose) || openingProseLeaksStructuredJson(prose)) {
-    return { state: failedLiveOpeningPageState(state), prose: STORYTELLER_RETRY_MESSAGE, failed: true, unlocks: [] };
+    const page = buildFailedStorytellerPage(state);
+    return { state: page.state, prose: page.prose, failed: true, unlocks: [] };
   }
   // Scene quest is built from typed beats inside applySuccessfulLiveOpening — do not pass writer titles.
   const applied = applySuccessfulLiveOpening(state, prose, { pads: result.pads });
@@ -2115,6 +2094,19 @@ export function useGame() {
       currentTurn: current.turn,
       busy
     });
+    // Brief 06 — Try again after a story writer miss re-sends the same act once (no hidden retry).
+    if (isStorytellerRetryChip(input) && current.pendingWriterRetry?.act) {
+      const act = current.pendingWriterRetry.act;
+      const cleared: GameState = {
+        ...current,
+        pendingWriterRetry: null,
+        log: (current.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE),
+      };
+      stateRef.current = cleared;
+      setState(cleared);
+      current = cleared;
+      input = act;
+    }
     const mode = settingsRef.current.contentMode === 'kid' ? 'kid' : 'adult';
     const mediated = mediatePlayerInput(input);
     if (mediated.action === 'block') {
@@ -2495,7 +2487,7 @@ export function useGame() {
           && liveCurrent.engineMode !== 'pyoa'
           && (
             !!liveCurrent.openingEstablishment?.sceneWriteError
-            || /^try again$/i.test(contentSanitized)
+            || isStorytellerRetryChip(contentSanitized)
             || (
               liveCurrent.openingEstablishment?.complete === true
               && !!liveCurrent.pendingGeneratedOpening
@@ -2531,7 +2523,7 @@ export function useGame() {
           && (
             openingState.openingEstablishment?.complete === true
             || !!openingState.openingEstablishment?.sceneWriteError
-            || /^try again$/i.test(contentSanitized)
+            || isStorytellerRetryChip(contentSanitized)
           );
         if (wantsLivePage) {
           const painted = await paintLiveOpeningPage(openingState, settingsRef.current);
@@ -2577,7 +2569,7 @@ export function useGame() {
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
         if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
-          const failed = failedLiveOpeningPageState(openingState);
+          const failed = buildFailedStorytellerPage(openingState).state;
           stateRef.current = failed;
           setState(failed);
           void persist(failed);
@@ -3202,11 +3194,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             if (turnAbort.signal.aborted) throw err;
             const kind = classifyTurnFailure(err);
             if (!shouldAutoRetryTurn(kind) || attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES) {
-              // Fate already returns empty here so lastResortStoryBody can paint.
-              // Live used to throw → catch restored the draft and left the optimistic
-              // player bubble with no GM row (hosted T2 "Ask what they want" after 18a name-lock).
+              // Fate returns empty here; live paints honest Try again when the book body stays empty.
               if (shouldAutoRetryTurn(kind)) {
-                debugLogger.record('WARN', 'GM transport exhausted — last-resort will write the book', {
+                debugLogger.record('WARN', 'GM transport exhausted — book body may miss', {
                   kind,
                   attempt: attempt + 1,
                   timeoutMs: gmTimeoutMs,
@@ -3235,7 +3225,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }
         }
         if (lastErr && shouldAutoRetryTurn(classifyTurnFailure(lastErr))) {
-          debugLogger.record('WARN', 'GM transport exhausted — last-resort will write the book', {
+                debugLogger.record('WARN', 'GM transport exhausted — book body may miss', {
             kind: classifyTurnFailure(lastErr),
             turn: liveCurrent.turn,
             host: gmProxyHost(),
@@ -3272,7 +3262,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       } catch (err) {
         const kind = classifyTurnFailure(err);
         if (shouldAutoRetryTurn(kind) || kind === 'timeout' || kind === 'empty' || kind === 'network') {
-          debugLogger.record('WARN', 'GM transport threw — last-resort will write the book', {
+          debugLogger.record('WARN', 'GM transport threw — book body may miss', {
             kind,
             timeoutMs: gmTimeoutMs,
             writerTier: writerTierForBudget,
@@ -3999,14 +3989,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (!storyHasBody(cleanText) && mudTurnLive) {
         cleanText = mudDisplayBody(mudTurnLive);
       }
-      if (!storyHasBody(cleanText) && !useMud) {
-        const spoken = outageSpokenLine(liveCurrent, preparedEvent.packet.verb, sanitizedInput);
-        if (spoken) cleanText = spoken;
-      }
       {
         const lastGmRow = [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
         // 28l — writer turns reach this only on a total outage (the writer turn already revised any
         // reprint / stub / unasked fight close); MUD receipt turns keep the old stub guard.
+        // Brief 06 — no outageSpokenLine / fight last-resort fill; empty reaches Try again.
         if (
           !storyHasBody(cleanText)
           || (useMud && (
@@ -4024,6 +4011,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           if (painted.prose && !isDroughtStubProse(painted.prose) && !isLastGmReprint(painted.prose, lastGmRow)) {
             cleanText = painted.prose;
             if (painted.status) mergedSystemLog = [...mergedSystemLog, painted.status];
+          } else if (!useMud && !authoredBook) {
+            cleanText = '';
           }
         }
         // T10AQ — Exhaustion-6 / road death: death sentence owns the page (not a CAST reaction).
@@ -4032,51 +4021,30 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           cleanText = deathPage;
         }
       }
-      if (!storyHasBody(cleanText)) {
-        const manifest = liveCurrent.sealedManifest;
-        // 31i — never ship banned HUD stubs; one diegetic stitch max, else Class A FAIL
-        if (
-          manifest &&
-          !consecutiveRecoveryExceeded(liveCurrent) &&
-          !isBannedFallbackStub(
-            [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content
-          )
-        ) {
-          try {
-            const fallback = applyRenderFallback(manifest, liveCurrent, 'empty');
-            if (isBannedFallbackStub(fallback.prose)) {
-              throw new Error('banned stub');
-            }
-            cleanText = fallback.prose;
-            liveCurrent = markEngineRecoveryCommit(
-              attachSealedManifest(liveCurrent, fallback.manifestUpdated)
-            );
-            debugLogger.record('WARN', 'GM empty — diegetic recovery stitch from sealed manifest', {
-              turn: liveCurrent.turn,
-              hash: manifest.beatEffectsHash,
-            });
-          } catch {
-            debugLogger.record('WARN', 'Refusing System-only turn — recovery blocked', {
-              turn: liveCurrent.turn,
-            });
-            refundSpentTextTurn();
-            keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
-            setError('The story did not come through. Try that action again — this attempt was not charged.');
-            return;
-          }
-        } else {
-          debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
-            turn: liveCurrent.turn,
-            recoveryStreak: liveCurrent.sceneFacts?.engineRecoveryStreak ?? 0,
-          });
-          refundSpentTextTurn();
-          keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
-          setError('The story did not come through. Try that action again — this attempt was not charged.');
-          return;
-        }
-      } else {
-        liveCurrent = clearEngineRecoveryStreak(liveCurrent);
+      if (!storyHasBody(cleanText) && !useMud && !authoredBook) {
+        // Brief 06 — writer miss shows honest Try again; no canned last-resort / sealed stitch.
+        debugLogger.record('WARN', 'Writer miss — honest Try again (no state advance)', {
+          turn: stateAtTurnStart.turn,
+        });
+        refundSpentTextTurn();
+        const page = buildFailedStorytellerPage(stateAtTurnStart, { pendingAct: sanitizedInput });
+        stateRef.current = page.state;
+        setState(page.state);
+        void persist(page.state);
+        setRestoreDraft(null);
+        return;
       }
+      if (!storyHasBody(cleanText)) {
+        debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
+          turn: liveCurrent.turn,
+          recoveryStreak: liveCurrent.sceneFacts?.engineRecoveryStreak ?? 0,
+        });
+        refundSpentTextTurn();
+        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+        setError('The story did not come through. Try that action again — this attempt was not charged.');
+        return;
+      }
+      liveCurrent = clearEngineRecoveryStreak(liveCurrent);
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,
         newTurn: liveCurrent.turn + 1,
@@ -5113,7 +5081,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       mergedState = creditFillerOffers(mergedState, heardChoices);
       // q43-OCD: one shared pad commit (pad → stamp offered chips / recentOfferedActions → replay hash).
       // Do not reshape after this: commitOfferedTurn already owns the legal pad.
-      mergedState = commitOfferedTurn({ ...mergedState, choices: heardChoices }, gmEntry.id);
+      mergedState = commitOfferedTurn(
+        { ...mergedState, choices: heardChoices, pendingWriterRetry: null },
+        gmEntry.id
+      );
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
       if (imagesKilled()) {
@@ -5831,7 +5802,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
       if (isBlankOpeningProse(cleanOpening) || openingProseLeaksStructuredJson(cleanOpening)) {
-        const failed = failedLiveOpeningPageState(newState);
+        const failed = buildFailedStorytellerPage(newState).state;
         stateRef.current = failed;
         setState(failed);
         void persist(failed);
@@ -6005,21 +5976,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           setError('Opening failed to paint. Try New Game again.');
         }
       } else {
-        const failed = applyFailedLiveOpening(newState);
-        const gm: LogEntry = {
-          id: uid(),
-          turn: failed.turn,
-          role: 'gm',
-          content: STORYTELLER_RETRY_MESSAGE,
-          timestamp: Date.now(),
-        };
-        const retryState: GameState = beginTabletopCreation({
-          ...failed,
-          log: [...(failed.log ?? []).filter((e) => e.content !== STORYTELLER_RETRY_MESSAGE), gm],
-          choices: [STORYTELLER_RETRY_CHIP],
-          pendingGeneratedOpening: true,
-          lastUpdated: Date.now(),
-        });
+        const retryState = buildFailedStorytellerPage(newState).state;
         stateRef.current = retryState;
         setState(retryState);
         void persist(retryState);

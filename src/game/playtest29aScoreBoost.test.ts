@@ -17,7 +17,7 @@ import { recordPyoaBranchChoice, isPyoaBranchLocked, exhaustDelayPads } from './
 import { BUILD_STAMP } from './runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
 import { filterSystemLogForEngine } from './systemLog';
-import { applyRenderFallback, buildSealedManifest } from './sealedManifest';
+import { buildSealedManifest } from './sealedManifest';
 
 describe('playtest29a — Manus score boost terminal authority', () => {
   it('stamp advanced past 29a; Mid writer stays OFF', () => {
@@ -228,17 +228,14 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     expect(plain).toMatch(/Old Mill/);
   });
 
-  it('Sealed fallback prose has no RenderFallbackUsed tag', () => {
+  it('sealed manifest still hashes without deterministic fallback prose', () => {
     const state = createInitialState(undefined, 'litrpg');
     state.campaignBibleId = 'summoned-pact';
     state.turn = 10;
     state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
     const arc = runArcDirectorBeforeGm(state, 'Ask who summoned me');
     const manifest = buildSealedManifest(arc.state, 'Ask who', arc);
-    const fallback = applyRenderFallback(manifest, arc.state, 'timeout');
-    expect(fallback.prose).not.toMatch(/RenderFallbackUsed/i);
-    expect(fallback.prose).not.toMatch(/beat recovered/i);
-    expect(fallback.prose.length).toBeGreaterThan(20);
+    expect(manifest.beatEffectsHash).toMatch(/^[0-9a-f]{8}$/);
   });
 
   it('PYOA charter use locks branch; delay pads exhaust to lock', () => {

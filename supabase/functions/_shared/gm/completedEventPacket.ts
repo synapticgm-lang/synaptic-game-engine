@@ -29,7 +29,6 @@ import {
 import { nearbyPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway, isRoadLabel, isTripHere, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney.ts';
 import { hasWriterCueChrome } from './writerCueLines.ts';
-import { spokenTalkFallback } from './talkEnvelope.ts';
 import { peopleHere } from './scenePresence.ts';
 import { isBookForbiddenLedgerLine } from './ledgerToProse.ts';
 import { TALK_VERB } from './intentParser.ts';
@@ -54,7 +53,7 @@ import {
   type SystemHousingId,
 } from './systemHousing.ts';
 import { isNeverCastTitle } from './neverCast.ts';
-import { terminalFightBeat, terminalFightOutcome } from './engineResult.ts';
+import { terminalFightOutcome } from './engineResult.ts';
 import { kitRefDisplay, turnUsesKit } from './inventory.ts';
 import { isAtmosphereOnlyBeat } from './semanticLoopDetector.ts';
 import {
@@ -1316,111 +1315,17 @@ function sceneAnswerWho(state: GameState): string {
   if (openingCastRecords(state).length) return '';
   return atOpeningPlace(state) ? openingCastLabel(state) : '';
 }
-function listNames(names: string[]): string {
-  if (names.length <= 1) return names[0] ?? '';
-  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
-}
-function capFirst(s: string): string {
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
-}
-function descriptorSentence(descriptor: string | undefined): string {
-  const d = (descriptor ?? '').replace(/\s+/g, ' ').trim().replace(/[.!?]+$/, '');
-  return d ? `${capFirst(d)}.` : '';
-}
-/** 28f — place / presence lines once per arrival or change: '' when a recent GM beat already said it. */
-function onceSaid(state: GameState, line: string): string {
-  const l = (line ?? '').replace(/\s+/g, ' ').trim();
-  if (!l) return '';
-  const recent = (state.log ?? [])
-    .filter((e) => e.role === 'gm')
-    .slice(-10)
-    .map((e) => String(e.content ?? '').replace(/\s+/g, ' '));
-  return recent.some((b) => b.includes(l)) ? '' : l;
-}
-function peopleHereSentence(present: string[]): string {
-  if (!present.length) return 'Nobody you knew by name stood close.';
-  return `${listNames(present)} ${present.length > 1 ? 'were' : 'was'} still there.`;
-}
-function exitsSentence(place: string, exits: string[] | undefined): string {
-  if (exits?.length) return `The ways out of ${place} were ${listNames(exits)}.`;
-  return `The only way out of ${place} you knew was the way you came.`;
-}
-function stayedPreposition(place: string): string {
-  return /\b(trail|road|march|quay|wall|approach|seam)\b/i.test(place) ? 'on' : 'at';
-}
 /** A mapped place name for a page sentence. A road label or trip HERE is not a place. */
 function pagePlace(state: GameState, name: string): string {
   const n = (name ?? '').replace(/\s+/g, ' ').trim();
   return n && !isRoadLabel(n) && !isTripHere(state, n) ? n : '';
 }
-function isExitsAsk(act: string): boolean {
-  return /\b(?:exits?|ways? out|scout)\b/i.test(act);
-}
 /**
- * 27a — ledger stitch for a blocked paint: look / exits / travel / wait / talk
- * from place, descriptor, exits, present and left-behind facts only.
+ * Brief 06 slice 3 — ledger stitch no longer paints canned miss prose.
+ * Empty leaves the honest Try again path upstream.
  */
-export function ledgerActionStitch(state: GameState, playerInput: string): string {
-  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
-  const priorBodies = new Set(
-    (state.log ?? [])
-      .filter((e) => e.role === 'gm')
-      .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase())
-  );
-  const fresh = (s: string) => !!s && !priorBodies.has(s.replace(/\s+/g, ' ').trim().toLowerCase());
-  // 28f — a fight the engine settled this turn: the stitch states that outcome, never a scenery line.
-  const cleared = [...(state.arcDirector?.encounterClearedReceipts ?? [])]
-    .reverse()
-    .find((r) => r.turn === state.turn);
-  if (cleared) {
-    const fightLine =
-      cleared.outcome === 'escape'
-        ? `You broke away from ${cleared.name} and got clear. The fight was over.`
-        : cleared.outcome === 'parleyResolved'
-          ? `${cleared.name} accepted terms and stood down. The fight was over.`
-          : cleared.outcome === 'defeat'
-            ? `${cleared.name} put you down and left you there. The fight was over.`
-            : `${cleared.name} went down and stayed down. The fight was over.`;
-    if (fresh(fightLine)) return fightLine;
-  }
-  if (isLedgerReadAction(act) && ledgerSheetLine(state)) {
-    return ledgerReadStitch(state.systemHousing?.housing, ledgerReadChanges(state));
-  }
-  if (/\b(?:talk|speak|ask|press|offer|refuse|tell|persuade)\b/i.test(act)) {
-    const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
-    if (fresh(talk) && !/^Nobody here answered/i.test(talk)) return talk;
-  }
-  const f = ledgerPlaceFacts(state);
-  if (isExitsAsk(act)) {
-    const line = `You checked the ways out of ${f.place}. ${exitsSentence(f.place, f.exits)} ${onceSaid(state, peopleHereSentence(f.present))}`;
-    if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
-  }
-  if (/\blook(?:\s+around)?\b|\binspect\b|\bsurvey\b/i.test(act) && !/\bpanel\b/i.test(act) && !/\btravel\b/i.test(act)) {
-    const sight = f.descriptor || placeFirstSight(state, state.currentLocation, true);
-    const line = `You looked over ${f.place}. ${onceSaid(state, descriptorSentence(sight))} ${onceSaid(state, peopleHereSentence(f.present))}`;
-    if (fresh(line)) return line.replace(/\s+/g, ' ').trim();
-  }
-  const recent = (state.log ?? [])
-    .filter((e) => e.role === 'gm')
-    .slice(-10)
-    .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
-  const pool = topicAdvancePool(state, undefined, act || 'Look around').filter(fresh);
-  if (pool.length) return pickAdvanceVariant(pool, recent, (state.turn ?? 0) + act.length);
-  // 28g — last fallback: never a line used in the last 10 GM turns. Rotate stay / exits; never dump journal step text.
-  const stayLine = `You stayed ${stayedPreposition(f.place)} ${f.place} a moment longer. ${onceSaid(state, descriptorSentence(f.descriptor))} ${onceSaid(state, peopleHereSentence(f.present))} The next move was yours.`;
-  const lastLines = [
-    stayLine,
-    `You weighed the ways on from ${f.place}. ${exitsSentence(f.place, f.exits)}`,
-    ...(f.exits ?? []).map((x) => `From ${f.place}, the way to ${x} stayed open.`),
-  ].map((s) => s.replace(/\s+/g, ' ').trim());
-  const recentLower = recent.map((b) => b.toLowerCase());
-  const unused = lastLines.find((s) => !recentLower.some((b) => b.includes(s.toLowerCase())));
-  if (unused) return unused;
-  const lastUse = (s: string) => {
-    const i = [...recentLower].reverse().findIndex((b) => b.includes(s.toLowerCase()));
-    return i < 0 ? 99 : i;
-  };
-  return [...lastLines].sort((a, b) => lastUse(b) - lastUse(a))[0] ?? stayLine;
+export function ledgerActionStitch(_state: GameState, _playerInput: string): string {
+  return '';
 }
 function factToken(value: string): string {
   return value.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -1805,29 +1710,14 @@ export function proseViolatesEventPacket(
   return false;
 }
 /** Brief 06: canned packet stitch banks deleted — live AI prose or honest empty only. */
-const NO_DESCRIPTION_LOOK_LINE = 'You saw nothing that called for a closer look.';
 export const PACKET_STITCH_FINGERPRINTS: readonly string[] = [];
 const OLD_LANDING_STUB =
-  /You acted at landing|That beat closed\.|The next move was yours\.|The blow landed/i;
+  /You acted at landing|That beat closed\.\|The next move was yours\.\|The blow landed/i;
 /** 13a/13b — retired 1–2 line droughts. Never commit these as the story body. */
 export const RETIRED_DROUGHT_STUB =
   /Whatever you tried had already happened|Dust hung at/i;
 export function isDroughtStubProse(text: string): boolean {
   return RETIRED_DROUGHT_STUB.test((text ?? '').trim());
-}
-const SHORT_ALREADY_TOLD = /already answered you|already said it|Their answer stayed short/i;
-function lastGoodGmBody(state: GameState): string {
-  const rows = [...(state.log ?? [])].reverse().filter((e) => e.role === 'gm');
-  for (const e of rows) {
-    const raw = String(e.content ?? '').replace(/\s+/g, ' ').trim();
-    const body = sanitizeLockedNameBeat(state, raw);
-    if (body.length < 40) continue;
-    if (isDroughtStubProse(body) || SHORT_ALREADY_TOLD.test(body)) continue;
-    if (isAtmosphereOnlyBeat(body)) continue;
-    if (isPacketStitchProse(body) && body.length < 160) continue;
-    return body.length > 720 ? `${body.slice(0, 719).trim()}…` : body;
-  }
-  return '';
 }
 const LEDGER_WAIT_FP = /The name \S+ already stood|The room waited on what you did next/i;
 const COMBAT_CLOSE_FP = /You close with |loot is legal|The exchange goes badly\. You go down/i;
@@ -1855,405 +1745,24 @@ export function isLastGmReprint(prose: string, lastGm: string): boolean {
   if (head.length >= 24 && prev.includes(head)) return true;
   return false;
 }
-/** A known place the line names (map, journey or hub list); never a capitalised word of the line itself. */
-function destFromAct(act: string, state: GameState): string {
-  const line = act.toLowerCase();
-  const known = [
-    ...(state.places ?? []).map((p) => p.name),
-    state.journey?.to ?? '',
-    ...hubsForBibleId(state.campaignBibleId).map((h) => h.name),
-  ]
-    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
-    .filter((n) => n.length > 2);
-  return known.find((n) => line.includes(n.toLowerCase())) || 'the next way out';
-}
-function herePhrase(where: string): string {
-  const place = (where || 'this place').replace(/\s+/g, ' ').trim();
-  if (/\bof the\s*$/i.test(place) || /^(?:the\s+)?(?:outdoor\s+)?seam of the$/i.test(place)) {
-    return 'this hall';
-  }
-  return /^(?:a|an|the)\s/i.test(place) ? place : `the ${place}`;
-}
-function castHead(state: GameState, packet?: CompletedEventPacket): string {
-  const who = (packet?.answerWho || packet?.witnesses?.[0] || openingCastLabel(state) || '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (!who || /\bpanel\b/i.test(who)) return '';
-  return who.charAt(0).toUpperCase() + who.slice(1);
-}
-function pickAdvanceVariant(variants: string[], recent: string[], salt: number): string {
-  const free = variants.filter(
-    (v) => !recent.some((b) => sameBeat(b, v) || (v.length >= 24 && b.includes(v.slice(0, 36))))
-  );
-  const pool = free.length ? free : variants;
-  return pool[Math.abs(salt) % pool.length]!;
-}
 /**
- * Last-resort / stitch advance: interesting + simple 4–6 short sentences,
- * or a short spoken HERE line. Never the name telegram. Never last GM.
- */
-/** The run's point of view for the last-resort bank, as `terminalFightBeat` takes it: "Jax … them" or "You … you". */
-function lastResortPov(state: GameState, packet?: CompletedEventPacket) {
-  const pov = pcPov(packet?.pc ?? state.character);
-  const S = pcStorySubject(pov);
-  const third = narratesPcInThirdPerson(pov);
-  const first = S === 'I';
-  return {
-    S,
-    s: third ? S : first ? 'I' : 'you',
-    P: third ? pov.his : first ? 'my' : 'your',
-    was: S === 'You' ? 'were' : 'was',
-  };
-}
-function topicAdvancePool(
-  state: GameState,
-  packet?: CompletedEventPacket,
-  playerInput?: string
-): string[] {
-  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
-  const whereNamed = pagePlace(state, packet?.location || state.currentLocation || '');
-  const where = whereNamed || 'this place';
-  const here = whereNamed ? herePhrase(whereNamed) : 'this place';
-  const head = castHead(state, packet);
-  const pv = lastResortPov(state, packet);
-  const recent = (state.log ?? [])
-    .filter((e) => e.role === 'gm')
-    .slice(-10)
-    .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
-  const salt = (state.turn ?? 0) + act.length;
-  const facts = ledgerPlaceFacts(state);
-  const placeName = pagePlace(state, facts.place) || 'this place';
-  const desc = descriptorSentence(facts.descriptor);
-  const people = facts.present.length ? listNames(facts.present) : (state.turn ?? 0) <= 3 ? head : '';
-  const peopleLine = people
-    ? `${people} ${facts.present.length > 1 || /\band\b/.test(people) ? 'were' : 'was'} still there.`
-    : `Nobody ${pv.s} knew by name stood close.`;
-  const groundLine = NO_DESCRIPTION_LOOK_LINE;
-  // 28f — the place / presence line is said once per arrival or change, not every stitch.
-  const placeOnce = onceSaid(state, desc || groundLine);
-  const peopleOnce = onceSaid(state, peopleLine);
-  const look = [
-    `${pv.S} looked over ${placeName}. ${placeOnce} ${peopleOnce}`,
-    `${capFirst(placeName)} held ${pv.P} eye a moment. ${placeOnce} ${peopleOnce}`,
-  ];
-  const wait = [
-    `${pv.S} held still at ${placeName}. ${people ? `${people} did not fill the pause.` : 'Nothing close moved.'} ${placeOnce}`,
-  ];
-  const exitsPool = [
-    `${pv.S} checked the ways out of ${placeName}. ${exitsSentence(placeName, facts.exits)} ${peopleOnce}`,
-  ];
-  const wantAgain = [
-    `${pv.S} ${pv.was} still at ${here}. ${head ? `${head} already said what they wanted.` : 'They already said what they wanted.'} They waited on what ${pv.s} did next. The room did not add a second speech.`,
-    `At ${here} the ask was already answered. ${head ? `${head} did not say it twice.` : 'They did not say it twice.'} The room stayed the same.`,
-    `${pv.S} asked again at ${here}. ${head ? `${head} had already given the want.` : 'The want had already been given.'} They stayed in sight. Nothing new was added.`,
-  ];
-  const whoAgain = [
-    `${pv.S} ${pv.was} still at ${here}. ${head ? `${head} already answered who they were.` : 'They already answered who they were.'} They waited on what ${pv.s} did next. The room did not add a second name.`,
-    `At ${here} the name-ask was already answered. ${head ? `${head} did not introduce twice.` : 'They did not introduce twice.'}`,
-  ];
-  const graphHit = matchGraphExitPad(state.activeDungeon, act);
-  const hubHit = parseTravelDestination(act, state.campaignBibleId);
-  // The travel engine's commit this turn decides arrived vs set out, whatever words the player used.
-  const committedArrival = packet?.outcome === 'arrived';
-  const committedSetOut = packet?.outcome === 'set out';
-  const journeyTo = committedSetOut ? pagePlace(state, state.journey?.to ?? '') : '';
-  const dest = graphHit?.name || hubHit?.name || journeyTo || destFromAct(act, state);
-  const fromNamed = committedSetOut ? pagePlace(state, state.journey?.from ?? '') : '';
-  const setOutFrom = fromNamed ? herePhrase(fromNamed) : here;
-  const padDest = (
-    graphHit?.name
-    || hubHit?.name
-    || (act.match(/\b(?:to|toward)\s+([^.,!?]+)/i)?.[1] ?? '')
-  )
-    .replace(/[.!?]+$/, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-  const arrived =
-    committedArrival
-    || (!committedSetOut
-      && (!!graphHit
-        || !!hubHit
-        || /go through|take the stairs|walk toward.+\bdoorway\b|\b(?:north|south|east|west)\s+doorway\b/i.test(act)
-        || (!!dest && dest !== 'the next way out' && here.toLowerCase().includes(dest.toLowerCase()))));
-  const wantsMove =
-    arrived
-    || committedSetOut
-    || !!hubHit
-    || /\b(?:let'?s go|walk with|are we going\b(?!\s+to\s+stand)|said we were (?:walk|go)|still here|travel toward|go through|take the stairs|head(?:ing)? (?:to|toward))\b/i.test(
-      act
-    )
-    || (/\bi(?:'m| am) going to\b/i.test(act) && !/\bgoing to (?:stand|wait|make|sit|stay|talk|ask)\b/i.test(act));
-  const shortDest = (
-    (committedArrival ? where : '')
-    || graphHit?.name
-    || hubHit?.name
-    || (padDest && !/\bdoorway\b/i.test(padDest) && padDest !== 'the next way out'
-      ? padDest.split(/\s+[—–]\s+/).pop()
-      : '')
-    || (arrived ? (here.split(/\s+[—–]\s+/).pop() ?? '') : '')
-  )
-    .replace(/\s+/g, ' ')
-    .trim();
-  const arriveHub = arrived && shortDest ? matchHub(hubsForBibleId(state.campaignBibleId), shortDest) : null;
-  const arriveNamed = pagePlace(state, arriveHub?.name ?? (arrived ? shortDest : ''));
-  const arriveHere = arriveNamed ? herePhrase(arriveNamed) : here;
-  const arriveDesc = descriptorSentence(arriveNamed ? placeFirstSight(state, arriveHub?.name ?? shortDest) : '');
-  const behindPlace = facts.leftBehind.length ? pagePlace(state, facts.leftFrom) : '';
-  const behindLine = behindPlace
-    ? `${listNames(facts.leftBehind)} stayed ${stayedPreposition(behindPlace)} ${behindPlace}.`
-    : '';
-  const go = arrived
-    ? [
-      `${pv.S} reached ${arriveHere}. ${arriveDesc} ${behindLine}`,
-      `${pv.S} came into ${arriveHere}. ${arriveDesc} ${behindLine}`,
-      `The way gave onto ${arriveHere}. ${arriveDesc} ${behindLine}`,
-    ]
-    : [
-      `${pv.S} set out for ${dest} from ${setOutFrom}. The trail lay open ahead.`,
-      `${pv.S} started toward ${dest} from ${setOutFrom}.`,
-      `${pv.S} left ${setOutFrom} and kept on toward ${dest}.`,
-    ];
-  // T10AJ — opening-card speech only while the cast is still present (peopleHere / card place).
-  const castHere =
-    openingCastStillHere(state)
-    && (() => {
-      const hereNow = peopleHere(state);
-      const cast = openingCastNames(state);
-      if (!cast.length || !hereNow.length) return false;
-      return cast.some((c) => hereNow.some((n) => {
-        const a = c.replace(/\s+/g, ' ').trim().toLowerCase();
-        const b = n.replace(/\s+/g, ' ').trim().toLowerCase();
-        return a === b || a.includes(b) || b.includes(a);
-      }));
-    })();
-  const spokenWantRaw = castHere ? openingSpokenWant(state).replace(/\s+/g, ' ').trim() : '';
-  const spokenWhoRaw = castHere ? openingWhoAskLine(state).replace(/\s+/g, ' ').trim() : '';
-  // T10Q — last-resort page is 3rd-person past when the PC is named; never "answers you".
-  const toPageSpeech = (line: string) => {
-    if (!line || pv.S === 'You') return line;
-    return line
-      .replace(/\banswers you\b/gi, 'answered them')
-      .replace(/\banswer you\b/gi, 'answered them');
-  };
-  const spokenWant = toPageSpeech(spokenWantRaw);
-  const spokenWho = toPageSpeech(spokenWhoRaw);
-  const wantFirst = spokenWant
-    ? `${pv.S} ${pv.was} at ${here}. ${spokenWant} ${head ? `${head} stayed in sight.` : 'They stayed in the room.'}`
-    : `${pv.S} ${pv.was} at ${here}. ${peopleLine}`;
-  const whoFirst = spokenWho
-    ? `${pv.S} ${pv.was} at ${here}. ${spokenWho} They stayed in the room.`
-    : `${pv.S} ${pv.was} at ${here}. ${peopleLine}`;
-  const accept = [
-    `${pv.S} took the work at ${here}. ${head ? `${head} kept the offered kit within reach.` : 'The offered kit stayed in reach.'} The deal stood.`,
-    `${pv.S} said yes at ${here}. ${spokenWant || 'The deal stood.'} The offered kit was in reach.`,
-  ];
-  let pool = look;
-  if (lineNamesOtherNpc(state, act) && !wantsMove) {
-    // 27i — a line naming another known NPC is answered by that NPC, never the opener's card.
-    const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
-    pool = talk && !/^Nobody here answered/i.test(talk) ? [talk] : look;
-  } else if (isOpeningNameGiveLine(act) && !hallTopicAlreadyAnswered(state, 'want')) {
-    pool = [openingNameLockSpokenBeat(state)];
-  } else if (classifyOpeningOfferInput(state, act) === 'accept' || isAcceptOfferLine(act)) {
-    pool = accept;
-  } else if (isExitsAsk(act) && !hubHit && !graphHit) {
-    pool = exitsPool;
-  } else if (hallTalkAsksStayLeave(act) || hallTalkAsksRefuse(act)) {
-    const spoken = castHere
-      ? (hallTalkAsksRefuse(act) ? openingSpokenRefuse(state) : openingStayLeaveLine(state))
-          .replace(/\s+/g, ' ')
-          .trim()
-      : '';
-    pool = spoken
-      ? [`${pv.S} ${pv.was} at ${here}. ${toPageSpeech(spoken)}`]
-      : look;
-  } else if (wantsMove) {
-    pool = go;
-  } else if (hallTalkAsksWant(act) || playerAskedWhyPulled(act)) {
-    const incoming = act.replace(/\s+/g, ' ').trim().toLowerCase();
-    const playerAskedWant = (state.log ?? []).some((e) => {
-      if (e.role !== 'player') return false;
-      if (hallTalkTopic(e.content ?? '') !== 'want') return false;
-      return (e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() !== incoming;
-    });
-    pool = playerAskedWant ? wantAgain : [wantFirst];
-  } else if (hallTalkAsksWho(act)) {
-    const incoming = act.replace(/\s+/g, ' ').trim().toLowerCase();
-    const playerAskedWho = (state.log ?? []).some((e) => {
-      if (e.role !== 'player') return false;
-      if (hallTalkTopic(e.content ?? '') !== 'who') return false;
-      return (e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() !== incoming;
-    });
-    pool = playerAskedWho ? whoAgain : [whoFirst];
-  } else if (hallTalkAsksWhere(act) || /\b(?:joss|go|walk|leave|door|ladder|toward)\b/i.test(act)) {
-    pool = go;
-  } else if (packet?.verb === 'waited' || /\bwait\b/i.test(act)) {
-    pool = wait;
-  } else if (packet?.verb === 'inspected' || /\blook\b|\binspect\b|\bscout\b/i.test(act)) {
-    pool = look;
-  } else if (packet?.verb === 'spoke' || packet?.verb === 'parleyed' || packet?.verb === 'used') {
-    if (!hallTopicAlreadyAnswered(state, 'who')) pool = [whoFirst];
-    else if (!hallTopicAlreadyAnswered(state, 'want')) pool = [wantFirst];
-    else if (packet?.verb === 'used') pool = look;
-    else {
-      const talk = spokenTalkFallback(state, act).replace(/\s+/g, ' ').trim();
-      pool = talk && !/^Nobody here answered/i.test(talk) ? [talk] : look;
-    }
-  } else {
-    // T10Q — Analyze / Read / other acts are not unanswered who/want hall stubs.
-    pool = look;
-  }
-  return pool.map((s) => s.replace(/\s+/g, ' ').trim());
-}
-function topicAdvanceStitch(
-  state: GameState,
-  packet?: CompletedEventPacket,
-  playerInput?: string
-): string {
-  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
-  const recent = (state.log ?? [])
-    .filter((e) => e.role === 'gm')
-    .slice(-10)
-    .map((e) => String(e.content ?? '').replace(/\s+/g, ' ').trim());
-  const salt = (state.turn ?? 0) + act.length;
-  const pool = topicAdvancePool(state, packet, playerInput);
-  return pickAdvanceVariant(pool, recent, salt).replace(/\s+/g, ' ').trim();
-}
-/** T10AJ — leftover STATUS/dungeon/check labels that must never paint as the book body. */
-function hasBookForbiddenLedger(prose: string): boolean {
-  const body = (prose ?? '').replace(/\s+/g, ' ').trim();
-  if (!body) return false;
-  if (/\b(?:Dungeon(?: room)?:|Ways on:|A lead waits here:|Look-out:|Check (?:failure|success)\b|Travel:)/i.test(body)) {
-    return true;
-  }
-  return body
-    .split(/(?<=[.!?])\s+/)
-    .some((s) => isBookForbiddenLedgerLine(s.trim()));
-}
-function lastResortUsable(state: GameState, prose: string, lastGm: string): string {
-  const body = sanitizeLockedNameBeat(state, (prose ?? '').replace(/\s+/g, ' ').trim());
-  if (!body || body.length < 24) return '';
-  if (isDroughtStubProse(body) || proseAsksForPcName(body)) return '';
-  if (isNameTelegramProse(body) || LEDGER_WAIT_FP.test(body)) return '';
-  if (isLastGmReprint(body, lastGm)) return '';
-  // T10E — writer cue chrome is never a book beat (writerEngineResult should have rewritten it).
-  if (hasWriterCueChrome(body)) return '';
-  // T10AJ — ledger labels belong on STATUS, never the story body.
-  if (hasBookForbiddenLedger(body)) return '';
-  if (
-    /Nothing listed had moved on|The moment at .+ settled|You still had the next move|the room(?: at .+)? held its place|You close with |loot is legal|The exchange goes badly\. You go down/i.test(body)
-  ) {
-    return '';
-  }
-  return body;
-}
-/**
- * Last-resort book body after empty/timeout GM (retries already spent).
- * Never Dust-hung / already-happened. After a locked name, do not reprint
- * page-1 or the last GM beat. Prefer the topic stitch for this line; never
- * loop the same ledger telegram.
- */
-export function lastResortStoryBody(
-  state: GameState,
-  packet?: CompletedEventPacket,
-  playerInput?: string
-): { prose: string; status: string } {
-  const fight = terminalFightOutcome(packet?.engineResult ?? state.completedEvent?.engineResult);
-  if (fight) {
-    const pov = pcPov(packet?.pc ?? state.character);
-    const third = narratesPcInThirdPerson(pov);
-    return {
-      prose: terminalFightBeat(
-        fight,
-        playerFacingLocation(state),
-        { who: pcStorySubject(pov), him: third ? pov.him : 'you' },
-        isJourneyUnderway(state)
-      ),
-      status: 'Writer left the settled fight out — painted from the engine result',
-    };
-  }
-  const named = !!lockedOpeningPcName(state);
-  const lastGm = lastCommittedGmBody(state);
-  // The turn's committed record (travel beat and engine receipts) is one page, before any player-word line.
-  const recordSource = [travelBeatFact(state), packet?.engineResult || state.completedEvent?.engineResult || '']
-    .filter(Boolean)
-    .join(' ');
-  const pcName = (state.character?.name ?? '').trim() || undefined;
-  const act = (playerInput || packet?.playerAction || '').replace(/\s+/g, ' ').trim();
-  const finish = (prose: string, status: string): { prose: string; status: string } => {
-    const cleaned = sanitizeLockedNameBeat(state, prose.replace(/\s+/g, ' ').trim());
-    // Brief 06: do not append canned speech — typed speech beat is rendered once upstream.
-    const sealed = scrubOpeningTurnProse(state, cleaned.replace(/\s+/g, ' ').trim());
-    return { prose: sealed, status };
-  };
-  const record = lastResortUsable(state, writerEngineResult(recordSource, pcName), lastGm);
-  if (record) return finish(record, 'Writer page blocked — painted from the turn record');
-  const pkt = packet
-    ? (act && !(packet.playerAction ?? '').trim() ? { ...packet, playerAction: act } : packet)
-    : undefined;
-  const candidates: string[] = [
-    ...topicAdvancePool(state, pkt ?? packet, act || 'Look around'),
-  ];
-  if (!named) candidates.push(lastGoodGmBody(state));
-  for (const raw of candidates) {
-    const body = lastResortUsable(state, raw, lastGm);
-    if (body) {
-      return finish(
-        body,
-        named
-          ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
-          : 'Writer empty after retries — last good beat held (not a drought stub)',
-      );
-    }
-  }
-  const fallback = topicAdvanceStitch(state, pkt ?? packet, act || 'Look around');
-  const unique = isLastGmReprint(fallback, lastGm)
-    ? `${fallback} What you already knew still held.`
-    : fallback;
-  return finish(
-    unique,
-    named
-      ? 'Writer empty after retries — topic advance (not a page-1 reprint)'
-      : 'Writer empty after retries — last good beat held (not a drought stub)',
-  );
-}
-/**
- * Writer outage on a talk or parley turn: the addressee's own card line, else '' so the caller paints
- * `bookBodyAfterWriterMiss`. Any other verb, or no one here to answer, is not a spoken turn.
- */
-/**
- * Page to show when the clause check did not return a verdict.
- * Built from the ledger only (empty writer text). Does not roll, award, or save.
+ * Page when the clause check withheld a verdict: never canned miss prose (brief 06).
  */
 export function pageWhenClauseWithheld(
-  state: GameState,
-  packet: CompletedEventPacket | undefined,
-  playerInput: string
+  _state: GameState,
+  _packet: CompletedEventPacket | undefined,
+  _playerInput: string
 ): string {
-  const spoken = outageSpokenLine(state, packet?.verb, playerInput);
-  if (spoken.trim()) return spoken;
-  const painted = bookBodyAfterWriterMiss(state, packet, playerInput, '');
-  if (painted.prose.trim()) return painted.prose.trim();
-  const fact = (packet?.engineResult || packet?.factSheet?.beat.engineResult || '').trim();
-  if (fact) return fact;
-  const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
-  return `You stayed at ${where}. The engine had already settled the moment.`;
+  return '';
 }
 
-export function outageSpokenLine(state: GameState, verb: CompletedEventPacket['verb'] | undefined, playerInput: string): string {
-  if (verb !== 'spoke' && verb !== 'parleyed') return '';
-  const spoken = spokenTalkFallback(state, playerInput).replace(/\s+/g, ' ').trim();
-  if (!spoken || isDroughtStubProse(spoken)) return '';
-  if (/^Nobody here answered|Silence held the question|No one listed on the ledger answered/i.test(spoken)) return '';
-  return spoken;
-}
 /**
- * Writer timeout / empty / reprint → a visible new book beat.
- * Live and Fate both paint this instead of leaving the player line unanswered.
+ * Writer timeout / empty / reprint: keep usable writer text; otherwise empty (Try again upstream).
+ * No fight / spoken / last-resort painters — empty miss is honest Try again (brief 06).
  */
 export function bookBodyAfterWriterMiss(
   state: GameState,
-  packet: CompletedEventPacket | undefined,
+  _packet: CompletedEventPacket | undefined,
   playerInput: string,
   writerText = ''
 ): { prose: string; status?: string } {
@@ -2271,7 +1780,7 @@ export function bookBodyAfterWriterMiss(
   ) {
     return { prose: raw };
   }
-  return lastResortStoryBody(state, packet, playerInput);
+  return { prose: '', status: 'Writer miss — honest Try again' };
 }
 export function isPacketStitchProse(text: string): boolean {
   const body = (text ?? '').trim();

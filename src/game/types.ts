@@ -1137,6 +1137,11 @@ export interface GameState {
   openingRite?: import('./openingRite').OpeningRiteState;
   /** After the last establishment answer, generate the real opening scene once. */
   pendingGeneratedOpening?: boolean;
+  /**
+   * Brief 06 — writer miss on a story turn: Try again re-sends this act once.
+   * Cleared on a successful writer page. Does not advance turn/XP while set.
+   */
+  pendingWriterRetry?: { act: string } | null;
   /** Per-NPC memory ledger. */
   npcMemories?: NpcMemory[];
   /**

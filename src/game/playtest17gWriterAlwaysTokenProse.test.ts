@@ -20,7 +20,6 @@ import {
 import {
   buildCompletedEventPacket,
   isDroughtStubProse,
-  lastResortStoryBody,
 } from './completedEventPacket';
 import {
   shouldStitchOpeningContinue,
@@ -177,12 +176,9 @@ describe('playtest17g — writer always + Token Prose after page 1', () => {
       packet
     );
     expect(accepted.path).toMatch(/13c|last-resort/);
+    expect(accepted.prose).toBe('');
     expect(accepted.prose).not.toMatch(DROUGHT);
-    expect(isDroughtStubProse(accepted.prose)).toBe(false);
     expect(looksLikeTokenJson('{ "refs": [], "lines": [] }')).toBe(true);
-    const resort = lastResortStoryBody(state, packet);
-    expect(resort.prose).not.toMatch(DROUGHT);
-    expect(resort.prose).not.toMatch(/What do you enter|The panel waits on a name/i);
   });
 
   it('live useGame and Fate share the same gates and token-prose accept path', () => {

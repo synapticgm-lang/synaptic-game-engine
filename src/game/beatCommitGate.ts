@@ -43,10 +43,7 @@ import { isJourneyUnderway } from './travelJourney';
 import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
 import { dropsFightRoll, engineFactProblems } from './engineFactGate';
 import {
-  assemblePacketStitch,
-  buildCompletedEventPacket,
   isDroughtStubProse,
-  lastResortStoryBody,
   proseViolatesEventPacket,
 } from './completedEventPacket';
 
@@ -588,54 +585,9 @@ export function repairRejectedBeat(
     || _reasons.includes('atmosphere-only')
     || _reasons.includes('same-room-essay');
   if (stillBad) {
-    const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
-    const event =
-      state.completedEvent
-      ?? (state.activeEncounter && lastPlayer ? buildCompletedEventPacket(state, String(lastPlayer)) : undefined);
-    const resort = lastResortStoryBody(state, event);
-    const stitch = event
-      ? assemblePacketStitch(event, recentGmBeatTexts(state, 10))
-      : codedSceneMove(state);
-    const settleStall = (t: string) =>
-      /Nothing listed had moved on|The moment at .+ settled|the room(?: at .+)? held its place|You still had the next move|You close with |loot is legal/i.test(
-        t ?? ''
-      );
-    const sameAsRejected =
-      resort.prose.replace(/\s+/g, ' ').trim() === (prose ?? '').replace(/\s+/g, ' ').trim();
-    let move =
-      !isDroughtStubProse(resort.prose)
-      && !settleStall(resort.prose)
-      && !sameAsRejected
-      && !/writer did not return a new beat/i.test(resort.prose)
-      && !isAtmosphereOnlyBeat(resort.prose)
-        ? resort.prose
-        : !isDroughtStubProse(stitch) && !settleStall(stitch)
-          ? stitch
-          : resort.prose;
-    if (
-      (isAtmosphereOnlyBeat(move) || settleStall(move))
-      && stitch
-      && !isDroughtStubProse(stitch)
-      && !settleStall(stitch)
-      && !isAtmosphereOnlyBeat(stitch)
-    ) {
-      move = stitch;
-    }
-    const hardEssay =
-      _reasons.includes('same-room-essay')
-      || _reasons.includes('craft-ignore')
-      || _reasons.includes('event-packet')
-      || isAtmosphereOnlyBeat(prose)
-      || missingPointerCardSlot(state, prose);
-    // 13b — last good GM / card paragraph, not Dust-hung drought stitch.
-    if (hardEssay || _reasons.includes('atmosphere-only') || _reasons.includes('recycle-without-delta')) {
-      next = move;
-    } else if (collage.hit && collage.tailHasNewContent && next.trim() && next.trim().length > 40) {
-      next = `${next} ${move}`.trim();
-    } else {
-      next = move;
-    }
-    notes.push(isDroughtStubProse(move) ? 'Commit gate: packet stitch' : 'Commit gate: last-resort body');
+    // Brief 06 slice 3 — no canned last-resort / stitch fill; empty → honest Try again upstream.
+    next = '';
+    notes.push('Commit gate: writer miss — no canned fill');
   }
 
   // Never leave banned stall / stitch bank / director chrome / drought in the repaired draft.
@@ -645,13 +597,8 @@ export function repairRejectedBeat(
     || isStitchBankFingerprint(next)
     || isDroughtStubProse(next)
   ) {
-    const resort = lastResortStoryBody(state, state.completedEvent);
-    next = !isDroughtStubProse(resort.prose)
-      ? resort.prose
-      : state.completedEvent
-        ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
-        : codedSceneMove(state);
-    notes.push('Commit gate: replaced stall/stitch-bank stub');
+    next = '';
+    notes.push('Commit gate: cleared stall/stitch-bank stub — no canned fill');
   }
 
   return { prose: next.trim(), repaired: notes.length > 0 && next.trim() !== (prose ?? '').trim(), notes };

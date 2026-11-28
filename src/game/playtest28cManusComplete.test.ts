@@ -7,7 +7,6 @@ import {
 } from './arcDirector';
 import {
   buildSealedManifest,
-  applyRenderFallback,
   hashBeatEffects,
 } from './sealedManifest';
 import {
@@ -25,7 +24,7 @@ import { buildAuthorityVoiceHint, buildVoiceCadence } from './voiceCadenceSystem
 import type { RunSummary } from './fateAutoplay';
 
 describe('playtest28c — Manus complete ranked backlog', () => {
-  it('Wave 3: sealed manifest hash + deterministic fallback prose', () => {
+  it('Wave 3: sealed manifest hash (deterministic fallback prose deleted — brief 06)', () => {
     const state = createInitialState(undefined, 'litrpg');
     state.campaignBibleId = 'summoned-pact';
     state.turn = 10;
@@ -35,10 +34,6 @@ describe('playtest28c — Manus complete ranked backlog', () => {
     const manifest = buildSealedManifest(arc.state, 'Ask who summoned me', arc);
     expect(manifest.beatEffectsHash).toMatch(/^[0-9a-f]{8}$/);
     expect(manifest.requiredFacts.some((f) => /Location:/.test(f))).toBe(true);
-    const fallback = applyRenderFallback(manifest, arc.state, 'timeout');
-    expect(fallback.prose).not.toMatch(/beat recovered/i);
-    expect(fallback.prose).not.toMatch(/RenderFallbackUsed/i);
-    expect(fallback.prose.length).toBeGreaterThan(40);
   });
 
   it('Wave 3 chaos: GM fail preserves ArcDirector ledger — no duplicate XP on replay hash', () => {
@@ -64,12 +59,10 @@ describe('playtest28c — Manus complete ranked backlog', () => {
     const arc = runArcDirectorBeforeGm(state, 'Ask why the Circle wanted me');
     const hashBeforeFail = hashCanonicalState(arc.state);
     const manifest = buildSealedManifest(arc.state, 'Ask why', arc);
-    const fallback = applyRenderFallback(manifest, arc.state, 'empty');
     const after = recordReplayHash(arc.state);
     expect(after.replayHashes?.length).toBe(1);
     expect(hashBeatEffects(arc.state, arc)).toBe(manifest.beatEffectsHash);
     expect(hashCanonicalState(arc.state)).toBe(hashBeforeFail);
-    expect(fallback.systemLog[0]).toMatch(/ledger preserved/i);
     expect(arc.beatCommitted || arc.systemReceipts.length >= 0).toBe(true);
   });
 

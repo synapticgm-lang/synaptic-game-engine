@@ -9,7 +9,7 @@ import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay } from './bank';
 import { replayWhole } from './replayRun';
-import { outageSpokenLine, pageOpeners } from '../../game/completedEventPacket';
+import { pageOpeners } from '../../game/completedEventPacket';
 import type { GameState } from '../../game/types';
 
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
@@ -66,10 +66,7 @@ describe('replay bank multi lap 31', () => {
     expect(F.prose(6), 'the beat names where Jax was headed').toMatch(/Cathedral Close/);
     expect((F.turnCheck(6)?.p0 ?? []).map((f) => f.kind)).not.toContain('ignored-action');
 
-    const at = F.after(5);
-    expect(outageSpokenLine(at, 'unchanged', 'Travel toward Cathedral Close'), 'travel is not a spoken turn').toBe('');
-    const nobody = { ...at, sceneFacts: { ...at.sceneFacts, present: [] } } as GameState;
-    expect(outageSpokenLine(nobody, 'spoke', 'Talk to someone'), 'no one here to answer').toBe('');
+    // Brief 06 — outageSpokenLine deleted; travel miss no longer paints spoken fallback.
   });
 
   it('[m31 fl151 T14 | lap 31 the trip start is not a way out] "led them from the Weighing Cup" is the handed start of the move', async () => {

@@ -14,7 +14,6 @@ import {
   buildCompletedEventPacket,
   formatWriterFacingEvent,
   isDroughtStubProse,
-  lastResortStoryBody,
 } from './completedEventPacket';
 import { harvestNarrativeIntoLedger } from './narrativeHarvest';
 import { acceptObeyedStoryBody, obeyLedgerNouns } from './ledgerNounObey';
@@ -157,11 +156,9 @@ describe('playtest13c — writer obeys the ledger', () => {
       crown(),
       buildCompletedEventPacket(crown(), SIGN_READ)
     );
+    // Brief 06 — empty miss (no last-good / page-1 reprint painter).
+    expect(accepted.prose).toBe('');
     expect(accepted.prose).not.toMatch(DROUGHT);
-    expect(isDroughtStubProse(accepted.prose)).toBe(false);
-    expect(accepted.prose).toMatch(/archive floor|Lene Quill|reader’s ribbon|iron mesh/i);
-    const resort = lastResortStoryBody(crown(), buildCompletedEventPacket(crown(), SIGN_READ));
-    expect(isDroughtStubProse(resort.prose)).toBe(false);
   });
 
   it('harvest does not persist Orel Vane from hall-talk T2', () => {
