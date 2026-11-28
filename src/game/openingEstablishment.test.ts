@@ -10,7 +10,9 @@ import {
   extractGivenName,
   establishmentChoices,
   harvestEarthOriginFromProse,
+  isGiveNameCoverChip,
   isLocationishOpeningUtterance,
+  isNameCoverChip,
   isNameOriginKitCoverChoice,
   isOpeningSetupChipLabel,
   mergePreferredProfileIntoOpening,
@@ -348,6 +350,10 @@ describe('name cover — refuse / give chip / no canned book page', () => {
   });
 
   it('Give your name with no typed text posts no GM line and keeps the name cover', async () => {
+    expect(isNameCoverChip('Give your name')).toBe(true);
+    expect(isGiveNameCoverChip('Give your name')).toBe(true);
+    expect(isGiveNameCoverChip('Refuse to give a name')).toBe(false);
+
     const before = nameOnlyBeforeLive();
     const result = await applyOpeningAnswer(before, 'Give your name');
     expect(result.generateOpening).toBe(false);

@@ -2356,6 +2356,10 @@ export function playerAskedWhyPulled(raw: string): boolean {
 export function isNameCoverChip(label: string): boolean {
   return /^(?:give|refuse)\b.*\bname\b/i.test((label ?? '').trim());
 }
+/** Name-cover Give chip only (not Refuse). Reuses cover + refusal helpers — no new label regex. */
+export function isGiveNameCoverChip(label: string): boolean {
+  return isNameCoverChip(label) && !isNameRefusalUtterance(label);
+}
 /**
  * Keep the open rite's accept / refuse on a pad. A card with its own open Accept/Refuse offer
  * already carries the rite's answer, so its pad is left as the offer pair made it.
@@ -3317,12 +3321,8 @@ export async function applyOpeningAnswer(
   const answer = stripChoicePrefix(rawInput);
   if (!answer) return { state, generateOpening: false };
   const currentCoverKind = est.pending[0]?.kind;
-  // "Give your name" only focuses the existing name input — no GM re-ask line.
-  if (
-    currentCoverKind === 'name'
-    && isNameCoverChip(answer)
-    && /^give\b/i.test(answer)
-  ) {
+  // Give-your-name chip is focus-only in the UI; if it still reaches here, no GM re-ask.
+  if (currentCoverKind === 'name' && isGiveNameCoverChip(answer)) {
     return { state, generateOpening: false };
   }
   const harvest = harvestUtterance(answer);
