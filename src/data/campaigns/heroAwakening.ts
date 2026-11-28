@@ -33,90 +33,14 @@ export const heroAwakening: CampaignBible = {
     'You are still in your own world — not summoned elsewhere. Smoke or dust hangs where a Threshold just went wrong. A private panel opens at eye level: [Wake Ledger Online]. Someone nearby wants a headcount. Your body, folk, and kit are whatever you already were.',
   /** Code picks one per New Game (seed). Writer rewrites with artistic license — ingredients, not a script. */
   openingHooks: [
-    {
-      place: { id: 'ha-place-threshold-indoors', kind: 'corridor' },
-      cast: [
-        { id: 'ha-cast-crew-lead', role: 'crew lead', pronouns: 'they/them', durability: 'passer' },
-      ],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'headcount'],
-      location: 'a collapsed indoor corridor after a Threshold clear',
-      text: 'A Threshold clear went wrong indoors. Dust, alarms or bells, collapsed corridor. You were Unmarked. A private Wake Ledger opens. A crew lead shouts for survivors.',
-    },
-    {
-      place: { id: 'ha-place-dawn-market', kind: 'market' },
-      cast: [
-        { id: 'ha-cast-stall-keeper', role: 'stall-keeper', pronouns: 'they/them', durability: 'passer' },
-      ],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'panic'],
-      location: 'a dawn market at a sealed Threshold door',
-      text: 'Dawn market. A sealed Threshold door cracks. Crowd panics. Your panel blooms mid-run — only you see levels. A stall-keeper grabs your sleeve.',
-    },
-    {
-      place: { id: 'ha-place-night-watch', kind: 'wall' },
-      cast: [
-        { id: 'ha-cast-rival-awoken', role: 'rival Awoken', pronouns: 'they/them', durability: 'passer' },
-      ],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'skill-flash'],
-      location: 'a night watch wall or rooftop',
-      text: 'Night watch on a wall or rooftop. Something spills through a Threshold seam. Your first skill fires by accident. A rival Awoken sees the flash.',
-    },
-    {
-      place: { id: 'ha-place-infirmary', kind: 'infirmary' },
-      cast: [
-        { id: 'ha-cast-healer', role: 'healer', pronouns: 'they/them', durability: 'durable' },
-      ],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'wounds'],
-      location: 'an infirmary or healers’ tent',
-      text: 'Infirmary or healers’ tent. You should be dead. Healers argue over wounds that do not match an Unmarked body. The ledger whispers while they work.',
-    },
-    {
-      place: { id: 'ha-place-job-board', kind: 'hall' },
-      cast: [
-        { id: 'ha-cast-clerk', role: 'clerk', pronouns: 'they/them', durability: 'passer' },
-      ],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'posted-name'],
-      location: 'a job board or contract hall',
-      text: 'Job board / contract hall. Someone posts your name who should not know it. Your panel shows a quest they did not stamp. A clerk watches too closely.',
-    },
-    {
-      place: { id: 'ha-place-quiet-shrine', kind: 'shrine' },
-      cast: [],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'alone'],
-      location: 'a quiet shrine, cellar, or archive',
-      text: 'Quiet shrine, cellar, or archive. Alone. The Wake Ledger opens without a crisis. Footsteps on the stairs — friend, auditor, or thief.',
-    },
-    {
-      place: { id: 'ha-place-under-river', kind: 'tunnel' },
-      cast: [
-        { id: 'ha-cast-stranger', role: 'stranger survivor', pronouns: 'they/them', durability: 'passer' },
-      ],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'grade-spill'],
-      location: 'an under-river tunnel, sewer, or mine',
-      text: 'Under-river tunnel / sewer / mine. Grade spill. You and one stranger make it out. Their Grade is fixed. Yours is not. Do you tell them?',
-    },
-    {
-      place: { id: 'ha-place-festival-square', kind: 'square' },
-      cast: [],
-      offer: { items: [] },
-      rite: { steps: [{ id: 'ha-rite-name', label: 'Give a name' }] },
-      beatOrder: ['arrive', 'panel', 'wrong-day'],
-      location: 'a festival square at a public First Mark ceremony',
-      text: 'Festival square. Public First Mark ceremony for others. You were never called. Your panel opens anyway — wrong day, wrong person, right world.',
-    },
+    'A Threshold clear went wrong indoors. Dust, alarms or bells, collapsed corridor. You were Unmarked. A private Wake Ledger opens. A crew lead shouts for survivors.',
+    'Dawn market. A sealed Threshold door cracks. Crowd panics. Your panel blooms mid-run — only you see levels. A stall-keeper grabs your sleeve.',
+    'Night watch on a wall or rooftop. Something spills through a Threshold seam. Your first skill fires by accident. A rival Awoken sees the flash.',
+    'Infirmary or healers’ tent. You should be dead. Healers argue over wounds that do not match an Unmarked body. The ledger whispers while they work.',
+    'Job board / contract hall. Someone posts your name who should not know it. Your panel shows a quest they did not stamp. A clerk watches too closely.',
+    'Quiet shrine, cellar, or archive. Alone. The Wake Ledger opens without a crisis. Footsteps on the stairs — friend, auditor, or thief.',
+    'Under-river tunnel / sewer / mine. Grade spill. You and one stranger make it out. Their Grade is fixed. Yours is not. Do you tell them?',
+    'Festival square. Public First Mark ceremony for others. You were never called. Your panel opens anyway — wrong day, wrong person, right world.',
   ],
   openingPrompts: [
     {

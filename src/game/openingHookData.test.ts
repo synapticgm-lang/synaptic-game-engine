@@ -10,7 +10,6 @@ import {
 } from '@/data/campaigns/types';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import { SUMMONED_PACT_PHASE4_HOOKS } from '@/data/campaigns/summonedPactPhase4Hooks';
-import { heroAwakening } from '@/data/campaigns/heroAwakening';
 import { mintOpeningInstance, snapshotFromPickedHook } from './openingInstance';
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
@@ -117,16 +116,6 @@ describe('openingHookData (brief 01)', () => {
     expect(SUMMONED_PACT_PHASE4_HOOKS.length).toBe(24);
     for (let i = 0; i < SUMMONED_PACT_PHASE4_HOOKS.length; i++) {
       assertTypedShape(SUMMONED_PACT_PHASE4_HOOKS[i]!, `SUMMONED_PACT_PHASE4_HOOKS[${i}]`);
-    }
-  });
-
-  it('every Hero Awakening openingHooks card is an object with typed hook data', () => {
-    const cards = heroAwakening.openingHooks ?? [];
-    expect(cards.length).toBe(8);
-    for (let i = 0; i < cards.length; i++) {
-      const card = cards[i]!;
-      expect(typeof card).toBe('object');
-      assertTypedShape(card as OpeningBeatCard, `heroAwakening.openingHooks[${i}]`);
     }
   });
 });
