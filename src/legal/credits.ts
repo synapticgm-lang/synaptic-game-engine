@@ -4,7 +4,7 @@
  */
 
 export const CREDITS_PATH = '/credits';
-export const CREDITS_LAST_UPDATED = '28 November 2026';
+export const CREDITS_LAST_UPDATED = '27 October 2026';
 
 /** The attribution CC BY 4.0 requires for SRD 5.2.1, word for word. */
 export const SRD_5_2_1_NOTICE =
@@ -125,46 +125,17 @@ export const CREDIT_SECTIONS: CreditSection[] = [
     title: 'Icons',
     rows: [
       {
-        work: 'Lucide (lucide-react)',
-        source: 'Lucide Contributors (portions: Cole Bemis / Feather)',
+        work: 'Lucide',
+        source: 'Lucide Contributors',
         license: 'ISC',
         usedFor: 'Buttons, HUD, settings, and menus',
         url: 'https://lucide.dev',
-        notice:
-          'ISC License. Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.',
       },
       {
         work: 'Inventory glyphs',
         source: 'SynapticGM (original drawings)',
         license: 'Original; bundled with the game',
         usedFor: 'Item icons, armor/weapon glyphs, and the paper-doll silhouette',
-      },
-    ],
-  },
-  {
-    id: 'bundled-art',
-    title: 'Bundled art and textures',
-    intro:
-      'Theme and map textures shipped under public/. Original SynapticGM work. Items whose licence is not confirmed are listed for John in docs/legal/credits-unconfirmed.md, not guessed here.',
-    rows: [
-      {
-        work: 'Theme material packs',
-        source: 'SynapticGM',
-        license: 'Original',
-        usedFor:
-          'Panel, frame-filigree and atmosphere textures for race and shop theme kits (public/themes/*).',
-      },
-      {
-        work: 'Adventure map textures',
-        source: 'SynapticGM',
-        license: 'Original',
-        usedFor: 'Local map parchment and terrain grain (public/maps/).',
-      },
-      {
-        work: 'Theme SVG grain fallbacks',
-        source: 'SynapticGM',
-        license: 'Original',
-        usedFor: 'Vector grain under public/themes/ when a bitmap is not used.',
       },
     ],
   },
@@ -185,50 +156,35 @@ export const CREDIT_SECTIONS: CreditSection[] = [
   {
     id: 'libraries',
     title: 'Libraries',
-    intro:
-      'Every runtime dependency from package.json dependencies, plus the staff AI-player harness. Build tooling (Vite, Vitest, ESLint, TypeScript, Tailwind, and the rest of devDependencies) is omitted. Grant texts come from each package LICENSE file where present; open items are in docs/legal/credits-unconfirmed.md.',
+    intro: 'Open-source tools you actually meet in play (cloud save, sign-in, PDF export). Build tooling is omitted.',
     rows: [
       {
         work: 'React',
-        source: 'Meta (Facebook, Inc. and its affiliates) and contributors',
+        source: 'Meta and contributors',
         license: 'MIT',
         usedFor: 'The app interface',
         url: 'https://react.dev',
-        notice: 'React, Copyright (c) Facebook, Inc. and its affiliates. Licensed under the MIT License.',
-      },
-      {
-        work: 'react-dom',
-        source: 'Meta (Facebook, Inc. and its affiliates) and contributors',
-        license: 'MIT',
-        usedFor: 'DOM renderer for the React UI',
-        url: 'https://react.dev',
-        notice: 'react-dom, Copyright (c) Facebook, Inc. and its affiliates. Licensed under the MIT License.',
       },
       {
         work: 'jsPDF',
-        source: 'James Hall, yWorks GmbH and contributors',
+        source: 'jsPDF contributors',
         license: 'MIT',
         usedFor: 'Optional session PDF export',
         url: 'https://github.com/parallax/jsPDF',
-        notice:
-          'jsPDF, Copyright (c) 2010-2025 James Hall, https://github.com/MrRio/jsPDF; (c) 2015-2025 yWorks GmbH, https://www.yworks.com/. Licensed under the MIT License.',
       },
       {
-        work: 'Supabase JS (@supabase/supabase-js)',
+        work: 'Supabase JS',
         source: 'Supabase',
         license: 'MIT',
         usedFor: 'Optional cloud saves and account session',
         url: 'https://supabase.com',
-        notice: 'Supabase JS, Copyright (c) 2020 Supabase. Licensed under the MIT License.',
       },
       {
         work: 'Transformers.js (@xenova/transformers)',
-        source: 'Xenova and contributors',
+        source: 'Hugging Face / Xenova and contributors',
         license: 'Apache-2.0',
         usedFor: 'In-browser story memory (matching earlier scenes to the current one)',
         url: 'https://github.com/xenova/transformers.js',
-        notice:
-          'Transformers.js (@xenova/transformers), Copyright Xenova. Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).',
       },
       {
         work: 'Fuse.js',
@@ -256,9 +212,9 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         notice: 'Zod, Copyright (c) 2025 Colin McDonnell. Licensed under the MIT License.',
       },
       {
-        work: 'Google Identity (@react-oauth/google)',
+        work: 'Google Identity (react-oauth)',
         source: '@react-oauth/google',
-        license: 'MIT (package.json; full grant text unconfirmed — see docs/legal/credits-unconfirmed.md)',
+        license: 'MIT',
         usedFor: 'Optional Sign in with Google',
         url: 'https://github.com/MomenSherif/react-oauth',
       },
