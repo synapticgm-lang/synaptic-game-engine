@@ -37,3 +37,25 @@ export function pickRandomOption(options, rng) {
   const i = Math.floor(roll * list.length);
   return list[Math.min(i, list.length - 1)] || '';
 }
+
+/**
+ * Story turns: uniform random among visible chips.
+ * Setup/creation: one uniform random on the first setup screen, then the row's
+ * forward chip by position (index 0 — creationChips puts the primary action first;
+ * ChipRow paints in that order). No label / phrase matching.
+ *
+ * @returns {{ pick: string, mode: 'random' | 'forward' }}
+ */
+export function pickDriverOption({
+  options,
+  rng,
+  setup = false,
+  setupPickCount = 0,
+} = {}) {
+  const list = (options || []).map((c) => String(c || '').trim()).filter(Boolean);
+  if (!list.length) return { pick: '', mode: 'random' };
+  if (setup && Number(setupPickCount) > 0) {
+    return { pick: list[0], mode: 'forward' };
+  }
+  return { pick: pickRandomOption(list, rng), mode: 'random' };
+}

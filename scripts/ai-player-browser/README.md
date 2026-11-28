@@ -59,7 +59,7 @@ If the on-screen GM story matches the previous beat twice in a row, or the teste
 
 ## Random pick (no AI player)
 
-`--pick=random` (or `AI_PLAYER_PICK=random`) drives the same live Chrome tab with **no OpenRouter / no player-brain**. Each turn (including origin/setup) picks a uniformly random visible chip via the existing click helpers. Seed: `--seed=` / `AI_PLAYER_SEED` (logged; default is time). No typed free-text, no thumbs/feedback writes. Login, one-tab, stop-after-2-repeats, `AI_PLAYER_TURNS`, and `--bible=` stay as usual. Play log lines: option list + count, picked chip, full GM prose verbatim; setup is logged before T1.
+`--pick=random` (or `AI_PLAYER_PICK=random`) drives the same live Chrome tab with **no OpenRouter / no player-brain**. Story turns pick a uniformly random visible chip. Setup/creation: one uniform random on the first setup screen, then the row’s forward chip by position (index 0). Seed: `--seed=` / `AI_PLAYER_SEED` (logged; default is time). No typed free-text, no thumbs/feedback writes. Login, one-tab, stop-after-2-repeats, `AI_PLAYER_TURNS`, and `--bible=` stay as usual. Play log lines: option list + count, picked chip `(random|forward)`, full GM prose verbatim; setup is logged before T1.
 
 ```
 node scripts/ai-player-browser/run.mjs --pick=random --bible=summoned-pact --seed=42

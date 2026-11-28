@@ -269,11 +269,18 @@ describe('q51-AIP aipTester', () => {
       resolvePickSeed,
       createPickRng,
       pickRandomOption,
+      pickDriverOption,
     } = await load('scripts/ai-player-browser/randomPick.mjs') as {
       parsePickMode: (a?: string[], e?: NodeJS.ProcessEnv) => 'brain' | 'random';
       resolvePickSeed: (a?: string[], e?: NodeJS.ProcessEnv, now?: number) => number;
       createPickRng: (seed: number) => () => number;
       pickRandomOption: (opts: string[], rng: () => number) => string;
+      pickDriverOption: (o: {
+        options: string[];
+        rng: () => number;
+        setup?: boolean;
+        setupPickCount?: number;
+      }) => { pick: string; mode: 'random' | 'forward' };
     };
     const { formatRandomPlayLogEntry } = await load('scripts/ai-player-browser/playLog.mjs') as {
       formatRandomPlayLogEntry: (e: {
@@ -281,6 +288,7 @@ describe('q51-AIP aipTester', () => {
         options: string[];
         picked: string;
         gmProse: string;
+        pickMode?: 'random' | 'forward';
       }) => string;
     };
     expect(parsePickMode([], {})).toBe('brain');
@@ -295,22 +303,50 @@ describe('q51-AIP aipTester', () => {
     expect(opts).toContain(a);
     expect(a).toBe(b);
     expect(pickRandomOption([], rng)).toBe('');
+    // Confirm-style row: primary is index 0; later setup must take it (not HP / start-over).
+    const confirmRow = ['Begin play', 'Roll for HP at each level', 'Start over'];
+    const firstSetup = pickDriverOption({
+      options: confirmRow,
+      rng: createPickRng(9),
+      setup: true,
+      setupPickCount: 0,
+    });
+    expect(firstSetup.mode).toBe('random');
+    expect(confirmRow).toContain(firstSetup.pick);
+    const laterSetup = pickDriverOption({
+      options: confirmRow,
+      rng: createPickRng(9),
+      setup: true,
+      setupPickCount: 1,
+    });
+    expect(laterSetup).toEqual({ pick: 'Begin play', mode: 'forward' });
+    const storyPick = pickDriverOption({
+      options: opts,
+      rng: createPickRng(7),
+      setup: false,
+      setupPickCount: 99,
+    });
+    expect(storyPick.mode).toBe('random');
+    expect(storyPick.pick).toBe(a);
     const prose = '  Line one.\n\nLine two with  spaces.  ';
     const setupLine = formatRandomPlayLogEntry({
       step: 'setup',
       options: opts,
       picked: 'Wait',
       gmProse: prose,
+      pickMode: 'forward',
     });
-    expect(setupLine.startsWith('Setup: options (3): Look around | Ask what they want | Wait → picked: Wait')).toBe(true);
+    expect(setupLine.startsWith('Setup: options (3): Look around | Ask what they want | Wait → picked: Wait (forward)')).toBe(true);
     expect(setupLine).toContain(`GM: ${prose}`);
     const t1 = formatRandomPlayLogEntry({
       step: 1,
       options: ['Give your name'],
       picked: 'Give your name',
       gmProse: 'Hello.',
+      pickMode: 'random',
     });
     expect(t1.startsWith('T1: options (1):')).toBe(true);
+    expect(t1).toContain('picked: Give your name (random)');
   });
 
   it('random-pick: run.mjs skips OpenRouter key when pick=random', async () => {
@@ -321,7 +357,8 @@ describe('q51-AIP aipTester', () => {
     expect(src).toMatch(/if \(randomPick\) \{[\s\S]*?no OpenRouter player/);
     expect(src).toMatch(/if \(!loginCheck && !randomPick\)/);
     expect(src).toMatch(/useRandomPick/);
-    expect(src).toMatch(/if \(useRandomPick\) \{[\s\S]*?pickRandomOption/);
+    expect(src).toMatch(/pickDriverOption/);
+    expect(src).toMatch(/if \(useRandomPick\) \{[\s\S]*?pickDriverOption/);
     expect(src).toMatch(/skipped: 'random_pick'/);
   });
 
