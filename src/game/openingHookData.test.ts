@@ -39,6 +39,7 @@ const DECKS_TYPED_SO_FAR = [
   'umbra-protocol',
   'crimson-nocturne',
   'onyx-blood-covenant',
+  'salt-road-heist',
 ] as const;
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
