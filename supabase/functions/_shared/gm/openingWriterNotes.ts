@@ -128,7 +128,7 @@ export function formatOpeningPage1Rail(state: GameState): string {
 }
 
 /** Full player-input packet for the opening GM call (client builds this). */
-export function formatOpeningWriterNotes(state: GameState, retryErrors?: string[]): string {
+export function formatOpeningWriterNotes(state: GameState): string {
   const rail = formatOpeningPage1Rail(state);
   const inst = state.openingEstablishment?.instance;
   const extra = inst
@@ -141,10 +141,7 @@ export function formatOpeningWriterNotes(state: GameState, retryErrors?: string[
         .filter(Boolean)
         .join('\n')
     : '';
-  const retry = retryErrors?.length
-    ? `Your last draft failed these checks: ${retryErrors.join('; ')}. Rewrite the opening. Use the locked names exactly. Make the offer unmistakable. Name concrete people and the place.`
-    : '';
-  return [rail, extra, retry].filter(Boolean).join('\n\n');
+  return [rail, extra].filter(Boolean).join('\n\n');
 }
 
 /** Single words that are not distinctive proper names even when Title-Cased. */

@@ -1,6 +1,7 @@
 /**
- * Live AI opening (non-PYOA): validate, retry once, derive journal/rite,
+ * Live AI opening (non-PYOA): commit structured writer output, derive journal/rite,
  * shape concrete offer chips, never fall back to authored page 1.
+ * Fail only on throw / empty / unparseable / leaked JSON structure — no prose quality gates.
  */
 import type { GameState, Quest, Settings } from './types';
 import { openingInstanceOf, givenNameOf, escapeRe } from './openingInstance';
@@ -76,10 +77,6 @@ export function isVitestEnv(): boolean {
   return false;
 }
 
-function sentenceCount(text: string): number {
-  return (text.match(/[.!?]["']?\s+[A-Z]|[.!?]["']?\s*$/g) ?? []).length;
-}
-
 /** Person names match the full name, or the first or last name on its own. */
 export function mentionsName(text: string, name: string): boolean {
   const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 2 && !isCommonOpeningLexeme(p))];
@@ -106,35 +103,6 @@ export function mentionsPlaceName(text: string, placeName: string): boolean {
   return distinctivePlaceTokens(place).some((p) => new RegExp(`\\b${escapeRe(p)}\\b`, 'i').test(text));
 }
 
-/** Generic suffix of a minted place (Well, Trail, Gate) — never a coined stem. */
-export function placeGenericSuffix(placeName: string): string | undefined {
-  const parts = (placeName ?? '').trim().split(/\s+/).filter(Boolean);
-  if (parts.length < 2) return undefined;
-  const last = parts[parts.length - 1]!.replace(/['’]s$/i, '');
-  if (last.length < 3 || !isCommonOpeningLexeme(last)) return undefined;
-  return last.toLowerCase();
-}
-
-/** True when the prose uses the definite generic for this place ("the well", "the well's lip"). */
-export function proseUsesDefiniteGeneric(prose: string, placeName: string): boolean {
-  const generic = placeGenericSuffix(placeName);
-  if (!generic) return false;
-  return new RegExp(`\\bthe\\s+${escapeRe(generic)}(?:['’]s)?\\b`, 'i').test(prose);
-}
-
-/**
- * Locked place is mentioned when the prose uses the full name or a distinctive token,
- * or when the journal title already names it and the prose uses the definite generic
- * ("the well"). A bare "trail" / "road" with no coined stem still fails.
- */
-export function mentionsRequiredPlace(prose: string, placeName: string, journalTitle?: string): boolean {
-  const place = (placeName ?? '').trim();
-  if (!place) return false;
-  if (mentionsPlaceName(prose, place)) return true;
-  const title = (journalTitle ?? '').trim();
-  return !!title && mentionsPlaceName(title, place) && proseUsesDefiniteGeneric(prose, place);
-}
-
 function lockedPlaceNames(state: GameState): string[] {
   const inst = openingInstanceOf(state);
   return [inst?.placeName, inst?.settlementName, inst?.nearbyLandmark].filter(Boolean) as string[];
@@ -155,68 +123,6 @@ function mentionsOpeningName(state: GameState, text: string, name: string): bool
   const place = lockedPlaceFor(state, name);
   if (place) return mentionsPlaceName(text, place);
   return mentionsName(text, name);
-}
-
-const COMMON_STORY_WORDS = new Set([
-  'your', 'you', 'their', 'them', 'this', 'that', 'with', 'from', 'have', 'been', 'were', 'they',
-  'heat', 'light', 'trail', 'road', 'circle', 'place', 'here', 'already', 'back', 'down', 'over',
-  'under', 'into', 'then', 'when', 'what', 'where', 'there', 'about', 'after', 'before', 'still',
-  'just', 'like', 'than', 'some', 'more', 'only', 'also', 'even', 'well', 'upon', 'onto',
-]);
-
-function similarToAuthored(text: string, authored: string | undefined): boolean {
-  const a = (authored ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
-  const b = text.replace(/\s+/g, ' ').trim().toLowerCase();
-  if (!a || a.length < 40) return false;
-  // Verbatim reprint of a long authored span, not shared setting words (heat, trail, ash).
-  const span = a.slice(0, Math.min(90, a.length)).trim();
-  if (span.length >= 70 && b.includes(span)) return true;
-  const content = (s: string) => s.split(/[^a-z]+/).filter((w) => w.length >= 5 && !COMMON_STORY_WORDS.has(w));
-  const wordsA = [...new Set(content(a))];
-  if (wordsA.length < 10) return false;
-  const setB = new Set(content(b));
-  const hit = wordsA.filter((w) => setB.has(w)).length;
-  return hit / wordsA.length > 0.85;
-}
-
-export function validateLiveOpeningProse(state: GameState, prose: string, journalTitle?: string): string[] {
-  const errors: string[] = [];
-  const text = (prose ?? '').replace(/\s+/g, ' ').trim();
-  if (text.length < 180) errors.push('too short');
-  if (sentenceCount(text) < 2) errors.push('needs at least two sentences');
-  if (/\bsomeone here\b|\bsomeone nearby\b|\ba figure\b|\ba person here\b|\bpeople here\b|\bsomeone in the scene\b|\bunnamed (?:man|woman|person|figure)\b/i.test(text)) {
-    errors.push('vague salad wording');
-  }
-  if (/Do not invent|Do not place|Ruin level:|The camera stays HERE|Who is here \/ who summoned|Opening offer \(optional|LOCKED PLACE:|【 OPENING/i.test(text)) {
-    errors.push('pointer dump');
-  }
-  const inst = openingInstanceOf(state);
-  if (inst?.placeName && !mentionsRequiredPlace(text, inst.placeName, journalTitle)) {
-    errors.push(`missing place ${inst.placeName}`);
-  }
-  if (inst && !inst.alone && inst.cast.length) {
-    const hit = inst.cast.some((c) => mentionsName(text, c.name));
-    if (!hit) errors.push('missing named person');
-  }
-  const locked = [
-    inst?.placeName,
-    inst?.settlementName,
-    inst?.factionName,
-    ...(inst?.cast ?? []).map((c) => c.name),
-  ].filter(Boolean) as string[];
-  for (const r of inst?.retiredNames ?? []) {
-    const needles = retiredNameNeedles(r);
-    if (!needles.length) continue;
-    if (locked.some((n) => needles.every((w) => n.toLowerCase().includes(w.toLowerCase())))) continue;
-    if (needles.some((w) => new RegExp(`\\b${escapeRe(w)}\\b`, 'i').test(text))) {
-      errors.push(`retired name ${r}`);
-    }
-  }
-  if (similarToAuthored(text, state.openingEstablishment?.authoredPage1Retired)) {
-    errors.push('authored reprint');
-  }
-  errors.push(...validateOpeningCastVoice(state, text));
-  return errors;
 }
 
 /** Deterministic mock used in unit tests so CI never hits the network. */
@@ -360,63 +266,6 @@ export function prosePronounForName(prose: string, name: string): 'he' | 'she' |
   if (he && !she) return 'he';
   if (she && !he) return 'she';
   return 'unknown';
-}
-
-/** Light check: self-introductions and explicit appositives must match minted gender. */
-export function validateOpeningCastVoice(state: GameState, prose: string): string[] {
-  const errors: string[] = [];
-  const inst = openingInstanceOf(state);
-  if (!inst?.cast.length) return errors;
-  const text = prose ?? '';
-
-  const introRe = /["“]([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\.\s+I\s+[a-z]+/g;
-  let intro: RegExpExecArray | null;
-  while ((intro = introRe.exec(text))) {
-    const introduced = intro[1]!;
-    const member = inst.cast.find(
-      (c) => mentionsName(introduced, c.name) || givenNameOf(c.name).toLowerCase() === givenNameOf(introduced).toLowerCase()
-    );
-    if (!member?.gender) continue;
-    const before = text.slice(Math.max(0, intro.index - 280), intro.index);
-    const window = before.split(/(?<=[.!?])(?:\s+|$)/).slice(-2).join(' ');
-    const femaleCue = /\b(?:she|her|hers|a woman|the woman)\b/i.test(window);
-    const maleCue = /\b(?:he|him|his|a man|the man)\b/i.test(window);
-    if (femaleCue && !maleCue && member.gender === 'male') {
-      errors.push(`self-introduction gender mismatch: ${member.name} is a man`);
-    }
-    if (maleCue && !femaleCue && member.gender === 'female') {
-      errors.push(`self-introduction gender mismatch: ${member.name} is a woman`);
-    }
-  }
-
-  const descriptor = 'woman|lady|girl|female|man|gentleman|boy|male|fellow';
-  const descriptorGender = (noun: string): 'male' | 'female' | undefined => {
-    if (/^(?:woman|lady|girl|female)$/i.test(noun)) return 'female';
-    if (/^(?:man|gentleman|boy|male|fellow)$/i.test(noun)) return 'male';
-    return undefined;
-  };
-  for (const member of inst.cast) {
-    if (!member.gender) continue;
-    const given = givenNameOf(member.name);
-    const namePat = `${escapeRe(member.name)}|${escapeRe(given)}`;
-    const patterns = [
-      new RegExp(`\\b(?:the|a|an)\\s+(${descriptor})\\s*,\\s*(?:${namePat})\\b`, 'gi'),
-      new RegExp(`\\b(?:the|a|an)\\s+(${descriptor})\\s+(?:${namePat})\\b`, 'gi'),
-      new RegExp(`\\b(?:${namePat})\\s*,\\s*(?:a|an|the)\\s+(${descriptor})\\b`, 'gi'),
-      new RegExp(`\\b(?:${namePat})\\s+the\\s+(${descriptor})\\b`, 'gi'),
-    ];
-    for (const re of patterns) {
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(text))) {
-        const noun = m[1]!;
-        const got = descriptorGender(noun);
-        if (got && got !== member.gender) {
-          errors.push(`descriptor does not match minted gender for ${member.name}`);
-        }
-      }
-    }
-  }
-  return [...new Set(errors)];
 }
 
 export function optionPronounErrors(
@@ -791,6 +640,8 @@ export function isBlankOpeningProse(text: string | undefined | null): boolean {
 }
 
 export function applyFailedLiveOpening(state: GameState): GameState {
+  // offeredPad is the ActionBar source; leave it stale and scene chips stay clickable.
+  const turn = state.turn ?? 0;
   return {
     ...state,
     openingEstablishment: {
@@ -799,6 +650,15 @@ export function applyFailedLiveOpening(state: GameState): GameState {
       sceneWriteError: STORYTELLER_RETRY_MESSAGE,
     },
     choices: failedOpeningPads,
+    offeredPad: {
+      turn,
+      choices: [...failedOpeningPads],
+      chips: failedOpeningPads.map((label) => ({
+        label,
+        actionId: 'opening:try-again',
+        kind: 'opening-retry',
+      })),
+    },
   };
 }
 
@@ -825,6 +685,7 @@ export function applySuccessfulLiveOpening(
     currentLocation: openingInstanceOf(state)?.placeName || state.currentLocation,
     quests: visible,
     choices: pads,
+    offeredPad: null,
     openingEstablishment: {
       ...(state.openingEstablishment ?? { pending: [], answers: {}, complete: true }),
       sceneWritten: true,
@@ -857,13 +718,12 @@ export function mockLiveOpeningStructuredReply(state: GameState): string {
 async function runWriter(
   writer: LiveOpeningWriter,
   state: GameState,
-  settings: Settings,
-  retryErrors?: string[]
+  settings: Settings
 ): Promise<OpeningDraft> {
-  const input = formatOpeningWriterNotes(state, retryErrors) || '(opening)';
+  const input = formatOpeningWriterNotes(state) || '(opening)';
   const raw = await writer(state, input, settings);
   const parsed = draftFromWriterRaw(raw);
-  // parse → rewrite markup → leak gate (proseOk)
+  // parse → rewrite markup → structure leak gate
   return { ...parsed, prose: rewriteOpeningMarkup(parsed.prose, state.engineMode).trim() };
 }
 
@@ -882,6 +742,11 @@ function withFallbackPadsAndTitle(
   return next;
 }
 
+/** Commit path: structured prose present and not a leaked JSON shell. No English quality gates. */
+function openingDraftCommits(d: OpeningDraft): boolean {
+  return !!d.prose.trim() && !openingProseLeaksStructuredJson(d.prose);
+}
+
 export async function writeLiveOpening(
   state: GameState,
   settings: Settings,
@@ -895,85 +760,19 @@ export async function writeLiveOpening(
     const { callOpeningGm } = await import('./aiService');
     writer = (s, input, settings) => callOpeningGm(s, input, settings);
   }
-  let retried = false;
+  const fail = (): LiveOpeningFailure => ({ ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads });
   let draft: OpeningDraft;
   try {
     draft = await runWriter(writer, state, settings);
   } catch {
-    return { ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads };
+    return fail();
   }
-  const optionErrors = (d: OpeningDraft, prose = d.prose) => validateOpeningOptions(state, prose, d.options);
-  const titleErrors = (d: OpeningDraft) => validateOpeningJournalTitle(state, d.journalTitle);
-  const fail = (): LiveOpeningFailure => ({ ok: false, error: STORYTELLER_RETRY_MESSAGE, pads: failedOpeningPads });
-  // A writer retry already existed for a failed first draft (and for bad structured options).
-  // Parse failures and leak-gate failures now use that same single automatic retry
-  // before "Try again"; a second failure does not call the writer again.
-  // draft.prose has already been rewritten in runWriter (parse → rewrite → gate)
-  const proseOk = (d: OpeningDraft) =>
-    !!d.prose.trim()
-    && !openingProseLeaksStructuredJson(d.prose)
-    && !validateLiveOpeningProse(state, d.prose, d.journalTitle).length;
-  const parseOrGateErrors = (d: OpeningDraft): string[] => {
-    const errors: string[] = [];
-    if (!d.prose.trim()) errors.push('Reply must be a JSON object with a string prose field.');
-    else if (openingProseLeaksStructuredJson(d.prose)) {
-      errors.push('The prose field must not contain leftover JSON keys or punctuation.');
-    }
-    return errors;
-  };
-
-  if (proseOk(draft)) {
-    const optionsBad = optionErrors(draft).length > 0;
-    const titleBad = titleErrors(draft).length > 0;
-    if (optionsBad && draft.structured) {
-      // First prose is usable — retry once. Prefer a fully valid second draft
-      // (so options follow *that* prose) over first prose plus generic fallback pads.
-      retried = true;
-      const kept = draft.prose;
-      try {
-        const second = await runWriter(writer, state, settings, [...optionErrors(draft), ...titleErrors(draft)]);
-        if (proseOk(second) && !optionErrors(second).length) {
-          draft = second;
-        } else if (second.options.length && !validateOpeningOptions(state, kept, second.options).length) {
-          draft = {
-            prose: kept,
-            options: second.options,
-            journalTitle: second.journalTitle || draft.journalTitle,
-            structured: true,
-          };
-        } else {
-          draft = withFallbackPadsAndTitle(state, draft, kept);
-        }
-        if (validateOpeningJournalTitle(state, draft.journalTitle).length) {
-          draft = { ...draft, journalTitle: deriveOpeningJournal(state, draft.prose).title };
-        }
-      } catch {
-        draft = withFallbackPadsAndTitle(state, draft, kept);
-      }
-    } else if (optionsBad || titleBad) {
-      draft = withFallbackPadsAndTitle(state, draft, draft.prose);
-    }
-  } else {
-    retried = true;
-    try {
-      draft = await runWriter(writer, state, settings, [
-        ...parseOrGateErrors(draft),
-        ...validateLiveOpeningProse(state, draft.prose, draft.journalTitle),
-        ...optionErrors(draft),
-        ...titleErrors(draft),
-      ]);
-    } catch {
-      return fail();
-    }
-    if (!proseOk(draft)) return fail();
-    draft = withFallbackPadsAndTitle(state, draft, draft.prose);
-  }
-
-  if (!proseOk(draft)) return fail();
+  if (!openingDraftCommits(draft)) return fail();
+  draft = withFallbackPadsAndTitle(state, draft, draft.prose);
   return {
     ok: true,
     prose: draft.prose,
-    retried,
+    retried: false,
     pads: draft.options,
     journal: deriveOpeningJournal(state, draft.prose, draft.journalTitle),
     rite: deriveOpeningRite(state, draft.prose),
