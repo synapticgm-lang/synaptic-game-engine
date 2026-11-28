@@ -117,7 +117,10 @@ export function renderWriterDraft(raw: string, state: GameState, packet?: Comple
 function unresolvedProblem(why: string, playerInput: string, engineFact: string): string {
   void playerInput;
   if (why === 'too short') return 'Too thin: write 4–6 full sentences.';
-  if (why === 'engine result not stated') return `State the ENGINE RESULT plainly as already settled: ${engineFact.slice(0, 240)}`;
+  if (why === 'engine result not stated') {
+    // Instruction and content stay on separate lines so the model cannot echo a glued prompt as story.
+    return `State the ENGINE RESULT plainly as already settled.\nENGINE RESULT: ${engineFact.slice(0, 240)}`;
+  }
   if (why === 'speech, no reply' || why === 'asked person, no reply') return 'Someone must answer the player in quoted speech.';
   if (why === 'question unanswered') return 'Answer the player\'s question directly.';
   const target = why.match(/^named target missing \((.+)\)$/)?.[1];

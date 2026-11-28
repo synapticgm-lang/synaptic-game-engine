@@ -1543,18 +1543,20 @@ export function formatWriterFacingEvent(
     panelRead ? ledgerReadEventLine(who, pov.him, housingFromSystemBlock(packet.systemBlock)) : `${who} ${packet.verb}${target}.`,
     `Outcome: ${panelRead ? 'read the change below' : packet.outcome}.`,
   );
+  // Content slot only — settled fact. "Already shown / write consequence" lives on PLAYER/ACTION
+  // below. Do not glue those instructions into this line (live salt-road T4 echoed them as story).
   if (packet.engineResult) {
     const fightClose = terminalFightOutcome(packet.engineResult);
-    const mark =
-      fightClose && fightClose.outcome !== 'escaped'
-        ? ' Fight-close already on the combat log — narrate the moment and aftermath, do not restate it.'
-        : '';
     // VR1-b: engineResult may include "Check success." / "Check failure." from outcomeFactFromRecord — one outcome fact.
-    // T10RC7 — player act / PC quote cues convert to consequence instructions (already shown in UI),
-    // never a required restatement of the typed line.
     lines.push(
-      `ENGINE RESULT (required fact — state settled outcomes plainly; the player's typed act is already shown in the UI — do not restate it; write the consequence and world/NPC response)${mark}: ${writerEngineResult(packet.engineResult, pcStorySubject(pcPov(packet.pc)))}`
+      `ENGINE RESULT: ${writerEngineResult(packet.engineResult, pcStorySubject(pcPov(packet.pc)))}`,
     );
+    // Own instruction line (not inside the ENGINE RESULT content slot).
+    if (fightClose && fightClose.outcome !== 'escaped') {
+      lines.push(
+        'Fight-close already on the combat log — narrate the moment and aftermath, do not restate it.',
+      );
+    }
   }
   if (panelRead) {
     const readHousing = housingFromSystemBlock(packet.systemBlock);
@@ -1688,7 +1690,7 @@ export function formatWriterFacingEvent(
   lines.push(opening ? 'PLAYER: (opening)' : 'PLAYER: (already shown in UI — do not restate)');
   if (!opening) {
     lines.push(
-      `ACTION: write the consequence and world/NPC response for this beat — do not restate the player's act. Do not retell an arrival already written, and do not answer a different action.`
+      `ACTION: write the consequence and world/NPC response for this beat — do not restate the player's act. Do not retell an arrival already written, and do not answer a different action.`,
     );
     if (packet.combatLive && WRITER_ATTACK.test(act)) {
       lines.push('The attack is on the page: show the blow landing, glancing or missing, and the foe answering it.');
