@@ -40,16 +40,6 @@ const DECKS_TYPED_SO_FAR = [
   'crimson-nocturne',
   'onyx-blood-covenant',
   'salt-road-heist',
-  'glass-harbor-letters',
-  'embercourt-oath',
-  'rainglass-case',
-  'static-house',
-  'driftwake-crew',
-  'ashline-convoy',
-  'twin-lanterns',
-  'redmesa-claim',
-  'cape-district-vigil',
-  'wayfarers-map',
 ] as const;
 
 const TYPED_FIXTURE: OpeningHookTypedData & OpeningBeatCard = {
