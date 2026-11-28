@@ -1076,7 +1076,8 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
   });
   const sentences = lines.map((line) => {
     if (isBareTokenStub(line.text)) return '';
-    const said = line.written ?? (line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text);
+    // Brief 06: speech is one typed beat rendered once — code does not add quote marks or said-tags.
+    const said = line.written ?? line.text;
     const once = dropTypedNameAfterToken(said, (tok) => byTok.get(tok)?.display);
     let next = once.replace(
       /(\b(?:the|a|an)\s+)?(?:@t(\d+)\b|\bt(\d+)\b)(['’]s\b)?/gi,

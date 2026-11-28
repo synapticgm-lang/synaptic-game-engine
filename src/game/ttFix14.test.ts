@@ -97,10 +97,10 @@ describe('3 — a speech line keeps its narration', () => {
     expect(beat.lines[0]!.speaker_tok).toBe('t7');
   });
 
-  it('a bare tag still paints as a said line', () => {
+  it('a bare typed speech line paints once without code adding a said-tag', () => {
     const beat = parseTokenBeat(wire('"Look there," @t7 said.'))!;
-    expect(renderTokenBeat(beat, refs)).toBe('Tilde Rudd said, "Look there."');
+    expect(renderTokenBeat(beat, refs)).toBe('Look there.');
     const typed = parseTokenBeat(wire('"Look there."', 't7'))!;
-    expect(renderTokenBeat(typed, refs)).toBe('Tilde Rudd said, "Look there."');
+    expect(renderTokenBeat(typed, refs)).toBe('Look there.');
   });
 });

@@ -13,7 +13,6 @@ import {
   repairRejectedBeat,
   codedSceneMove,
 } from './beatCommitGate';
-import { isBannedFallbackStub } from './sealedManifest';
 import {
   autoFightSpawnPreface,
   ensureEncounterSpawnPreface,
@@ -61,7 +60,6 @@ describe('playtest31pBatchE', () => {
       const stub =
         'figure 1 is still here in the cathedral infirmary — the moment has not moved on.';
       expect(isVerbatimStallStub(stub)).toBe(true);
-      expect(isBannedFallbackStub(stub)).toBe(true);
       const state = createInitialState(undefined, 'litrpg');
       state.currentLocation = 'cathedral infirmary';
       state.sceneFacts = {

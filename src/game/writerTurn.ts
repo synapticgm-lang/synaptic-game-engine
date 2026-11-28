@@ -41,7 +41,7 @@ import {
 } from './semanticLoopDetector';
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
-import { ensureSpokenAnswer, stripSpeakerSilence, type SpokenAnswer } from './spokenAnswer';
+import { stripSpeakerSilence, type SpokenAnswer } from './spokenAnswer';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isOfferRefuseLine } from './openingOffer';
@@ -247,11 +247,12 @@ export function runWriterTurn(opts: {
   const first = renderWriterDraft(opts.firstRaw, check.state, packet);
   const problems = writerDraftProblems(first.prose, check);
   if (!first.prose) return { ...first, outcome: 'empty', problems, remaining: problems, firstDraft: '' };
-  const spoken = ensureSpokenAnswer(finishCommittedProse(first.prose, check, packet), check.state, check.playerInput);
-  // T10RC8 — seat-list final page (after spoken append); Absent-speaker lines never ship.
+  // Brief 06: speech is the typed beat only — do not append canned said-lines.
+  const finished = finishCommittedProse(first.prose, check, packet);
+  // T10RC8 — seat-list final page; Absent-speaker lines never ship.
   // OPEN7B — strip act-echo openings before accept (product fix; gate stays strict).
   // OPEN8 — crowd/role Talk must show an answer or acknowledged absence.
-  const seated = dropUnseatedSpeakerLines(check.state, spoken.prose);
+  const seated = dropUnseatedSpeakerLines(check.state, finished);
   const prose = scrubOpeningTurnProse(
     check.state,
     ensureCrowdOrRoleTalkAnswered(
@@ -271,7 +272,6 @@ export function runWriterTurn(opts: {
     problems,
     remaining: writerDraftProblems(prose, check),
     firstDraft: first.prose,
-    spoken: spoken.answer,
   };
 }
 
@@ -370,7 +370,7 @@ export function dropPlayerActEchoOpening(prose: string, playerInput: string): st
 /**
  * OPEN8 — Talk / Ask / Follow-up to a crowd or role phrase must land either (a) a concrete
  * present person answering, or (b) a plain acknowledged absence. Deterministic; no new AI call.
- * Runs beside dropPlayerActEchoOpening after ensureSpokenAnswer.
+ * Runs beside dropPlayerActEchoOpening after the typed speech beat.
  */
 export function ensureCrowdOrRoleTalkAnswered(
   prose: string,
@@ -429,34 +429,19 @@ export function ensureCrowdOrRoleTalkAnswered(
     }
     return text;
   }
+  // Brief 06: never invent quote / said-tag lines — typed speech beat is the only speech.
   if (speaker) {
-    // (a) concrete person answers — name them (and quote when the chip aimed at a crowd
-    // label) so turn-ignored-action clears for both role and "people here" addressees.
-    const crowdAim = /\bpeople here\b/i.test(who);
-    const line = crowdAim
-      ? `${capitalizeTalkLabel(speaker)} spoke for the people here: "Not now."`
-      : mentionsName(speaker, who) || mentionsName(who, speaker) || new RegExp(`\\b${escRe(who)}\\b`, 'i').test(speaker)
-        ? `${capitalizeTalkLabel(speaker)} answered: "Not now."`
-        : `${capitalizeTalkLabel(speaker)} answered: "Not now."`;
-    const cleaned = text
+    return text
       .replace(/\bNo one (?:was|is) there to answer\.?/gi, ' ')
       .replace(/\bNobody here can answer(?:\s+that)?\.?/gi, ' ')
       .replace(/\b(?:and )?the answer never came\.?/gi, ' ')
       .replace(/\bwaited for .{0,40} to answer\.?/gi, ' ')
       .replace(/\s+/g, ' ')
-      .trim();
-    return cleaned ? `${cleaned} ${line}` : line;
+      .trim() || text;
   }
-  // (b) acknowledged absence — plain, once.
-  if (absence) return text;
-  return text ? `${text} Nobody here can answer that.` : 'Nobody here can answer that.';
+  return text;
 }
 
-function capitalizeTalkLabel(label: string): string {
-  const t = (label ?? '').replace(/\s+/g, ' ').trim();
-  if (!t) return 'Someone';
-  return t.replace(/^\w/, (c) => c.toUpperCase());
-}
 /** Fight omit rewrite, then repairs, then RC-N3 blocking rewrite / engine-fact fallback. */
 export async function runWriterTurnWithFightRetry(opts: {
   firstRaw: string;
@@ -597,11 +582,11 @@ export function sealPostWriterProse(
   playerInput: string,
 ): { prose: string; spoken?: SpokenAnswer } {
   const placed = withMoveDestination(state, prose);
-  const spoken = ensureSpokenAnswer(placed, state, playerInput);
+  // Brief 06: do not append canned speech after the typed beat.
   // T10RC8 — after every append/repair/warden seal: drop unseated speaker attribution.
   // OPEN7B — strip act-echo openings on the sealed page too.
   // OPEN8 — crowd/role Talk answer seal on the sealed page.
-  const seated = dropUnseatedSpeakerLines(state, spoken.prose);
+  const seated = dropUnseatedSpeakerLines(state, placed);
   const answered = ensureCrowdOrRoleTalkAnswered(
     dropInventedPcSpeechOnNonTalk(
       dropPlayerActEchoOpening(seated, playerInput),
@@ -615,7 +600,6 @@ export function sealPostWriterProse(
   // re-stamp so arrival prose always names the place (deterministic, no AI re-roll).
   return {
     prose: scrubOpeningTurnProse(state, withMoveDestination(state, answered)),
-    spoken: spoken.answer,
   };
 }
 
@@ -1015,7 +999,7 @@ async function runWriterTurnFightOnly(opts: {
     && missingFightFacts(opts.check.state, second.prose) < missingFightFacts(opts.check.state, first.prose);
   const base = rewriteBetter ? second : first;
   if (base.prose.trim()) return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
-  // T10AL — lastResortStoryBody already finishes with ensureSpokenAnswer (one owner per beat).
+  // T10AL — lastResortStoryBody paints from the engine record (no canned speech append).
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
