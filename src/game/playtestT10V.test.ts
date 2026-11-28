@@ -156,7 +156,8 @@ describe('T10V typed ask answers + System ping', () => {
     expect(isLedgerReadAction('Ping the System for bearings')).toBe(true);
     const state = hall({ turn: 6 });
     const typed = resolveTypedFreeText(state, 'Ping the System for bearings');
-    expect(typed.engineResult).toMatch(/System readout|Changed since|First read|panel|Name:/i);
+    expect(typed.engineResult).toMatch(/Changed since|First read|Nothing changed/i);
+    expect(typed.engineResult).not.toMatch(/System readout:|Name:|Mark:/i);
     expect(typed.engineResult).not.toMatch(/Must narrate: Ping the System/i);
   });
 

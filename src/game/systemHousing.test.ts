@@ -68,22 +68,22 @@ describe('system housing', () => {
     expect(formatSystemBlock(c)).toMatch(/thief/i);
   });
 
-  it('(d) writer packet carries the SYSTEM paragraph of parts that are on', () => {
+  it('(d) writer packet gets housing scene physics, never a SYSTEM / Known parts dump', () => {
     const state = createInitialState('Story', 'litrpg', undefined, 'housing-a');
     state.systemHousing = clampSystemHousing(config('private_window', ['quest_list', 'radio', 'map']));
-    const packet = buildCompletedEventPacket(state, 'Look around');
-    const line = systemLine(formatWriterFacingEvent(packet));
-    expect(line).toContain('SYSTEM:');
-    expect(line).toMatch(/quest list/);
-    expect(line).not.toMatch(/radio|map|weapon/i);
-    expect(line).not.toMatch(/_/);
+    const text = formatWriterFacingEvent(buildCompletedEventPacket(state, 'Look around'));
+    expect(systemLine(text)).toBe('');
+    expect(text).toMatch(/HOUSING:.*player's head/i);
+    expect(text).not.toMatch(/STATUS:\s*\w+\s*=/i);
+    expect(text).not.toMatch(/Known:\s*health/i);
+    expect(text).not.toMatch(/It shows health/i);
 
     const pocket = createInitialState('Story', 'litrpg', undefined, 'housing-a');
     pocket.systemHousing = clampSystemHousing(config('leftover_pocket', []));
-    const pocketLine = systemLine(formatWriterFacingEvent(buildCompletedEventPacket(pocket, 'Look around')));
-    expect(pocketLine).toContain('SYSTEM:');
-    expect(pocketLine).toMatch(/pocket/);
-    expect(pocketLine).not.toMatch(/quest/i);
+    const pocketText = formatWriterFacingEvent(buildCompletedEventPacket(pocket, 'Look around'));
+    expect(systemLine(pocketText)).toBe('');
+    expect(pocketText).toMatch(/HOUSING:.*leftover pocket/i);
+    expect(pocketText).not.toMatch(/SYSTEM:/);
   });
   it('chips name the frozen housing instead of always the panel', () => {
     expect(systemStatusChip('worn_device')).toBe('Read the device');
@@ -135,9 +135,11 @@ describe('system housing', () => {
     expect(clampSystemHousing(config('world_status', ['quest_list'])).parts.quest_list).toBe(false);
     for (const action of ['Ask the world', 'Look around']) {
       const text = formatWriterFacingEvent(buildCompletedEventPacket(worldStatus(), action));
-      expect(systemLine(text)).toContain(WORLD_STATUS_WRITER_SENTENCE);
+      expect(systemLine(text), action).toBe('');
+      expect(text, action).toContain(WORLD_STATUS_WRITER_SENTENCE);
       expect(text, action).not.toMatch(/blue panel|panel in the air|empty air|System window|panel read/i);
       expect(text, action).not.toMatch(/Quest: /);
+      expect(text, action).not.toMatch(/Known:\s*health|weapon copying = known/i);
     }
     const read = formatWriterFacingEvent(buildCompletedEventPacket(worldStatus(), 'Ask the world'));
     expect(read).toMatch(/Jax took stock of what the world knows of/);

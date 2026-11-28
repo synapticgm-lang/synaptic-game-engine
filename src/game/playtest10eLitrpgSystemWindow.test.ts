@@ -95,7 +95,7 @@ describe('playtest10e — LitRPG System window', () => {
     expect(win?.lines.some((l) => /^Name: —$/.test(l))).toBe(true);
     expect(win?.lines.some((l) => /Registration: incomplete/.test(l))).toBe(true);
     expect(win?.lines.some((l) => /Pactborn/.test(l))).toBe(true);
-    expect(win?.lines.some((l) => /HP 20 \/ 20/.test(l))).toBe(true);
+    expect(win?.lines.some((l) => /HP:? 20 \/ 20/.test(l))).toBe(true);
   });
 
   it('name-lock writes the designation and does not show on tabletop', () => {

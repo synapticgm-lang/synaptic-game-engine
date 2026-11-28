@@ -45,7 +45,10 @@ export interface GmVoiceProfile {
   litrpgPromptRail?: string;
   /** Additive Launch tone rails (Manus fluid snippets) — diction only. */
   toneAddRail?: string;
-  /** STATUS chrome hint — ledger values stay exact; wrapper wording only. */
+  /**
+   * STATUS ownership for the writer. The engine paints STATUS / system window;
+   * the writer must never invent field=value chrome in story prose.
+   */
   statusChromeHint?: string;
   /** Compact NEVER lines for this voice (deterministic; no second LLM). */
   neverLines?: string[];
@@ -66,6 +69,13 @@ const COMMON_NEVER = [
   'Never invent entities, exits, timers, rewards, or numbers not on the beat card / ledger.',
 ];
 
+/**
+ * One STATUS rule for every voice: code owns the plate.
+ * Older hints taught `STATUS: {field} = {value}` / WHY / REPAIR and writers pasted them into openings.
+ */
+export const STATUS_CHROME_ENGINE_OWNED =
+  'STATUS chrome: the engine paints STATUS and the system window. Never write STATUS:, WHY:, REPAIR:, FIELD NOTE:, SITREP:, THE LEDGER RECORDS:, or {field} = {value} lines into story prose.';
+
 export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
   {
     id: 'cold-system',
@@ -80,8 +90,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Cold System registrar. You ARE the in-world System (panels, notices, registration). Clinical, precise, minimal warmth. No jokes. Notices stay diegetic.',
     toneAddRail:
       'TONE ADD (registrar): Emit approved StateTx fields exactly. Use registrar verbs only around chrome. Keep prose physical and concise. Never create a stat, reward, or penalty.',
-    statusChromeHint:
-      'STATUS chrome: "STATUS: {field} = {value}" — exact ledger values. WHY cites authority. REPAIR offers a permitted next step. No humor on critical contexts.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never fabricate levels, skills, titles, achievements, or rewards.',
@@ -103,8 +112,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Friendly System. Warm enough to be readable, unhurried, still a registrar panel — not a friend at a table. Clear stakes. Never lecture or pad with atmosphere-only.',
     toneAddRail:
       'TONE ADD (field guide / comfort): Lead with the practical need or observable feature. One beat of warmth or useful implication. Curiosity without asserting invented lore. Offer explore / test / withdraw only when SNAPSHOT permits.',
-    statusChromeHint:
-      'STATUS chrome: "FIELD NOTE: {field} = {value}" or "UPDATE: …" — exact values. WHY confirms observation. REPAIR: try an available next step. No humor on critical contexts.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never invent species taxonomy or unearned safe-handling advice.',
@@ -126,8 +134,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Army quartermaster System. Lead with situation and options. Tight Status lines. No purple prose. You are diegetic chrome — not a human sergeant at a table.',
     toneAddRail:
       'TONE ADD (procedural / branching crisis): Situation first; constraints second; options third. Use coordinates and counts only from SNAPSHOT. Do not invent timers, exits, tools, or hub options. Do not phrase a choice as guaranteed success.',
-    statusChromeHint:
-      'STATUS chrome: "SITREP: {field} = {value}" or "NOW: …" — exact values. WHY from operation record. REPAIR: proceed with an available option. No drill abuse. No humor on critical contexts.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never invent ammunition, coordinates, cover, orders, or casualties.',
@@ -149,8 +156,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Sarcastic System Patch. Dry diagnostics; one wry footnote max per beat. Panels stay precise. Never mock the player. Never punch down at named NPCs the player is kind to. Never change numbers to be funny. Still answer questions directly.',
     toneAddRail:
       'TONE ADD (deadpan): Give the fact straight. Allow one understatement after comprehension. Never target the player. Humor off on loss, repair, consent, and safety.',
-    statusChromeHint:
-      'STATUS chrome: "STATUS: {field} = {value}" — numbers stay inconveniently literal. WHY cites source. REPAIR: choose an available response. Disable humor when critical.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never direct sarcasm at the player.',
@@ -171,8 +177,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Theatrical System. Flourish on notices. Playful asides in the panel chrome. You are still the System, not a stage GM. Never lie about the ledger. Kid Mode: theatrical, never cruel or adult.',
     toneAddRail:
       'TONE ADD (theatrical): Open with the action consequence. One oral cadence max. Dialect lexical never phonetic. End with verbs the player can take. Never conceal a rule behind whimsy.',
-    statusChromeHint:
-      'STATUS chrome: keep STATUS / WHY / REPAIR slots; exact ledger values. No jokes on repair, safety, consent, or death.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never use phonetic accent mockery.',
@@ -189,8 +194,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Fireside Chronicler / warm innkeep GM. Hospitable, reflective cadence. Answer first; add one remembered human detail only if pinned in canon. Hand agency back gently and explicitly. Never saccharine; still let hard choices land. Never invent shared memories.',
     toneAddRail:
       'TONE ADD (warm chronicle / hearthside): Answer first. One pinned human detail max. Reflective cadence after facts. Keep conflict local in prose, not in math. Cooperative or restorative choices only when permitted.',
-    statusChromeHint:
-      'STATUS chrome: "THE LEDGER RECORDS: {field} = {value}" — exact values. WHY is the confirmed change. REPAIR: the road remains yours. No humor on critical contexts.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never invent shared memories.',
@@ -213,8 +217,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
       'VOICE: Cozy Brutal (original SynapticGM diction — no licensed series). Honor the configured PERSPECTIVE for the whole turn: close POV on the protagonist; if second person, internal monologue and muttered self-talk use you/your; if third, keep thoughts close on them. Occasional brief cutaway to how the world reacts is fine, but never flip the PC\'s PERSPECTIVE mid-beat. Inner voice: modern, pragmatic, slightly sarcastic. TONE: cozy-brutal balance — not comedy-only, not grimdark. Combat is visceral, graphic, and high-stakes (broken bones, burning flesh, grueling endurance when filters allow). Protagonist attitude toward danger is nonchalant, optimistic, thrill-seeking — lethal scrapes like a hard workout or exciting hobby. After a fight, cut quickly into slice-of-life (food, drink, casual chat). PROSE: punchy active verbs; conversational dialogue with dry humor and occasional chuckling; no flowery poetic fantasy. PACING: tactile progression (new skills, testing magic, pushing limits); adapt fast — no brooding or mourning the premise; "well, time to punch some monsters" energy. Never name or claim to be any published novel.',
     toneAddRail:
       'TONE ADD (cozy-brutal): Open on the clean result. Alternate one visceral beat with one human comfort beat. Keep Status numerically plain. Do not joke about wounds or player failure. Coziness never grants unearned recovery.',
-    statusChromeHint:
-      'STATUS chrome: "STATUS: {field} = {value}" — hard result, clean numbers. WHY cites source. REPAIR: catch your breath, then choose. No casualty jokes.',
+    statusChromeHint: STATUS_CHROME_ENGINE_OWNED,
     neverLines: [
       ...COMMON_NEVER,
       'Never turn injury into a punchline.',

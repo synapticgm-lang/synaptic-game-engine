@@ -54,7 +54,7 @@ function pact(housing: SystemHousingId, over: Partial<GameState> = {}): GameStat
   } as GameState;
 }
 
-const SHEET_RUN = /Name: Jax;\s*Level 1;/;
+const SHEET_RUN = /Name: Jax;\s*Level(?::)?\s*1;/;
 
 describe('s77 Root G — Check Status: the painted plate is the window', () => {
   // T9 replay: the opening plate showed XP 0/150; by T9 the ledger holds 75/150.
@@ -92,13 +92,11 @@ describe('s77 Root G — Check Status: the painted plate is the window', () => {
   it('the log entry still carries the systemWindow plate', () => {
     const entry = withLitrpgSystemWindow(gmEntry(9, 'Jax looked inward.'), t9(), 'Check Status');
     expect(entry.systemWindow?.lines).toContain('Name: Jax');
-    expect(entry.systemWindow?.lines).toContain('XP 75/150');
+    expect(entry.systemWindow?.lines).toContain('XP: 75/150');
   });
 
-  it('code-written prose for a read has no sheet run', () => {
-    const line = ledgerActionStitch(t9(), 'Check Status');
-    expect(line).not.toMatch(SHEET_RUN);
-    expect(line).toContain('XP 0 → 75');
+  it('ledgerActionStitch paints no sheet run (brief 06: no canned miss prose)', () => {
+    expect(ledgerActionStitch(t9(), 'Check Status')).toBe('');
   });
 });
 
