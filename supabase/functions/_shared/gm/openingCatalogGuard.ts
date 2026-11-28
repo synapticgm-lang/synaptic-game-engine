@@ -161,6 +161,3 @@ export function proseHasEmptySlot(prose: string): boolean {
   const t = (prose ?? '').replace(/\s+/g, ' ');
   return /\bThey read:\s*\./i.test(t) || /said,\s*["“]\s+/i.test(t) || /["“]\s+is a rite to finish/i.test(t);
 }
-
-/** Never matches — catalog leak regex deleted; names come from cast data (brief 03). */
-export const CATALOG_CAST_LEAK_RE = /$a/;

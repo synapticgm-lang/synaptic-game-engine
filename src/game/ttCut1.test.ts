@@ -9,7 +9,7 @@ import { applyProseWarden } from './proseWarden';
 import { thisTurnsEventCheck } from './writerTurn';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
 import { nudgeIfStuck } from './choiceRanking';
-import { hubsForBibleId } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId } from './outdoorHubs';
 import { checkActionFollowed } from './turnCheck';
 import { lineHasUnhandedOwnThing } from './tokenProse';
 // @ts-expect-error plain .mjs script
@@ -59,7 +59,7 @@ describe('(b) a quest step names a place by its one real name', () => {
     for (const bible of ALL_CAMPAIGN_BIBLES) {
       const hubs = hubsForBibleId(bible.id);
       const others = hubs.flatMap((h) =>
-        (h.aliases ?? [])
+        hubAliasLabels(h)
           .filter((a) => a.split(' ').length >= 2 && a.split(' ').every((w) => /^[A-Z]/.test(w)))
           .filter((a) => !hubs.some((o) => o.name.includes(a)))
           .map((a) => [a, h.name] as const)

@@ -6,7 +6,7 @@
  * the card text for the writer. A description the engine does not know keeps its own words.
  */
 import type { GameState } from './types';
-import { hubsForBibleId, type OutdoorHub } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId, type OutdoorHub } from './outdoorHubs';
 import { playerFacingLocation, underwayHereLabel } from './locationName';
 import { dungeonRoomPlace } from './places';
 import { isInteriorPlace } from './placeAuthority';
@@ -80,7 +80,7 @@ function placeCore(description: string): string {
 }
 
 function hubNames(h: OutdoorHub): string[] {
-  return [h.name, ...(h.aliases ?? [])]
+  return [h.name, ...hubAliasLabels(h)]
     .map((n) => n.trim().replace(/^(?:the|a|an)\s+/i, ''))
     .filter((n) => n.length >= 5);
 }

@@ -7,7 +7,6 @@ import { openingHookHasTypedData } from '@/data/campaigns/types';
 import { createInitialState } from './defaults';
 import {
   attachOpeningInstance,
-  extractTitleNames,
   mintOpeningInstance,
   snapshotFromPickedHook,
   type OpeningHookSnapshot,
@@ -89,8 +88,7 @@ describe('openingInstance (brief 03 typed mint)', () => {
     expect(state.npcMemories?.some((m) => m.durability === 'durable')).toBe(true);
   });
 
-  it('does not scrape Title-Case English for names', () => {
-    expect(extractTitleNames('Walk with Oren for water and a scarf')).toEqual([]);
+  it('does not scrape Title-Case English for names — untyped hooks mint alone', () => {
     const untyped: OpeningHookSnapshot = {
       location: 'the ash-heat of Cinderwake Trail',
       whoHere: 'Brother Oren and tracker Kessa Cinder',

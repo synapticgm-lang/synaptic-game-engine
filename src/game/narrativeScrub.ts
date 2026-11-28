@@ -7,7 +7,7 @@ import type { GameState } from './types';
 import { findUngroundedNamedClaims } from './suggestionValidation';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { realPresentPeople, isPolityFactionOrPlaceToken } from './chromeAuthority';
-import { hubsForBibleId } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId } from './outdoorHubs';
 import { presentNpcRecords } from './npcRecords';
 
 function groundedPresentNames(state: GameState): string[] {
@@ -360,7 +360,7 @@ function buildLooseGroundSet(state: GameState, prose: string): Set<string> {
       const hubs = hubsForBibleId(state.campaignBibleId);
       for (const hub of hubs) {
         add(hub.name);
-        for (const alias of hub.aliases ?? []) add(alias);
+        for (const alias of hubAliasLabels(hub)) add(alias);
       }
     } catch {
       // hubsForBibleId may not be available in all contexts

@@ -27,7 +27,6 @@ import { runWriterTurnWithFightRetry } from './writerTurn';
 import { parsePlayerIntent } from './intentParser';
 import { peopleHere } from './scenePresence';
 import {
-  CATALOG_CAST_LEAK_RE,
   proseHasEmptySlot,
   scrubOpeningTurnProse,
 } from './openingCatalogGuard';
@@ -195,7 +194,6 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
     const refs = compileRefEnum(prepared.state).map((r) => r.display).join(' | ');
     const here = peopleHere(prepared.state).join(' | ');
     for (const hay of [facing, allow, refs, here, offered.receipts.join(' ')]) {
-      expect(hay).not.toMatch(CATALOG_CAST_LEAK_RE);
       expect(hay).not.toMatch(/A Pact loadout crew/i);
     }
   });
@@ -237,19 +235,16 @@ describe('opening offer-accept turn (live 17:27 UK flow)', () => {
     expect(turn.path).not.toBe('last-resort');
     expect(turn.prose).toMatch(new RegExp(lead.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
     expect(turn.prose).toMatch(/pack|strap|arms/i);
-    expect(turn.prose).not.toMatch(CATALOG_CAST_LEAK_RE);
     expect(turn.prose).not.toMatch(/A Pact loadout crew/i);
     expect(proseHasEmptySlot(turn.prose)).toBe(false);
     // The mocked draft is the page; rewrite is only for blocking misses.
     expect(writerUsed).toBeGreaterThanOrEqual(0);
 
     const scrubbed = scrubOpeningTurnProse(prepared.state, LIVE_BROKEN_TURN2);
-    expect(scrubbed).not.toMatch(CATALOG_CAST_LEAK_RE);
     expect(proseHasEmptySlot(scrubbed)).toBe(false);
     expect(scrubbed).not.toMatch(/They read:\s*\./i);
 
     const painted = lastResortStoryBody(prepared.state, prepared.packet, accept);
-    expect(painted.prose).not.toMatch(CATALOG_CAST_LEAK_RE);
     expect(proseHasEmptySlot(painted.prose)).toBe(false);
     expect(painted.prose).not.toMatch(/A Pact loadout crew/i);
   });

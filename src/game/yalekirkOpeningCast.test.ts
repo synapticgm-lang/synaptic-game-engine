@@ -1,16 +1,17 @@
 /**
- * PR35 — Yalekirk / Ash Court opening: mint occupancy, no bible catalog pins,
+ * Yalekirk / Ash Court opening: typed cast presence, no catalog pins,
  * no forced rite completion, no invented clash.
+ * (Deleted scrape tests for impliedRoleFromWhoHere / impliedOccupancyCount —
+ * those English scrapers are gone; occupancy is cast.length / alone.)
  */
 import { describe, expect, it } from 'vitest';
+import type { OpeningBeatCard, OpeningHookTypedData } from '@/data/campaigns/types';
 import { summonedPact } from '@/data/campaigns/summonedPact';
 import { createInitialState } from './defaults';
 import { deriveOpeningJournal } from './liveOpening';
 import { ensureXpNarration } from './narrativeSanitize';
 import {
   attachOpeningInstance,
-  impliedOccupancyCount,
-  impliedRoleFromWhoHere,
   snapshotFromPickedHook,
 } from './openingInstance';
 import { resolveOpeningPinnedNames } from './openingPin';
@@ -21,7 +22,17 @@ import type { GameState } from './types';
 
 const CATALOG_PAIR = /Orel(?:\s+Vane)?|Sera(?:\s+Quill)?|High Chanter/i;
 
-const ASH_PICKED = {
+const ASH_TYPED: OpeningHookTypedData & OpeningBeatCard = {
+  place: { id: 'test-ash-hall', kind: 'ritual hall' },
+  cast: [
+    { id: 'test-ash-priest', role: 'priest', pronouns: 'he/him', durability: 'durable' },
+    { id: 'test-ash-mask', role: 'iron mask', pronouns: 'they/them', durability: 'durable' },
+  ],
+  offer: {
+    items: [{ id: 'test-ember-blade', label: 'ember-blade', carryable: true }],
+  },
+  rite: { steps: [{ id: 'test-rite-mark', label: 'Show the Mark' }] },
+  beatOrder: ['wake', 'offer'],
   who: 'an Earth stranger pulled by Ash Court priests as Calamity proof',
   pressing: 'They want the Mark read aloud as evidence against Pellane before you can leave.',
   location: 'an Ash-adjacent ritual hall',
@@ -58,14 +69,19 @@ function ashState(over: Partial<GameState> = {}): GameState {
 }
 
 function attachAsh(over: Partial<GameState> = {}): GameState {
-  return attachOpeningInstance(ashState(over), snapshotFromPickedHook(ASH_PICKED));
+  return attachOpeningInstance(ashState(over), snapshotFromPickedHook(ASH_TYPED), ASH_TYPED.page1);
 }
 
-describe('PR35 Yalekirk Ash Court opening', () => {
-  it('slices a long faction whoHere into a role and mints people', () => {
-    const who = ASH_PICKED.faction;
-    expect(impliedRoleFromWhoHere(who)).toMatch(/priest/i);
-    expect(impliedOccupancyCount(who)).toBe(2);
+describe('Yalekirk Ash Court opening (typed cast)', () => {
+  it('presence and roles come from typed cast, not whoHere English', () => {
+    const snap = snapshotFromPickedHook(ASH_TYPED);
+    expect(snap.cast).toHaveLength(2);
+    expect(snap.cast!.map((c) => c.role)).toEqual(['priest', 'iron mask']);
+    const state = attachAsh();
+    const inst = state.openingEstablishment!.instance!;
+    expect(inst.alone).toBe(false);
+    expect(inst.cast).toHaveLength(2);
+    expect(inst.cast.every((c) => c.role === 'priest' || c.role === 'iron mask')).toBe(true);
   });
 
   it('mints per-game people, journals them as present, and drops catalog pins', () => {
@@ -96,7 +112,7 @@ describe('PR35 Yalekirk Ash Court opening', () => {
         answers: {},
         complete: true,
         aloneArrival: false,
-        pickedHookFallback: ASH_PICKED.page1,
+        pickedHookFallback: ASH_TYPED.page1,
         pinnedNpcNames: [],
       },
       sceneFacts: { ...emptySceneFacts(0), present: [] },
@@ -134,5 +150,4 @@ describe('PR35 Yalekirk Ash Court opening', () => {
     ]);
     expect(fight).toMatch(/The clash leaves you wiser — you gain 25 XP/);
   });
-
 });

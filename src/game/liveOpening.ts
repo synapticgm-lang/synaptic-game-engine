@@ -9,7 +9,6 @@ import { isCampaignHubToken } from './outdoorHubs';
 import { tagOpeningOfferPads } from './openingOfferRecognize';
 import {
   formatOpeningWriterNotes,
-  isCommonOpeningLexeme,
   openingChoiceCount,
   openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
@@ -79,16 +78,22 @@ export function isVitestEnv(): boolean {
 
 /** Person names match the full name, or the first or last name on its own. */
 export function mentionsName(text: string, name: string): boolean {
-  const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 2 && !isCommonOpeningLexeme(p))];
+  const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 2)];
   return parts.some((p) => new RegExp(`\\b${escapeRe(p)}\\b`, 'i').test(text));
 }
 
-/** Distinctive tokens of a minted place — never a generic suffix such as Trail or Crossing. */
+/**
+ * Distinctive tokens of a minted place name.
+ * Multi-word places drop the trailing kind token (Trail, Well, Gate) so a bare
+ * kind word in prose does not count as naming the place — no English stop-list.
+ */
 export function distinctivePlaceTokens(placeName: string): string[] {
-  return (placeName ?? '')
+  const parts = (placeName ?? '')
     .split(/\s+/)
     .map((p) => p.replace(/['’]s$/i, ''))
-    .filter((p) => p.length >= 4 && !isCommonOpeningLexeme(p));
+    .filter((p) => p.length >= 4);
+  if (parts.length >= 2) return parts.slice(0, -1);
+  return parts;
 }
 
 /**
@@ -227,11 +232,6 @@ export function castPronounForName(state: GameState | undefined, name: string): 
   return 'unknown';
 }
 
-/** @deprecated Use castPronounForName — pronouns come from cast data, not prose. */
-export function prosePronounForName(_prose: string, _name: string): 'he' | 'she' | 'unknown' {
-  return 'unknown';
-}
-
 export function optionPronounErrors(
   label: string,
   prose: string,
@@ -285,9 +285,9 @@ function properNamesInOption(label: string, state: GameState): string[] {
   for (const raw of spans) {
     const span = raw.replace(leadingVerb, '').trim();
     if (!span) continue;
-    if (isCommonOpeningLexeme(span) || INSPECT_VERBS.test(span)) continue;
+    if (INSPECT_VERBS.test(span)) continue;
     if (/^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak|Head|Show|Go|Come|Follow|Leave|Enter|Open|Bring|Find|Call|Listen|Hold|Run|Hide|Move|Turn|Point)$/i.test(span)) continue;
-    if (span.split(/\s+/).every((w) => isCommonOpeningLexeme(w) || INSPECT_VERBS.test(w))) continue;
+    if (span.split(/\s+/).every((w) => INSPECT_VERBS.test(w))) continue;
     if (found.some((f) => f.toLowerCase() === span.toLowerCase() || f.toLowerCase().includes(span.toLowerCase()))) continue;
     found.push(span);
   }

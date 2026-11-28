@@ -144,14 +144,6 @@ export function formatOpeningWriterNotes(state: GameState): string {
   return [rail, extra].filter(Boolean).join('\n\n');
 }
 
-/** @deprecated Empty — lexeme stop-lists deleted (brief 03 / H8). Names come from cast data. */
-export const COMMON_OPENING_LEXEMES = new Set<string>();
-
-export function isCommonOpeningLexeme(word: string): boolean {
-  const k = (word ?? '').trim().toLowerCase();
-  return !k;
-}
-
 /** Retired catalog names as authored on the opening instance (no lexeme stop-list). */
 export function distinctiveRetiredNames(retiredNames: string[] | undefined): string[] {
   const out: string[] = [];
@@ -175,9 +167,6 @@ export function isRetiredCatalogToken(token: string, retiredNames: string[] | un
   if (!retiredNames?.length) return false;
   const t = (token ?? '').replace(/^(?:the|a|an)\s+/i, '').trim();
   if (!t) return false;
-  if (isCommonOpeningLexeme(t)) {
-    return retiredNames.some((r) => r.toLowerCase() === t.toLowerCase() && !isCommonOpeningLexeme(r));
-  }
   const lower = t.toLowerCase();
   for (const needle of distinctiveRetiredNames(retiredNames)) {
     const n = needle.toLowerCase();

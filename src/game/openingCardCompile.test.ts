@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { compileNounAllowlist, compileRefEnum } from './completedEventPacket';
 import { compileOpeningCard, normalizeOpeningHookCard, openingCastLabel } from './openingEstablishment';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeHeadNoun } from './placeNames';
 import { applySandboxXpAwards } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
@@ -140,7 +140,7 @@ describe('every Summoned Pact hook card keeps its own place', () => {
       const compiled = compileOpeningCard('summoned-pact', card.text, card.page1)!;
       const loc = card.location.toLowerCase();
       for (const hub of hubs) {
-        const names = [hub.name, ...(hub.aliases ?? [])].map((n) => n.toLowerCase().replace(/^(?:the|a|an)\s+/, '')).filter((n) => n.length >= 5);
+        const names = [hub.name, ...hubAliasLabels(hub)].map((n) => n.toLowerCase().replace(/^(?:the|a|an)\s+/, '')).filter((n) => n.length >= 5);
         if (!names.some((n) => new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(loc))) continue;
         const heads = names.map((n) => n.split(' ').pop());
         if (heads.includes(placeHeadNoun(card.location))) continue;

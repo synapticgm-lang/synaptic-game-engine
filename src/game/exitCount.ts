@@ -5,7 +5,7 @@
  */
 import type { GameState } from './types';
 import { playerFacingLocation } from './locationName';
-import { hubsForBibleId } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId } from './outdoorHubs';
 import { exitPlaceNames } from './placeNames';
 
 const NUM: Record<string, number> = {
@@ -137,7 +137,7 @@ export function wrongExitPlaceProblem(state: GameState, sentence: string): strin
   const known = [state.currentLocation, here, ...exits, state.journey?.from, state.journey?.to].filter(Boolean).map((s) => key(s!));
   const isKnown = (name: string) => known.some((k) => k && (k.includes(key(name)) || key(name).includes(k)));
   const names = [
-    ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...(h.aliases ?? [])]),
+    ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...hubAliasLabels(h)]),
     ...(state.places ?? []).map((p) => p.name),
   ]
     .map(norm)
