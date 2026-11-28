@@ -105,7 +105,7 @@ describe('playtest13b — writer owns the book after page 1', () => {
       expect(storyBeatWriterPath(state, line)).toBe('callGm');
       expect(classifyResponsePath({ state, playerInput: line, subscriptionTier: 'free' })).toBe('E');
       const body = assemblePacketStitch(buildCompletedEventPacket(state, line));
-      expect(body).not.toMatch(DROUGHT);
+      expect(body).toBe('');
       expect(isDroughtStubProse(body)).toBe(false);
       callGm(line);
     }

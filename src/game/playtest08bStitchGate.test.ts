@@ -118,39 +118,28 @@ describe('08b — authored stitch slots', () => {
     const askGoing = buildCompletedEventPacket(litrpgState(), 'Ask what is going on');
     expect(askGoing.target ?? '').not.toMatch(/what is going on/i);
     const s1 = assemblePacketStitch(askGoing);
-    expect(s1).not.toMatch(/what is going on/i);
-    expect(s1).not.toMatch(/You acted at landing/i);
-    expect(s1).not.toMatch(/That beat closed/i);
+    expect(s1).toBe('');
 
     const askDirect = buildCompletedEventPacket(litrpgState(), 'Ask a direct question');
     expect(askDirect.target ?? '').not.toMatch(/direct question/i);
-    expect(assemblePacketStitch(askDirect)).not.toMatch(/direct question/i);
+    expect(assemblePacketStitch(askDirect)).toBe('');
 
     const attackHold = buildCompletedEventPacket(liveSkirmish(10), 'Attack with what you are holding');
     expect(attackHold.target ?? '').not.toMatch(/what you are holding/i);
     const s3 = assemblePacketStitch(attackHold);
-    expect(s3).not.toMatch(/what you are holding/i);
-    expect(s3).not.toMatch(/The blow landed/i);
+    expect(s3).toBe('');
   });
 
-  it('inspect during a fight is not The blow landed', () => {
+  it('inspect during a fight yields no canned stitch', () => {
     const packet = buildCompletedEventPacket(liveSkirmish(10), 'Look around');
     expect(packet.outcome).toBe('inspected');
-    const stitch = assemblePacketStitch(packet);
-    expect(stitch).not.toMatch(/The blow landed/i);
-    expect(stitch).toMatch(/fight|lane|eyes|reading/i);
+    expect(assemblePacketStitch(packet)).toBe('');
   });
 
-  it('same stitch template is starved in last 10', () => {
+  it('packet stitch banks are gone (brief 06)', () => {
     const packet = buildCompletedEventPacket(liveSkirmish(10), 'Look around');
-    const a = assemblePacketStitch(packet, []);
-    const b = assemblePacketStitch(packet, [a]);
-    const c = assemblePacketStitch(packet, [a, b]);
-    expect(b).not.toBe(a);
-    expect(c).not.toBe(a);
-    expect(c).not.toBe(b);
-    const again = assemblePacketStitch(packet, [a, b, c]);
-    expect([a, b, c]).toContain(again);
+    expect(assemblePacketStitch(packet, [])).toBe('');
+    expect(assemblePacketStitch(packet, ['x'])).toBe('');
   });
 });
 
@@ -178,7 +167,6 @@ describe('08b — no Talk lastKill pads', () => {
 
     const spoke = buildCompletedEventPacket(withCorpsePresent, 'Talk to Pact-Hunter Skirmisher');
     const stitch = assemblePacketStitch(spoke);
-    expect(stitch).not.toMatch(/You spoke Pact-Hunter/i);
-    expect(stitch).not.toMatch(/Skirmisher answered/i);
+    expect(stitch).toBe('');
   });
 });

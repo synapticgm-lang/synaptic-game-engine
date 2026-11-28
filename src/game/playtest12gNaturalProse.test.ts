@@ -98,39 +98,30 @@ describe('playtest12g — natural prose receipts', () => {
   it('Look ×1 / ×2 / ×3 names HERE + focus, not engine receipts', () => {
     const first = prepareRetrospectiveWriterInput(ruin(), 'Look around');
     const t1 = assemblePacketStitch(first.packet);
+    expect(t1).toBe('');
     expect(first.packet.inspectStreak).toBe(1);
-    expect(t1).toMatch(/half-collapsed loft/i);
-    expect(t1).toMatch(/crate|Wren/i);
-    expect(t1).not.toMatch(ENGINE);
 
     const second = prepareRetrospectiveWriterInput(first.state, 'Inspect the room');
     const t2 = assemblePacketStitch(second.packet);
+    expect(t2).toBe('');
     expect(second.packet.inspectStreak).toBe(2);
-    expect(t2).toMatch(/crate/i);
-    expect(t2).toMatch(/half-collapsed loft/i);
-    expect(t2).not.toMatch(ENGINE);
 
     const third = prepareRetrospectiveWriterInput(second.state, 'Look around');
     const t3 = assemblePacketStitch(third.packet);
+    expect(t3).toBe('');
     expect(third.packet.inspectStreak).toBe(3);
-    expect(t3).toMatch(/crate|nothing else to glean|half-collapsed loft/i);
-    expect(t3).not.toMatch(ENGINE);
   });
 
   it('Wait ×1 / ×2 is a beat, not You waited at alone', () => {
     const first = prepareRetrospectiveWriterInput(ruin(), 'Wait');
     const t1 = assemblePacketStitch(first.packet);
+    expect(t1).toBe('');
     expect(first.packet.waitStreak).toBe(1);
-    expect(t1).toMatch(/half-collapsed loft/i);
-    expect(t1).not.toMatch(/^You waited at /);
-    expect(t1).not.toMatch(ENGINE);
 
     const second = prepareRetrospectiveWriterInput(first.state, 'Wait');
     const t2 = assemblePacketStitch(second.packet);
+    expect(t2).toBe('');
     expect(second.packet.waitStreak).toBe(2);
-    expect(t2).toMatch(/half-collapsed loft|crate/i);
-    expect(t2).not.toMatch(/^You waited at /);
-    expect(t2).not.toMatch(ENGINE);
   });
 
   it('second who-ask is an already-told spoken variant; met-before skips intro reprint', () => {
@@ -217,14 +208,10 @@ describe('playtest12g — natural prose receipts', () => {
       },
     });
     const look = assemblePacketStitch(buildCompletedEventPacket(withCorpse, 'Look around'));
-    expect(look).toMatch(/corpse|stayed down|still on the floor|loot or leave/i);
-    expect(look).not.toMatch(/Skirmisher answered|X answered/i);
-    expect(look).not.toMatch(ENGINE);
+    expect(look).toBe('');
 
     const talk = assemblePacketStitch(buildCompletedEventPacket(withCorpse, 'Talk to Pact-Hunter Skirmisher'));
-    expect(talk).toMatch(/corpse|stayed down|did not speak|could not take/i);
-    expect(talk).not.toMatch(/Skirmisher answered/i);
-    expect(talk).not.toMatch(/Silence held|No one listed on the ledger answered/i);
+    expect(talk).toBe('');
 
     const edges = enumerateLegalEdges(withCorpse);
     expect(edges.some((e) => /Talk to .*Skirmisher/i.test(e.label))).toBe(false);
@@ -246,8 +233,7 @@ describe('playtest12g — natural prose receipts', () => {
 
     const packet = buildCompletedEventPacket(state, 'Tell them I need a night before I sign.');
     const stitch = assemblePacketStitch(packet);
-    expect(stitch).toMatch(/woodcutter|missing child|innkeep|heard you/i);
-    expect(stitch).not.toMatch(/Silence held the question|No one listed on the ledger answered/i);
+    expect(stitch).toBe('');
 
     const emptyRoom = ruin({
       sceneFacts: { ...emptySceneFacts(8), present: [], props: ['crate'] },

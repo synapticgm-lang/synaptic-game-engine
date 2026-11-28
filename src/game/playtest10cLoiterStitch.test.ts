@@ -59,9 +59,7 @@ describe('playtest10c — loiter stitch + writer strip', () => {
     const packet = buildCompletedEventPacket(ruin(), 'Look around');
     expect(packet.inspectStreak).toBe(1);
     const stitch = assemblePacketStitch(packet);
-    expect(stitch).toMatch(/took in|studied|eyes went over/i);
-    expect(stitch).toMatch(/half-collapsed loft/i);
-    expect(stitch).not.toMatch(/same edges|already there|Nothing new stepped/i);
+    expect(stitch).toBe('');
   });
 
   it('second look uses ledger focus; third+ stays exhausted', () => {
@@ -70,17 +68,16 @@ describe('playtest10c — loiter stitch + writer strip', () => {
     const second = prepareRetrospectiveWriterInput(first.state, 'Inspect the room');
     expect(second.packet.inspectStreak).toBe(2);
     const t2 = assemblePacketStitch(second.packet);
-    expect(t2).toMatch(/hatch/i);
-    expect(t2).toMatch(/had not moved/i);
+    expect(t2).toBe('');
 
     const third = prepareRetrospectiveWriterInput(second.state, 'Look around');
     expect(third.packet.inspectStreak).toBe(3);
     const t3 = assemblePacketStitch(third.packet);
-    expect(t3).toMatch(/hatch|nothing else to glean/i);
+    expect(t3).toBe('');
 
     const fourth = prepareRetrospectiveWriterInput(third.state, 'Look around');
     expect(fourth.packet.inspectStreak).toBe(4);
-    expect(assemblePacketStitch(fourth.packet)).toBe(t3);
+    expect(assemblePacketStitch(fourth.packet)).toBe('');
   });
 
   it('travel / talk / HERE change reset the streak', () => {
@@ -126,7 +123,7 @@ describe('playtest10c — loiter stitch + writer strip', () => {
     };
     const packet = buildCompletedEventPacket(fight, 'Look around');
     expect(packet.inspectStreak).toBe(0);
-    expect(assemblePacketStitch(packet)).toMatch(/fight|lane|eyes|reading/i);
+    expect(assemblePacketStitch(packet)).toBe('');
   });
 
   it('same-room inspect ×2 strips the 500-char GM essay from the writer packet', () => {
