@@ -71,9 +71,9 @@ describe('T10TURNS section budget', () => {
     expect(text).toMatch(/ACTION: write the consequence/);
     expect(text).not.toMatch(/ACTION: this beat carries out the PLAYER line/);
     expect(text).toMatch(/WORLD FACTS \(this turn\):/);
-    // Leaf owns the long ENGINE RESULT once; WORLD FACTS must not duplicate the short form.
-    expect(text).toMatch(/ENGINE RESULT \(required fact/);
-    expect(text).not.toMatch(/^ENGINE RESULT:/m);
+    // Leaf owns ENGINE RESULT once as settled fact only (no instruction parenthetical in the content slot).
+    expect(text).toMatch(/^ENGINE RESULT:/m);
+    expect(text).not.toMatch(/ENGINE RESULT \(required fact/);
   });
 });
 
