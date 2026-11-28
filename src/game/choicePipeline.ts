@@ -38,8 +38,6 @@ import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { shopChips } from './shopChips';
 import { inspirationRerollPads } from './rules/houseRules';
-import { systemPromptPad } from './rules/abilityPoints';
-import { classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
 import { isJourneyStepLine, isJourneyUnderway, journeyPads } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
@@ -67,7 +65,7 @@ import {
   isHuntChip,
   isSeekFightChip,
 } from './choiceRanking';
-import { assembleFourSlotPads } from './fourSlotPads';
+import { finalSceneOptions } from './finalOptions';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -596,7 +594,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     lastEngineChips = { state, key, chips: originChips, labels: seenOrigin };
     return originChips;
   }
-  const system = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
+  // Setup chips (class / stats / boxes) stay on the System row — not in the scene engine list.
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
   const sources: Array<[ChipKind, string[]]> = [
     ['inspiration-reroll', inspirationRerollPads(state)],
@@ -610,7 +608,6 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     ['spine', spineEngineChipLabels(state)],
     ['dungeon', dungeonCardChoices(state)],
     ['opening', openingOfferPads(state)],
-    ['system', system],
     ['compiled', compileChoices(state, []).choices],
     ['fallback', sceneSafeFallbacks(state, storyProse)],
   ];
@@ -1585,11 +1582,12 @@ export function padChoicesToCount(
   // XP-D1 OPEN7 — hard filler family cap ≤2 at the END of every pad path (journey / affordance /
   // hand-built). Free text never blocked. Hunt / Gather / Seek / Check System / quest / Travel stay.
   cappedEnd = enforceFillerFamilyCap(cappedEnd, state);
-  // FOURSLOT6 — seal before assemble so a post-filter strip cannot leave a short pad
-  // (8101 journey shorts / 8103 T38 lone Seek). Assemble refill honors excluded families
-  // via isFourSlotLegal (02i/02w — never re-birth Travel/Leave after starve).
+  // FOURSLOT6 — seal before final count so a post-filter strip cannot leave a short pad
+  // (8101 journey shorts / 8103 T38 lone Seek). finalSceneOptions refill also requires
+  // isFourSlotLegal (02i/02w — never re-birth Travel/Leave after starve).
   cappedEnd = sealPadUniverse(cappedEnd, state, excluded);
-  cappedEnd = assembleFourSlotPads(state, cappedEnd);
+  // One count owner: finalOptions (exactly 4 LitRPG/RPG, 3 tabletop). No four-slot filler layer.
+  cappedEnd = finalSceneOptions(state, cappedEnd);
   return cappedEnd;
 }
 
