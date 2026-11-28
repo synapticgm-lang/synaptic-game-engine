@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Brief 03 — per-game names from typed cast/place data; no English renamer.
  */
 import { describe, expect, it } from 'vitest';
