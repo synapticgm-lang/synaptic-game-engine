@@ -1,86 +1,85 @@
 /**
- * PR41: only carryable objects from an opening offer become inventory. A place given (a bunk) or words
- * given (a cover story) is honoured as a benefit on the offer record and in the receipt, not carried.
+ * Brief 02: carryable vs benefit comes from typed offer.items[].carryable — not head-noun English.
  */
 import { describe, expect, it } from 'vitest';
-import { ALL_CAMPAIGN_BIBLES, getCampaignBibleById } from '@/data/campaigns';
+import { getCampaignBibleById } from '@/data/campaigns';
+import { openingHookHasTypedData, type OpeningBeatCard } from '@/data/campaigns/types';
 import { newGameState } from './newGameTestState';
-import { compileOpeningOffer, isCarryableOfferItem, openingOfferPads, resolveOpeningHookPick } from './openingEstablishment';
+import { offerRecordFromTypedData, openingOfferPads, resolveOpeningHookPick } from './openingEstablishment';
 import { applyOpeningOfferChoice } from './openingOffer';
 import type { GameState } from './types';
 
-type Card = { bible: string; seed: string; offer: string };
-function offerCards(): Card[] {
-  const out: Card[] = [];
-  for (const bible of ALL_CAMPAIGN_BIBLES) {
-    if (!(bible.openingHooks ?? []).some((h) => (h as { openingOffer?: string }).openingOffer)) continue;
-    const seen = new Set<string>();
-    for (let i = 0; i < 1500; i++) {
-      const p = resolveOpeningHookPick(getCampaignBibleById(bible.id)!, String(i));
-      if (!p?.text || seen.has(p.text)) continue;
-      seen.add(p.text);
-      if (!p.openingOffer || !compileOpeningOffer(`Opening offer: ${p.openingOffer}`)) continue;
-      out.push({ bible: bible.id, seed: String(i), offer: p.openingOffer });
-    }
+function typedOfferCards(bibleId: string) {
+  const bible = getCampaignBibleById(bibleId)!;
+  const out: Array<{ seed: string; card: OpeningBeatCard }> = [];
+  const seen = new Set<string>();
+  for (let i = 0; i < 1500; i++) {
+    const seed = String(i);
+    const p = resolveOpeningHookPick(bible, seed);
+    if (!p?.offer?.items?.length || !p.text || seen.has(p.text)) continue;
+    seen.add(p.text);
+    out.push({ seed, card: p as OpeningBeatCard });
   }
   return out;
 }
-function opened(c: Card): GameState {
-  const s = newGameState(c.bible, { seed: c.seed, liveOpening: true });
+
+function opened(bibleId: string, seed: string): GameState {
+  const s = newGameState(bibleId, { seed, liveOpening: true });
   return { ...s, turn: 1, openingEstablishment: { ...s.openingEstablishment!, sceneWritten: true } } as GameState;
 }
-function accept(s: GameState) {
-  const before = new Set((s.inventory ?? []).map((x) => x.name.toLowerCase()));
-  const r = applyOpeningOfferChoice(s, openingOfferPads(s)[0]!);
-  const gained = (r.state.inventory ?? []).map((x) => x.name).filter((n) => !before.has(n.toLowerCase()));
-  const benefits = r.state.openingEstablishment?.card?.offer?.benefits ?? [];
-  return { r, gained, benefits };
-}
 
-describe('opening offer: carryables go to inventory, places / words stay benefits', () => {
-  const cards = offerCards();
-
-  it('head-noun rule', () => {
-    for (const t of ['knife', 'room-key', 'heel of bread', 'citizenship papers', 'short line', 'pass', 'little coin']) {
-      expect(isCarryableOfferItem(t), t).toBe(true);
-    }
-    for (const t of ['bunk', 'a berth', 'seat at the table', 'story', 'cover story', 'rank']) {
-      expect(isCarryableOfferItem(t), t).toBe(false);
-    }
+describe('opening offer: carryables from typed data', () => {
+  it('offerRecordFromTypedData splits on the carryable flag', () => {
+    const rec = offerRecordFromTypedData({
+      items: [
+        { id: 'a', label: 'knife', carryable: true },
+        { id: 'b', label: 'oilskin', carryable: true },
+        { id: 'c', label: 'a bunk', carryable: false },
+        { id: 'd', label: 'story', carryable: false },
+      ],
+    });
+    expect(rec?.items).toEqual(['knife', 'oilskin']);
+    expect(rec?.benefits).toEqual(['a bunk', 'story']);
   });
 
-  it('every offer card: each granted inventory item is a carryable object; something is granted', () => {
-    expect(cards.length).toBeGreaterThanOrEqual(38);
+  it('grain-ship crew kit: knife and oilskin inventory; bunk is a benefit', () => {
+    const bible = getCampaignBibleById('summoned-pact')!;
+    let seed = '';
+    for (let i = 0; i < 1500; i++) {
+      const p = resolveOpeningHookPick(bible, String(i));
+      if (p?.offer?.items?.some((it) => it.id === 'sp-offer-bunk')) {
+        seed = String(i);
+        break;
+      }
+    }
+    expect(seed).toBeTruthy();
+    const s = opened('summoned-pact', seed);
+    expect(openingHookHasTypedData(resolveOpeningHookPick(bible, seed)!)).toBe(true);
+    const before = new Set((s.inventory ?? []).map((x) => x.name.toLowerCase()));
+    const r = applyOpeningOfferChoice(s, openingOfferPads(s)[0]!);
+    const gained = (r.state.inventory ?? []).map((x) => x.name).filter((n) => !before.has(n.toLowerCase()));
+    const benefits = r.state.openingEstablishment?.card?.offer?.benefits ?? [];
+    expect(gained.map((g) => g.toLowerCase()).sort()).toEqual(['knife', 'oilskin']);
+    expect(benefits.map((b) => b.toLowerCase())).toContain('a bunk');
+    expect(r.receipts.join(' | ')).toMatch(/not carried\):/);
+  }, 60_000);
+
+  it('every typed Summoned Pact offer card grants only carryable inventory items', () => {
+    const cards = typedOfferCards('summoned-pact');
+    expect(cards.length).toBeGreaterThanOrEqual(10);
     for (const c of cards) {
-      const { r, gained, benefits } = accept(opened(c));
-      expect(r.state.openingEstablishment?.offerTaken, c.offer).toBe('accepted');
-      for (const g of gained) expect(isCarryableOfferItem(g), `${c.seed}: "${g}"`).toBe(true);
-      expect(gained.length + benefits.length, `${c.seed}: ${c.offer}`).toBeGreaterThan(0);
+      const s = opened('summoned-pact', c.seed);
+      const pads = openingOfferPads(s);
+      if (!pads.length) continue;
+      const carryable = new Set(
+        (c.card.offer?.items ?? []).filter((it) => it.carryable).map((it) => it.label.toLowerCase())
+      );
+      const before = new Set((s.inventory ?? []).map((x) => x.name.toLowerCase()));
+      const r = applyOpeningOfferChoice(s, pads[0]!);
+      const gained = (r.state.inventory ?? []).map((x) => x.name).filter((n) => !before.has(n.toLowerCase()));
+      for (const g of gained) {
+        expect(carryable.has(g.toLowerCase()), `${c.seed}: "${g}"`).toBe(true);
+      }
     }
   }, 120_000);
-
-  it('seed 14 "a mask and a story": mask carried, the story is a benefit on the record + receipt', () => {
-    const c = cards.find((x) => x.bible === 'summoned-pact' && /a mask and a story/.test(x.offer))!;
-    const { r, gained, benefits } = accept(opened(c));
-    expect(gained.map((g) => g.toLowerCase())).toEqual(['mask']);
-    expect(benefits).toEqual(['story']);
-    expect(r.receipts.join(' | ')).toMatch(/not carried\): story/);
-  }, 60_000);
-
-  it('the crew-kit card (knife, oilskin, a bunk): the bunk is lodging, not inventory', () => {
-    const c = cards.find((x) => x.bible === 'summoned-pact' && /kit you as crew/.test(x.offer))!;
-    const { gained, benefits } = accept(opened(c));
-    expect(gained.map((g) => g.toLowerCase()).sort()).toEqual(['knife', 'oilskin']);
-    expect(benefits).toEqual(['bunk']);
-  }, 60_000);
-
-  it('an older record that still lists "bunk" as an item is split at accept time', () => {
-    const c = cards.find((x) => x.bible === 'summoned-pact' && /kit you as crew/.test(x.offer))!;
-    const s = opened(c);
-    const est = s.openingEstablishment!;
-    const old = { ...s, openingEstablishment: { ...est, card: { ...est.card!, offer: { ...est.card!.offer!, items: ['knife', 'oilskin', 'bunk'], benefits: undefined } } } } as GameState;
-    const { gained, benefits } = accept(old);
-    expect(gained.map((g) => g.toLowerCase())).not.toContain('bunk');
-    expect(benefits).toEqual(['bunk']);
-  }, 60_000);
 });

@@ -4,7 +4,7 @@
  */
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
-import { openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson, splitOfferGrants } from './openingEstablishment';
+import { openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson } from './openingEstablishment';
 import { classifyOpeningOfferInput } from './openingOfferRecognize';
 import { isBannedOpeningAttribution, openingOfferAttribution } from './openingCatalogGuard';
 import { seat } from './presentAuthority';
@@ -12,12 +12,10 @@ import { openRouteView } from './questRoutes';
 import { applyStructuralEvents } from './structuralEvents';
 import { recordPersonSeen } from './timeline';
 
-const OFFER_NOUN = /\b(?:work|job|offer|kit|deal|cots|terms)\b/i;
-
 export function isOfferRefuseLine(raw: string, state?: GameState): boolean {
   if (state) return classifyOpeningOfferInput(state, raw) === 'refuse';
   const t = (raw ?? '').replace(/\s+/g, ' ').trim();
-  return /^(?:i\s+)?(?:refuse|decline|turn down|say no to)\b/i.test(t) && OFFER_NOUN.test(t);
+  return /^(?:i\s+)?(?:refuse|decline|turn down|say no to)\b/i.test(t);
 }
 
 export function applyOpeningOfferChoice(
@@ -46,11 +44,10 @@ export function applyOpeningOfferChoice(
     };
   }
   if (classifyOpeningOfferInput(seated, playerInput) === 'accept') {
-    // Only carryable objects become inventory; a place or words given (a bunk, a cover story) is honoured
-    // as a benefit on the record and in the receipt (heals records compiled before the split too).
-    const split = splitOfferGrants(offer.items ?? []);
-    const benefits = [...new Set([...(offer.benefits ?? []), ...split.benefits])];
-    const events: GameEvent[] = split.items.map((name) => ({
+    // items[] are already the carryable grants from typed data; benefits[] are non-carried.
+    const items = offer.items ?? [];
+    const benefits = [...(offer.benefits ?? [])];
+    const events: GameEvent[] = items.map((name) => ({
       type: 'item-gain',
       name,
       qty: 1,

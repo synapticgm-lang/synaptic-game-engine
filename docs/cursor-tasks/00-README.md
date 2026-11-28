@@ -102,7 +102,7 @@ From HISTORY.md:
 Work top to bottom, and only start a brief once its dependencies are merged. The de-dup briefs 39–46 (27 Nov) are placed in order below, so the list is not in number order. The R9 briefs (15–17) are their own phase alongside phase 3 (John, 27 Nov). Interface quick repairs (34–35) and gear swap (24) can slot in any time they don't share files with an open brief. Gated briefs wait for John's yes.
 
 - [ ] **01** [Hook cards as typed data: cast, place, offer, rite, beat order](01-hooks-as-data-schema.md) — Phase 1 (opening slices, part A)
-- [ ] **02** [Offers and rites read from data; delete the offer and rite parsers](02-offers-and-rites-as-data.md) — Phase 1 (opening slices, part B: concrete offer chips)
+- [x] **02** [Offers and rites read from data; delete the offer and rite parsers](02-offers-and-rites-as-data.md) — Phase 1 (opening slices, part B: concrete offer chips)
 - [ ] **03** [Per-game names and pronouns from cast data; delete the renamer and name guards](03-cast-names-pronouns-as-data.md) — Phase 1 (opening slices, part C: per-game names)
 - [ ] **04** [Opening scene quests come from the hook's beats, not text](04-scene-quests-from-hook-data.md) — Phase 1 (opening slices, part D: scene quests)
 - [ ] **05** [Page 1 gets its own writer request; honest Try again, no hidden retry](05-page1-own-request.md) — Phase 2 (opening slices: live AI page 1) — *gated: John's yes*
