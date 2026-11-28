@@ -17,7 +17,7 @@ import type { GameState, Quest, QuestTarget } from './types';
 import { mainSpineQuest } from './questPlay';
 import { stepChip } from './choiceRanking';
 import { isGiverName, talkStepPerson } from './questGiver';
-import { hubsForBibleId } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId } from './outdoorHubs';
 import { resolveNpcRecord } from './npcRecords';
 import { atPlace, findQuestTargets, placeQuestTarget, targetSpot } from './questTargets';
 import { applyQuestRouteOutcome, openRouteView } from './questRoutes';
@@ -37,7 +37,7 @@ export function tabletopStepPlace(state: GameState, step: string): string | null
   const text = ` ${chipKey(step).replace(/['’]s\b/g, '').replace(/[^a-z0-9' ]+/g, ' ')} `;
   const names: Array<[string, string]> = [
     ...hubsForBibleId(state.campaignBibleId).flatMap((h) =>
-      [h.name, ...(h.aliases ?? [])].map((n): [string, string] => [n, h.name])
+      [h.name, ...hubAliasLabels(h)].map((n): [string, string] => [n, h.name])
     ),
     ...(state.places ?? []).map((p): [string, string] => [p.name, p.name]),
   ]

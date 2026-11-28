@@ -31,11 +31,12 @@ function state(over: Partial<GameState> = {}): GameState {
   } as GameState;
 }
 
-function memory(id: string, name: string, hint: string): NpcMemory {
+function memory(id: string, name: string, hint: string, durability: 'durable' | 'passer' = 'durable'): NpcMemory {
   return {
     npcId: id,
     npcName: name,
     roleHint: hint,
+    durability,
     disposition: 'neutral',
     facts: [],
     lastSeenTurn: 1,
@@ -94,11 +95,12 @@ describe('heirlooms', () => {
       npcMemories: [...(born.npcMemories ?? []), memory(second, 'Priest Rowan', 'priest')],
     }, 'Priest Rowan', 'Lowmarket');
     expect(capped.npcMemories?.find((m) => m.npcId === second)?.heirloom).toBeUndefined();
-    expect(isDurableRole('courier', 'courier', 'road')).toBe(false);
+    expect(isDurableRole('courier', 'courier', 'road', 'passer')).toBe(false);
+    expect(isDurableRole('sheriff', 'sheriff', 'town', 'durable')).toBe(true);
     const passer = ensureNpcSheet(state({
       seed,
       currentLocation: 'North Road',
-      npcMemories: [memory(sheriffId, 'Ned the Courier', 'courier')],
+      npcMemories: [memory(sheriffId, 'Ned the Courier', 'courier', 'passer')],
     }), 'Ned the Courier', 'North Road');
     expect(passer.npcMemories?.find((m) => m.npcName === 'Ned the Courier')?.heirloom).toBeUndefined();
   });

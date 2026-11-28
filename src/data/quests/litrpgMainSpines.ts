@@ -10,7 +10,7 @@ import {
   pickTabletopStampAlt,
   withMatchedTabletopSpine,
 } from '@/data/quests/tabletopMainSpines';
-import { hubsForBibleId } from '@/game/outdoorHubs';
+import { hubAliasLabels, hubsForBibleId } from '@/game/outdoorHubs';
 
 import { hashSeed } from '@/game/seededRng';
 /**
@@ -1064,7 +1064,7 @@ export function isNamedSpineGiver(giver: string): boolean {
 export function placeSpine(spine: LitRpgMainSpine, hookBlob?: string, location?: string): string | null {
   const key = (s: string) => s.replace(/\s+/g, ' ').trim().toLowerCase().replace(/^the\s+/, '');
   const pin = key(spine.mapPin);
-  const hub = hubsForBibleId(spine.bibleId).find((h) => [h.name, ...(h.aliases ?? [])].some((n) => key(n) === pin));
+  const hub = hubsForBibleId(spine.bibleId).find((h) => [h.name, ...hubAliasLabels(h)].some((n) => key(n) === pin));
   if (hub) return hub.name;
   const here = (location || hookBlob?.match(/^Location:[ \t]*(.+)$/im)?.[1] || '').replace(/\s+/g, ' ').trim();
   return here && familyScore(here, spine.familyTags) > 0 ? here : null;

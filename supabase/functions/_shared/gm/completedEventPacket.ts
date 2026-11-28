@@ -17,6 +17,7 @@ import { formatRefRecords, formatSceneBlock, matchesOpeningWords, mentionFromSce
 import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import {
+  hubAliasLabels,
   hubsForBibleId,
   isCampaignHubToken,
   matchHub,
@@ -643,7 +644,7 @@ export function compileNounAllowlist(
   if (pc && !/^(you|adventurer|player)$/i.test(pc)) pushUnique(out, seen, pc);
   for (const h of hubsForBibleId(state.campaignBibleId)) {
     pushUnique(out, seen, h.name);
-    for (const alias of h.aliases ?? []) pushUnique(out, seen, alias);
+    for (const alias of hubAliasLabels(h)) pushUnique(out, seen, alias);
   }
   // This turn's road stop only, the name inside travelBeat ("The way passes the Old Well").
   const beat = ` ${travelBeatFact(state).toLowerCase()} `;

@@ -1,10 +1,15 @@
+/**
+ * Opening option / journal / page-1 commit checks that do not depend on English scrapers.
+ * Deleted scrape-pinning cases (alignHookPronouns, whoHere role/offer rewrite, Father Aldous
+ * title scrape, "two militia" phrase roles) — those behaviours were removed in brief 03;
+ * untyped hooks mint alone, and pronouns/roles come from typed cast data.
+ */
 import { describe, expect, it } from 'vitest';
+import type { OpeningBeatCard, OpeningHookTypedData } from '@/data/campaigns/types';
 import { createInitialState } from './defaults';
 import {
-  alignHookPronouns,
-  givenNameOf,
   mintOpeningInstance,
-  type OpeningHookSnapshot,
+  snapshotFromPickedHook,
 } from './openingInstance';
 import {
   fallbackOpeningPads,
@@ -39,7 +44,7 @@ const nollshawInst: OpeningInstance = {
   placeName: 'Nollshaw Well',
   placeKind: 'well',
   nearbyLandmark: 'Greyhollow Church',
-  cast: [{ name: 'Tilde Barrow', role: 'priest', gender: 'female' }],
+  cast: [{ name: 'Tilde Barrow', role: 'priest', gender: 'female', pronouns: 'she/her' }],
   situation: 'a traveler who has just reached the well',
   offerChips: [
     { kind: 'accept', label: 'Hear Tilde out', note: 'Tilde Barrow is here with a reason — hear it before you decide.' },
@@ -64,8 +69,8 @@ const merrowInst: OpeningInstance = {
   placeKind: 'trail',
   nearbyLandmark: 'Kitchen Saint Alley',
   cast: [
-    { name: 'Wenna Merrow', role: 'tracker', gender: 'female' },
-    { name: 'Ysolde Marl', role: 'tracker', gender: 'female' },
+    { name: 'Wenna Merrow', role: 'tracker', gender: 'female', pronouns: 'she/her' },
+    { name: 'Ysolde Marl', role: 'tracker', gender: 'female', pronouns: 'she/her' },
   ],
   situation: 'an Earth stranger pulled into the ash-heat',
   offerChips: [{ kind: 'refuse', label: 'Keep your own kit', note: 'Refuse and keep your own kit.' }],
@@ -89,7 +94,28 @@ const merrowDraft2Prose =
 const nollshawDraft2Prose =
   'The newcomer stood at the lip of Nollshaw Well. The stones were worn smooth, older than anything around them. Tilde Barrow waited at their side, a woman with the stoop of a father who had carried too many years past harvest. She did not fill the quiet. When she finally spoke, her voice was low and even, as though she had asked this question a hundred times and never once liked the answer.\n\n"What answered from the shaft?"';
 
-describe('PR33 opening false rejects', () => {
+const TYPED_TWO: OpeningHookTypedData & OpeningBeatCard = {
+  place: { id: 'test-cinder-trail', kind: 'trail' },
+  cast: [
+    { id: 'test-cast-a', role: 'priest', pronouns: 'he/him', durability: 'durable' },
+    { id: 'test-cast-b', role: 'tracker', pronouns: 'she/her', durability: 'durable' },
+  ],
+  offer: {
+    items: [
+      { id: 'test-water', label: 'waterskin', carryable: true },
+      { id: 'test-iron', label: 'brand-iron', carryable: true },
+    ],
+  },
+  rite: { steps: [{ id: 'test-rite', label: 'Give a name' }] },
+  beatOrder: ['wake', 'offer'],
+  location: 'catalog trail must not drive minting',
+  whoHere: 'Brother Oren and tracker Kessa Cinder',
+  openingOffer: 'English offer that minting must not parse',
+  pressing: 'They want an answer.',
+  page1: 'Authored page 1.',
+};
+
+describe('Opening false rejects (typed / locked instance)', () => {
   it('accepts Nollshaw Well draft 1 options when the prose is committed without place-name prose gates', () => {
     const state = withInstance('dnd', nollshawInst, 'pr31-live-dnd-keep');
     expect(mentionsPlaceName(NOLLshawDraft1Prose, 'Nollshaw Well')).toBe(false);
@@ -134,7 +160,7 @@ describe('PR33 opening false rejects', () => {
       placeName: 'Beltaneleigh Gate',
       placeKind: 'gate',
       nearbyLandmark: "Mira's Apothecary",
-      cast: [{ name: 'Rosel Cotter', role: 'militia', gender: 'female' }],
+      cast: [{ name: 'Rosel Cotter', role: 'militia', gender: 'female', pronouns: 'she/her' }],
     });
     expect(validateOpeningJournalTitle(merrow, 'Merrowbury Trail, In Their Prints')).toEqual([]);
     expect(validateOpeningJournalTitle(gate, 'The Gate, After Dark')).toEqual([]);
@@ -155,74 +181,26 @@ describe('PR33 opening false rejects', () => {
     ])).toEqual([]);
   });
 
-  it('never uses Father, Mother, Brother, or Sister as a minted person role, and aligns offer pronouns', () => {
-    const hook: OpeningHookSnapshot = {
-      location: 'Greyhollow well at Nollshaw',
-      whoHere: 'Father Aldous',
-      openingOffer:
-        'Walk with Father Aldous and he will share what answered from the shaft. The inn lights stay a rumor uphill if you refuse him.',
-      pressingNeed: 'Father Aldous wants to know what answered from the shaft.',
-    };
-    const inst = mintOpeningInstance(hook, 'pr33-father|cursed-keep|opening-instance', {
-      bibleId: 'cursed-keep',
-      engineMode: 'dnd',
-    });
-    expect(inst.cast).toHaveLength(1);
-    expect(inst.cast[0]!.role).toBe('priest');
-    expect(inst.cast.some((c) => /^(father|mother|brother|sister)$/i.test(c.role))).toBe(false);
-    const offer = inst.offerSummary ?? '';
-    expect(offer).not.toMatch(/Father Aldous/i);
-    expect(offer).toMatch(new RegExp(`Walk with ${inst.cast[0]!.name} and `));
-    if (inst.cast[0]!.gender === 'female') {
-      expect(offer).toMatch(/\bshe will share\b/i);
-      expect(offer).not.toMatch(/\bhe will share\b/i);
-      expect(offer).toMatch(/refuse her/i);
-      expect(offer).not.toMatch(/refuse him/i);
-    } else {
-      expect(offer).toMatch(/\bhe will share\b/i);
-      expect(offer).toMatch(/refuse him/i);
-    }
-  });
-
-  it('rewrites stale offer pronouns after a two-person name swap', () => {
-    const hook: OpeningHookSnapshot = {
-      location: 'the ash-heat of Cinderwake Trail',
-      whoHere: 'Brother Oren and tracker Kessa Cinder, already mid-pursuit',
-      openingOffer:
-        'Walk with Brother Oren and he will share water and a pilgrim scarf. Stay for Kessa and she will offer a brand-iron if you take her hunt — or you keep Earth kit and both of them.',
-    };
-    const inst = mintOpeningInstance(hook, 'pr33-pronouns|summoned-pact|opening-instance', {
+  it('typed cast supplies roles and pronouns; untyped English does not mint people', () => {
+    const typed = mintOpeningInstance(snapshotFromPickedHook(TYPED_TWO), 'pr33-typed|summoned-pact|opening-instance', {
       bibleId: 'summoned-pact',
       engineMode: 'litrpg',
     });
-    expect(inst.cast).toHaveLength(2);
-    const [a, b] = inst.cast;
-    const offer = inst.offerSummary ?? '';
-    expect(offer).not.toMatch(/Oren|Kessa/i);
-    const aSubj = a!.gender === 'female' ? 'she' : 'he';
-    const bSubj = b!.gender === 'female' ? 'she' : 'he';
-    const bPoss = b!.gender === 'female' ? 'her' : 'his';
-    expect(offer).toMatch(new RegExp(`Walk with ${a!.name} and ${aSubj} will share`, 'i'));
-    expect(offer).toMatch(new RegExp(`Stay for ${givenNameOf(b!.name)} and ${bSubj} will offer`, 'i'));
-    expect(offer).toMatch(new RegExp(`take ${bPoss} hunt`, 'i'));
-    expect(alignHookPronouns(`Walk with ${a!.name} and he will share water.`, [a!])).toMatch(
-      new RegExp(`Walk with ${a!.name} and ${aSubj} will share`)
-    );
-  });
+    expect(typed.cast).toHaveLength(2);
+    expect(typed.cast[0]!.role).toBe('priest');
+    expect(typed.cast[1]!.role).toBe('tracker');
+    expect(typed.cast[0]!.pronouns).toBe('he/him');
+    expect(typed.cast[1]!.pronouns).toBe('she/her');
+    expect(typed.cast.some((c) => /Oren|Kessa|Father|Brother/i.test(c.name))).toBe(false);
+    expect(typed.cast.some((c) => /^(father|mother|brother|sister)$/i.test(c.role))).toBe(false);
 
-  it('does not use a plural group phrase as one person\'s role', () => {
-    const hook: OpeningHookSnapshot = {
-      location: 'Greyhollow gate after dark',
-      whoHere: 'two militia',
-      pressingNeed: 'The militia want you inside the bar, not back in the woods.',
-    };
-    const inst = mintOpeningInstance(hook, 'pr33-militia|cursed-keep|opening-instance', {
-      bibleId: 'cursed-keep',
-      engineMode: 'dnd',
-    });
-    expect(inst.cast.length).toBeGreaterThanOrEqual(1);
-    expect(inst.cast[0]!.role).toBe('militia');
-    expect(inst.cast[0]!.role).not.toMatch(/two militia/i);
+    const untyped = mintOpeningInstance(
+      { location: 'Greyhollow well', whoHere: 'Father Aldous', openingOffer: 'Walk with Father Aldous and he will share.' },
+      'pr33-untyped|cursed-keep|opening-instance',
+      { bibleId: 'cursed-keep', engineMode: 'dnd' }
+    );
+    expect(untyped.cast).toHaveLength(0);
+    expect(untyped.alone).toBe(true);
   });
 
   it('does not fill page-1 pads with an accept chip naming an item the prose never mentions', () => {
@@ -230,7 +208,7 @@ describe('PR33 opening false rejects', () => {
       placeName: 'Beltaneleigh Gate',
       placeKind: 'gate',
       nearbyLandmark: "Mira's Apothecary",
-      cast: [{ name: 'Rosel Cotter', role: 'militia', gender: 'female' }],
+      cast: [{ name: 'Rosel Cotter', role: 'militia', gender: 'female', pronouns: 'she/her' }],
       situation: 'a traveler at the gate after dark',
       offerChips: [
         { kind: 'accept', label: 'Take the kit', note: 'Take the kit.' },

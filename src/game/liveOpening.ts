@@ -9,7 +9,6 @@ import { isCampaignHubToken } from './outdoorHubs';
 import { tagOpeningOfferPads } from './openingOfferRecognize';
 import {
   formatOpeningWriterNotes,
-  isCommonOpeningLexeme,
   openingChoiceCount,
   openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
@@ -79,16 +78,22 @@ export function isVitestEnv(): boolean {
 
 /** Person names match the full name, or the first or last name on its own. */
 export function mentionsName(text: string, name: string): boolean {
-  const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 2 && !isCommonOpeningLexeme(p))];
+  const parts = [name, ...name.split(/\s+/).filter((p) => p.length >= 2)];
   return parts.some((p) => new RegExp(`\\b${escapeRe(p)}\\b`, 'i').test(text));
 }
 
-/** Distinctive tokens of a minted place — never a generic suffix such as Trail or Crossing. */
+/**
+ * Distinctive tokens of a minted place name.
+ * Multi-word places drop the trailing kind token (Trail, Well, Gate) so a bare
+ * kind word in prose does not count as naming the place — no English stop-list.
+ */
 export function distinctivePlaceTokens(placeName: string): string[] {
-  return (placeName ?? '')
+  const parts = (placeName ?? '')
     .split(/\s+/)
     .map((p) => p.replace(/['’]s$/i, ''))
-    .filter((p) => p.length >= 4 && !isCommonOpeningLexeme(p));
+    .filter((p) => p.length >= 4);
+  if (parts.length >= 2) return parts.slice(0, -1);
+  return parts;
 }
 
 /**
@@ -211,60 +216,19 @@ export function optionsAreNearDuplicates(a: string, b: string): boolean {
   }
   return false;
 }
-const SUBORDINATORS = /^(?:after|before|when|while|because|as|if|though|although|until|unless|since|once|whereas|whilst)$/i;
-const COORDINATORS = /^(?:and|but|then|or)$/i;
-
-/** The clause immediately containing a pronoun, starting after the nearest coordinator or subordinator. */
-function clauseAround(sentence: string, index: number): { intro: string; body: string } {
-  const before = sentence.slice(0, index);
-  const split = before.split(/\b((?:after|before|when|while|because|as|if|though|although|until|unless|since|once|whereas|whilst|and|but|then|or)\s+)/i);
-  if (split.length === 1) return { intro: '', body: sentence };
-  const intro = (split[split.length - 2] ?? '').trim();
-  const body = (split[split.length - 1] ?? '') + sentence.slice(index);
-  return { intro, body };
-}
-
 /**
- * Gender the prose actually assigns to this person.
- * Only sentences that name them and do not also name another proper person are used.
- * A pronoun is accepted only when it is the grammatical subject straight after the
- * name's own clause, or when the sentence has no other possible referent.
- * "Nell took the scarf after he tossed it" does not make Nell a "he".
+ * Pronouns for a minted opening person — from cast data only (brief 03 / H8).
+ * Prose is never scraped for he/she.
  */
-export function prosePronounForName(prose: string, name: string): 'he' | 'she' | 'unknown' {
-  const given = givenNameOf(name);
-  const nameRe = new RegExp(`\\b${escapeRe(name)}\\b|\\b${escapeRe(given)}\\b`, 'i');
-  const sentences = (prose ?? '').split(/(?<=[.!?])(?:\s+|$)/).map((s) => s.trim()).filter(Boolean);
-  const hits = sentences.filter((s) => nameRe.test(s));
-  const exclusive = hits.filter((s) => {
-    const spans = s.match(/\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\b/g) ?? [];
-    return !spans.some((span) => {
-      if (nameRe.test(span)) return false;
-      if (/^(The|A|An|You|Your|They|This|That|Here|There|Then|And|But|With|From|Into)$/.test(span)) return false;
-      if (isCommonOpeningLexeme(span) || INSPECT_VERBS.test(span)) return false;
-      return true;
-    });
-  });
-  const licensed: string[] = [];
-  for (const sentence of exclusive) {
-    const re = /\b(he|him|his|she|her|hers)\b/gi;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(sentence))) {
-      const { intro, body } = clauseAround(sentence, m.index);
-      const introWord = intro.replace(/\s+/g, ' ').trim().replace(/[,:;]+$/, '');
-      if (SUBORDINATORS.test(introWord)) continue;
-      const clauseHasName = nameRe.test(body) || (!introWord && nameRe.test(sentence));
-      const continuesNameClause = COORDINATORS.test(introWord) && nameRe.test(sentence.slice(0, m.index));
-      if (!clauseHasName && !continuesNameClause) continue;
-      licensed.push(m[0]);
-    }
-  }
-  const blob = licensed.join(' ');
-  if (!blob) return 'unknown';
-  const he = /\b(?:he|him|his)\b/i.test(blob);
-  const she = /\b(?:she|her|hers)\b/i.test(blob);
-  if (he && !she) return 'he';
-  if (she && !he) return 'she';
+export function castPronounForName(state: GameState | undefined, name: string): 'he' | 'she' | 'they' | 'unknown' {
+  if (!state || !name) return 'unknown';
+  const member = openingInstanceOf(state)?.cast.find(
+    (c) => mentionsName(name, c.name) || givenNameOf(c.name).toLowerCase() === givenNameOf(name).toLowerCase()
+  );
+  if (!member) return 'unknown';
+  if (member.pronouns === 'he/him' || member.gender === 'male') return 'he';
+  if (member.pronouns === 'she/her' || member.gender === 'female') return 'she';
+  if (member.pronouns === 'they/them') return 'they';
   return 'unknown';
 }
 
@@ -284,14 +248,10 @@ export function optionPronounErrors(
     errors.push(`option uses a pronoun without a named person: ${label}`);
     return errors;
   }
-  let g = prosePronounForName(prose, target);
-  if (g === 'unknown' && state) {
-    const member = openingInstanceOf(state)?.cast.find((c) => mentionsName(target, c.name) || mentionsName(c.name, target));
-    if (member?.gender === 'male') g = 'he';
-    if (member?.gender === 'female') g = 'she';
-  }
-  if (he && g !== 'he') errors.push(`option pronoun does not match the prose for ${givenNameOf(target)}: ${label}`);
-  if (she && g !== 'she') errors.push(`option pronoun does not match the prose for ${givenNameOf(target)}: ${label}`);
+  const g = castPronounForName(state, target);
+  if (he && g !== 'he' && g !== 'unknown') errors.push(`option pronoun does not match cast data for ${givenNameOf(target)}: ${label}`);
+  if (she && g !== 'she' && g !== 'unknown') errors.push(`option pronoun does not match cast data for ${givenNameOf(target)}: ${label}`);
+  void prose;
   return errors;
 }
 
@@ -325,9 +285,9 @@ function properNamesInOption(label: string, state: GameState): string[] {
   for (const raw of spans) {
     const span = raw.replace(leadingVerb, '').trim();
     if (!span) continue;
-    if (isCommonOpeningLexeme(span) || INSPECT_VERBS.test(span)) continue;
+    if (INSPECT_VERBS.test(span)) continue;
     if (/^(Ask|Walk|Take|Hear|Keep|Look|Wait|Stand|Watch|Study|Accept|Refuse|Give|Offer|Stay|Step|Tell|Say|Cross|Join|Check|Speak|Head|Show|Go|Come|Follow|Leave|Enter|Open|Bring|Find|Call|Listen|Hold|Run|Hide|Move|Turn|Point)$/i.test(span)) continue;
-    if (span.split(/\s+/).every((w) => isCommonOpeningLexeme(w) || INSPECT_VERBS.test(w))) continue;
+    if (span.split(/\s+/).every((w) => INSPECT_VERBS.test(w))) continue;
     if (found.some((f) => f.toLowerCase() === span.toLowerCase() || f.toLowerCase().includes(span.toLowerCase()))) continue;
     found.push(span);
   }
@@ -465,7 +425,7 @@ export function fallbackOpeningPads(state: GameState, prose: string): string[] {
   for (const member of inst?.cast ?? []) {
     if (labels.length >= n) break;
     if (!mentionsName(prose, member.name)) continue;
-    push(`Ask ${givenNameOf(member.name)} about the deal`);
+    push(askPadFor(member.name, prose, state));
   }
   if (inst?.placeName && labels.length < n && mentionsName(prose, inst.placeName)) {
     push(`Look around ${inst.placeName}`);
@@ -502,10 +462,11 @@ export function shapeOpeningPads(state: GameState, prose: string): string[] {
   return fallbackOpeningPads(state, prose);
 }
 
-/** Use the prose pronoun only when a sentence is clearly about that person; otherwise no pronoun. */
-export function askPadFor(name: string, prose: string): string {
+/** Pad wording uses cast pronouns when known; otherwise a neutral ask. */
+export function askPadFor(name: string, prose: string, state?: GameState): string {
   const given = givenNameOf(name);
-  const g = prosePronounForName(prose, name);
+  const g = castPronounForName(state, name);
+  void prose;
   if (g === 'he') return `Ask ${given} what he's after`;
   if (g === 'she') return `Ask ${given} what she's after`;
   return `Ask ${given} about the deal`;

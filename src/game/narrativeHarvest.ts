@@ -21,7 +21,7 @@ import {
 import { isPlannerUiPersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
-import { hubsForBibleId } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId } from './outdoorHubs';
 import { roadMeetingLabel } from './travelJourney';
 import { seat, setPresentList } from './presentAuthority';
 
@@ -72,7 +72,7 @@ export function maskPlaceNames(state: GameState, prose: string): string {
     }
   }
   const names = [
-    ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...(h.aliases ?? [])]),
+    ...hubsForBibleId(state.campaignBibleId).flatMap((h) => [h.name, ...hubAliasLabels(h)]),
     ...(state.places ?? []).map((p) => p.name),
     ...stops,
     ...(state.activeDungeon?.nodes ?? []).map((n) => n.name),

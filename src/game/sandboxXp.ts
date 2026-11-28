@@ -9,7 +9,7 @@
 
 import type { GameEvent } from './parser';
 import type { ActiveEncounter, GameState, Item, NpcMemory, Quest } from './types';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubAliasLabels, hubsForBibleId, matchHub } from './outdoorHubs';
 import { milestoneAreaOpts } from './placeAuthority';
 import {
   finishSettlementQuestCard,
@@ -327,7 +327,7 @@ export function applySandboxXpAwards(
         places.push({
           id: placeId,
           name: hub.name,
-          aliases: hub.aliases,
+          aliases: hubAliasLabels(hub),
           threatTier: hub.threatTier,
           mapScale: 'street',
           arcStatus: 'visited',
