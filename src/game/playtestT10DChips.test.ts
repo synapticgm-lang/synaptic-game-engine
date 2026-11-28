@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10D — Story RPG origin chips exclusive until recorded; Follow-up chips use the person's
  * own bound want and only for people present (seed 1027/1029 evidence).
  */

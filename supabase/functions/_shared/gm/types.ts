@@ -1005,6 +1005,8 @@ export interface GameState {
   playPhase?: PlayPhase;
   saveId: string;
   storyName: string;
+  /** When the campaign save was started — shown beside the name, never baked into storyName. */
+  storyStartedAt?: number;
   engineMode: EngineMode;
   campaignArchetype?: CampaignArchetype;
   lastUpdated: number;
@@ -1705,6 +1707,8 @@ export interface WorldAtlasState {
 export interface SaveSlotInfo {
   saveId: string;
   storyName: string;
+  /** Campaign start time for the save list date line (falls back to lastUpdated when absent). */
+  startedAt?: number;
   characterName: string;
   lastUpdated: number;
   turn: number;

@@ -1,4 +1,4 @@
-﻿{"turn":2,"location":"a shop or cafe at Registration","offeredChoices":["Give your name and register","Ask what they want","Look inward"],"level":2,"playerInput":"Give your name and register","xpGained":150}
+{"turn":2,"location":"a shop or cafe at Registration","offeredChoices":["Give your name and register","Ask what they want","Look inward"],"level":2,"playerInput":"Give your name and register","xpGained":150}
 {"turn":3,"location":"a shop or cafe at Registration","offeredChoices":["+1 STR","+1 DEX"],"level":2,"playerInput":"+1 STR","xpGained":0}
 {"turn":4,"location":"a shop or cafe at Registration","offeredChoices":["Ask the people who pulled you about the lead","Read the people who pulled you","Search the scene for signs","Read the System trail","Say somethingâ€¦","Do something elseâ€¦"],"level":2,"playerInput":"Ask the people who pulled you about the lead","xpGained":58}
 {"turn":5,"location":"a shop or cafe at Registration","offeredChoices":["Search the area","Search the scene for signs","Read the System trail","Say somethingâ€¦","Do something elseâ€¦"],"level":2,"playerInput":"Search the area","xpGained":0}

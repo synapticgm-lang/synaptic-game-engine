@@ -1,4 +1,4 @@
-﻿{"turn":2,"location":"Core Chamber","offeredChoices":["Claim the Hollow","Ask what they want","Ask the world"],"level":2,"playerInput":"Claim the Hollow","xpGained":150}
+{"turn":2,"location":"Core Chamber","offeredChoices":["Claim the Hollow","Ask what they want","Ask the world"],"level":2,"playerInput":"Claim the Hollow","xpGained":150}
 {"turn":3,"location":"On the road between places","offeredChoices":["Travel toward First Tunnel Spur","Search the area","Search the scene for signs","Read the System trail","Say somethingâ€¦","Do something elseâ€¦"],"level":2,"playerInput":"Travel toward First Tunnel Spur","xpGained":0}
 {"turn":4,"location":"First Tunnel Spur","offeredChoices":["Walk on","Choose Sorcerer","Choose Berserker","Turn back toward Core Chamber"],"level":2,"playerInput":"Walk on","xpGained":0}
 {"turn":5,"location":"On the road between places","offeredChoices":["Travel toward Spawn Nursery","Ask Cutha Brack about the lead","Read Cutha Brack","Search the scene for signs","Read the System trail","Say somethingâ€¦","Do something elseâ€¦"],"level":2,"playerInput":"Travel toward Spawn Nursery","xpGained":0}

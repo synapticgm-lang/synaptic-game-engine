@@ -1,4 +1,4 @@
-﻿import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { avoidRepeatLethalPick, isLethalChipLabel } from './fateAutoplay';
 import { commitTravel, journeyPads, worldClock } from './travelJourney';

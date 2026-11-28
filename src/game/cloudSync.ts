@@ -1,4 +1,14 @@
 import type { ArtStylePreset, GameState, LogEntry, SaveSlotInfo, Settings } from './types';
+import { redecodeWin1252AsUtf8, splitStoryNameAndDate } from './storySave';
+
+function slotStoryFields(rawName: string | undefined, fallbackStartedAt: number): { storyName: string; startedAt: number } {
+  const decoded = redecodeWin1252AsUtf8(rawName ?? '') ?? (rawName ?? '');
+  const { title, startedAt: fromName } = splitStoryNameAndDate(decoded);
+  return {
+    storyName: title.trim() || 'Campaign',
+    startedAt: fromName ?? fallbackStartedAt,
+  };
+}
 import { isPlayableSave } from './defaults';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { flushPlaytimeToProfile } from './playtime';
@@ -41,11 +51,14 @@ export type CloudSaveBundle = {
 export function gameStateToLocalSlot(state: GameState | null): SaveSlotInfo | null {
   if (!state?.saveId) return null;
   const character = state.character ?? {};
+  const lastUpdated = state.lastUpdated ?? 0;
+  const story = slotStoryFields(state.storyName, state.storyStartedAt ?? lastUpdated);
   return {
     saveId: state.saveId,
-    storyName: state.storyName ?? 'Campaign',
+    storyName: story.storyName,
+    startedAt: state.storyStartedAt ?? story.startedAt,
     characterName: displayAdventurerName(character.name),
-    lastUpdated: state.lastUpdated ?? 0,
+    lastUpdated,
     turn: state.turn ?? 0,
     level: Number(character.level ?? 1),
     source: 'local',
@@ -90,11 +103,14 @@ function slotFromCloudRow(row: {
   const state = row.game_state && typeof row.game_state === 'object' ? (row.game_state as GameState) : null;
   const character = state?.character ?? {};
   const updatedAtMs = row.updated_at ? Date.parse(String(row.updated_at)) : (state?.lastUpdated ?? 0);
+  const lastUpdated = Number.isFinite(updatedAtMs) ? updatedAtMs : 0;
+  const story = slotStoryFields(state?.storyName ?? row.story_name ?? undefined, state?.storyStartedAt ?? lastUpdated);
   return {
     saveId: state?.saveId || row.save_id,
-    storyName: state?.storyName ?? row.story_name ?? 'Campaign',
+    storyName: story.storyName,
+    startedAt: state?.storyStartedAt ?? story.startedAt,
     characterName: displayAdventurerName(character.name),
-    lastUpdated: Number.isFinite(updatedAtMs) ? updatedAtMs : 0,
+    lastUpdated,
     turn: state?.turn ?? row.turn ?? 0,
     level: Number(character.level ?? 1),
     source: 'cloud',

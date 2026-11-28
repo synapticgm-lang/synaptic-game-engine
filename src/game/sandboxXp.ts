@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 28a — Milestone XP only (XP-PLAN.md). One engine function, amounts from xpRules.
  * Pays: encounter end (victory or neutralised), dungeon cleared, quest step, quest complete,
  * a story-significant person won over by a passed social check, a named place reached by a quest

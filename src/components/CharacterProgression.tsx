@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { GameState } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
 import { deriveTabletopSheet } from '@/game/tabletop/characterBuild';

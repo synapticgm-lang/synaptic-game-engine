@@ -15,6 +15,7 @@ import { withMotiveLines } from './npcSheet';
 import { normalizeLedgerEntry } from './npcMemoryLedger';
 import { setPlayPhase } from './playPhase';
 import { applyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
+import { repairCampaignStoryName } from './storySave';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -226,6 +227,15 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
   const voiced = withMotiveLines(result.state, resolveActiveCampaignBible(result.state));
   if (voiced !== result.state) {
     result = { ...result, state: voiced, dirty: true, notes: [...result.notes, 'npc motive lines seeded'] };
+  }
+  const named = repairCampaignStoryName(result.state);
+  if (named !== result.state) {
+    result = {
+      ...result,
+      state: named,
+      dirty: true,
+      notes: [...result.notes, 'campaign storyName encoding/date repaired'],
+    };
   }
   const errors = applyErrorRepairs(result.state);
   if (errors.dirty) {

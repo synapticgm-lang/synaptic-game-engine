@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 00:40 decision: one root rule for skipped votes. A skip is wrong only when the reply the vote rates is a
  * GM reply (identified by replyKey) that has not been rated yet, whatever the turn type. Replaces the
  * 00:00 no_reply exemption and any setup-step excuse.
