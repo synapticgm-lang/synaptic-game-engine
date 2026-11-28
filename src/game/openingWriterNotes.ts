@@ -10,6 +10,23 @@ import { openingRiteWriterOffer } from './openingRiteFacts';
 
 export const STORYTELLER_RETRY_MESSAGE = "The storyteller didn't answer — Try again";
 export const STORYTELLER_RETRY_CHIP = 'Try again';
+/** Sole pad on a writer-miss page (brief 05 / #82). Lives here so count owners can import without pulling liveOpening. */
+export const failedOpeningPads = [STORYTELLER_RETRY_CHIP];
+
+/**
+ * Miss page owns its ActionBar (brief 05 / #82 / #74 setupOwns pattern).
+ * Structural: pending retry act, retry chip kinds, or opening sceneWriteError — not label text.
+ */
+export function isStorytellerRetryPage(state: GameState): boolean {
+  if (state.pendingWriterRetry?.act) return true;
+  const kinds = state.offeredPad?.chips ?? [];
+  for (const chip of kinds) {
+    if (chip.kind === 'story-retry' || chip.kind === 'opening-retry') return true;
+  }
+  const oe = state.openingEstablishment;
+  if (oe?.sceneWriteError && oe.sceneWritten === false) return true;
+  return false;
+}
 
 export function openingChoiceCountOf(engineMode: GameState['engineMode'] | undefined): number {
   return engineMode === 'dnd' ? 3 : 4;

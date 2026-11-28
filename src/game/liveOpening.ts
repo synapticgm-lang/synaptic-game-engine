@@ -9,7 +9,9 @@ import { isCampaignHubToken } from './outdoorHubs';
 import { tagOpeningOfferPads } from './openingOfferRecognize';
 import { beginTabletopCreation } from './tabletop/creationFlow';
 import {
+  failedOpeningPads,
   formatOpeningWriterNotes,
+  isStorytellerRetryPage,
   openingChoiceCount,
   openingProseLeaksStructuredJson,
   readOpeningStructuredOutput,
@@ -21,7 +23,14 @@ import {
 
 export { openingProseLeaksStructuredJson };
 
-export { formatOpeningWriterNotes, openingChoiceCount, STORYTELLER_RETRY_CHIP, STORYTELLER_RETRY_MESSAGE };
+export {
+  failedOpeningPads,
+  formatOpeningWriterNotes,
+  isStorytellerRetryPage,
+  openingChoiceCount,
+  STORYTELLER_RETRY_CHIP,
+  STORYTELLER_RETRY_MESSAGE,
+};
 
 function retryLogId(): string {
   return Math.random().toString(36).slice(2, 11);
@@ -598,8 +607,6 @@ function hideCatalogStarter(q: Quest, privateSpineId?: string): Quest {
   }
   return q;
 }
-
-export const failedOpeningPads = [STORYTELLER_RETRY_CHIP];
 
 /** True when opening prose is empty or whitespace-only and must not be committed. */
 export function isBlankOpeningProse(text: string | undefined | null): boolean {
