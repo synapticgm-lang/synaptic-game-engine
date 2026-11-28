@@ -65,6 +65,8 @@ describe('LitRPG System personality', () => {
       expect(rail).toContain(GM_VOICE_FIREWALL);
       expect(rail).toContain('NEVER-LINES:');
       expect(rail).toContain('STATUS chrome:');
+      expect(rail).toMatch(/engine paints STATUS/i);
+      expect(rail).not.toMatch(/STATUS:\s*\{field\}\s*=\s*\{value\}/);
       expect(rail).toContain('KEEP fluid rails');
       expect(rail).not.toContain('You are a person at this table');
     }

@@ -58,8 +58,8 @@ describe('s73 K — Check Status paints the System window', () => {
     const s = summoned('private_window');
     const entry = withLitrpgSystemWindow(gmEntry(17, 'You looked inward.'), s, 'Check Status');
     expect(entry.systemWindow?.heading).toBe('SYSTEM');
-    expect(entry.systemWindow?.lines).toContain('Level 2');
-    expect(entry.systemWindow?.lines.some((l) => /^XP 25\/225$/.test(l))).toBe(true);
+    expect(entry.systemWindow?.lines).toContain('Level: 2');
+    expect(entry.systemWindow?.lines.some((l) => /^XP: 25\/225$/.test(l))).toBe(true);
   });
 
   it('the writer packet carries the WINDOW line with only what changed, never the sheet', () => {

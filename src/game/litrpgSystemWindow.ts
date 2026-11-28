@@ -125,12 +125,12 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   }
   const on = (part: SystemPartId) => !housing || isPartOn(housing, part);
   const lines: string[] = [`Name: ${name ?? '—'}`];
-  if (on('level')) lines.push(`Level ${c?.level ?? 1}`);
+  if (on('level')) lines.push(`Level: ${c?.level ?? 1}`);
   const className = on('level') ? classDisplayName(state) : null;
   if (className) lines.push(`Class: ${className}`);
-  if (on('health')) lines.push(`HP ${c?.hp ?? 0} / ${c?.maxHp ?? 0}`);
+  if (on('health')) lines.push(`HP: ${c?.hp ?? 0} / ${c?.maxHp ?? 0}`);
   if (on('power_pool') && typeof c?.mp === 'number' && (c.maxMp ?? 0) > 0) {
-    lines.push(`MP ${c.mp} / ${c.maxMp}`);
+    lines.push(`MP: ${c.mp} / ${c.maxMp}`);
   }
   if (housing && isPartOn(housing, 'active_effects') && (c?.conditions ?? []).length) {
     lines.push(`Effects: ${(c?.conditions ?? []).join(', ')}`);
@@ -161,10 +161,18 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   } else {
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
-  if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
+  if (on('experience')) lines.push(`XP: ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
   lines.push(...openingRiteWindowLines(state));
+  // Every painted line keeps a non-empty label (Name: — is a labelled blank value).
+  const labeled = lines.filter((l) => {
+    const [k] = windowField(l);
+    return !!k;
+  });
   // The floor line is the first to go when the window would run past its limit.
-  return { heading: 'SYSTEM', lines: lines.length > SYSTEM_WINDOW_MAX_LINES ? lines.filter((l) => l !== floor) : lines };
+  return {
+    heading: 'SYSTEM',
+    lines: labeled.length > SYSTEM_WINDOW_MAX_LINES ? labeled.filter((l) => l !== floor) : labeled,
+  };
 }
 
 /** The window never runs past this many lines (it prints at most 15). */
@@ -227,7 +235,7 @@ export function ledgerSheetLine(state: GameState): string {
   if (!sheet) return '';
   const quest = (state.quests ?? []).find((q) => q.status === 'active');
   const next = quest?.objectives?.find((o) => !o.completed)?.description;
-  const parts = sheet.lines.filter((l) => !/^(?:HP|MP)\s/.test(l));
+  const parts = sheet.lines.filter((l) => !/^(?:HP|MP)\b/.test(l));
   if (quest?.name && (!housing || isPartOn(housing, 'quest_list'))) {
     parts.push(next ? `Quest: ${quest.name}, next: ${next}` : `Quest: ${quest.name}`);
   }

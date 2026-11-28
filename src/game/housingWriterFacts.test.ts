@@ -59,8 +59,8 @@ describe('housing writer facts', () => {
     expect(sheet).toMatch(/^The window reads:/);
     expect(sheet).toContain("Quest: The Crown's Meat Shield, next: Report to High Priest Arus");
     const lines = buildLitrpgSystemWindow(state)!.lines;
-    expect(lines.some((l) => /^Level /.test(l))).toBe(true);
-    expect(lines.some((l) => /^XP /.test(l))).toBe(true);
+    expect(lines.some((l) => /^Level:/.test(l))).toBe(true);
+    expect(lines.some((l) => /^XP:/.test(l))).toBe(true);
     expect(writerFacts(state).blocks.join('\n')).toMatch(/Quest list: \[MAIN\] The Crown's Meat Shield \(active\)/);
   });
 });

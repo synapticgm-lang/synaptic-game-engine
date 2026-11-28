@@ -46,6 +46,7 @@ import { ledgerChangeFact, ledgerReadChanges, ledgerReadStitch, ledgerSheetLine 
 import {
   applyOpeningHousingLine,
   formatSystemBlock,
+  systemHousingWriterSentence,
   housingFromSystemBlock,
   hidesPart,
   systemHousingWriterClause,
@@ -1469,7 +1470,12 @@ export function formatWriterFacingEvent(
     lines.push(`${ledgerReadLabel(readHousing)} (game chrome: ${writerHousingClause(packet.systemBlock)} ${readShows}): ${ledgerChangeFact(packet.ledgerChanges)}`);
   }
   if (packet.reader) lines.push(formatReaderLine(packet.reader));
-  if (packet.systemBlock) lines.push(packet.systemBlock);
+  // Housing scene physics only — never formatSystemBlock's "SYSTEM: … Known: health, …"
+  // list (writers pasted that as STATUS: field = known into openings).
+  {
+    const housingId = housingFromSystemBlock(packet.systemBlock);
+    if (housingId) lines.push(`HOUSING: ${systemHousingWriterSentence(housingId)}`);
+  }
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
   const locationLine = writerLeafBlock(`Location: ${packet.location}.`, packet.factSheet);

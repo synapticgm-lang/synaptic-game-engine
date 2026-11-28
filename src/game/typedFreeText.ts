@@ -512,10 +512,11 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   const hostile = hostileParleyContext(live);
 
   // T10V — System ping / panel read: the engine's plate answers (location, mark, quest track).
-  // Free text is never rejected; the readout is code-owned, not a writer "nothing happened".
+  // Free text is never rejected; the readout is code-owned (systemWindow), never a sheet dump
+  // into ENGINE RESULT (writers pasted Name: —; 1;: incomplete into prose).
   if (isLedgerReadAction(raw) && ledgerSheetLine(live)) {
     const changes = ledgerReadChanges(live);
-    const fact = `${ledgerChangeFact(changes)} System readout: ${ledgerSheetLine(live)}`;
+    const fact = ledgerChangeFact(changes);
     const one: StepResolution = {
       tried: raw.slice(0, 80),
       done: true,
