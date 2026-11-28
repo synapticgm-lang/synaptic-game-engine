@@ -9,6 +9,7 @@ import { systemPromptPad } from '@/game/rules/abilityPoints';
 import { partyHeading, recruitPad } from '@/game/rules/companions';
 import { romanceAllowed, romancePad, rpgEndingChip, storyRpgContactPad } from '@/game/storyRpgProgress';
 import { originPad } from '@/game/rules/rpgOrigin';
+import { creationChips, tabletopCreationPending } from '@/game/tabletop/creationFlow';
 import { loadSettings } from '@/game/db';
 
 const ROW_CHIP =
@@ -53,33 +54,42 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const recruits = recruitPad(state) ?? [];
   const endingChip = rpgEndingChip(state);
   const origins = originPad(state);
+  const creating = tabletopCreationPending(state);
+  const creation = creating ? creationChips(state) : [];
   // q42-OPT1m: contact favour chips come from sceneAffordances (engine offered list), not a parallel builder.
   const contactPad = storyRpgContactPad(state);
   const romance = romancePad(state, romanceAllowed(loadSettings()));
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
-  // Setup / System / origin rows own their chips. Scene row is resolveOfferedChoices only (finalOptions).
+  // Setup / System / origin / creation rows own their chips. Scene row is resolveOfferedChoices only (finalOptions).
   const systemChips = [...(systemPrompt?.chips ?? [])];
   const originChips = [...(origins ?? [])];
+  const creationRow = [...creation];
   const offeredSet = new Set<string>();
   for (const c of actions) offeredSet.add(c.trim().toLowerCase());
   const contacts: string[] = [];
   for (const c of contactPad ?? []) if (offeredSet.has(c.trim().toLowerCase())) contacts.push(c);
   const promptSet = new Set<string>();
-  for (const c of [...systemChips, ...originChips, ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
+  for (const c of [...systemChips, ...originChips, ...creationRow, ...recruits, ...(endingChip ? [endingChip] : []), ...contacts, ...(romance ?? [])]) {
     promptSet.add(c.trim().toLowerCase());
   }
+  // Session-zero creation: only the inn-book chips (no scene row beside them).
   const mainActions: string[] = [];
-  for (const c of actions) if (!promptSet.has(c.trim().toLowerCase())) mainActions.push(c);
+  if (!creating) {
+    for (const c of actions) if (!promptSet.has(c.trim().toLowerCase())) mainActions.push(c);
+  }
 
   const handleFatesPick = () => {
-    onAction(pickFateChoice(fatePickPool(actions, systemPrompt?.chips)));
+    onAction(pickFateChoice(fatePickPool(actions, systemPrompt?.chips ?? (creationRow.length ? creationRow : null))));
   };
 
-  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !contacts.length && !romance)) return null;
+  if (hidden || (actions.length === 0 && !systemPrompt && !party && !recruits.length && !origins && !creationRow.length && !contacts.length && !romance)) return null;
 
   return (
     <div className="flex flex-col gap-1.5 pb-2">
+      {creationRow.length > 0 && (
+        <ChipRow testId="tabletop-creation-row" heading="Who are you on the road?" chips={creationRow} tone="border-violet-500/40 text-violet-100" busy={busy} onAction={onAction} />
+      )}
       {originChips.length > 0 && (
         <ChipRow testId="origin-row" heading="Where do you come from?" chips={originChips} tone="border-violet-500/40 text-violet-100" busy={busy} onAction={onAction} />
       )}

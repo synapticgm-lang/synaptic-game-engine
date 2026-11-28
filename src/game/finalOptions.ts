@@ -11,6 +11,7 @@ import { STAT_SYSTEM_CHOICE_CHIP, statChip, statPointPad } from './rules/ability
 import { CLASS_QUICK_START_CHIP, classChip, classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
 import { creationChips, tabletopCreationPending } from './tabletop/creationFlow';
+import { closedUniverseFallbacks, excludedPadFamilies } from './padUniverse';
 import { isJourneyUnderway, journeyPads } from './travelJourney';
 
 const LITRPG_STAT_KEYS: AttributeKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
@@ -90,6 +91,14 @@ export function finalSceneOptions(state: GameState, candidates: string[]): strin
   if (out.length < n) {
     for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
       push(a.label, true);
+      if (out.length >= n) break;
+    }
+  }
+
+  // Stored-pad path never runs choicePipeline's closed-universe refill; use the same source here.
+  if (out.length < n) {
+    for (const c of closedUniverseFallbacks(state, excludedPadFamilies(state))) {
+      push(c, true);
       if (out.length >= n) break;
     }
   }

@@ -5,6 +5,9 @@ import { excludedPadFamilies, isLeaveFamilyPad, isTravelPad } from './padUnivers
 import { emptySceneFacts } from './sceneFacts';
 import { CLASS_QUICK_START_CHIP, classChip } from './rules/characterClass';
 import { STAT_SYSTEM_CHOICE_CHIP, statChip } from './rules/abilityPoints';
+import { beginTabletopCreation, creationChips, tabletopCreationPending } from './tabletop/creationFlow';
+import { resolveOfferedChoices } from './playTranscript';
+import { normalizeSearchTarget } from './searchContinuity';
 import type { AttributeKey, EngineMode, GameState } from './types';
 
 function base(mode: EngineMode): GameState {
@@ -102,5 +105,74 @@ describe('finalOptions — exact 4/4/3 scene pad, setup excluded', () => {
     expect(scene.length).toBeGreaterThan(0);
     expect(scene.some((c) => isTravelPad(c))).toBe(false);
     expect(scene.some((c) => isLeaveFamilyPad(c))).toBe(false);
+  });
+
+  it('tabletop creation pending: offered row is creation chips only (session-zero)', () => {
+    const state = beginTabletopCreation(base('dnd'));
+    expect(tabletopCreationPending(state)).toBe(true);
+    const expected = creationChips(state);
+    expect(expected.length).toBeGreaterThan(0);
+    // Scene-looking candidates must not win: resolveOfferedChoices owns session-zero.
+    state.choices = ['Talk to Edda Crane', 'Travel toward Greyhollow Inn', 'Search the area'];
+    state.offeredPad = {
+      turn: state.turn ?? 0,
+      choices: state.choices,
+      chips: state.choices.map((label) => ({ label, actionId: `label:${label.toLowerCase()}`, kind: 'compiled' as const })),
+    };
+    const offered = resolveOfferedChoices(state);
+    expect(offered).toEqual(expected);
+    for (const label of offered) {
+      expect(expected).toContain(label);
+    }
+  });
+
+  it('LitRPG class offer pending: scene row exactly 4 when affordances are exhausted', () => {
+    const state = base('litrpg');
+    state.character = { ...state.character, classId: undefined, name: 'Jax', level: 1 };
+    state.classOffer = { turn: state.turn ?? 5, choices: ['cleric', 'bard', 'druid'] };
+    const place = state.currentLocation!;
+    const searchKey = normalizeSearchTarget('Search the area', place);
+    state.sceneFacts = { ...emptySceneFacts(state.turn ?? 5), present: [], searchedEmpty: [searchKey] };
+    state.discoveredLocations = ['sp-hub-lowmarket', 'sp-hub-west-wall'];
+    state.log = [
+      { id: 'a', turn: 1, role: 'player', content: 'Travel toward Lowmarket', timestamp: 1 },
+      { id: 'b', turn: 1, role: 'gm', content: 'You reach Lowmarket.', timestamp: 2 },
+      { id: 'c', turn: 2, role: 'player', content: `Travel toward ${place}`, timestamp: 3 },
+      { id: 'd', turn: 2, role: 'gm', content: `You reach ${place}.`, timestamp: 4 },
+      { id: 'e', turn: 3, role: 'player', content: 'Travel toward Lowmarket', timestamp: 5 },
+      { id: 'f', turn: 3, role: 'gm', content: 'Back.', timestamp: 6 },
+    ];
+    const setup = [
+      classChip('cleric'),
+      classChip('bard'),
+      classChip('druid'),
+      CLASS_QUICK_START_CHIP,
+    ];
+    const shortScene = [
+      'Travel toward Lowmarket',
+      'Find a way out',
+      'Pursue First Read at Morrowleigh Hollow',
+    ];
+    const mixed = [...setup, ...shortScene];
+    state.choices = mixed;
+    state.offeredPad = {
+      turn: state.turn ?? 5,
+      choices: mixed,
+      chips: mixed.map((label) => ({ label, actionId: `label:${label.toLowerCase()}`, kind: 'compiled' as const })),
+    };
+
+    const scene = finalSceneOptions(state, mixed);
+    expect(scene).toHaveLength(4);
+    for (const label of scene) {
+      expect(isSetupOption(state, label), label).toBe(false);
+    }
+    const offered = resolveOfferedChoices(state);
+    expect(offered).toHaveLength(4);
+    for (const label of offered) {
+      expect(isSetupOption(state, label), label).toBe(false);
+    }
+    // Membership: every offered scene label is either a non-setup candidate or a closed-universe refill.
+    const sceneCandidates = new Set(shortScene.map((c) => c.toLowerCase()));
+    expect(offered.filter((c) => sceneCandidates.has(c.toLowerCase())).length).toBeGreaterThan(0);
   });
 });

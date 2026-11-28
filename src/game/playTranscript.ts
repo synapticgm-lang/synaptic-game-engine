@@ -36,6 +36,7 @@ import {
 } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
 import { originPad } from './rules/rpgOrigin';
+import { creationChips, tabletopCreationPending } from './tabletop/creationFlow';
 import { isLookAroundAction } from './sandboxXp';
 import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
 import { BUILD_STAMP } from './runManifest';
@@ -132,6 +133,8 @@ export function resolveOfferedChoices(state: GameState): string[] {
   // T10W — origin setup owns the pad until recorded (session-zero; no scene mix).
   const origin = originPad(state);
   if (origin?.length) return origin;
+  // Tabletop inn-book creation is session-zero (same as origin): creation chips only, no scene refill.
+  if (tabletopCreationPending(state)) return creationChips(state);
   // Setup (class / stats / reward box) stays on the System row in ActionBar — never merge into the scene pad.
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
   return finalSceneOptions(state, chips);
@@ -307,7 +310,7 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
         ...(travelMove ? { slotCategory: 'move' as const } : {}),
       });
     }
-    if (fourSlotEngineLabels(reshaped.map((row) => row.label), state.engineMode).length >= sceneOptionCount(state.engineMode) || reshaped.length) {
+    if (fourSlotEngineLabels(reshaped.map((row) => row.label)).length >= sceneOptionCount(state.engineMode) || reshaped.length) {
       cooledFinal = reshaped;
     }
   }
